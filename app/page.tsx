@@ -415,12 +415,11 @@ function calcGoal(weight: number, purpose: PurposeKey) {
   const p = weight * x.pPerKg;
   const f = Math.max((kcal * x.fatPct) / 9, weight * 0.8); // 脂質は最低でも体重×0.8g
   const c = Math.max(0, (kcal - p * 4 - f * 9) / 4);
-  return {
-    kcal: Math.round((p * 4 + f * 9 + c * 4) / 10) * 10,
-    p: Math.round(p),
-    f: Math.round(f),
-    c: Math.round(c),
-  };
+  const rp = Math.round(p);
+  const rf = Math.round(f);
+  const rc = Math.round(c);
+  // 表示するg数から出した値にして、記録側の「目標kcal」と一致させる
+  return { kcal: rp * 4 + rf * 9 + rc * 4, p: rp, f: rf, c: rc };
 }
 
 function AutoGoal({ setGoal }: { setGoal: (g: Goal) => void }) {
