@@ -122,7 +122,7 @@ export default function Nutrients() {
     <main className="container">
       <header className="brandbar">
         <span className="brand">LIFEGYM</span>
-        <Link href="/" className="toplink">
+        <Link href="/" className="guidebtn">
           ‹ 記録に戻る
         </Link>
       </header>

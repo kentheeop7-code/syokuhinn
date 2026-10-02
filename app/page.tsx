@@ -683,11 +683,12 @@ export default function Home() {
     <main className="container">
       <header className="brandbar">
         <span className="brand">LIFEGYM</span>
-        <Link href="/nutrients" className="toplink">
-          栄養素のはたらき ›
+        <Link href="/nutrients" className="guidebtn">
+          📖 栄養素ガイド
         </Link>
       </header>
-      <h1 className="title">PFC</h1>
+      <h1 className="title">マッチョ飯ラボ</h1>
+      <p className="tagline">PFCをはかって、理想のカラダへ。</p>
       <p className="member">LIFEGYM会員様専用アプリ</p>
 
       <QuoteHero />

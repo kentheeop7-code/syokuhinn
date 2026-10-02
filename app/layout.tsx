@@ -3,7 +3,7 @@ import "./globals.css";
 import QuoteBackground from "./QuoteBackground";
 
 export const metadata: Metadata = {
-  title: "PFC",
+  title: "マッチョ飯ラボ | LIFEGYM",
   description: "写真で食品のPFCがわかる、目標に合う食品も見つかるアプリ",
 };
 

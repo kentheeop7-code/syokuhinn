@@ -914,3 +914,42 @@ ul.rows.card li:first-child {
     transform: none;
   }
 }
+
+/* header guide button / title */
+.guidebtn {
+  padding: 8px 14px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  background: var(--brand);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--brand) 40%, transparent);
+  transition: transform 0.15s, opacity 0.2s;
+}
+
+.guidebtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.title {
+  font-size: clamp(1.9rem, 9vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.title.sm {
+  font-size: 1.6rem;
+}
+
+.tagline {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.tagline + .member {
+  margin-top: 10px;
+}
