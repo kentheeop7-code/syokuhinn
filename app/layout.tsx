@@ -3,8 +3,8 @@ import "./globals.css";
 import QuoteBackground from "./QuoteBackground";
 
 export const metadata: Metadata = {
-  title: "マッチョ飯ラボ | LIFEGYM",
-  description: "写真で食品のPFCがわかる、目標に合う食品も見つかるアプリ",
+  title: "家政婦の筋 | LIFEGYM",
+  description: "食品のPFC・ビタミン・ミネラル・塩分がわかり、目標に近づく食事を記録できるアプリ",
 };
 
 export const viewport = { width: "device-width", initialScale: 1 };

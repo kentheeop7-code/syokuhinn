@@ -953,3 +953,87 @@ ul.rows.card li:first-child {
 .tagline + .member {
   margin-top: 10px;
 }
+
+/* guide additions */
+.anav {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.anav a {
+  flex: 1;
+  padding: 10px;
+  color: var(--brand);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid var(--brand);
+  border-radius: 12px;
+}
+
+.anav a:hover {
+  color: #fff;
+  background: var(--brand);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.keyrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.keychip {
+  padding: 3px 10px;
+  color: var(--brand);
+  font-size: 0.78rem;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  border-radius: 999px;
+}
+
+.plist {
+  margin: 12px 0 0;
+  padding-left: 1.2em;
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+
+.plist li {
+  margin-bottom: 4px;
+}
+
+.caution {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  color: var(--danger);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  background: color-mix(in srgb, var(--danger) 9%, transparent);
+  border-radius: 10px;
+}
+
+.inapp {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 1px 8px;
+  color: #fff;
+  font-size: 0.7rem;
+  background: var(--brand);
+  border-radius: 6px;
+}
+
+.approx {
+  margin-left: 6px;
+  padding: 1px 7px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 400;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}

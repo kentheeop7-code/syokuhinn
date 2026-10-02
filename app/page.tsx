@@ -5,6 +5,7 @@ import Link from "next/link";
 import QuoteHero from "./QuoteHero";
 import {
   CATEGORIES,
+  APPROX,
   FOODS,
   LIMITS,
   MICROS,
@@ -173,7 +174,10 @@ function FoodRow({
   return (
     <li>
       <div className="rowhead">
-        <span>{food.name}</span>
+        <span>
+          {food.name}
+          {APPROX.has(food.name) && <span className="approx">概算値</span>}
+        </span>
         <span className="muted">
           {Math.round((food.p * 4 + food.f * 9 + food.c * 4) * g)}kcal
         </span>
@@ -265,6 +269,9 @@ function Search({
       <p className="note">
         最初は100gあたりの栄養素です。茶碗1杯などの目安ボタンか、グラム数の入力で量を変えられます。「追加」で{" "}
         {label(date)} の記録に入ります。
+      </p>
+      <p className="note">
+        数値は文部科学省「日本食品標準成分表（八訂）増補2023年」を元にしています（「概算値」は公式に同じ食品がないものです）。
       </p>
       {hits.length === 0 && <p className="note">見つかりませんでした。</p>}
       <ul className="rows card">
@@ -687,7 +694,7 @@ export default function Home() {
           📖 栄養素ガイド
         </Link>
       </header>
-      <h1 className="title">マッチョ飯ラボ</h1>
+      <h1 className="title">家政婦の筋</h1>
       <p className="tagline">PFCをはかって、理想のカラダへ。</p>
       <p className="member">LIFEGYM会員様専用アプリ</p>
 
