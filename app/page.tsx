@@ -272,7 +272,7 @@ function Calendar({
               onClick={() => setSelected(k)}
             >
               {d}
-              <i className={`mark ${s}`} />
+              {s && <i className={`mark ${s}`} />}
             </button>
           );
         })}
