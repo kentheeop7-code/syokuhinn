@@ -55,6 +55,12 @@ function sum(entries: Entry[]): Totals {
     fe: 0,
     k: 0,
     salt: 0,
+    mg: 0,
+    b2: 0,
+    b6: 0,
+    b12: 0,
+    fol: 0,
+    nia: 0,
   };
   for (const e of entries) {
     const food = byName.get(e.name);

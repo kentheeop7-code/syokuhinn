@@ -247,6 +247,7 @@ const ITEMS: Item[] = [
     lack: "口内炎、口角炎、肌荒れ",
     over: "水にとけるので、通常の食事なら心配は少ないです",
     target: "男性1.6mg、女性1.2mg",
+    inApp: true,
   },
   {
     name: "ビタミンB6",
@@ -256,6 +257,7 @@ const ITEMS: Item[] = [
     lack: "肌荒れ、口内炎、しびれ、気分の落ち込み",
     over: "サプリで長期にとりすぎると、手足のしびれが出ることがあります",
     target: "男性1.4mg、女性1.1mg",
+    inApp: true,
   },
   {
     name: "ビタミンB12",
@@ -264,6 +266,7 @@ const ITEMS: Item[] = [
     foods: "貝類、レバー、魚、肉、卵、乳製品",
     lack: "貧血、しびれ、疲れやすい。植物性中心の食事の人は不足しやすいです",
     target: "2.4μg",
+    inApp: true,
   },
   {
     name: "葉酸",
@@ -272,6 +275,7 @@ const ITEMS: Item[] = [
     foods: "ほうれん草、ブロッコリー、枝豆、レバー、いちご",
     lack: "貧血、口内炎",
     target: "240μg（妊娠を望む女性は追加が必要）",
+    inApp: true,
   },
   {
     name: "ナイアシン",
@@ -280,6 +284,7 @@ const ITEMS: Item[] = [
     foods: "魚、鶏肉、レバー、豆類",
     lack: "皮ふ炎、疲れやすい",
     target: "男性15mgNE、女性11mgNE",
+    inApp: true,
   },
   {
     name: "ビタミンC",
@@ -335,6 +340,7 @@ const ITEMS: Item[] = [
     lack: "筋肉のけいれん、こむら返り、疲れやすい、寝つきが悪い",
     over: "サプリでのとりすぎは下痢の原因に（食事では心配は少ないです）",
     target: "男性340〜370mg、女性270〜290mg（サプリは1日350mgまで）",
+    inApp: true,
   },
   {
     name: "鉄",

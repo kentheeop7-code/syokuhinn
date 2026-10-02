@@ -1037,3 +1037,14 @@ html {
   border: 1px solid var(--line);
   border-radius: 6px;
 }
+
+/* more nutrients in grid */
+.micros {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (min-width: 420px) {
+  .micros {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
