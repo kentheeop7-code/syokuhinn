@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
+const MODEL = "gemini-2.5-flash";
+
 const PROMPT = `写真に写っている食品・料理を識別し、PFC（たんぱく質・脂質・炭水化物）を推定してください。
 見た目から量（グラム）も推定し、その量での合計値を出してください。
 食品が写っていない場合は foods を空配列にしてください。
@@ -10,10 +12,10 @@ const PROMPT = `写真に写っている食品・料理を識別し、PFC（た�
 protein/fat/carbs は g、小数1桁まで。`;
 
 export async function POST(req: Request) {
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = process.env.GEMINI_API_KEY;
   if (!key) {
     return NextResponse.json(
-      { error: "サーバーにAPIキーが設定されていません。" },
+      { error: "写真認識は現在使えません。「食品を検索」をお使いください。" },
       { status: 500 }
     );
   }
@@ -24,36 +26,40 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "リクエストが不正です。" }, { status: 400 });
   }
-  if (typeof image !== "string" || !image.startsWith("data:image/jpeg;base64,")) {
+  const prefix = "data:image/jpeg;base64,";
+  if (typeof image !== "string" || !image.startsWith(prefix)) {
     return NextResponse.json({ error: "画像が不正です。" }, { status: 400 });
   }
-  const data = image.slice("data:image/jpeg;base64,".length);
+  const data = image.slice(prefix.length);
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-5-5",
-      max_tokens: 1024,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: { type: "base64", media_type: "image/jpeg", data },
-            },
-            { type: "text", text: PROMPT },
-          ],
-        },
-      ],
-    }),
-  });
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              { inline_data: { mime_type: "image/jpeg", data } },
+              { text: PROMPT },
+            ],
+          },
+        ],
+        generationConfig: { responseMimeType: "application/json" },
+      }),
+    }
+  );
 
+  if (res.status === 429) {
+    return NextResponse.json(
+      {
+        error:
+          "無料枠の利用上限に達しました。しばらく待つか、「食品を検索」をお使いください。",
+      },
+      { status: 429 }
+    );
+  }
   if (!res.ok) {
     return NextResponse.json(
       { error: "解析に失敗しました。時間をおいて再度お試しください。" },
@@ -62,7 +68,7 @@ export async function POST(req: Request) {
   }
 
   const json = await res.json();
-  const text: string = json?.content?.[0]?.text ?? "";
+  const text: string = json?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
   const match = text.match(/\{[\s\S]*\}/);
   try {
     const parsed = JSON.parse(match ? match[0] : text);

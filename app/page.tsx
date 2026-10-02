@@ -151,6 +151,50 @@ function Photo() {
   );
 }
 
+function Search() {
+  const [q, setQ] = useState("");
+  const [grams, setGrams] = useState("100");
+  const g = (num(grams) || 0) / 100;
+  const hits = FOODS.filter((x) => x.name.includes(q.trim()));
+
+  return (
+    <section>
+      <div className="searchbar">
+        <input
+          className="textinput"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="食品名で検索（例: 鶏、ごはん）"
+          aria-label="食品名"
+        />
+        <label className="gram">
+          <input
+            inputMode="decimal"
+            value={grams}
+            onChange={(e) => setGrams(e.target.value)}
+            aria-label="グラム数"
+          />
+          g
+        </label>
+      </div>
+      {hits.length === 0 && <p className="note">見つかりませんでした。</p>}
+      <ul className="rows card">
+        {hits.map((x) => (
+          <li key={x.name}>
+            <div className="rowhead">
+              <span>{x.name}</span>
+              <span className="muted">
+                {Math.round((x.p * 4 + x.f * 9 + x.c * 4) * g)}kcal
+              </span>
+            </div>
+            <PfcRow p={x.p * g} f={x.f * g} c={x.c * g} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function Goal() {
   const [p, setP] = useState("");
   const [f, setF] = useState("");
@@ -261,7 +305,7 @@ function Goal() {
 }
 
 export default function Home() {
-  const [tab, setTab] = useState<"photo" | "goal">("photo");
+  const [tab, setTab] = useState<"photo" | "search" | "goal">("photo");
   return (
     <main className="container">
       <h1 className="title">PFC</h1>
@@ -277,6 +321,13 @@ export default function Home() {
         </button>
         <button
           role="tab"
+          aria-selected={tab === "search"}
+          onClick={() => setTab("search")}
+        >
+          食品を検索
+        </button>
+        <button
+          role="tab"
           aria-selected={tab === "goal"}
           onClick={() => setTab("goal")}
         >
@@ -284,7 +335,7 @@ export default function Home() {
         </button>
       </div>
 
-      {tab === "photo" ? <Photo /> : <Goal />}
+      {tab === "photo" ? <Photo /> : tab === "search" ? <Search /> : <Goal />}
     </main>
   );
 }

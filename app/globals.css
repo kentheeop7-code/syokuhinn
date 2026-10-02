@@ -220,6 +220,52 @@ ul.rows.card li:first-child {
   white-space: nowrap;
 }
 
+.searchbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.textinput,
+.gram {
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.textinput {
+  flex: 1;
+  min-width: 0;
+}
+
+.textinput:focus,
+.gram:focus-within {
+  border-color: var(--accent);
+}
+
+.gram {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.gram input {
+  width: 52px;
+  padding: 0;
+  font: inherit;
+  color: var(--text);
+  text-align: right;
+  background: none;
+  border: none;
+  outline: none;
+}
+
 .inputs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
