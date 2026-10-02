@@ -61,6 +61,8 @@ function sum(entries: Entry[]): Totals {
     b12: 0,
     fol: 0,
     nia: 0,
+    zn: 0,
+    vd: 0,
   };
   for (const e of entries) {
     const food = byName.get(e.name);
@@ -370,6 +372,139 @@ function Calendar({
   );
 }
 
+type PurposeKey = "diet" | "muscle" | "performance";
+
+// 体重だけで出せる簡易式（スポーツ栄養の一般的な目安）。
+// エネルギー = 体重 × kcalPerKg、たんぱく質 = 体重 × pPerKg、脂質 = エネルギーの fatPct、残りを炭水化物に。
+const PURPOSES: Record<
+  PurposeKey,
+  {
+    label: string;
+    kcalPerKg: number;
+    pPerKg: number;
+    fatPct: number;
+    desc: string;
+  }
+> = {
+  diet: {
+    label: "ダイエット",
+    kcalPerKg: 28,
+    pPerKg: 1.8,
+    fatPct: 0.25,
+    desc: "体脂肪を落としながら筋肉を守る。エネルギーは控えめ、たんぱく質は多めです。",
+  },
+  muscle: {
+    label: "筋肉をつける",
+    kcalPerKg: 38,
+    pPerKg: 1.8,
+    fatPct: 0.25,
+    desc: "筋肉の材料（たんぱく質）と、増量に必要なエネルギーをしっかりとります。",
+  },
+  performance: {
+    label: "パフォーマンスアップ",
+    kcalPerKg: 42,
+    pPerKg: 1.5,
+    fatPct: 0.22,
+    desc: "運動のエネルギー源になる炭水化物を多めに。練習量が多い人向けです。",
+  },
+};
+
+function calcGoal(weight: number, purpose: PurposeKey) {
+  const x = PURPOSES[purpose];
+  const kcal = weight * x.kcalPerKg;
+  const p = weight * x.pPerKg;
+  const f = Math.max((kcal * x.fatPct) / 9, weight * 0.8); // 脂質は最低でも体重×0.8g
+  const c = Math.max(0, (kcal - p * 4 - f * 9) / 4);
+  return {
+    kcal: Math.round((p * 4 + f * 9 + c * 4) / 10) * 10,
+    p: Math.round(p),
+    f: Math.round(f),
+    c: Math.round(c),
+  };
+}
+
+function AutoGoal({ setGoal }: { setGoal: (g: Goal) => void }) {
+  const [weight, setWeight] = useState("");
+  const [purpose, setPurpose] = useState<PurposeKey | null>(null);
+
+  useEffect(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem("lg-body") || "null");
+      if (s) {
+        setWeight(s.weight ?? "");
+        setPurpose(s.purpose ?? null);
+      }
+    } catch {}
+  }, []);
+
+  const apply = (w: string, p: PurposeKey | null) => {
+    setWeight(w);
+    setPurpose(p);
+    try {
+      localStorage.setItem("lg-body", JSON.stringify({ weight: w, purpose: p }));
+    } catch {}
+    const kg = num(w);
+    if (p && kg >= 20 && kg <= 250) {
+      const r = calcGoal(kg, p);
+      setGoal({ p: String(r.p), f: String(r.f), c: String(r.c) });
+    }
+  };
+
+  const kg = num(weight);
+  const valid = purpose && kg >= 20 && kg <= 250;
+  const r = valid ? calcGoal(kg, purpose) : null;
+
+  return (
+    <div className="autogoal">
+      <p className="agtitle">体重と目的から自動で計算</p>
+      <div className="agrow">
+        <label className="gram">
+          <input
+            inputMode="decimal"
+            value={weight}
+            onChange={(e) => apply(e.target.value, purpose)}
+            placeholder="体重"
+            aria-label="体重（kg）"
+          />
+          kg
+        </label>
+        <div className="chips tight">
+          {(Object.keys(PURPOSES) as PurposeKey[]).map((k) => (
+            <button
+              key={k}
+              className={purpose === k ? "chip on" : "chip"}
+              onClick={() => apply(weight, k)}
+            >
+              {PURPOSES[k].label}
+            </button>
+          ))}
+        </div>
+      </div>
+      {purpose && <p className="note">{PURPOSES[purpose].desc}</p>}
+      {r && purpose && (
+        <div className="agresult">
+          <div className="agkcal">
+            目標 <b>{r.kcal}</b> kcal
+          </div>
+          <PfcRow p={r.p} f={r.f} c={r.c} />
+          <p className="agnote">
+            体重1kgあたり たんぱく質 {r1(r.p / kg)}g・炭水化物 {r1(r.c / kg)}g ／
+            エネルギー比 P{Math.round(((r.p * 4) / r.kcal) * 100)}% F
+            {Math.round(((r.f * 9) / r.kcal) * 100)}% C
+            {Math.round(((r.c * 4) / r.kcal) * 100)}%
+          </p>
+        </div>
+      )}
+      {!r && (
+        <p className="note">体重（kg）を入れて目的を選ぶと、下の目標PFCが自動で入ります。</p>
+      )}
+      <p className="note">
+        目安の計算です。年齢・性別・運動量で必要量は変わります。結果は下の欄で自由に調整できます。持病や妊娠中の方は医師に相談してください。
+      </p>
+    </div>
+  );
+}
+
 function DayView({
   date,
   entries,
@@ -517,7 +652,9 @@ function DayView({
       <h2 className="h2">{label(date)}</h2>
 
       <div className="card">
-        <p className="cardtitle">目標のPFC（g）</p>
+        <p className="cardtitle">目標のPFC</p>
+        <AutoGoal setGoal={setGoal} />
+        <p className="cardtitle">目標の量（g）— 手動で調整もできます</p>
         <div className="inputs">
           {(
             [
@@ -543,6 +680,9 @@ function DayView({
       <div className="card">
         <div className="kcal">
           合計 <b>{Math.round(total.kcal)}</b> kcal
+          {t.p + t.f + t.c > 0 && (
+            <span className="muted"> ／ 目標 {Math.round(t.p * 4 + t.f * 9 + t.c * 4)} kcal</span>
+          )}
         </div>
         <Progress name="たんぱく質" cls="p" value={total.p} target={t.p} />
         <Progress name="脂質" cls="f" value={total.f} target={t.f} />
