@@ -61,8 +61,7 @@ export const MICROS: { key: NutrientKey; label: string; unit: string }[] = [
 export const LIMITS: Partial<Record<NutrientKey, number>> = {
   va: 2700,
   ca: 2500,
-  fe: 40,
-  zn: 40,
+  zn: 35,
   vd: 100,
   salt: 7.5,
 };
