@@ -1,4 +1,5 @@
 :root {
+  --brand: #1f9d55;
   --bg: #f6f5f2;
   --card: #ffffff;
   --text: #2b2b2b;
@@ -12,6 +13,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --brand: #3ecf82;
     --bg: #161618;
     --card: #1f1f22;
     --text: #ececec;
@@ -295,4 +297,318 @@ ul.rows.card li:first-child {
 
 .inputs input:focus {
   border-color: var(--accent);
+}
+
+/* LIFEGYM */
+.brandbar {
+  margin-bottom: 20px;
+}
+
+.brand {
+  color: var(--brand);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.member {
+  margin: 8px 0 28px;
+  color: var(--brand);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.h2 {
+  margin: 28px 0 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.cardtitle {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.card + .card,
+.cal + .h2 + .card {
+  margin-top: 14px;
+}
+
+.h2 + .card {
+  margin-top: 12px;
+}
+
+/* calendar */
+.cal {
+  margin-top: 0;
+}
+
+.calhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calhead button {
+  width: 36px;
+  height: 36px;
+  font-size: 1.3rem;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.calhead button:hover {
+  background: var(--line);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.wd {
+  padding-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.day {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.day:hover {
+  background: var(--line);
+}
+
+.day.today {
+  border-color: var(--line);
+}
+
+.day.sel {
+  color: #fff;
+  background: var(--brand);
+}
+
+.mark {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.day .mark {
+  position: absolute;
+  bottom: 4px;
+  left: calc(50% - 3px);
+}
+
+.mark.logged {
+  background: var(--muted);
+}
+
+.mark.reached {
+  background: var(--brand);
+}
+
+.day.sel .mark {
+  outline: 1.5px solid #fff;
+}
+
+.legend {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+/* progress */
+.prog {
+  margin-bottom: 14px;
+}
+
+.proghead {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.track {
+  height: 8px;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: 4px;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.fill.p { background: var(--p); }
+.fill.f { background: var(--f); }
+.fill.c { background: var(--c); }
+
+/* micronutrients */
+.micros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px 6px;
+  margin: 12px 0 0;
+}
+
+.micros dt {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.micros dd {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+.micros small {
+  margin-left: 2px;
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
+/* entries / buttons */
+.entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.entry > span:first-child {
+  flex: 1;
+}
+
+.del {
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.del:hover {
+  color: #c8553d;
+}
+
+.small {
+  margin-top: 10px;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--brand);
+  background: none;
+  border: 1px solid var(--brand);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.small:hover:not(:disabled) {
+  color: #fff;
+  background: var(--brand);
+}
+
+.small:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px;
+  font: inherit;
+  color: #fff;
+  background: var(--brand);
+  border: 1px solid var(--brand);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.btn.ghost {
+  color: var(--brand);
+  background: none;
+}
+
+.sharebox {
+  width: 100%;
+  padding: 12px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.chip {
+  flex: none;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip.on {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
 }
