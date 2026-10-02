@@ -23,7 +23,7 @@ const QUOTES = [
   { text: "健康は最大の財産である", by: "ラルフ・ウォルドー・エマーソン" },
 ];
 
-const INTERVAL_MS = 6000;
+const INTERVAL_MS = 4000;
 
 export default function QuoteHero() {
   const [i, setI] = useState(0);
