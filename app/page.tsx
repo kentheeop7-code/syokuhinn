@@ -27,6 +27,7 @@ const MAX_GRAMS: Record<string, number> = {
   "野菜・果物": 200,
   "卵・乳・大豆": 250,
   "調味料・油": 30,
+  "惣菜・外食": 250,
 };
 
 const num = (v: string) => Math.max(0, parseFloat(v) || 0);
@@ -424,15 +425,15 @@ const PURPOSES: Record<
 const METHODS: Record<Method, { label: string; desc: string }> = {
   balance: {
     label: "バランス型",
-    desc: "脂質はエネルギーの25%。食事摂取基準の範囲に近い、続けやすい配分です。",
+    desc: "たんぱく質は体重×1.6g、脂質はエネルギーの25%、残りを炭水化物に。厚労省の目標量の範囲内で、続けやすい配分です。",
   },
   lowfat: {
     label: "ローファット",
-    desc: "脂質をエネルギーの18%ほどに抑え、主食（炭水化物）で満たします。油・揚げ物・脂身を減らす食べ方です。",
+    desc: "脂質をエネルギーの20%（厚労省の下限）に抑え、たんぱく質は体重×1.8g、残りを炭水化物に。脂質を10〜15%まで下げる方法は、長く続けるのは勧められません。",
   },
   keto: {
     label: "ケトジェニック",
-    desc: "炭水化物を1日20〜50gに抑え、脂質でエネルギーをとります。ごはん・パン・麺・砂糖・果物はほとんど使いません。",
+    desc: "炭水化物を1日20〜50gに抑え、たんぱく質は体重×1.6g、残りを脂質（約70〜75%）に。同じカロリーなら減量効果は他の方法と大きく変わらず、LDLコレステロールが上がることがあります。",
   },
 };
 
@@ -477,8 +478,10 @@ function calcPlan(pf: Profile) {
     p = Math.min(p, Math.round((target * 0.3) / 4));
     f = Math.round(Math.max(0, (target - p * 4 - c * 4) / 9));
   } else if (method === "lowfat") {
-    // 脂質はエネルギーの約18%（体重×0.6gは下回らない）。残りを炭水化物で。
-    f = Math.round(Math.max((target * 0.18) / 9, weight * 0.6));
+    // 脂質はエネルギーの20%（厚労省の目標量の下限。体重×0.6gは下回らない）。
+    // 減量中はたんぱく質を少し多めに（体重×1.8g）。残りを炭水化物で。
+    p = Math.round(weight * 1.8);
+    f = Math.round(Math.max((target * 0.2) / 9, weight * 0.6));
     c = Math.round(Math.max(0, (target - p * 4 - f * 9) / 4));
   } else {
     f = Math.round(Math.max((target * purpose.fatPct) / 9, weight * 0.8));
@@ -790,19 +793,38 @@ function ProfileGoal({
 
       {pf.purpose === "diet" && (
         <>
-          <p className="aglabel">ダイエットのやり方</p>
-          <div className="chips tight">
-            {(Object.keys(METHODS) as Method[]).map((k) => (
-              <button
-                key={k}
-                className={pf.method === k ? "chip on" : "chip"}
-                onClick={() => update({ method: k })}
-              >
-                {METHODS[k].label}
-              </button>
-            ))}
+          <p className="aglabel">ダイエットのやり方（PFCを見比べて選べます）</p>
+          <div className="mcards">
+            {(Object.keys(METHODS) as Method[]).map((k) => {
+              const mp = calcPlan({ ...pf, method: k });
+              return (
+                <button
+                  key={k}
+                  className={pf.method === k ? "mcard on" : "mcard"}
+                  onClick={() => update({ method: k })}
+                >
+                  <b>{METHODS[k].label}</b>
+                  {mp ? (
+                    <>
+                      <span>P {mp.p}g</span>
+                      <span>F {mp.f}g</span>
+                      <span>C {mp.c}g</span>
+                      <em>
+                        F{Math.round(((mp.f * 9) / mp.kcal) * 100)}% / C
+                        {Math.round(((mp.c * 4) / mp.kcal) * 100)}%
+                      </em>
+                    </>
+                  ) : (
+                    <em>数値は入力後に表示</em>
+                  )}
+                </button>
+              );
+            })}
           </div>
           <p className="note">{METHODS[pf.method].desc}</p>
+          <Link href="/nutrients#diets" className="evlink">
+            研究・根拠のまとめを見る ›
+          </Link>
         </>
       )}
 

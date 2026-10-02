@@ -392,6 +392,91 @@ const ITEMS: Item[] = [
   },
 ];
 
+type Diet = {
+  title: string;
+  setting: string;
+  evidence: string[];
+  tips: string[];
+  fit: string;
+  caution?: string;
+};
+
+const DIETS: Diet[] = [
+  {
+    title: "バランス型",
+    setting: "たんぱく質 体重×1.6g／脂質 エネルギーの25%／炭水化物 残り（約55%）。厚生労働省の目標量（P13〜20%・F20〜30%・C50〜65%）の範囲内です。",
+    evidence: [
+      "減量の土台は、使うエネルギーより食べるエネルギーを少なくすること（ISSN 2017）。",
+      "低脂質〜低炭水化物のどの方法でも、体組成の改善は同様に期待できるとされています（ISSN 2017）。",
+    ],
+    tips: ["初めての人や、長く続けたい人の基本形。", "維持エネルギーの約1割減から始め、体重の変化を見ながら調整します。"],
+    fit: "迷ったらこれ。外食・家庭料理と両立しやすい配分です。",
+  },
+  {
+    title: "ローファット（低脂質）",
+    setting: "たんぱく質 体重×1.8g／脂質 エネルギーの20%／炭水化物 残り（約60%）。",
+    evidence: [
+      "12か月の大規模RCT（DIETFITS・609人）では、低脂質 −5.3kg と低炭水化物 −6.0kg に有意な差はありませんでした（Gardner ら, JAMA 2018）。",
+      "摂取カロリーとたんぱく質をそろえた28の給食研究では、脂質中心でも炭水化物中心でも、エネルギー消費や体脂肪の差はごくわずか（1日あたり約26kcal）でした（Hall & Guo, Gastroenterology 2017）。",
+      "脂質の下限は、厚労省の目標量で20%、ISSNも許容範囲（AMDR）として20〜35%を示しています。10〜15%まで落とす方法は、脂溶性ビタミン（A・D・E・K）や必須脂肪酸、ホルモンの面から長く続けるのは勧められません。",
+    ],
+    tips: [
+      "脂身・揚げ物・加工肉・洋菓子を減らし、ドレッシング・マヨネーズ・カレールウなどの「隠れ脂質」に注意。",
+      "主食は食物繊維の多いもの（玄米・麦ごはん・オートミール・いも）を選ぶと、おなかがもちます。",
+      "たんぱく質は減らさない。鶏むね・ささみ・白身魚・卵白・豆腐などが使いやすい食材です。",
+    ],
+    fit: "ごはんなどの炭水化物が好きな人、運動の強度を落としたくない人に向きます。",
+    caution: "脂質をゼロに近づけるのは逆効果です。",
+  },
+  {
+    title: "ケトジェニック（超低炭水化物）",
+    setting:
+      "炭水化物 1日20〜50g（エネルギーの約5%）／たんぱく質 体重×1.6g（30%以内）／脂質 残り（約70〜75%）。ごはん・パン・麺・砂糖・多くの果物はほとんど使いません。",
+    evidence: [
+      "炭水化物を1日50g未満にすると、体内でケトン体が増える「栄養ケトーシス」になります。これは重い病気のケトアシドーシスとは別のものです（ISSN 2024）。",
+      "ランダム化比較試験のメタ解析（長期の減量）では、超低炭水化物のケトジェニックは低脂質食より体重がわずかに多く減りましたが、LDLコレステロールは上がる傾向でした（Bueno ら, Br J Nutr 2013）。",
+      "2026年のメタ解析では、処方カロリーをそろえた条件でも、ケトジェニックの減量は平均で約1.5kg多い程度でした（Nutrients 2026）。",
+      "カロリーとたんぱく質をそろえると、ケトジェニックが脂肪減少で臨床的に優れるという根拠はありません。強みは、食欲が落ちて自然に食べる量が減る人がいることです（ISSN 2017）。",
+      "最初の1〜2週間に体重が急に減るのは、主に水分とグリコーゲン（糖の貯え）が減るためで、脂肪だけが減ったわけではありません。",
+      "運動パフォーマンスは、炭水化物を多くとる食事に比べて、中立〜低下とされています。筋肉量（除脂肪量）も減ることがあります（ISSN 2024）。",
+    ],
+    tips: [
+      "最初の1〜2週間は、頭痛・だるさ・めまい・便秘（いわゆる「ケトフルー」）が出ることがあります。水分と、ナトリウム・カリウム・マグネシウムを意識します。",
+      "塩分やマグネシウムの追加量は資料によって違い、研究で決まった量ではありません。高血圧や腎臓病の方は、自己判断で増やさないでください。",
+      "葉物野菜・ブロッコリー・きのこ・海藻で、食物繊維とビタミン・ミネラルを補います。",
+      "続ける場合も、3か月ごとに体重・体調・血液検査（LDLなど）を見直すのがおすすめです。長期（1年を超える）の安全性のデータは限られています。",
+    ],
+    fit: "肉・魚・チーズなど脂質の多い食事が好きで、糖質を減らすと食欲が落ち着く人に向きます。",
+    caution:
+      "次の方は、始める前に必ず医師に相談してください：妊娠・授乳中／1型糖尿病／糖尿病で薬（SGLT2阻害薬など）を使っている／腎臓・肝臓・膵臓・胆のうの病気／脂質異常症／摂食障害の経験がある／18歳未満／高齢で食欲が低い。",
+  },
+];
+
+const DIET_REFS: { label: string; url?: string }[] = [
+  {
+    label: "日本人の食事摂取基準（2025年版）スライド集 — 厚生労働省",
+    url: "https://www.mhlw.go.jp/content/10904750/001734207.pdf",
+  },
+  {
+    label: "Aragon AA ら. ISSN position stand: diets and body composition. J Int Soc Sports Nutr 2017",
+    url: "https://pubmed.ncbi.nlm.nih.gov/28630601/",
+  },
+  {
+    label: "ISSN position stand: ketogenic diets. J Int Soc Sports Nutr 2024",
+    url: "https://doaj.org/article/89b64f5404dd42f486f6dbbece9b1260",
+  },
+  {
+    label: "Bueno NB ら. Very-low-carbohydrate ketogenic diet v. low-fat diet for long-term weight loss: a meta-analysis of randomised controlled trials. Br J Nutr 2013",
+    url: "https://pubmed.ncbi.nlm.nih.gov/23651522/",
+  },
+  {
+    label: "Do Ketogenic Diets Produce Greater Weight Loss than Higher-Carbohydrate Diets Under Comparable Prescribed Energy Conditions? Nutrients 2026",
+    url: "https://doi.org/10.3390/nu18152525",
+  },
+  { label: "Gardner CD ら. DIETFITS（低脂質 vs 低炭水化物, 12か月RCT）. JAMA 2018;319:667-679" },
+  { label: "Hall KD, Guo J. Obesity energetics: body weight regulation and the effects of diet composition（28件の給食研究のメタ解析）. Gastroenterology 2017" },
+];
+
 export default function Nutrients() {
   return (
     <main className="container">
@@ -406,6 +491,7 @@ export default function Nutrients() {
 
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#goals">目的別ガイド</a>
+        <a href="#diets">ダイエット方法</a>
         <a href="#nutrients">栄養素のはたらき</a>
       </nav>
 
@@ -440,8 +526,55 @@ export default function Nutrients() {
         ))}
       </ul>
 
-      <h2 className="h2" id="nutrients">
-        栄養素のはたらき
+      <h2 className="h2" id="diets">
+        ダイエット方法の比較（研究のまとめ）
+      </h2>
+      <p className="note">
+        どの方法でも、減量の中心はエネルギー収支（食べる量が使う量より少ないこと）です。カロリーとたんぱく質をそろえると、PFCの配分による差は小さいため、続けやすさで選ぶのが現実的です。アプリのPFCは、ここに書いた考え方で計算しています。
+      </p>
+      <ul className="nlist">
+        {DIETS.map((d) => (
+          <li key={d.title} className="card ncard">
+            <div className="nhead">
+              <h2>{d.title}</h2>
+            </div>
+            <p className="nrole">{d.setting}</p>
+            <p className="aglabel">研究で分かっていること</p>
+            <ul className="plist">
+              {d.evidence.map((e) => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
+            <p className="aglabel">続けるコツ・注意</p>
+            <ul className="plist">
+              {d.tips.map((e) => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
+            <dl className="ndl">
+              <dt>向いている人</dt>
+              <dd>{d.fit}</dd>
+            </dl>
+            {d.caution && <p className="caution">⚠ {d.caution}</p>}
+          </li>
+        ))}
+      </ul>
+      <p className="aglabel">出典・参考</p>
+      <ul className="plist refs">
+        {DIET_REFS.map((r) => (
+          <li key={r.label}>
+            {r.url ? (
+              <a href={r.url} target="_blank" rel="noopener noreferrer">
+                {r.label}
+              </a>
+            ) : (
+              r.label
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="h2" id="nutrients">        栄養素のはたらき
       </h2>
       <p className="note">
         「アプリで計算」と書かれた栄養素は、記録タブで合計を確認できます。それ以外は、食品の選び方の参考にしてください。
