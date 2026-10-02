@@ -703,6 +703,17 @@ export const portionsOf = (food: Food): Portion[] =>
 // 「約1.5×茶碗1杯」のように、量を目安の大きさで表す
 export function describeAmount(food: Food, grams: number): string {
   const ps = portionsOf(food);
+  // 2個分・3杯分のように、ちょうど整数倍になるものを優先して表す
+  const exact = ps.find((p) => Math.abs(grams / p.g - 1) <= 0.05);
+  if (exact) return exact.label;
+  let multi: { p: Portion; n: number; err: number } | null = null;
+  for (const p of ps) {
+    const r = grams / p.g;
+    const n = Math.round(r);
+    const err = Math.abs(r - n) / n;
+    if (n >= 2 && n <= 3 && err <= 0.05 && (!multi || err < multi.err)) multi = { p, n, err };
+  }
+  if (multi) return `${multi.p.label}×${multi.n}`;
   let best: { p: Portion; r: number } | null = null;
   for (const p of ps) {
     const r = grams / p.g;

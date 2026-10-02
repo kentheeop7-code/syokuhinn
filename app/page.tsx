@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import QuoteHero from "./QuoteHero";
 import {
@@ -372,138 +372,400 @@ function Calendar({
   );
 }
 
+type Sex = "m" | "f";
+type Pal = "low" | "mid" | "high";
 type PurposeKey = "diet" | "muscle" | "performance";
+type Profile = {
+  sex: Sex | null;
+  age: string;
+  height: string;
+  pal: Pal;
+  weight: string; // 目標体重
+  purpose: PurposeKey | null;
+};
 
-// 体重だけで出せる簡易式（スポーツ栄養の一般的な目安）。
-// エネルギー = 体重 × kcalPerKg、たんぱく質 = 体重 × pPerKg、脂質 = エネルギーの fatPct、残りを炭水化物に。
+const PAL: Record<Pal, { label: string; v: number; desc: string }> = {
+  low: { label: "低い", v: 1.5, desc: "ほぼ座って過ごす（運動習慣なし）" },
+  mid: { label: "ふつう", v: 1.75, desc: "座り仕事が中心＋通勤・家事・軽い運動" },
+  high: { label: "高い", v: 2.0, desc: "立ち仕事や、週に何度も運動する" },
+};
+
+// エネルギーは「目標体重を維持するエネルギー」を基準に、目的で調整します。
 const PURPOSES: Record<
   PurposeKey,
-  {
-    label: string;
-    kcalPerKg: number;
-    pPerKg: number;
-    fatPct: number;
-    desc: string;
-  }
+  { label: string; energy: number; pPerKg: number; fatPct: number; desc: string }
 > = {
   diet: {
     label: "ダイエット",
-    kcalPerKg: 28,
-    pPerKg: 1.8,
+    energy: 0.9,
+    pPerKg: 1.6,
     fatPct: 0.25,
-    desc: "体脂肪を落としながら筋肉を守る。エネルギーは控えめ、たんぱく質は多めです。",
+    desc: "維持エネルギーより約1割少なめ。筋肉を守るため、たんぱく質は多めです。",
   },
   muscle: {
     label: "筋肉をつける",
-    kcalPerKg: 38,
+    energy: 1.1,
     pPerKg: 1.8,
     fatPct: 0.25,
-    desc: "筋肉の材料（たんぱく質）と、増量に必要なエネルギーをしっかりとります。",
+    desc: "維持エネルギーより約1割多め。筋肉の材料（たんぱく質）をしっかりとります。",
   },
   performance: {
     label: "パフォーマンスアップ",
-    kcalPerKg: 42,
+    energy: 1.0,
     pPerKg: 1.5,
     fatPct: 0.22,
     desc: "運動のエネルギー源になる炭水化物を多めに。練習量が多い人向けです。",
   },
 };
 
-function calcGoal(weight: number, purpose: PurposeKey) {
-  const x = PURPOSES[purpose];
-  const kcal = weight * x.kcalPerKg;
-  const p = weight * x.pPerKg;
-  const f = Math.max((kcal * x.fatPct) / 9, weight * 0.8); // 脂質は最低でも体重×0.8g
-  const c = Math.max(0, (kcal - p * 4 - f * 9) / 4);
-  const rp = Math.round(p);
-  const rf = Math.round(f);
-  const rc = Math.round(c);
-  // 表示するg数から出した値にして、記録側の「目標kcal」と一致させる
-  return { kcal: rp * 4 + rf * 9 + rc * 4, p: rp, f: rf, c: rc };
+// 目標とするBMI（日本人の食事摂取基準 2025年版）
+const bmiRange = (age: number) =>
+  age < 50 ? [18.5, 24.9] : age < 65 ? [20.0, 24.9] : [21.5, 24.9];
+// エネルギー産生栄養素バランス 目標量（%エネルギー）
+const pRange = (age: number) => (age < 50 ? [13, 20] : age < 65 ? [14, 20] : [15, 20]);
+
+// 基礎代謝量：国立健康・栄養研究所の推定式（日本人向け）
+function bmr(sex: Sex, age: number, height: number, weight: number) {
+  const k = sex === "m" ? 0.4235 : 0.9708;
+  return ((0.0481 * weight + 0.0234 * height - 0.0138 * age - k) * 1000) / 4.186;
 }
 
-function AutoGoal({ setGoal }: { setGoal: (g: Goal) => void }) {
-  const [weight, setWeight] = useState("");
-  const [purpose, setPurpose] = useState<PurposeKey | null>(null);
+function calcPlan(pf: Profile) {
+  const age = num(pf.age);
+  const height = num(pf.height);
+  const weight = num(pf.weight);
+  if (
+    !pf.sex ||
+    !pf.purpose ||
+    age < 18 ||
+    age > 99 ||
+    height < 120 ||
+    height > 220 ||
+    weight < 30 ||
+    weight > 200
+  )
+    return null;
+  const purpose = PURPOSES[pf.purpose];
+  const bm = bmr(pf.sex, age, height, weight);
+  const tdee = bm * PAL[pf.pal].v;
+  const target = Math.max(tdee * purpose.energy, bm * 1.1);
+  const p = Math.round(weight * purpose.pPerKg);
+  const f = Math.round(Math.max((target * purpose.fatPct) / 9, weight * 0.8));
+  const c = Math.round(Math.max(0, (target - p * 4 - f * 9) / 4));
+  const kcal = p * 4 + f * 9 + c * 4;
+  const bmi = weight / (height / 100) ** 2;
+  return {
+    bmr: Math.round(bm / 10) * 10,
+    tdee: Math.round(tdee / 10) * 10,
+    kcal,
+    p,
+    f,
+    c,
+    bmi,
+    age,
+    weight,
+  };
+}
+
+type MenuItem = { name: string; g: number };
+type Meal = { title: string; items: MenuItem[] };
+
+// 目標のPFCに近づくように、よくある食材で1日の食事例を組み立てる
+function buildMenu(t: { kcal: number; p: number; f: number; c: number }): {
+  meals: Meal[];
+  total: Totals;
+} {
+  const get = (n: string) => byName.get(n)!;
+  const rice = get("白ごはん");
+  const chicken = get("鶏むね肉（皮なし）");
+  const salmon = get("サケ（焼き）");
+  const oil = get("オリーブオイル");
+  const s = Math.min(1.3, Math.max(0.7, t.kcal / 2200));
+  const r5 = (x: number) => Math.max(0, Math.round(x / 5) * 5);
+
+  const fixed: Record<string, MenuItem[]> = {
+    朝食: [
+      { name: "卵", g: Math.max(50, Math.round((100 * s) / 50) * 50) },
+      { name: "納豆", g: 45 },
+    ],
+    昼食: [
+      { name: "ブロッコリー", g: r5(80 * s) },
+      { name: "トマト", g: r5(100 * s) },
+    ],
+    夕食: [
+      { name: "キャベツ", g: r5(100 * s) },
+      { name: "えのき", g: 50 },
+    ],
+    間食: [
+      { name: "無糖ヨーグルト", g: Math.max(100, Math.round((150 * s) / 50) * 50) },
+      { name: "バナナ", g: 100 },
+      { name: "アーモンド", g: 10 },
+    ],
+  };
+  const fx = sum(Object.values(fixed).flat().map((i) => ({ id: "", name: i.name, grams: i.g })));
+
+  const meat = {
+    p: (chicken.p + salmon.p) / 2,
+    f: (chicken.f + salmon.f) / 2,
+  };
+  const alm = get("アーモンド");
+  let R = 200;
+  let M = 150;
+  let O = 10;
+  let A = 0; // 間食に足すアーモンド
+  for (let i = 0; i < 60; i++) {
+    const gap = t.f - fx.f - (rice.f * R) / 100 - (meat.f * M) / 100;
+    O = Math.min(30, Math.max(0, gap / (oil.f / 100))); // 油は1日30gまで
+    A = Math.min(30, Math.max(0, (gap - O) / (alm.f / 100))); // アーモンドは追加で30gまで
+    R = Math.max(0, (t.c - fx.c - (alm.c * A) / 100) / (rice.c / 100));
+    M = Math.max(0, (t.p - fx.p - (rice.p * R) / 100 - (alm.p * A) / 100) / (meat.p / 100));
+  }
+  const r10 = (x: number) => Math.max(0, Math.round(x / 10) * 10);
+  const riceG = [0.3, 0.4, 0.3].map((w) => r10(R * w));
+  const meatG = [r10(M * 0.5), r10(M * 0.5)];
+  const oilG = [Math.round(O * 0.6), O - Math.round(O * 0.6)].map((x) => Math.max(0, Math.round(x)));
+  const push = (arr: MenuItem[], name: string, g: number) => {
+    if (g >= 5) arr.push({ name, g });
+  };
+
+  const meals: Meal[] = [
+    { title: "朝食", items: [] },
+    { title: "昼食", items: [] },
+    { title: "夕食", items: [] },
+    { title: "間食", items: [] },
+  ];
+  push(meals[0].items, "白ごはん", riceG[0]);
+  meals[0].items.push(...fixed["朝食"]);
+  push(meals[1].items, "白ごはん", riceG[1]);
+  push(meals[1].items, "鶏むね肉（皮なし）", meatG[0]);
+  meals[1].items.push(...fixed["昼食"]);
+  push(meals[1].items, "オリーブオイル", oilG[0]);
+  push(meals[2].items, "白ごはん", riceG[2]);
+  push(meals[2].items, "サケ（焼き）", meatG[1]);
+  meals[2].items.push(...fixed["夕食"]);
+  push(meals[2].items, "オリーブオイル", oilG[1]);
+  meals[3].items.push(...fixed["間食"].map((i) => (i.name === "アーモンド" ? { name: i.name, g: i.g + r5(A) } : i)));
+
+  const total = sum(
+    meals.flatMap((m) => m.items).map((i) => ({ id: "", name: i.name, grams: i.g }))
+  );
+  return { meals, total };
+}
+
+function ProfileGoal({
+  setGoal,
+  onAddMany,
+}: {
+  setGoal: (g: Goal) => void;
+  onAddMany: (items: MenuItem[]) => void;
+}) {
+  const [pf, setPf] = useState<Profile>({
+    sex: null,
+    age: "",
+    height: "",
+    pal: "mid",
+    weight: "",
+    purpose: null,
+  });
+  const [added, setAdded] = useState(false);
+  const latest = useRef(pf); // 続けて入力されても、常に最新の値を元に計算する
 
   useEffect(() => {
     try {
-      const s = JSON.parse(localStorage.getItem("lg-body") || "null");
+      const s = JSON.parse(localStorage.getItem("lg-profile") || "null");
       if (s) {
-        setWeight(s.weight ?? "");
-        setPurpose(s.purpose ?? null);
+        latest.current = { ...latest.current, ...s };
+        setPf(latest.current);
       }
     } catch {}
   }, []);
 
-  const apply = (w: string, p: PurposeKey | null) => {
-    setWeight(w);
-    setPurpose(p);
+  const update = (patch: Partial<Profile>) => {
+    const next = { ...latest.current, ...patch };
+    latest.current = next;
+    setPf(next);
+    setAdded(false);
     try {
-      localStorage.setItem("lg-body", JSON.stringify({ weight: w, purpose: p }));
+      localStorage.setItem("lg-profile", JSON.stringify(next));
     } catch {}
-    const kg = num(w);
-    if (p && kg >= 20 && kg <= 250) {
-      const r = calcGoal(kg, p);
-      setGoal({ p: String(r.p), f: String(r.f), c: String(r.c) });
-    }
+    const r = calcPlan(next);
+    if (r) setGoal({ p: String(r.p), f: String(r.f), c: String(r.c) });
   };
 
-  const kg = num(weight);
-  const valid = purpose && kg >= 20 && kg <= 250;
-  const r = valid ? calcGoal(kg, purpose) : null;
+  const plan = calcPlan(pf);
+  const menu = useMemo(
+    () => (plan ? buildMenu(plan) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [plan?.kcal, plan?.p, plan?.f, plan?.c]
+  );
+  const [bLo, bHi] = plan ? bmiRange(plan.age) : [0, 0];
+  const [pLo, pHi] = plan ? pRange(plan.age) : [0, 0];
+  const pe = plan ? Math.round(((plan.p * 4) / plan.kcal) * 100) : 0;
+  const fe = plan ? Math.round(((plan.f * 9) / plan.kcal) * 100) : 0;
+  const ce = plan ? Math.round(((plan.c * 4) / plan.kcal) * 100) : 0;
+
+  const field = (
+    labelText: string,
+    unit: string,
+    key: "age" | "height" | "weight",
+    ph: string
+  ) => (
+    <label className="afield">
+      <span>{labelText}</span>
+      <span className="gram">
+        <input
+          inputMode="decimal"
+          value={pf[key]}
+          onChange={(e) => update({ [key]: e.target.value } as Partial<Profile>)}
+          placeholder={ph}
+          aria-label={`${labelText}（${unit}）`}
+        />
+        {unit}
+      </span>
+    </label>
+  );
 
   return (
     <div className="autogoal">
-      <p className="agtitle">体重と目的から自動で計算</p>
-      <div className="agrow">
-        <label className="gram">
-          <input
-            inputMode="decimal"
-            value={weight}
-            onChange={(e) => apply(e.target.value, purpose)}
-            placeholder="体重"
-            aria-label="体重（kg）"
-          />
-          kg
-        </label>
-        <div className="chips tight">
-          {(Object.keys(PURPOSES) as PurposeKey[]).map((k) => (
-            <button
-              key={k}
-              className={purpose === k ? "chip on" : "chip"}
-              onClick={() => apply(weight, k)}
-            >
-              {PURPOSES[k].label}
-            </button>
-          ))}
-        </div>
+      <p className="agtitle">① あなたのこと</p>
+      <div className="chips tight">
+        {(
+          [
+            ["m", "男性"],
+            ["f", "女性"],
+          ] as const
+        ).map(([k, l]) => (
+          <button
+            key={k}
+            className={pf.sex === k ? "chip on" : "chip"}
+            onClick={() => update({ sex: k })}
+          >
+            {l}
+          </button>
+        ))}
       </div>
-      {purpose && <p className="note">{PURPOSES[purpose].desc}</p>}
-      {r && purpose && (
-        <div className="agresult">
-          <div className="agkcal">
-            目標 <b>{r.kcal}</b> kcal
+      <div className="agrow">
+        {field("年齢", "歳", "age", "30")}
+        {field("身長", "cm", "height", "165")}
+      </div>
+      <p className="aglabel">ふだんの活動量</p>
+      <div className="chips tight">
+        {(Object.keys(PAL) as Pal[]).map((k) => (
+          <button
+            key={k}
+            className={pf.pal === k ? "chip on" : "chip"}
+            onClick={() => update({ pal: k })}
+          >
+            {PAL[k].label}
+          </button>
+        ))}
+      </div>
+      <p className="note">{PAL[pf.pal].desc}</p>
+
+      <p className="agtitle">② 目標体重</p>
+      <div className="agrow">{field("目標体重", "kg", "weight", "55")}</div>
+
+      <p className="agtitle">③ 目的</p>
+      <div className="chips tight">
+        {(Object.keys(PURPOSES) as PurposeKey[]).map((k) => (
+          <button
+            key={k}
+            className={pf.purpose === k ? "chip on" : "chip"}
+            onClick={() => update({ purpose: k })}
+          >
+            {PURPOSES[k].label}
+          </button>
+        ))}
+      </div>
+      {pf.purpose && <p className="note">{PURPOSES[pf.purpose].desc}</p>}
+
+      {!plan && (
+        <p className="note">
+          性別・年齢（18歳以上）・身長・目標体重を入れて、目的を選ぶと、目標のPFCが自動で入ります。
+        </p>
+      )}
+
+      {plan && pf.purpose && (
+        <>
+          <div className="agresult">
+            <div className="agkcal">
+              1日の目標 <b>{plan.kcal}</b> kcal
+            </div>
+            <PfcRow p={plan.p} f={plan.f} c={plan.c} />
+            <p className="agnote">
+              エネルギー比 P{pe}% / F{fe}% / C{ce}%　（厚生労働省の目標量: P{pLo}〜{pHi}%・F20〜30%・C50〜65%）
+            </p>
+            {(pe > pHi || ce < 50 || ce > 65) && (
+              <p className="agnote">
+                ※ たんぱく質が目標量より多め、または炭水化物が範囲外です。運動する人向けの配分で、食事摂取基準の範囲から少し外れることがあります。
+              </p>
+            )}
+            <dl className="agdl">
+              <dt>基礎代謝</dt>
+              <dd>約{plan.bmr}kcal</dd>
+              <dt>1日の消費目安</dt>
+              <dd>約{plan.tdee}kcal（基礎代謝×活動量{PAL[pf.pal].v}）</dd>
+              <dt>目標体重のBMI</dt>
+              <dd>
+                {r1(plan.bmi)}
+                {plan.bmi < bLo
+                  ? `（目標とする範囲 ${bLo}〜${bHi} より低めです）`
+                  : plan.bmi > bHi
+                  ? `（目標とする範囲 ${bLo}〜${bHi} より高めです）`
+                  : `（目標とする範囲 ${bLo}〜${bHi} に入っています）`}
+              </dd>
+            </dl>
           </div>
-          <PfcRow p={r.p} f={r.f} c={r.c} />
-          <p className="agnote">
-            体重1kgあたり たんぱく質 {r1(r.p / kg)}g・炭水化物 {r1(r.c / kg)}g ／
-            エネルギー比 P{Math.round(((r.p * 4) / r.kcal) * 100)}% F
-            {Math.round(((r.f * 9) / r.kcal) * 100)}% C
-            {Math.round(((r.c * 4) / r.kcal) * 100)}%
-          </p>
-        </div>
+
+          {menu && (
+            <div className="agmenu">
+              <p className="agtitle">その目標に近づく、1日の食事の例</p>
+              {menu.meals.map((m) => (
+                <div key={m.title} className="agmeal">
+                  <b>{m.title}</b>
+                  <ul>
+                    {m.items.map((i) => {
+                      const food = byName.get(i.name)!;
+                      const hint = describeAmount(food, i.g);
+                      return (
+                        <li key={i.name}>
+                          {i.name} <span className="muted">約{i.g}g{hint && `（${hint}）`}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+              <p className="agnote">
+                この例の合計: {Math.round(menu.total.kcal)}kcal ／ P{r1(menu.total.p)}g F
+                {r1(menu.total.f)}g C{r1(menu.total.c)}g（目標との差 P{menu.total.p - plan.p >= 0 ? "+" : ""}
+                {r1(menu.total.p - plan.p)}g F{menu.total.f - plan.f >= 0 ? "+" : ""}
+                {r1(menu.total.f - plan.f)}g C{menu.total.c - plan.c >= 0 ? "+" : ""}
+                {r1(menu.total.c - plan.c)}g）
+              </p>
+              <button
+                className="small"
+                onClick={() => {
+                  onAddMany(menu.meals.flatMap((m) => m.items));
+                  setAdded(true);
+                }}
+              >
+                {added ? "✓ この日の記録に追加しました" : "＋ この例を今日の記録に追加"}
+              </button>
+              <p className="agnote">
+                食材は一例です。同じ栄養の食品に置きかえても大丈夫です（「食品を探す」で調べられます）。
+              </p>
+            </div>
+          )}
+        </>
       )}
-      {!r && (
-        <p className="note">体重（kg）を入れて目的を選ぶと、下の目標PFCが自動で入ります。</p>
-      )}
+
       <p className="note">
-        目安の計算です。年齢・性別・運動量で必要量は変わります。結果は下の欄で自由に調整できます。持病や妊娠中の方は医師に相談してください。
+        目安の計算です。基礎代謝は国立健康・栄養研究所の推定式、BMIとPFCの範囲は「日本人の食事摂取基準（2025年版）」を参考にしています。体調や持病、妊娠・授乳中の方は医師や管理栄養士に相談してください。結果は下の欄で自由に調整できます。
       </p>
     </div>
   );
 }
-
 function DayView({
   date,
   entries,
@@ -652,7 +914,7 @@ function DayView({
 
       <div className="card">
         <p className="cardtitle">目標のPFC</p>
-        <AutoGoal setGoal={setGoal} />
+        <ProfileGoal setGoal={setGoal} onAddMany={(items) => items.forEach((i) => onAdd(i.name, i.g))} />
         <p className="cardtitle">目標の量（g）— 手動で調整もできます</p>
         <div className="inputs">
           {(

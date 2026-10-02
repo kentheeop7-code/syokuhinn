@@ -1208,3 +1208,75 @@ html {
   font-size: 0.75rem;
   line-height: 1.6;
 }
+
+/* profile-based goal */
+.afield {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.afield .gram {
+  color: var(--text);
+}
+
+.agtitle:not(:first-child) {
+  margin-top: 16px;
+}
+
+.aglabel {
+  margin: 12px 0 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.autogoal .agrow {
+  margin-top: 10px;
+}
+
+.agdl {
+  display: grid;
+  grid-template-columns: 7.5em 1fr;
+  gap: 4px 8px;
+  margin: 12px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.agdl dt {
+  color: var(--muted);
+}
+
+.agdl dd {
+  margin: 0;
+}
+
+.agmenu {
+  margin-top: 14px;
+  padding: 14px;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.agmenu .agtitle {
+  margin-top: 0;
+}
+
+.agmeal {
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+
+.agmeal b {
+  color: var(--brand-deep);
+  font-size: 0.85rem;
+}
+
+.agmeal ul {
+  margin: 4px 0 0;
+  padding-left: 1.2em;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
