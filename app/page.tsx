@@ -3,36 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { FOODS } from "@/lib/foods";
 
-type Result = {
-  name: string;
-  grams: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-  kcal: number;
-};
-
 const num = (v: string) => Math.max(0, parseFloat(v) || 0);
 const r1 = (n: number) => Math.round(n * 10) / 10;
-
-// 長辺1280pxのJPEGに縮小（Vercelのリクエスト上限対策）
-function resize(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      const s = Math.min(1, 1280 / Math.max(img.width, img.height));
-      const c = document.createElement("canvas");
-      c.width = Math.round(img.width * s);
-      c.height = Math.round(img.height * s);
-      c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url);
-      resolve(c.toDataURL("image/jpeg", 0.85));
-    };
-    img.onerror = () => reject(new Error("画像を読み込めませんでした。"));
-    img.src = url;
-  });
-}
 
 function PfcBars({ p, f, c }: { p: number; f: number; c: number }) {
   const total = p + f + c || 1;
@@ -58,96 +30,6 @@ function PfcRow({ p, f, c }: { p: number; f: number; c: number }) {
         <i className="dot c" />C <b>{r1(c)}</b>g
       </div>
     </div>
-  );
-}
-
-function Photo() {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [results, setResults] = useState<Result[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const onFile = async (file?: File) => {
-    if (!file) return;
-    setError("");
-    setResults(null);
-    setLoading(true);
-    try {
-      const image = await resize(file);
-      setPreview(image);
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ image }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "解析に失敗しました。");
-      setResults(json.foods);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "解析に失敗しました。");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const total = (results ?? []).reduce(
-    (a, x) => ({
-      p: a.p + x.protein,
-      f: a.f + x.fat,
-      c: a.c + x.carbs,
-      k: a.k + x.kcal,
-    }),
-    { p: 0, f: 0, c: 0, k: 0 }
-  );
-
-  return (
-    <section>
-      <label className="drop">
-        {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={preview} alt="選択した写真" />
-        ) : (
-          <span>写真を撮る・選ぶ</span>
-        )}
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={(e) => onFile(e.target.files?.[0])}
-        />
-      </label>
-
-      {loading && <p className="note">解析中…</p>}
-      {error && <p className="error">{error}</p>}
-
-      {results && results.length === 0 && (
-        <p className="note">食品が見つかりませんでした。</p>
-      )}
-
-      {results && results.length > 0 && (
-        <div className="card">
-          <div className="kcal">
-            合計 <b>{Math.round(total.k)}</b> kcal
-          </div>
-          <PfcBars p={total.p} f={total.f} c={total.c} />
-          <PfcRow p={total.p} f={total.f} c={total.c} />
-          <ul className="rows">
-            {results.map((x, i) => (
-              <li key={i}>
-                <div className="rowhead">
-                  <span>{x.name}</span>
-                  <span className="muted">
-                    約{Math.round(x.grams)}g・{Math.round(x.kcal)}kcal
-                  </span>
-                </div>
-                <PfcRow p={x.protein} f={x.fat} c={x.carbs} />
-              </li>
-            ))}
-          </ul>
-          <p className="note">※ 写真からの推定値です。目安としてお使いください。</p>
-        </div>
-      )}
-    </section>
   );
 }
 
@@ -177,6 +59,11 @@ function Search() {
           g
         </label>
       </div>
+      <p className="note">
+        {num(grams) === 100
+          ? "100gあたりの栄養素を表示しています。"
+          : `${r1(num(grams))}gあたりの栄養素を表示しています。`}
+      </p>
       {hits.length === 0 && <p className="note">見つかりませんでした。</p>}
       <ul className="rows card">
         {hits.map((x) => (
@@ -187,6 +74,7 @@ function Search() {
                 {Math.round((x.p * 4 + x.f * 9 + x.c * 4) * g)}kcal
               </span>
             </div>
+            <PfcBars p={x.p * g} f={x.f * g} c={x.c * g} />
             <PfcRow p={x.p * g} f={x.f * g} c={x.c * g} />
           </li>
         ))}
@@ -305,20 +193,13 @@ function Goal() {
 }
 
 export default function Home() {
-  const [tab, setTab] = useState<"photo" | "search" | "goal">("photo");
+  const [tab, setTab] = useState<"search" | "goal">("search");
   return (
     <main className="container">
       <h1 className="title">PFC</h1>
       <p className="sub">食事のたんぱく質・脂質・炭水化物をすばやく確認</p>
 
       <div className="tabs" role="tablist">
-        <button
-          role="tab"
-          aria-selected={tab === "photo"}
-          onClick={() => setTab("photo")}
-        >
-          写真で調べる
-        </button>
         <button
           role="tab"
           aria-selected={tab === "search"}
@@ -335,7 +216,7 @@ export default function Home() {
         </button>
       </div>
 
-      {tab === "photo" ? <Photo /> : tab === "search" ? <Search /> : <Goal />}
+      {tab === "search" ? <Search /> : <Goal />}
     </main>
   );
 }
