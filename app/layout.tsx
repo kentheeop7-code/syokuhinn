@@ -3,7 +3,7 @@ import "./globals.css";
 import QuoteBackground from "./QuoteBackground";
 
 export const metadata: Metadata = {
-  title: "家政婦の筋 | LIFEGYM",
+  title: "専属の栄養士 | LIFEGYM",
   description: "食品のPFC・ビタミン・ミネラル・塩分がわかり、目標に近づく食事を記録できるアプリ",
 };
 

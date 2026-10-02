@@ -700,7 +700,7 @@ export default function Home() {
           📖 栄養素ガイド
         </Link>
       </header>
-      <h1 className="title">家政婦の筋</h1>
+      <h1 className="title">専属の栄養士</h1>
       <p className="tagline">PFCをはかって、理想のカラダへ。</p>
       <p className="member">LIFEGYM会員様専用アプリ</p>
 

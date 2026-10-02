@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "栄養素ガイド | 家政婦の筋",
+  title: "栄養素ガイド | 専属の栄養士",
   description: "目的別（貧血・パフォーマンス・睡眠・筋肉づくりなど）のとり方と、栄養素のはたらき",
 };
 
