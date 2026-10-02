@@ -375,6 +375,7 @@ function Calendar({
 type Sex = "m" | "f";
 type Pal = "low" | "mid" | "high";
 type PurposeKey = "diet" | "muscle" | "performance";
+type Method = "balance" | "lowfat" | "keto";
 type Profile = {
   sex: Sex | null;
   age: string;
@@ -382,6 +383,7 @@ type Profile = {
   pal: Pal;
   weight: string; // 目標体重
   purpose: PurposeKey | null;
+  method: Method; // ダイエットのやり方
 };
 
 const PAL: Record<Pal, { label: string; v: number; desc: string }> = {
@@ -418,6 +420,22 @@ const PURPOSES: Record<
   },
 };
 
+// ダイエットのやり方（ダイエットを選んだときだけ使います）
+const METHODS: Record<Method, { label: string; desc: string }> = {
+  balance: {
+    label: "バランス型",
+    desc: "脂質はエネルギーの25%。食事摂取基準の範囲に近い、続けやすい配分です。",
+  },
+  lowfat: {
+    label: "ローファット",
+    desc: "脂質をエネルギーの18%ほどに抑え、主食（炭水化物）で満たします。油・揚げ物・脂身を減らす食べ方です。",
+  },
+  keto: {
+    label: "ケトジェニック",
+    desc: "炭水化物を1日20〜50gに抑え、脂質でエネルギーをとります。ごはん・パン・麺・砂糖・果物はほとんど使いません。",
+  },
+};
+
 // 目標とするBMI（日本人の食事摂取基準 2025年版）
 const bmiRange = (age: number) =>
   age < 50 ? [18.5, 24.9] : age < 65 ? [20.0, 24.9] : [21.5, 24.9];
@@ -449,9 +467,23 @@ function calcPlan(pf: Profile) {
   const bm = bmr(pf.sex, age, height, weight);
   const tdee = bm * PAL[pf.pal].v;
   const target = Math.max(tdee * purpose.energy, bm * 1.1);
-  const p = Math.round(weight * purpose.pPerKg);
-  const f = Math.round(Math.max((target * purpose.fatPct) / 9, weight * 0.8));
-  const c = Math.round(Math.max(0, (target - p * 4 - f * 9) / 4));
+  const method: Method = pf.purpose === "diet" ? pf.method : "balance";
+  let p = Math.round(weight * purpose.pPerKg);
+  let f: number;
+  let c: number;
+  if (method === "keto") {
+    // 炭水化物は1日20〜50g（エネルギーの約5%）。たんぱく質は摂りすぎない（〜30%）。残りを脂質で。
+    c = Math.min(50, Math.max(20, Math.round((target * 0.05) / 4)));
+    p = Math.min(p, Math.round((target * 0.3) / 4));
+    f = Math.round(Math.max(0, (target - p * 4 - c * 4) / 9));
+  } else if (method === "lowfat") {
+    // 脂質はエネルギーの約18%（体重×0.6gは下回らない）。残りを炭水化物で。
+    f = Math.round(Math.max((target * 0.18) / 9, weight * 0.6));
+    c = Math.round(Math.max(0, (target - p * 4 - f * 9) / 4));
+  } else {
+    f = Math.round(Math.max((target * purpose.fatPct) / 9, weight * 0.8));
+    c = Math.round(Math.max(0, (target - p * 4 - f * 9) / 4));
+  }
   const kcal = p * 4 + f * 9 + c * 4;
   const bmi = weight / (height / 100) ** 2;
   return {
@@ -464,6 +496,7 @@ function calcPlan(pf: Profile) {
     bmi,
     age,
     weight,
+    method,
   };
 }
 
@@ -471,21 +504,27 @@ type MenuItem = { name: string; g: number };
 type Meal = { title: string; items: MenuItem[] };
 
 // 目標のPFCに近づくように、よくある食材で1日の食事例を組み立てる
-function buildMenu(t: { kcal: number; p: number; f: number; c: number }): {
+function buildMenu(
+  t: { kcal: number; p: number; f: number; c: number },
+  method: Method
+): {
   meals: Meal[];
   total: Totals;
 } {
+  if (method === "keto") return buildKetoMenu(t);
+  const lean = method === "lowfat"; // 脂質を抑える：魚はタラ、卵は少なめ、ナッツなし
+  const fishName = lean ? "タラ" : "サケ（焼き）";
   const get = (n: string) => byName.get(n)!;
   const rice = get("白ごはん");
   const chicken = get("鶏むね肉（皮なし）");
-  const salmon = get("サケ（焼き）");
+  const salmon = get(fishName);
   const oil = get("オリーブオイル");
   const s = Math.min(1.3, Math.max(0.7, t.kcal / 2200));
   const r5 = (x: number) => Math.max(0, Math.round(x / 5) * 5);
 
   const fixed: Record<string, MenuItem[]> = {
     朝食: [
-      { name: "卵", g: Math.max(50, Math.round((100 * s) / 50) * 50) },
+      { name: "卵", g: lean ? 50 : Math.max(50, Math.round((100 * s) / 50) * 50) },
       { name: "納豆", g: 45 },
     ],
     昼食: [
@@ -499,7 +538,7 @@ function buildMenu(t: { kcal: number; p: number; f: number; c: number }): {
     間食: [
       { name: "無糖ヨーグルト", g: Math.max(100, Math.round((150 * s) / 50) * 50) },
       { name: "バナナ", g: 100 },
-      { name: "アーモンド", g: 10 },
+      ...(lean ? [] : [{ name: "アーモンド", g: 10 }]),
     ],
   };
   const fx = sum(Object.values(fixed).flat().map((i) => ({ id: "", name: i.name, grams: i.g })));
@@ -515,8 +554,8 @@ function buildMenu(t: { kcal: number; p: number; f: number; c: number }): {
   let A = 0; // 間食に足すアーモンド
   for (let i = 0; i < 60; i++) {
     const gap = t.f - fx.f - (rice.f * R) / 100 - (meat.f * M) / 100;
-    O = Math.min(30, Math.max(0, gap / (oil.f / 100))); // 油は1日30gまで
-    A = Math.min(30, Math.max(0, (gap - O) / (alm.f / 100))); // アーモンドは追加で30gまで
+    O = Math.min(45, Math.max(0, gap / (oil.f / 100))); // 油は1日45gまで
+    A = lean ? 0 : Math.min(40, Math.max(0, (gap - O) / (alm.f / 100))); // アーモンドは追加で40gまで
     R = Math.max(0, (t.c - fx.c - (alm.c * A) / 100) / (rice.c / 100));
     M = Math.max(0, (t.p - fx.p - (rice.p * R) / 100 - (alm.p * A) / 100) / (meat.p / 100));
   }
@@ -541,14 +580,83 @@ function buildMenu(t: { kcal: number; p: number; f: number; c: number }): {
   meals[1].items.push(...fixed["昼食"]);
   push(meals[1].items, "オリーブオイル", oilG[0]);
   push(meals[2].items, "白ごはん", riceG[2]);
-  push(meals[2].items, "サケ（焼き）", meatG[1]);
+  push(meals[2].items, fishName, meatG[1]);
   meals[2].items.push(...fixed["夕食"]);
   push(meals[2].items, "オリーブオイル", oilG[1]);
-  meals[3].items.push(...fixed["間食"].map((i) => (i.name === "アーモンド" ? { name: i.name, g: i.g + r5(A) } : i)));
+  meals[3].items.push(
+    ...fixed["間食"].map((i) =>
+      i.name === "アーモンド" ? { name: i.name, g: i.g + r5(A) } : i
+    )
+  );
 
   const total = sum(
     meals.flatMap((m) => m.items).map((i) => ({ id: "", name: i.name, grams: i.g }))
   );
+  return { meals, total };
+}
+
+// ケトジェニック用：ごはん・パン・麺を使わず、肉・魚・卵・チーズ・野菜・油で組み立てる
+function buildKetoMenu(t: { kcal: number; p: number; f: number; c: number }): {
+  meals: Meal[];
+  total: Totals;
+} {
+  const get = (n: string) => byName.get(n)!;
+  const thigh = get("鶏もも肉（皮つき）");
+  const salmon = get("サケ（焼き）");
+  const oil = get("オリーブオイル");
+  const butter = get("バター");
+  const s = Math.min(1.3, Math.max(0.8, t.kcal / 2200));
+  const r5 = (x: number) => Math.max(0, Math.round(x / 5) * 5);
+  const ent = (items: MenuItem[]) => items.map((i) => ({ id: "", name: i.name, grams: i.g }));
+
+  const base: MenuItem[] = [
+    { name: "卵", g: Math.max(100, Math.round((150 * s) / 50) * 50) },
+    { name: "プロセスチーズ", g: 30 },
+    { name: "アボカド", g: 70 },
+    { name: "アーモンド", g: 20 },
+  ];
+  const baseSum = sum(ent(base));
+  // 野菜は炭水化物の目標に合わせて量を決める
+  const veg0: MenuItem[] = [
+    { name: "ブロッコリー", g: 100 },
+    { name: "キャベツ", g: 100 },
+    { name: "トマト", g: 80 },
+    { name: "えのき", g: 50 },
+  ];
+  const veg0Sum = sum(ent(veg0));
+  const sv = Math.min(2, Math.max(0.4, (t.c - baseSum.c) / (veg0Sum.c || 1)));
+  const veg = veg0.map((i) => ({ name: i.name, g: Math.max(20, r5(i.g * sv)) }));
+  const fx = sum(ent([...base, ...veg]));
+
+  const meat = { p: (thigh.p + salmon.p) / 2, f: (thigh.f + salmon.f) / 2 };
+  const M = Math.min(400, Math.max(0, (t.p - fx.p) / (meat.p / 100)));
+  const gap = Math.max(0, t.f - fx.f - (meat.f * M) / 100);
+  const O = Math.min(60, (gap * 0.6) / (oil.f / 100));
+  const B = Math.min(40, Math.max(0, (gap - O * (oil.f / 100)) / (butter.f / 100)));
+  const r10 = (x: number) => Math.max(0, Math.round(x / 10) * 10);
+  const r1g = (x: number) => Math.max(0, Math.round(x));
+  const push = (arr: MenuItem[], name: string, g: number) => {
+    if (g >= 5) arr.push({ name, g });
+  };
+
+  const meals: Meal[] = [
+    { title: "朝食", items: [] },
+    { title: "昼食", items: [] },
+    { title: "夕食", items: [] },
+    { title: "間食", items: [] },
+  ];
+  meals[0].items.push(base[0], base[2]);
+  push(meals[0].items, "バター", r1g(B * 0.5));
+  push(meals[1].items, "鶏もも肉（皮つき）", r10(M * 0.5));
+  meals[1].items.push(veg[0], veg[1]);
+  push(meals[1].items, "オリーブオイル", r1g(O * 0.6));
+  push(meals[2].items, "サケ（焼き）", r10(M * 0.5));
+  meals[2].items.push(veg[2], veg[3]);
+  push(meals[2].items, "オリーブオイル", r1g(O * 0.4));
+  push(meals[2].items, "バター", r1g(B * 0.5));
+  meals[3].items.push(base[1], base[3]);
+
+  const total = sum(ent(meals.flatMap((m) => m.items)));
   return { meals, total };
 }
 
@@ -566,6 +674,7 @@ function ProfileGoal({
     pal: "mid",
     weight: "",
     purpose: null,
+    method: "balance",
   });
   const [added, setAdded] = useState(false);
   const latest = useRef(pf); // 続けて入力されても、常に最新の値を元に計算する
@@ -594,9 +703,9 @@ function ProfileGoal({
 
   const plan = calcPlan(pf);
   const menu = useMemo(
-    () => (plan ? buildMenu(plan) : null),
+    () => (plan ? buildMenu(plan, plan.method) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [plan?.kcal, plan?.p, plan?.f, plan?.c]
+    [plan?.kcal, plan?.p, plan?.f, plan?.c, plan?.method]
   );
   const [bLo, bHi] = plan ? bmiRange(plan.age) : [0, 0];
   const [pLo, pHi] = plan ? pRange(plan.age) : [0, 0];
@@ -679,6 +788,24 @@ function ProfileGoal({
       </div>
       {pf.purpose && <p className="note">{PURPOSES[pf.purpose].desc}</p>}
 
+      {pf.purpose === "diet" && (
+        <>
+          <p className="aglabel">ダイエットのやり方</p>
+          <div className="chips tight">
+            {(Object.keys(METHODS) as Method[]).map((k) => (
+              <button
+                key={k}
+                className={pf.method === k ? "chip on" : "chip"}
+                onClick={() => update({ method: k })}
+              >
+                {METHODS[k].label}
+              </button>
+            ))}
+          </div>
+          <p className="note">{METHODS[pf.method].desc}</p>
+        </>
+      )}
+
       {!plan && (
         <p className="note">
           性別・年齢（18歳以上）・身長・目標体重を入れて、目的を選ぶと、目標のPFCが自動で入ります。
@@ -695,9 +822,24 @@ function ProfileGoal({
             <p className="agnote">
               エネルギー比 P{pe}% / F{fe}% / C{ce}%　（厚生労働省の目標量: P{pLo}〜{pHi}%・F20〜30%・C50〜65%）
             </p>
-            {(pe > pHi || ce < 50 || ce > 65) && (
+            {(pe > pHi || pe < pLo || fe < 20 || fe > 30 || ce < 50 || ce > 65) && (
               <p className="agnote">
-                ※ たんぱく質が目標量より多め、または炭水化物が範囲外です。運動する人向けの配分で、食事摂取基準の範囲から少し外れることがあります。
+                ※ この配分は、食事摂取基準の目標量の範囲から外れています
+                {[
+                  pe > pHi || pe < pLo ? "たんぱく質" : "",
+                  fe < 20 || fe > 30 ? "脂質" : "",
+                  ce < 50 || ce > 65 ? "炭水化物" : "",
+                ]
+                  .filter(Boolean)
+                  .join("・")
+                  .replace(/^/, "（")
+                  .replace(/$/, "）")}
+                。目的に合わせた配分のためで、長く続ける場合は医師や管理栄養士に相談してください。
+              </p>
+            )}
+            {plan.method === "keto" && pf.purpose === "diet" && (
+              <p className="caution">
+                ⚠ ケトジェニックは糖質を大きく減らす食事法で、長期の安全性は十分に確立されていません。糖尿病などで薬を使っている方、腎臓・肝臓の病気がある方、妊娠・授乳中の方、摂食障害の経験がある方は、必ず医師に相談してください。食物繊維が不足しやすく、便秘や体調不良が出ることもあります。
               </p>
             )}
             <dl className="agdl">
