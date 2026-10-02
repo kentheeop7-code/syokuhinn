@@ -612,3 +612,305 @@ ul.rows.card li:first-child {
   background: var(--brand);
   border-color: var(--brand);
 }
+
+/* v3 */
+:root {
+  --danger: #d6342c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --danger: #ff6b61;
+  }
+}
+
+.brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toplink {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.toplink:hover {
+  color: var(--brand);
+}
+
+.title.sm {
+  font-size: 1.8rem;
+}
+
+.textinput.full {
+  display: block;
+  width: 100%;
+}
+
+.amount {
+  margin-bottom: 10px;
+}
+
+.amount .gram {
+  display: inline-flex;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+}
+
+.chips.tight {
+  margin: 0;
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.amountnote {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* over-intake warnings */
+.micros .over {
+  padding: 4px 6px;
+  margin: -4px -6px;
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  border-radius: 8px;
+}
+
+.micros .over dt,
+.micros .over dd {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.prog.over .proghead,
+.prog.over .proghead .muted {
+  color: var(--danger);
+}
+
+.fill.danger {
+  background: var(--danger);
+}
+
+.alert {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  list-style: none;
+  color: var(--danger);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  border-radius: 12px;
+}
+
+/* nutrients page */
+.nlist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ncard {
+  margin-top: 14px;
+}
+
+.nhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.nhead h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ntag {
+  flex: none;
+  padding: 2px 10px;
+  color: var(--brand);
+  font-size: 0.72rem;
+  border: 1px solid var(--brand);
+  border-radius: 999px;
+}
+
+.nrole {
+  margin: 0 0 12px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.ndl {
+  display: grid;
+  grid-template-columns: 6.8em 1fr;
+  gap: 6px 10px;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.ndl dt {
+  color: var(--muted);
+}
+
+.ndl dt.red {
+  color: var(--danger);
+}
+
+.ndl dd {
+  margin: 0;
+}
+
+/* motivational quote background */
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.quotebg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 8vw;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    color-mix(in srgb, var(--brand) 14%, transparent),
+    transparent 65%
+  );
+}
+
+.qmark {
+  position: absolute;
+  top: 6vh;
+  left: 6vw;
+  color: var(--brand);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(8rem, 30vw, 16rem);
+  line-height: 1;
+  opacity: 0.18;
+}
+
+/* frosted cards so the quote shows through */
+.card,
+.tabs,
+.list {
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+}
+
+.tabs {
+  background: color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+
+
+/* visible motivational quote hero */
+.hero {
+  position: relative;
+  margin: 0 0 24px;
+  padding: 22px 20px 16px;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--brand) 26%, var(--card)),
+    color-mix(in srgb, var(--brand) 6%, var(--card))
+  );
+  border: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
+  border-radius: 20px;
+}
+
+.herolabel {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--brand);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+.herostage {
+  display: grid;
+  min-height: 118px;
+}
+
+.hq {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  opacity: 0;
+  transform: translateX(48px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
+}
+
+.hq.on {
+  opacity: 1;
+  transform: none;
+}
+
+.hq.out {
+  transform: translateX(-48px);
+}
+
+.hq blockquote {
+  margin: 0;
+  color: var(--text);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  font-size: clamp(1.15rem, 4.8vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+}
+
+.hq figcaption {
+  margin-top: 10px;
+  color: var(--brand);
+  font-size: 0.82rem;
+  letter-spacing: 0.15em;
+}
+
+.hq figcaption::before {
+  content: "— ";
+}
+
+.herodots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.hdot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  background: color-mix(in srgb, var(--text) 25%, transparent);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.hdot.on {
+  width: 20px;
+  border-radius: 4px;
+  background: var(--brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hq {
+    transition: opacity 0.3s;
+    transform: none;
+  }
+}

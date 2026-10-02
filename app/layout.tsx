@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import QuoteBackground from "./QuoteBackground";
 
 export const metadata: Metadata = {
   title: "PFC",
@@ -15,7 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <QuoteBackground />
+        {children}
+      </body>
     </html>
   );
 }

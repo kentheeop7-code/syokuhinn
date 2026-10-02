@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import QuoteHero from "./QuoteHero";
 import {
   CATEGORIES,
   FOODS,
+  LIMITS,
   MICROS,
+  describeAmount,
+  portionsOf,
   type Food,
   type NutrientKey,
 } from "@/lib/foods";
@@ -37,7 +42,19 @@ const label = (k: string) => {
 };
 
 function sum(entries: Entry[]): Totals {
-  const t = { p: 0, f: 0, c: 0, fi: 0, va: 0, b1: 0, vc: 0, ca: 0, fe: 0, k: 0 };
+  const t = {
+    p: 0,
+    f: 0,
+    c: 0,
+    fi: 0,
+    va: 0,
+    b1: 0,
+    vc: 0,
+    ca: 0,
+    fe: 0,
+    k: 0,
+    salt: 0,
+  };
   for (const e of entries) {
     const food = byName.get(e.name);
     if (!food) continue;
@@ -74,18 +91,32 @@ function PfcRow({ p, f, c }: { p: number; f: number; c: number }) {
   );
 }
 
-function Micros({ food, g }: { food: Pick<Food, NutrientKey>; g: number }) {
+function Micros({
+  food,
+  g,
+  warn,
+}: {
+  food: Pick<Food, NutrientKey>;
+  g: number;
+  warn?: boolean;
+}) {
   return (
     <dl className="micros">
-      {MICROS.map((m) => (
-        <div key={m.key}>
-          <dt>{m.label}</dt>
-          <dd>
-            {r1(food[m.key] * g)}
-            <small>{m.unit}</small>
-          </dd>
-        </div>
-      ))}
+      {MICROS.map((m) => {
+        const v = food[m.key] * g;
+        const limit = warn ? LIMITS[m.key] : undefined;
+        const over = limit !== undefined && v > limit;
+        return (
+          <div key={m.key} className={over ? "over" : ""}>
+            <dt>{m.label}</dt>
+            <dd>
+              {over && "⚠"}
+              {m.key === "b1" ? Math.round(v * 100) / 100 : r1(v)}
+              <small>{m.unit}</small>
+            </dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }
@@ -103,12 +134,14 @@ function Progress({
 }) {
   const pct = target > 0 ? Math.min(100, (value / target) * 100) : 0;
   const left = target - value;
+  const over = target > 0 && value > target * 1.1;
   return (
-    <div className="prog">
+    <div className={`prog${over ? " over" : ""}`}>
       <div className="proghead">
         <span>
           <i className={`dot ${cls}`} />
           {name}
+          {over && " ⚠ 摂りすぎ"}
         </span>
         <span className="muted">
           {r1(value)} / {r1(target)}g
@@ -116,9 +149,83 @@ function Progress({
         </span>
       </div>
       <div className="track">
-        <span className={`fill ${cls}`} style={{ width: `${pct}%` }} />
+        <span
+          className={`fill ${over ? "danger" : cls}`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
+  );
+}
+
+function FoodRow({
+  food,
+  onAdd,
+}: {
+  food: Food;
+  onAdd: (name: string, grams: number) => void;
+}) {
+  const [grams, setGrams] = useState("100");
+  const [added, setAdded] = useState(false);
+  const g = num(grams) / 100;
+  const portions = portionsOf(food);
+
+  return (
+    <li>
+      <div className="rowhead">
+        <span>{food.name}</span>
+        <span className="muted">
+          {Math.round((food.p * 4 + food.f * 9 + food.c * 4) * g)}kcal
+        </span>
+      </div>
+      <div className="amount">
+        <label className="gram">
+          <input
+            inputMode="decimal"
+            value={grams}
+            onChange={(e) => {
+              setGrams(e.target.value);
+              setAdded(false);
+            }}
+            aria-label={`${food.name}のグラム数`}
+          />
+          g
+        </label>
+        <div className="chips tight">
+          <button
+            className={num(grams) === 100 ? "chip on" : "chip"}
+            onClick={() => setGrams("100")}
+          >
+            100g
+          </button>
+          {portions.map((p) => (
+            <button
+              key={p.label}
+              className={num(grams) === p.g ? "chip on" : "chip"}
+              onClick={() => {
+                setGrams(String(p.g));
+                setAdded(false);
+              }}
+            >
+              {p.label} {p.g}g
+            </button>
+          ))}
+        </div>
+      </div>
+      <PfcBars p={food.p * g} f={food.f * g} c={food.c * g} />
+      <PfcRow p={food.p * g} f={food.f * g} c={food.c * g} />
+      <Micros food={food} g={g} />
+      <button
+        className="small"
+        disabled={g <= 0}
+        onClick={() => {
+          onAdd(food.name, num(grams));
+          setAdded(true);
+        }}
+      >
+        {added ? "✓ 追加しました" : "＋ 追加"}
+      </button>
+    </li>
   );
 }
 
@@ -130,9 +237,6 @@ function Search({
   onAdd: (name: string, grams: number) => void;
 }) {
   const [q, setQ] = useState("");
-  const [added, setAdded] = useState("");
-  const [grams, setGrams] = useState("100");
-  const g = num(grams) / 100;
   const [cat, setCat] = useState<string>("すべて");
   const hits = FOODS.filter(
     (x) => (cat === "すべて" || x.cat === cat) && x.name.includes(q.trim())
@@ -140,24 +244,13 @@ function Search({
 
   return (
     <section>
-      <div className="searchbar">
-        <input
-          className="textinput"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="食品名で検索（例: 鶏、ごはん）"
-          aria-label="食品名"
-        />
-        <label className="gram">
-          <input
-            inputMode="decimal"
-            value={grams}
-            onChange={(e) => setGrams(e.target.value)}
-            aria-label="グラム数"
-          />
-          g
-        </label>
-      </div>
+      <input
+        className="textinput full"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="食品名で検索（例: 鶏、ごはん、麦）"
+        aria-label="食品名"
+      />
       <div className="chips">
         {["すべて", ...CATEGORIES].map((c) => (
           <button
@@ -170,38 +263,18 @@ function Search({
         ))}
       </div>
       <p className="note">
-        {r1(num(grams))}gあたりの栄養素です（調味料の大さじ1は約12〜15g）。「追加」で {label(date)} の記録に入ります。
+        最初は100gあたりの栄養素です。茶碗1杯などの目安ボタンか、グラム数の入力で量を変えられます。「追加」で{" "}
+        {label(date)} の記録に入ります。
       </p>
       {hits.length === 0 && <p className="note">見つかりませんでした。</p>}
       <ul className="rows card">
         {hits.map((x) => (
-          <li key={x.name}>
-            <div className="rowhead">
-              <span>{x.name}</span>
-              <span className="muted">
-                {Math.round((x.p * 4 + x.f * 9 + x.c * 4) * g)}kcal
-              </span>
-            </div>
-            <PfcBars p={x.p * g} f={x.f * g} c={x.c * g} />
-            <PfcRow p={x.p * g} f={x.f * g} c={x.c * g} />
-            <Micros food={x} g={g} />
-            <button
-              className="small"
-              disabled={g <= 0}
-              onClick={() => {
-                onAdd(x.name, num(grams));
-                setAdded(x.name);
-              }}
-            >
-              {added === x.name ? "✓ 追加しました" : "＋ 追加"}
-            </button>
-          </li>
+          <FoodRow key={x.name} food={x} onAdd={onAdd} />
         ))}
       </ul>
     </section>
   );
 }
-
 function Calendar({
   month,
   setMonth,
@@ -335,6 +408,26 @@ function DayView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [goal, total.p, total.f, total.c]);
 
+  const warnings = useMemo(() => {
+    const w: string[] = [];
+    (
+      [
+        ["p", "たんぱく質"],
+        ["f", "脂質"],
+        ["c", "炭水化物"],
+      ] as const
+    ).forEach(([k, name]) => {
+      if (t[k] > 0 && total[k] > t[k] * 1.1) w.push(`${name}が目標を超えています`);
+    });
+    MICROS.forEach((m) => {
+      const limit = LIMITS[m.key];
+      if (limit !== undefined && total[m.key] > limit)
+        w.push(`${m.label}が1日の上限の目安（${limit}${m.unit}）を超えています`);
+    });
+    return w;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goal, total]);
+
   const buildText = () => {
     const lines = [
       `【LIFEGYM PFC記録】${label(date)}`,
@@ -344,7 +437,8 @@ function DayView({
       )}kcal）`,
       `食物繊維${r1(total.fi)}g ビタミンC${r1(total.vc)}mg カルシウム${r1(
         total.ca
-      )}mg 鉄${r1(total.fe)}mg`,
+      )}mg 鉄${r1(total.fe)}mg 塩分${r1(total.salt)}g`,
+      ...warnings.map((w) => `⚠ ${w}`),
       "",
       ...entries.map((e) => `・${e.name} ${e.grams}g`),
     ];
@@ -375,14 +469,23 @@ function DayView({
   };
 
   const exportCsv = () => {
-    const rows = ["日付,食品,グラム,P,F,C,kcal"];
+    const rows = ["日付,食品,グラム,P,F,C,kcal,塩分g"];
     Object.keys(log)
       .sort()
       .forEach((d) =>
         log[d].forEach((e) => {
           const s = sum([e]);
           rows.push(
-            [d, e.name, e.grams, r1(s.p), r1(s.f), r1(s.c), Math.round(s.kcal)].join(",")
+            [
+              d,
+              e.name,
+              e.grams,
+              r1(s.p),
+              r1(s.f),
+              r1(s.c),
+              Math.round(s.kcal),
+              r1(s.salt),
+            ].join(",")
           );
         })
       );
@@ -431,7 +534,14 @@ function DayView({
         <Progress name="たんぱく質" cls="p" value={total.p} target={t.p} />
         <Progress name="脂質" cls="f" value={total.f} target={t.f} />
         <Progress name="炭水化物" cls="c" value={total.c} target={t.c} />
-        <Micros food={total} g={1} />
+        <Micros food={total} g={1} warn />
+        {warnings.length > 0 && (
+          <ul className="alert" role="alert">
+            {warnings.map((w) => (
+              <li key={w}>⚠ {w}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="card">
@@ -447,7 +557,13 @@ function DayView({
             return (
               <li key={e.id} className="entry">
                 <span>
-                  {e.name} <span className="muted">{e.grams}g</span>
+                  {e.name}{" "}
+                  <span className="muted">
+                    {e.grams}g
+                    {byName.get(e.name) &&
+                      describeAmount(byName.get(e.name)!, e.grams) &&
+                      `（${describeAmount(byName.get(e.name)!, e.grams)}）`}
+                  </span>
                 </span>
                 <span className="muted">
                   P{r1(s.p)} F{r1(s.f)} C{r1(s.c)}
@@ -478,6 +594,9 @@ function DayView({
                     {grams}g・残りの{Math.round(covered * 100)}%
                   </span>
                 </div>
+                {describeAmount(food, grams) && (
+                  <p className="amountnote">目安: {describeAmount(food, grams)}</p>
+                )}
                 <PfcRow p={got.p} f={got.f} c={got.c} />
                 <button className="small" onClick={() => onAdd(food.name, grams)}>
                   ＋ 追加
@@ -564,9 +683,14 @@ export default function Home() {
     <main className="container">
       <header className="brandbar">
         <span className="brand">LIFEGYM</span>
+        <Link href="/nutrients" className="toplink">
+          栄養素のはたらき ›
+        </Link>
       </header>
       <h1 className="title">PFC</h1>
       <p className="member">LIFEGYM会員様専用アプリ</p>
+
+      <QuoteHero />
 
       <div className="tabs" role="tablist">
         <button
