@@ -1953,3 +1953,142 @@ body {
     min-height: 132px;
   }
 }
+
+/* ===== v9: always-visible top bar, myth styling ===== */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(26, 145, 80, 0.08);
+}
+
+.topnav-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 6px 12px;
+}
+
+.tn-brand {
+  color: var(--brand);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+}
+
+.tn-items {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.tn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: 54px;
+  padding: 5px 6px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.15;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tn-item b {
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.tn-item:hover {
+  background: #e7f6ed;
+}
+
+.tn-item.on {
+  color: #ffffff;
+  background: var(--brand);
+}
+
+[id] {
+  scroll-margin-top: 78px;
+}
+
+.container {
+  padding-top: 24px;
+}
+
+/* myth tips */
+.tkgroup.myth {
+  background: #e8590c;
+}
+
+.tkmyth {
+  color: #b34700 !important;
+  font-weight: 600;
+}
+
+.mythbox {
+  margin: 4px 0 14px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.mythbox p {
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.mythbox span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.mb-no {
+  color: #8a3a00;
+  background: #fff0e4;
+}
+
+.mb-no span {
+  color: #d9480f;
+}
+
+.mb-yes {
+  color: var(--text);
+  font-weight: 700;
+  background: #e2f5ea;
+}
+
+.mb-yes span {
+  color: var(--brand-deep);
+}
+
+@media (max-width: 380px) {
+  .tn-item {
+    min-width: 48px;
+    padding: 5px 4px;
+  }
+
+  .tn-brand {
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+.tickctl span {
+  white-space: nowrap;
+}

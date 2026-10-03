@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import QuoteHero from "./QuoteHero";
 import TipsTicker from "./TipsTicker";
 import {
@@ -1467,8 +1468,19 @@ function DayView({
   );
 }
 
-export default function Home() {
+function HomeInner() {
   const [tab, setTab] = useState<"record" | "search">("record");
+  const sp = useSearchParams();
+  // 画面右上のバーから ?tab=search で来たときも、タブを切り替える
+  useEffect(() => {
+    const t = sp.get("tab") === "search" ? "search" : "record";
+    setTab(t);
+    window.scrollTo(0, 0);
+  }, [sp]);
+  const changeTab = (t: "record" | "search") => {
+    setTab(t);
+    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : "/");
+  };
   const [log, setLog] = useState<Log>({});
   const [goal, setGoal] = useState<Goal>({ p: "", f: "", c: "" });
   const [loaded, setLoaded] = useState(false);
@@ -1516,17 +1528,6 @@ export default function Home() {
 
   return (
     <main className="container">
-      <header className="brandbar">
-        <span className="brand">LIFEGYM</span>
-        <span className="topbtns">
-          <Link href="/tips" className="guidebtn alt">
-            💡 豆知識
-          </Link>
-          <Link href="/nutrients" className="guidebtn">
-            📖 栄養素ガイド
-          </Link>
-        </span>
-      </header>
       <h1 className="title">専属の栄養士</h1>
       <p className="tagline">PFCをはかって、理想のカラダへ。</p>
       <p className="member">LIFEGYM会員様専用アプリ</p>
@@ -1538,14 +1539,14 @@ export default function Home() {
         <button
           role="tab"
           aria-selected={tab === "record"}
-          onClick={() => setTab("record")}
+          onClick={() => changeTab("record")}
         >
           記録・目標
         </button>
         <button
           role="tab"
           aria-selected={tab === "search"}
-          onClick={() => setTab("search")}
+          onClick={() => changeTab("search")}
         >
           食品を探す
         </button>
@@ -1580,5 +1581,13 @@ export default function Home() {
         />
       )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeInner />
+    </Suspense>
   );
 }

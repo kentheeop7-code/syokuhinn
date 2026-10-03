@@ -4,20 +4,14 @@ import { TIPS, TIP_GROUPS } from "../tipsData";
 
 export const metadata: Metadata = {
   title: "豆知識 | 専属の栄養士",
-  description: "たんぱく質とダイエットの豆知識（小麦粉のたんぱく質、プロテイン入り食品の裏事情など）",
+  description: "勘違いを覆すびっくり豆知識、たんぱく質・ダイエットの豆知識（2026年1月時点）",
 };
 
 export default function Tips() {
   return (
     <main className="container">
-      <header className="brandbar">
-        <span className="brand">LIFEGYM</span>
-        <Link href="/" className="guidebtn">
-          ‹ 記録に戻る
-        </Link>
-      </header>
       <h1 className="title sm">豆知識</h1>
-      <p className="member">たんぱく質とダイエットで、知っておくと役立つ話</p>
+      <p className="member">勘違いを覆す話から、たんぱく質・ダイエットのコツまで（2026年1月時点の情報）</p>
 
       <nav className="anav" aria-label="ページ内メニュー">
         {TIP_GROUPS.map((g) => (
@@ -38,6 +32,18 @@ export default function Tips() {
                 <div className="nhead">
                   <h2>{t.title}</h2>
                 </div>
+                {t.myth && (
+                  <div className="mythbox">
+                    <p className="mb-no">
+                      <span>✕ よくある思い込み</span>
+                      {t.myth}
+                    </p>
+                    <p className="mb-yes">
+                      <span>◎ 実は…</span>
+                      {t.lead}
+                    </p>
+                  </div>
+                )}
                 <ul className="plist">
                   {t.points.map((p) => (
                     <li key={p}>{p}</li>

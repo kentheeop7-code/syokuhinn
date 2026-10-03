@@ -56,11 +56,12 @@ export default function TipsTicker() {
             className={`tk${n === i ? " on" : n === prev ? " out" : ""}`}
             aria-hidden={n !== i}
           >
-            <span className="tkgroup">
+            <span className={t.group === "myth" ? "tkgroup myth" : "tkgroup"}>
               {TIP_GROUPS.find((g) => g.key === t.group)?.label}
             </span>
             <b>{t.title}</b>
-            <p>{t.lead}</p>
+            {t.myth && <p className="tkmyth">✕ 思い込み：{t.myth}</p>}
+            <p>{t.myth ? `◎ 実は… ${t.lead}` : t.lead}</p>
             <Link href={`/tips#${t.id}`} tabIndex={n === i ? 0 : -1}>
               くわしく読む ›
             </Link>

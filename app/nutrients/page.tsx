@@ -480,12 +480,6 @@ const DIET_REFS: { label: string; url?: string }[] = [
 export default function Nutrients() {
   return (
     <main className="container">
-      <header className="brandbar">
-        <span className="brand">LIFEGYM</span>
-        <Link href="/" className="guidebtn">
-          ‹ 記録に戻る
-        </Link>
-      </header>
       <h1 className="title sm">栄養素ガイド</h1>
       <p className="member">目的別のとり方と、栄養素のはたらき（日本人の食事摂取基準 2025年版）</p>
 
