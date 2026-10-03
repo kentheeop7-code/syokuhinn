@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import QuoteHero from "./QuoteHero";
+import TipsTicker from "./TipsTicker";
 import {
   CATEGORIES,
   APPROX,
+  APPROX_NOTE,
   FOODS,
   LIMITS,
   MICROS,
@@ -191,6 +193,7 @@ function FoodRow({
           {Math.round((food.p * 4 + food.f * 9 + food.c * 4) * g)}kcal
         </span>
       </div>
+      {APPROX_NOTE[food.name] && <p className="amountnote">{APPROX_NOTE[food.name]}</p>}
       <div className="amount">
         <label className="gram">
           <input
@@ -1261,15 +1264,21 @@ export default function Home() {
     <main className="container">
       <header className="brandbar">
         <span className="brand">LIFEGYM</span>
-        <Link href="/nutrients" className="guidebtn">
-          📖 栄養素ガイド
-        </Link>
+        <span className="topbtns">
+          <Link href="/tips" className="guidebtn alt">
+            💡 豆知識
+          </Link>
+          <Link href="/nutrients" className="guidebtn">
+            📖 栄養素ガイド
+          </Link>
+        </span>
       </header>
       <h1 className="title">専属の栄養士</h1>
       <p className="tagline">PFCをはかって、理想のカラダへ。</p>
       <p className="member">LIFEGYM会員様専用アプリ</p>
 
       <QuoteHero />
+      <TipsTicker />
 
       <div className="tabs" role="tablist">
         <button
