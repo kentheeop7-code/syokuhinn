@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -560,13 +560,54 @@ function Calendar({
     return avg >= 0.9 ? "reached" : "logged";
   };
 
+  const [open, setOpen] = useState(false);
+  const [sy, sm, sd] = selected.split("-").map(Number);
+  const selDate = new Date(sy, sm - 1, sd);
+  const step = (n: number) => {
+    const d = new Date(sy, sm - 1, sd + n);
+    setSelected(key(d));
+    setMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+  };
+  const toToday = () => {
+    const d = new Date();
+    setSelected(key(d));
+    setMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+  };
+  const selStatus = status(selected);
+
   const cells: (number | null)[] = [
     ...Array(first).fill(null),
     ...Array.from({ length: days }, (_, i) => i + 1),
   ];
 
   return (
-    <div className="card cal">
+    <div className="card cal compact">
+      <div className="calbar">
+        <button aria-label="前の日" onClick={() => step(-1)}>
+          ‹
+        </button>
+        <div className="caltoday">
+          <b>
+            {sm}月{sd}日（{["日", "月", "火", "水", "木", "金", "土"][selDate.getDay()]}）
+          </b>
+          {selected === today ? (
+            <span className="todaybadge">今日</span>
+          ) : (
+            <button className="tobtn" onClick={toToday}>
+              今日へ
+            </button>
+          )}
+          {selStatus && <i className={`mark ${selStatus}`} />}
+        </div>
+        <button aria-label="次の日" onClick={() => step(1)}>
+          ›
+        </button>
+        <button className="calopen" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+          📅 {open ? "閉じる" : "月を見る"}
+        </button>
+      </div>
+      {open && (
+      <>
       <div className="calhead">
         <button aria-label="前の月" onClick={() => setMonth(new Date(y, m - 1, 1))}>
           ‹
@@ -605,6 +646,8 @@ function Calendar({
       <p className="legend">
         <i className="mark logged" /> 記録あり　<i className="mark reached" /> 目標の90%以上
       </p>
+      </>
+      )}
     </div>
   );
 }
@@ -1591,3 +1634,4 @@ export default function Home() {
     </Suspense>
   );
 }
+

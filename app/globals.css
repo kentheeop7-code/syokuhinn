@@ -2422,3 +2422,78 @@ html { overflow-x: clip; }
   color: #6b7c72;
 }
 
+
+/* ===== v12: supp label, faint quote, compact calendar ===== */
+.supp { flex-wrap: wrap; }
+.supp-label {
+  flex: 0 0 100%;
+  padding: 4px 8px 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #0f7a43;
+}
+.supp-count { top: 26px; }
+
+/* 名言：小さく、背景にうっすら */
+.hero {
+  margin: 0 0 6px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  opacity: 0.5;
+}
+.hero .herolabel { display: none; }
+.herostage { min-height: 40px; }
+.hq blockquote { font-size: 0.82rem; line-height: 1.45; font-weight: 500; }
+.hq figcaption { margin-top: 1px; font-size: 0.78rem; }
+.herodots { margin-top: 0; }
+
+/* カレンダー：今日だけの1行表示（ひらくと月全体） */
+.cal.compact { padding: 6px 8px; }
+.calbar { display: flex; align-items: center; gap: 4px; }
+.calbar > button:not(.calopen):not(.tobtn) {
+  flex: none;
+  width: 40px;
+  height: 44px;
+  font-size: 1.4rem;
+  background: none;
+  border: 0;
+  color: var(--brand);
+  cursor: pointer;
+}
+.caltoday { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.caltoday b { font-size: 1.05rem; }
+.todaybadge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.tobtn {
+  padding: 2px 10px;
+  min-height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--brand);
+  background: #fff;
+  color: var(--brand);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.calopen {
+  flex: none;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f3fbf6;
+  color: #14633a;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.cal.compact .day { min-height: 38px; }
+.supp-count { top: 4px; right: 12px; }
+.hero { opacity: 0.7; }
+.hq blockquote, .hq figcaption { color: #2f6b4a; }

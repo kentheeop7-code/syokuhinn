@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { SUPPS, SUPP_UPDATED } from "./supplementsData";
@@ -39,6 +39,7 @@ export default function SuppBar() {
       onTouchStart={() => setHold(true)}
       onTouchEnd={() => setTimeout(() => setHold(false), 4000)}
     >
+      <span className="supp-label">💰 最新のサプリメント値段（日本・2026年10月）</span>
       <button className="supp-arrow" aria-label="前のサプリ" onClick={() => goto(i - 1)}>
         ‹
       </button>
@@ -73,3 +74,4 @@ export default function SuppBar() {
     </div>
   );
 }
+
