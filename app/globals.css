@@ -2092,3 +2092,254 @@ body {
 .tickctl span {
   white-space: nowrap;
 }
+
+/* ===== v10: mobile sizing — text floor & tap targets (all screens) ===== */
+/* 文字は最小でも約13px、ナビのラベルのみ12.6px */
+.tn-item b { font-size: 0.74rem; }
+.herolabel { font-size: 0.74rem; letter-spacing: 0.2em; }
+.hq figcaption { font-size: 0.82rem; }
+.tkgroup { padding: 2px 10px; font-size: 0.78rem; }
+.tickctl { font-size: 0.84rem; }
+small,
+.frkcal small,
+.cmptable tbody th small,
+.micros small { font-size: 0.78rem; }
+.approx { font-size: 0.78rem; }
+.agnote { font-size: 0.84rem; line-height: 1.7; }
+.wd { font-size: 0.82rem; }
+.legend { font-size: 0.82rem; }
+.mcard em { font-size: 0.78rem; }
+.micros dt { font-size: 0.8rem; }
+.micros dd { font-size: 1rem; }
+.ntag { font-size: 0.8rem; }
+.inapp { font-size: 0.8rem; }
+.keychip { font-size: 0.84rem; }
+.tipsrc { font-size: 0.84rem; }
+.caution { font-size: 0.9rem; line-height: 1.7; }
+.note { font-size: 0.93rem; }
+.muted { font-size: 0.9rem; }
+.amountnote { font-size: 0.84rem; }
+.evlink { font-size: 0.9rem; }
+
+/* 押す部分は、できるだけ44px以上 */
+.chip { min-height: 44px; }
+.small { min-height: 44px; }
+.linkbtn { min-height: 44px; }
+.tickctl button { width: 40px; height: 40px; }
+.cmpx { top: 0; right: 0; width: 30px; height: 30px; }
+.hdot {
+  box-sizing: content-box;
+  width: 6px;
+  height: 6px;
+  padding: 9px 3px;
+  background-clip: content-box;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.hdot.on {
+  width: 16px;
+  background-color: #ffffff;
+}
+.tk a { padding: 10px 0; }
+.del { min-width: 52px; min-height: 44px; padding: 8px 12px; font-size: 0.9rem; }
+.tn-brand { padding: 10px 0; }
+
+/* 進み具合のバーは太めに */
+.track { height: 12px; border-radius: 6px; }
+.fill { border-radius: 6px; }
+
+@media (max-width: 520px) {
+  .container { padding-left: 14px; padding-right: 14px; }
+  .card { padding: 16px; border-radius: 16px; }
+  .autogoal { padding: 16px 14px; }
+  .flist { padding: 2px 14px; }
+  .cmp { padding: 14px 12px; }
+
+  /* 絞り込み・並べ替えは、横に隠さず折り返して全部見せる */
+  .chips { flex-wrap: wrap; overflow: visible; }
+
+  /* カレンダー：日付を押しやすく */
+  .cal { padding: 14px 8px; }
+  .grid { gap: 2px; }
+  .day { font-size: 0.98rem; }
+
+  /* ダイエット方法のカード：縦に並べて、1枚ずつ読みやすく */
+  .mcards { grid-template-columns: 1fr; gap: 10px; }
+  .mcard {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+    padding: 12px 14px;
+    font-size: 0.98rem;
+  }
+  .mcard b { flex: 0 0 100%; font-size: 1.02rem; }
+  .mcard em { flex: 0 0 100%; margin-top: 0; }
+
+  /* 追加・比較ボタンは、押しやすい幅に */
+  .rowbtns .small { flex: 1 1 calc(50% - 8px); justify-content: center; text-align: center; }
+  .rowbtns .linkbtn { flex: 1 1 100%; text-align: center; }
+
+  /* 比較表 */
+  .cmptable { font-size: 0.98rem; }
+  .cmptable thead th { min-width: 5.6em; font-size: 0.86rem; }
+  .cmptable tbody th { min-width: 6.4em; font-size: 0.86rem; }
+
+  /* 豆知識・ガイドの本文 */
+  .plist { font-size: 0.95rem; line-height: 1.8; }
+  .nrole { font-size: 0.97rem; }
+  .ndl { grid-template-columns: 6.2em 1fr; font-size: 0.92rem; }
+  .nhead h2 { font-size: 1.08rem; }
+
+  .h2 { font-size: 1.2rem; }
+  .sec { font-size: 1.12rem; }
+  .title { font-size: clamp(1.9rem, 9.5vw, 2.5rem); }
+}
+
+@media (max-width: 360px) {
+  .tn-item { min-width: 46px; padding: 5px 3px; }
+  .tn-brand { font-size: 0.86rem; letter-spacing: 0.1em; }
+  .micros { grid-template-columns: repeat(2, 1fr); }
+}
+
+.mythbox span { font-size: 0.8rem; }
+.calhead button { width: 44px; height: 44px; font-size: 1.5rem; }
+.hdot { padding: 9px 6px; }
+
+/* v10b: ticker without empty space, fixed quote dots */
+.tickstage {
+  display: block;
+  min-height: 0;
+  overflow: visible;
+}
+
+.tk,
+.tk.on {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition: none;
+  animation: tkIn 0.5s ease both;
+}
+
+@keyframes tkIn {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk,
+  .tk.on {
+    animation: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .tickstage {
+    min-height: 0;
+  }
+}
+
+.hdot,
+.hdot.on {
+  background-clip: content-box;
+  border-radius: 6px;
+}
+
+.hdot {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.hdot.on {
+  background-color: #ffffff;
+}
+
+/* v10c: no horizontal overflow, round quote dots */
+html { overflow-x: clip; }
+.tickstage { overflow: hidden; }
+.ticker, .hero { max-width: 100%; }
+
+.hdot {
+  position: relative;
+  box-sizing: border-box;
+  width: 22px;
+  height: 30px;
+  padding: 0;
+  background: none;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.hdot::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s, background 0.25s;
+}
+
+.hdot.on {
+  width: 32px;
+  background: none;
+  background-color: transparent;
+}
+
+.hdot.on::before {
+  width: 20px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+.herodots { gap: 0; margin-top: 2px; }
+
+/* v10d: entries wrap (no horizontal overflow), clearer menu text */
+.entry {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+}
+
+.entry > span:first-child {
+  flex: 1 1 100%;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.entry > span.muted {
+  flex: 1 1 auto;
+  white-space: normal;
+}
+
+.entry .del {
+  margin-left: auto;
+}
+
+.agmeal li {
+  padding: 3px 0;
+  line-height: 1.6;
+}
+
+.agmeal li .muted {
+  color: var(--text);
+  opacity: 0.72;
+  white-space: normal;
+}
+
+.rowhead,
+.proghead {
+  flex-wrap: wrap;
+}

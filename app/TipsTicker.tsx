@@ -16,22 +16,15 @@ const ORDER = (() => {
 })();
 export default function TipsTicker() {
   const [i, setI] = useState(0);
-  const [prev, setPrev] = useState(-1);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setI((cur) => {
-        setPrev(cur);
-        return (cur + 1) % ORDER.length;
-      });
+      setI((cur) => (cur + 1) % ORDER.length);
     }, INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
 
-  const go = (d: number) => {
-    setPrev(i);
-    setI((i + d + ORDER.length) % ORDER.length);
-  };
+  const go = (d: number) => setI((i + d + ORDER.length) % ORDER.length);
 
   return (
     <section className="ticker" aria-label="豆知識">
@@ -50,24 +43,20 @@ export default function TipsTicker() {
         </span>
       </div>
       <div className="tickstage">
-        {ORDER.map((t, n) => (
-          <div
-            key={t.id}
-            className={`tk${n === i ? " on" : n === prev ? " out" : ""}`}
-            aria-hidden={n !== i}
-          >
-            <span className={t.group === "myth" ? "tkgroup myth" : "tkgroup"}>
-              {TIP_GROUPS.find((g) => g.key === t.group)?.label}
-            </span>
-            <b>{t.title}</b>
-            {t.myth && <p className="tkmyth">✕ 思い込み：{t.myth}</p>}
-            <p>{t.myth ? `◎ 実は… ${t.lead}` : t.lead}</p>
-            <Link href={`/tips#${t.id}`} tabIndex={n === i ? 0 : -1}>
-              くわしく読む ›
-            </Link>
-          </div>
-        ))}
-      </div>
-    </section>
+        {(() => {
+          const t = ORDER[i];
+          return (
+            <div key={t.id} className="tk on">
+              <span className={t.group === "myth" ? "tkgroup myth" : "tkgroup"}>
+                {TIP_GROUPS.find((g) => g.key === t.group)?.label}
+              </span>
+              <b>{t.title}</b>
+              {t.myth && <p className="tkmyth">✕ 思い込み：{t.myth}</p>}
+              <p>{t.myth ? `◎ 実は… ${t.lead}` : t.lead}</p>
+              <Link href={`/tips#${t.id}`}>くわしく読む ›</Link>
+            </div>
+          );
+        })()}
+      </div>    </section>
   );
 }
