@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import SuppBar from "./SuppBar";
 
 const ITEMS = [
   { href: "/", key: "record", icon: "📝", label: "記録" },
@@ -23,6 +24,7 @@ export default function TopNav() {
   };
 
   return (
+    <>
     <header className="topnav">
       <div className="topnav-in">
         <Link href="/" className="tn-brand">
@@ -43,5 +45,8 @@ export default function TopNav() {
         </nav>
       </div>
     </header>
+    <SuppBar />
+    </>
   );
 }
+
