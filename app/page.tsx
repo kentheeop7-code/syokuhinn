@@ -170,30 +170,66 @@ function Progress({
   );
 }
 
+type SortKey = "default" | "p" | "pk" | "f" | "kcal" | "fi" | "salt";
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: "default", label: "標準" },
+  { key: "p", label: "たんぱく質が多い" },
+  { key: "pk", label: "100kcalあたりのたんぱく質" },
+  { key: "f", label: "脂質が少ない" },
+  { key: "kcal", label: "カロリーが低い" },
+  { key: "fi", label: "食物繊維が多い" },
+  { key: "salt", label: "塩分が少ない" },
+];
+
+const kcalOf = (x: Pick<Food, "p" | "f" | "c">) => x.p * 4 + x.f * 9 + x.c * 4;
+const MAX_COMPARE = 4;
+
 function FoodRow({
   food,
   onAdd,
+  picked,
+  canPick,
+  onPick,
 }: {
   food: Food;
   onAdd: (name: string, grams: number) => void;
+  picked: boolean;
+  canPick: boolean;
+  onPick: () => void;
 }) {
   const [grams, setGrams] = useState("100");
   const [added, setAdded] = useState(false);
+  const [open, setOpen] = useState(false);
   const g = num(grams) / 100;
   const portions = portionsOf(food);
 
   return (
-    <li>
-      <div className="rowhead">
-        <span>
+    <li className="frow">
+      <div className="frhead">
+        <div className="frname">
           {food.name}
           {APPROX.has(food.name) && <span className="approx">概算値</span>}
-        </span>
-        <span className="muted">
-          {Math.round((food.p * 4 + food.f * 9 + food.c * 4) * g)}kcal
-        </span>
+        </div>
+        <div className="frkcal">
+          <b>{Math.round(kcalOf(food) * g)}</b>
+          <small>kcal</small>
+        </div>
       </div>
       {APPROX_NOTE[food.name] && <p className="amountnote">{APPROX_NOTE[food.name]}</p>}
+
+      <div className="frpfc">
+        <span className="p">
+          <i className="dot p" />P <b>{r1(food.p * g)}</b>g
+        </span>
+        <span className="f">
+          <i className="dot f" />F <b>{r1(food.f * g)}</b>g
+        </span>
+        <span className="c">
+          <i className="dot c" />C <b>{r1(food.c * g)}</b>g
+        </span>
+      </div>
+      <PfcBars p={food.p * g} f={food.f * g} c={food.c * g} />
+
       <div className="amount">
         <label className="gram">
           <input
@@ -228,20 +264,165 @@ function FoodRow({
           ))}
         </div>
       </div>
-      <PfcBars p={food.p * g} f={food.f * g} c={food.c * g} />
-      <PfcRow p={food.p * g} f={food.f * g} c={food.c * g} />
-      <Micros food={food} g={g} />
-      <button
-        className="small"
-        disabled={g <= 0}
-        onClick={() => {
-          onAdd(food.name, num(grams));
-          setAdded(true);
-        }}
-      >
-        {added ? "✓ 追加しました" : "＋ 追加"}
-      </button>
+
+      <div className="rowbtns">
+        <button
+          className="small"
+          disabled={g <= 0}
+          onClick={() => {
+            onAdd(food.name, num(grams));
+            setAdded(true);
+          }}
+        >
+          {added ? "✓ 追加しました" : "＋ 記録に追加"}
+        </button>
+        <button
+          className={picked ? "small cmp on" : "small cmp"}
+          disabled={!picked && !canPick}
+          onClick={onPick}
+        >
+          {picked ? "✓ 比較中" : canPick ? "⇄ 比較に入れる" : "比較は4つまで"}
+        </button>
+        <button className="linkbtn" onClick={() => setOpen(!open)} aria-expanded={open}>
+          くわしい栄養素 {open ? "▴" : "▾"}
+        </button>
+      </div>
+      {open && <Micros food={food} g={g} />}
     </li>
+  );
+}
+
+function ComparePanel({
+  names,
+  onRemove,
+  onClear,
+}: {
+  names: string[];
+  onRemove: (n: string) => void;
+  onClear: () => void;
+}) {
+  const [basis, setBasis] = useState<"100g" | "100kcal">("100g");
+  const [more, setMore] = useState(false);
+  const list = names.map((n) => byName.get(n)).filter(Boolean) as Food[];
+  // 100kcal基準のときは、各食品を「100kcalぶん」に換算して比べる
+  const k = (x: Food) => (basis === "100g" ? 1 : 100 / Math.max(1, kcalOf(x)));
+
+  type Row = {
+    label: string;
+    unit: string;
+    get: (x: Food) => number;
+    best?: "high" | "low";
+    digits?: number;
+  };
+  const rows: Row[] =
+    basis === "100g"
+      ? [{ label: "エネルギー", unit: "kcal", get: (x) => kcalOf(x), best: "low", digits: 0 }]
+      : [{ label: "100kcalの重さ", unit: "g", get: (x) => 10000 / Math.max(1, kcalOf(x)), digits: 0 }];
+  rows.push(
+    { label: "たんぱく質 P", unit: "g", get: (x) => x.p * k(x), best: "high" },
+    { label: "脂質 F", unit: "g", get: (x) => x.f * k(x), best: "low" },
+    { label: "炭水化物 C", unit: "g", get: (x) => x.c * k(x) },
+    { label: "食物繊維", unit: "g", get: (x) => x.fi * k(x), best: "high" },
+    { label: "塩分", unit: "g", get: (x) => x.salt * k(x), best: "low" }
+  );
+  if (more) {
+    MICROS.filter((m) => !["fi", "salt"].includes(m.key)).forEach((m) =>
+      rows.push({
+        label: m.label,
+        unit: m.unit,
+        get: (x) => x[m.key] * k(x),
+        best: "high",
+        digits: m.key === "b1" ? 2 : 1,
+      })
+    );
+  }
+
+  return (
+    <div className="cmp card">
+      <div className="cmphead">
+        <b>食品を比べる</b>
+        <button className="linkbtn" onClick={onClear}>
+          すべて外す
+        </button>
+      </div>
+      <div className="chips tight">
+        {(
+          [
+            ["100g", "同じ100gで比べる"],
+            ["100kcal", "同じ100kcalで比べる"],
+          ] as const
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            className={basis === key ? "chip on" : "chip"}
+            onClick={() => setBasis(key)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {list.length < 2 ? (
+        <p className="note">
+          食品の「⇄ 比較に入れる」を押して、2つ以上選ぶと、ここに並べて表示します（最大4つ）。
+        </p>
+      ) : (
+        <>
+          <div className="cmpwrap">
+            <table className="cmptable">
+              <thead>
+                <tr>
+                  <th aria-label="項目" />
+                  {list.map((x) => (
+                    <th key={x.name}>
+                      <span>{x.name}</span>
+                      <button
+                        className="cmpx"
+                        onClick={() => onRemove(x.name)}
+                        aria-label={`${x.name}を比較から外す`}
+                      >
+                        ×
+                      </button>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => {
+                  const vals = list.map((x) => r.get(x));
+                  const min = Math.min(...vals);
+                  const max = Math.max(...vals);
+                  return (
+                    <tr key={r.label}>
+                      <th scope="row">
+                        {r.label}
+                        <small>{r.unit}</small>
+                      </th>
+                      {vals.map((v, i) => {
+                        const isBest =
+                          max !== min &&
+                          ((r.best === "high" && v === max) || (r.best === "low" && v === min));
+                        const d = r.digits ?? 1;
+                        return (
+                          <td key={list[i].name} className={isBest ? "best" : ""}>
+                            {d === 0 ? Math.round(v) : Math.round(v * 10 ** d) / 10 ** d}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="agnote">
+            緑の太字は、ダイエット中に有利な側です（たんぱく質・食物繊維・ビタミン・ミネラルは多い、カロリー・脂質・塩分は少ない）。
+          </p>
+          <button className="linkbtn" onClick={() => setMore(!more)}>
+            ビタミン・ミネラルも比べる {more ? "▴" : "▾"}
+          </button>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -254,9 +435,31 @@ function Search({
 }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("すべて");
+  const [sort, setSort] = useState<SortKey>("default");
+  const [picked, setPicked] = useState<string[]>([]);
+
+  const key: Record<SortKey, (x: Food) => number> = {
+    default: () => 0,
+    p: (x) => -x.p,
+    pk: (x) => -(x.p / Math.max(1, kcalOf(x))),
+    f: (x) => x.f,
+    kcal: (x) => kcalOf(x),
+    fi: (x) => -x.fi,
+    salt: (x) => x.salt,
+  };
   const hits = FOODS.filter(
     (x) => (cat === "すべて" || x.cat === cat) && x.name.includes(q.trim())
   );
+  const shown =
+    sort === "default"
+      ? hits
+      : [...hits]
+          // エネルギーがごく小さい食品（調味料など）は、並び替えの上位に出ないようにする
+          .filter((x) => sort !== "pk" || kcalOf(x) >= 20)
+          .sort((a, b) => key[sort](a) - key[sort](b));
+
+  const toggle = (n: string) =>
+    setPicked((cur) => (cur.includes(n) ? cur.filter((x) => x !== n) : [...cur, n].slice(0, MAX_COMPARE)));
 
   return (
     <section>
@@ -267,6 +470,7 @@ function Search({
         placeholder="食品名で検索（例: 鶏、ごはん、麦）"
         aria-label="食品名"
       />
+      <p className="aglabel">分類</p>
       <div className="chips">
         {["すべて", ...CATEGORIES].map((c) => (
           <button
@@ -278,17 +482,45 @@ function Search({
           </button>
         ))}
       </div>
+      <p className="aglabel">並び替え</p>
+      <div className="chips">
+        {SORTS.map((o) => (
+          <button
+            key={o.key}
+            className={o.key === sort ? "chip on" : "chip"}
+            onClick={() => setSort(o.key)}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+
+      {picked.length > 0 && (
+        <ComparePanel
+          names={picked}
+          onRemove={(n) => setPicked((cur) => cur.filter((x) => x !== n))}
+          onClear={() => setPicked([])}
+        />
+      )}
+
       <p className="note">
-        最初は100gあたりの栄養素です。茶碗1杯などの目安ボタンか、グラム数の入力で量を変えられます。「追加」で{" "}
+        {shown.length}件。初めは100gあたりの値です。目安ボタンやグラム数で量を変えられます。「記録に追加」で{" "}
         {label(date)} の記録に入ります。
       </p>
       <p className="note">
         数値は文部科学省「日本食品標準成分表（八訂）増補2023年」を元にしています（「概算値」は公式に同じ食品がないものです）。
       </p>
-      {hits.length === 0 && <p className="note">見つかりませんでした。</p>}
-      <ul className="rows card">
-        {hits.map((x) => (
-          <FoodRow key={x.name} food={x} onAdd={onAdd} />
+      {shown.length === 0 && <p className="note">見つかりませんでした。</p>}
+      <ul className="rows card flist">
+        {shown.map((x) => (
+          <FoodRow
+            key={x.name}
+            food={x}
+            onAdd={onAdd}
+            picked={picked.includes(x.name)}
+            canPick={picked.length < MAX_COMPARE}
+            onPick={() => toggle(x.name)}
+          />
         ))}
       </ul>
     </section>
@@ -953,6 +1185,7 @@ function DayView({
   const total = useMemo(() => sum(entries), [entries]);
   const t = { p: num(goal.p), f: num(goal.f), c: num(goal.c) };
   const [shareText, setShareText] = useState("");
+  const [showMicros, setShowMicros] = useState(false);
   const [msg, setMsg] = useState("");
 
   const suggestions = useMemo(() => {
@@ -1079,6 +1312,9 @@ function DayView({
     <>
       <h2 className="h2">{label(date)}</h2>
 
+      <h3 className="sec">
+        <span>1</span>目標を決める
+      </h3>
       <div className="card">
         <p className="cardtitle">目標のPFC</p>
         <ProfileGoal setGoal={setGoal} onAddMany={(items) => items.forEach((i) => onAdd(i.name, i.g))} />
@@ -1105,6 +1341,9 @@ function DayView({
         </div>
       </div>
 
+      <h3 className="sec">
+        <span>2</span>今日の合計と、目標との差
+      </h3>
       <div className="card">
         <div className="kcal">
           合計 <b>{Math.round(total.kcal)}</b> kcal
@@ -1115,7 +1354,14 @@ function DayView({
         <Progress name="たんぱく質" cls="p" value={total.p} target={t.p} />
         <Progress name="脂質" cls="f" value={total.f} target={t.f} />
         <Progress name="炭水化物" cls="c" value={total.c} target={t.c} />
-        <Micros food={total} g={1} warn />
+        <button
+          className="linkbtn microtoggle"
+          onClick={() => setShowMicros(!showMicros)}
+          aria-expanded={showMicros}
+        >
+          ビタミン・ミネラル・塩分を見る {showMicros ? "▴" : "▾"}
+        </button>
+        {showMicros && <Micros food={total} g={1} warn />}
         {warnings.length > 0 && (
           <ul className="alert" role="alert">
             {warnings.map((w) => (
@@ -1125,6 +1371,9 @@ function DayView({
         )}
       </div>
 
+      <h3 className="sec">
+        <span>3</span>今日食べたもの
+      </h3>
       <div className="card">
         <p className="cardtitle">食べたもの</p>
         {entries.length === 0 && (
@@ -1163,6 +1412,10 @@ function DayView({
       </div>
 
       {suggestions.length > 0 && (
+        <>
+        <h3 className="sec">
+          <span>4</span>目標に近づく食品
+        </h3>
         <div className="card">
           <p className="cardtitle">目標に近づく食品</p>
           <p className="note">残りのPFCに合う食品です。「追加」で合計に足せます。</p>
@@ -1186,6 +1439,7 @@ function DayView({
             ))}
           </ul>
         </div>
+        </>
       )}
 
       <div className="actions">

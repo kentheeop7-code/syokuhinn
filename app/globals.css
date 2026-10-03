@@ -1707,3 +1707,249 @@ body {
     transition: opacity 0.3s;
   }
 }
+
+/* ===== v8: section headings, food list, compare ===== */
+.sec {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0 10px;
+  color: var(--brand-deep);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sec span {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  background: var(--brand);
+  border-radius: 50%;
+}
+
+.linkbtn {
+  padding: 8px 4px;
+  color: var(--brand-deep);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.linkbtn:hover {
+  text-decoration: underline;
+}
+
+.microtoggle {
+  display: block;
+  margin-top: 8px;
+}
+
+/* food list (compact, mobile friendly) */
+.flist {
+  padding: 4px 16px;
+}
+
+.frow {
+  padding: 16px 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.flist .frow:first-child {
+  border-top: none;
+}
+
+.frhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.frname {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.frkcal {
+  flex: none;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.frkcal b {
+  color: var(--text);
+  font-size: 1.25rem;
+}
+
+.frkcal small {
+  margin-left: 2px;
+  font-size: 0.72rem;
+}
+
+.frpfc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 8px 0 6px;
+  font-size: 0.98rem;
+}
+
+.frpfc b {
+  font-size: 1.05rem;
+}
+
+.rowbtns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.rowbtns .small {
+  margin-top: 0;
+}
+
+.small.cmp {
+  color: var(--brand-deep);
+  border-color: #8fcaa8;
+}
+
+.small.cmp.on {
+  color: #ffffff;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+/* compare panel */
+.cmp {
+  margin: 16px 0;
+  padding: 16px;
+  border: 2px solid #b4dfc5;
+}
+
+.cmphead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--brand-deep);
+  font-size: 1.05rem;
+}
+
+.cmpwrap {
+  margin-top: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cmptable {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.92rem;
+}
+
+.cmptable th,
+.cmptable td {
+  padding: 9px 8px;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+
+.cmptable thead th {
+  position: relative;
+  min-width: 5.4em;
+  padding-top: 20px;
+  color: var(--brand-deep);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  vertical-align: bottom;
+  background: #effaf4;
+}
+
+.cmptable tbody th {
+  position: sticky;
+  left: 0;
+  min-width: 6.6em;
+  padding-left: 10px;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: left;
+  background: #ffffff;
+}
+
+.cmptable tbody th small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 400;
+}
+
+.cmptable thead th:first-child {
+  position: sticky;
+  left: 0;
+  background: #effaf4;
+}
+
+.cmptable td {
+  font-size: 1.02rem;
+}
+
+.cmptable td.best {
+  color: var(--brand-deep);
+  font-weight: 800;
+  background: #dcf3e5;
+}
+
+.cmpx {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* mobile header */
+@media (max-width: 520px) {
+  .brandbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .topbtns {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .guidebtn {
+    padding: 9px 15px;
+    font-size: 0.88rem;
+  }
+
+  .qmark {
+    display: none;
+  }
+
+  .tickstage {
+    min-height: 132px;
+  }
+}

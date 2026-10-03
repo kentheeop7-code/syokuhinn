@@ -6,18 +6,14 @@ import { TIPS, TIP_GROUPS } from "./tipsData";
 
 const INTERVAL_MS = 7000;
 
-// たんぱく質とダイエットの豆知識が、交互に自動で流れる
+// 3つの分類の豆知識が、順番に交ざって自動で流れる
 const ORDER = (() => {
-  const p = TIPS.filter((t) => t.group === "protein");
-  const d = TIPS.filter((t) => t.group === "diet");
+  const groups = TIP_GROUPS.map((g) => TIPS.filter((t) => t.group === g.key));
   const out: typeof TIPS = [];
-  for (let i = 0; i < Math.max(p.length, d.length); i++) {
-    if (p[i]) out.push(p[i]);
-    if (d[i]) out.push(d[i]);
-  }
+  const max = Math.max(...groups.map((g) => g.length));
+  for (let i = 0; i < max; i++) for (const g of groups) if (g[i]) out.push(g[i]);
   return out;
 })();
-
 export default function TipsTicker() {
   const [i, setI] = useState(0);
   const [prev, setPrev] = useState(-1);
