@@ -1,23 +1,46 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SUPPS, SUPP_UPDATED } from "./supplementsData";
 
-const INTERVAL_MS = 6000;
+const INTERVAL_MS = 7000;
 
-// ヘッダーの下で、サプリの相場・種類・効果が横にスライドして流れる（スワイプ・矢印でも操作できる）
+// 種類を5つのグループにまとめて、絞り込めるようにする
+const GROUPS = [
+  { key: "all", label: "すべて", kinds: [] as string[] },
+  { key: "protein", label: "プロテイン", kinds: ["プロテイン"] },
+  { key: "amino", label: "アミノ酸", kinds: ["アミノ酸", "筋肉サポート"] },
+  { key: "perf", label: "運動", kinds: ["パフォーマンス", "エネルギー"] },
+  { key: "vm", label: "ビタミン・ミネラル", kinds: ["ビタミン", "ミネラル"] },
+  { key: "health", label: "健康・美容", kinds: ["脂肪酸", "美容・関節", "腸活", "リラックス"] },
+];
+
+// ヘッダーの下で、サプリの実商品の価格・種類・効果が横にスライドして流れる
 export default function SuppBar() {
   const track = useRef<HTMLDivElement>(null);
+  const [group, setGroup] = useState("all");
   const [i, setI] = useState(0);
   const [open, setOpen] = useState(false);
   const [hold, setHold] = useState(false);
 
+  const list = useMemo(() => {
+    const g = GROUPS.find((x) => x.key === group);
+    return !g || g.key === "all" ? SUPPS : SUPPS.filter((s) => g.kinds.includes(s.kind));
+  }, [group]);
+
   const goto = (n: number) => {
     const el = track.current;
-    if (!el) return;
-    const k = (n + SUPPS.length) % SUPPS.length;
+    if (!el || list.length === 0) return;
+    const k = (n + list.length) % list.length;
     el.scrollTo({ left: k * el.clientWidth, behavior: "smooth" });
     setI(k);
+  };
+
+  const pickGroup = (k: string) => {
+    setGroup(k);
+    setI(0);
+    setOpen(false);
+    track.current?.scrollTo({ left: 0 });
   };
 
   useEffect(() => {
@@ -42,57 +65,80 @@ export default function SuppBar() {
       ro?.disconnect();
       window.removeEventListener("resize", fit);
     };
-  }, [i, open]);
+  }, [i, open, group]);
 
   const onScroll = () => {
     const el = track.current;
     if (!el) return;
     const k = Math.round(el.scrollLeft / el.clientWidth);
-    if (k !== i && k >= 0 && k < SUPPS.length) setI(k);
+    if (k !== i && k >= 0 && k < list.length) setI(k);
   };
 
   return (
     <div
       className={open ? "supp open" : "supp"}
       onTouchStart={() => setHold(true)}
-      onTouchEnd={() => setTimeout(() => setHold(false), 4000)}
+      onTouchEnd={() => setTimeout(() => setHold(false), 5000)}
     >
-      <span className="supp-label">💰 最新のサプリメント値段（日本・2026年10月）</span>
-      <button className="supp-arrow" aria-label="前のサプリ" onClick={() => goto(i - 1)}>
-        ‹
-      </button>
-      <div className="supp-track" ref={track} onScroll={onScroll}>
-        {SUPPS.map((s) => (
-          <div key={s.id} className="supp-slide">
-            <button className="supp-card" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-              <span className="supp-top">
-                <span aria-hidden>{s.icon}</span>
-                <b>{s.name}</b>
-                <em>{s.real ? "実商品" : "相場"}・{s.kind}</em>
-              </span>
-              <span className="supp-price">{s.price}</span>
-              <span className="supp-effect">{s.effect}</span>
-              {open && (
-                <span className="supp-more">
-                  <span>目安：{s.unit}</span>
-                  <span>ポイント：{s.tip}</span>
-                  <span className="supp-date">{s.real ? `出典：${s.src}。税込。価格は店やセールで変わります。` : `日本の相場・${SUPP_UPDATED}。商品ごとの価格は店やセールで変わります。`}</span>
-                </span>
-              )}
-            </button>
-          </div>
+      <div className="supp-head">
+        <span className="supp-label">💰 最新のサプリメント値段</span>
+        <span className="supp-count">
+          {i + 1} / {list.length}
+        </span>
+      </div>
+      <div className="supp-tabs" role="tablist" aria-label="サプリの種類">
+        {GROUPS.map((g) => (
+          <button
+            key={g.key}
+            role="tab"
+            aria-selected={group === g.key}
+            className={group === g.key ? "on" : ""}
+            onClick={() => pickGroup(g.key)}
+          >
+            {g.label}
+          </button>
         ))}
       </div>
-      <button className="supp-arrow" aria-label="次のサプリ" onClick={() => goto(i + 1)}>
-        ›
-      </button>
-      <span className="supp-count">
-        {i + 1}/{SUPPS.length}
-      </span>
+      <div className="supp-body">
+        <button className="supp-arrow" aria-label="前のサプリ" onClick={() => goto(i - 1)}>
+          ‹
+        </button>
+        <div className="supp-track" ref={track} onScroll={onScroll}>
+          {list.map((s) => (
+            <div key={s.id} className="supp-slide">
+              <button className="supp-card" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+                <span className="supp-ico" aria-hidden>
+                  {s.icon}
+                </span>
+                <span className="supp-main">
+                  <span className="supp-name">{s.name}</span>
+                  <span className="supp-badges">
+                    <em className={s.real ? "real" : ""}>{s.real ? "実商品" : "相場"}</em>
+                    <em>{s.kind}</em>
+                  </span>
+                  <span className="supp-price">{s.price}</span>
+                  <span className="supp-unit">{s.unit}</span>
+                  <span className="supp-effect">{s.effect}</span>
+                  {open && (
+                    <span className="supp-more">
+                      <span>ポイント：{s.tip}</span>
+                      <span className="supp-date">
+                        {s.real
+                          ? `出典：${s.src}。税込。価格は店やセールで変わります。`
+                          : `日本の相場・${SUPP_UPDATED}。商品ごとの価格は店やセールで変わります。`}
+                      </span>
+                    </span>
+                  )}
+                  <span className="supp-hint">{open ? "▲ 閉じる" : "▼ 詳しく見る"}</span>
+                </span>
+              </button>
+            </div>
+          ))}
+        </div>
+        <button className="supp-arrow" aria-label="次のサプリ" onClick={() => goto(i + 1)}>
+          ›
+        </button>
+      </div>
     </div>
   );
 }
-
-
-
-

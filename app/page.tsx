@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import QuoteHero from "./QuoteHero";
+import WeightChart from "./WeightChart";
 import TipsTicker from "./TipsTicker";
 import {
   CATEGORIES,
@@ -1605,6 +1606,7 @@ function HomeInner() {
             log={log}
             goal={goal}
           />
+          <WeightChart date={selected} />
           <DayView
             date={selected}
             entries={log[selected] ?? []}
@@ -1634,4 +1636,5 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
