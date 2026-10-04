@@ -26,6 +26,24 @@ export default function SuppBar() {
     return () => clearInterval(id);
   });
 
+  // 今見えているスライドの高さに合わせる（短いスライドの下に余白が出ないように）
+  useEffect(() => {
+    const fit = () => {
+      const el = track.current;
+      const slide = el?.children[i] as HTMLElement | undefined;
+      if (el && slide) el.style.height = `${slide.offsetHeight}px`;
+    };
+    fit();
+    const slide = track.current?.children[i] as HTMLElement | undefined;
+    const ro = typeof ResizeObserver !== "undefined" && slide ? new ResizeObserver(fit) : null;
+    if (ro && slide) ro.observe(slide);
+    window.addEventListener("resize", fit);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, [i, open]);
+
   const onScroll = () => {
     const el = track.current;
     if (!el) return;
@@ -74,5 +92,7 @@ export default function SuppBar() {
     </div>
   );
 }
+
+
 
 
