@@ -2845,3 +2845,5 @@ input:focus, select:focus, textarea:focus { outline: 3px solid var(--pop-sky); o
 .wresult span { display: block !important; }
 .wresult span b { display: block; margin-bottom: 2px; }
 .wresult li .lg { flex: none; }
+.wnote, .wnote.small { border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; }
+.wnote.small { margin-top: 12px; }
