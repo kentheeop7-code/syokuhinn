@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -167,7 +167,7 @@ export default function WeightChart() {
                 </text>
               ))}
               <line x1={M.l} x2={W - M.r} y1={chart.y(wt)} y2={chart.y(wt)} className="wtarget" />
-              <text x={W - M.r - 2} y={chart.y(wt) - 5} className="wtick" textAnchor="end">
+              <text x={M.l + 6} y={chart.y(wt) - 6} className="wtick" textAnchor="start">
                 目標 {wt}kg
               </text>
               {chart.lines.map((l) => (
@@ -224,3 +224,4 @@ export default function WeightChart() {
     </section>
   );
 }
+
