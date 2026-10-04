@@ -50,7 +50,7 @@ export default function SuppBar() {
               <span className="supp-top">
                 <span aria-hidden>{s.icon}</span>
                 <b>{s.name}</b>
-                <em>{s.kind}</em>
+                <em>{s.real ? "実商品" : "相場"}・{s.kind}</em>
               </span>
               <span className="supp-price">{s.price}</span>
               <span className="supp-effect">{s.effect}</span>
@@ -58,7 +58,7 @@ export default function SuppBar() {
                 <span className="supp-more">
                   <span>目安：{s.unit}</span>
                   <span>ポイント：{s.tip}</span>
-                  <span className="supp-date">日本の相場・{SUPP_UPDATED}。価格は店やセールで変わります。</span>
+                  <span className="supp-date">{s.real ? `出典：${s.src}。税込。価格は店やセールで変わります。` : `日本の相場・${SUPP_UPDATED}。商品ごとの価格は店やセールで変わります。`}</span>
                 </span>
               )}
             </button>
@@ -74,4 +74,5 @@ export default function SuppBar() {
     </div>
   );
 }
+
 
