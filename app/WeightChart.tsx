@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import SyncCard from "./SyncCard";
 
 // 体重の記録（日付 → kg）。端末のブラウザにだけ保存される
 type Weights = Record<string, number>;
@@ -229,9 +230,11 @@ export default function WeightChart({ date }: { date: string }) {
           )}
         </>
       )}
+      <SyncCard />
       <p className="wnote small">※ 一般的な目安です。体重の増減には個人差があり、体調や食事・睡眠でも日々変わります。</p>
     </section>
   );
 }
+
 
 
