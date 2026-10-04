@@ -1606,7 +1606,7 @@ function HomeInner() {
             log={log}
             goal={goal}
           />
-          <WeightChart date={selected} />
+          <WeightChart />
           <DayView
             date={selected}
             entries={log[selected] ?? []}
@@ -1636,5 +1636,6 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
