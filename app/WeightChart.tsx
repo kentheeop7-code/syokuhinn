@@ -27,29 +27,34 @@ export default function WeightChart() {
   const [goal, setGoal] = useState("");
   const [loaded, setLoaded] = useState(false);
 
+  // 目標体重は「目標を決める」で入れた体重と連動する（入力のたびに更新される）
   useEffect(() => {
+    const readGoal = () => {
+      try {
+        const p = JSON.parse(localStorage.getItem("lg-profile") || "null");
+        setGoal(p?.weight ? String(p.weight) : "");
+      } catch {}
+    };
     try {
       const n = localStorage.getItem("lg-now");
-      const g = localStorage.getItem("lg-wgoal");
       if (n) setNow(n);
-      if (g) setGoal(g);
-      else {
-        // 「目標を決める」で入れた目標体重があれば、最初の値に使う
-        const p = JSON.parse(localStorage.getItem("lg-profile") || "null");
-        if (p?.weight) setGoal(String(p.weight));
-      }
     } catch {}
+    readGoal();
     setLoaded(true);
+    window.addEventListener("lg-profile-change", readGoal);
+    window.addEventListener("storage", readGoal);
+    return () => {
+      window.removeEventListener("lg-profile-change", readGoal);
+      window.removeEventListener("storage", readGoal);
+    };
   }, []);
 
   useEffect(() => {
     if (!loaded) return;
     try {
       localStorage.setItem("lg-now", now);
-      localStorage.setItem("lg-wgoal", goal);
     } catch {}
-  }, [now, goal, loaded]);
-
+  }, [now, loaded]);
   const w0 = parseFloat(now);
   const wt = parseFloat(goal);
   const okNow = w0 >= 20 && w0 <= 300;
@@ -105,27 +110,18 @@ export default function WeightChart() {
             <b>kg</b>
           </span>
         </label>
-        <label className="wlabel">
+        <div className="wlabel">
           目標体重
-          <span className="winput">
-            <input
-              type="number"
-              inputMode="decimal"
-              step="0.1"
-              min="20"
-              max="300"
-              placeholder="62.0"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              aria-label="目標体重（kg）"
-            />
-            <b>kg</b>
+          <span className={okGoal ? "winput linked" : "winput linked empty"}>
+            <b className="wgoalval">{okGoal ? wt : "未設定"}</b>
+            {okGoal && <b>kg</b>}
           </span>
-        </label>
+          <small className="wlink">🔗 「目標を決める」の目標体重と連動</small>
+        </div>
       </div>
 
       {!okNow || !okGoal ? (
-        <p className="wempty">現在の体重と目標体重を入れると、グラフが表示されます。</p>
+        <p className="wempty">{okNow ? "下の「① あなたのこと」で目標体重を入れると、グラフが表示されます。" : "現在の体重を入れると、グラフが表示されます（目標体重は、下の「目標を決める」で入れたものが使われます）。"}</p>
       ) : diff <= 0 ? (
         <p className="wempty">目標体重が、現在の体重より低くなるように入れてください。</p>
       ) : (
@@ -224,4 +220,5 @@ export default function WeightChart() {
     </section>
   );
 }
+
 

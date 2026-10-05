@@ -979,6 +979,7 @@ function ProfileGoal({
     setAdded(false);
     try {
       localStorage.setItem("lg-profile", JSON.stringify(next));
+      window.dispatchEvent(new Event("lg-profile-change"));
     } catch {}
     const r = calcPlan(next);
     if (r) setGoal({ p: String(r.p), f: String(r.f), c: String(r.c) });
@@ -1636,6 +1637,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
