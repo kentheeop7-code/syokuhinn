@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SUPPS, SUPP_UPDATED } from "./supplementsData";
@@ -12,7 +12,7 @@ const GROUPS = [
   { key: "amino", label: "アミノ酸", kinds: ["アミノ酸", "筋肉サポート"] },
   { key: "perf", label: "運動", kinds: ["パフォーマンス", "エネルギー"] },
   { key: "vm", label: "ビタミン・ミネラル", kinds: ["ビタミン", "ミネラル"] },
-  { key: "health", label: "健康・美容", kinds: ["脂肪酸", "美容・関節", "腸活", "リラックス"] },
+  { key: "health", label: "健康・美容", kinds: ["脂肪酸", "美容・関節", "腸活", "リラックス", "血流"] },
 ];
 
 // ヘッダーの下で、サプリの実商品の価格・種類・効果が横にスライドして流れる
@@ -142,3 +142,4 @@ export default function SuppBar() {
     </div>
   );
 }
+
