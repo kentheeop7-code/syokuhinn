@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AGE_SOURCES, ageBand, ageNotes } from "./ageInfo";
 
@@ -65,6 +65,17 @@ export function AgeNotesBox({ age, sex }: { age: number; sex: "m" | "f" | null }
           <li key={t}>{t}</li>
         ))}
       </ul>
+      {sex === "f" && age >= 40 && (
+        <>
+          <p className="agetitle">女性の{age}歳：ホルモンの変化もいっしょに</p>
+          <ul>
+            <li>女性ホルモン（エストロゲン）が減る時期で、骨量・LDLコレステロール・内臓脂肪・血圧が変わりやすくなります。食事を減らすより、筋トレ＋たんぱく質＋骨を守る栄養を。</li>
+            <li>骨粗鬆症検診（40歳から5歳ごと）と、乳がん検診（2年に1回）を、あわせて受けましょう。</li>
+            <li>月経がある間は、鉄（赤身肉・レバー・あさり）を。閉経後は、カルシウム700〜800mg・ビタミンD・ビタミンKを重点的に。</li>
+            <li>ほてりや眠れないなど、更年期のつらい症状は、婦人科で相談できます。くわしくは、下の「女性のからだと食事：年代別ガイド」へ。</li>
+          </ul>
+        </>
+      )}
     </div>
   );
 }
@@ -117,3 +128,4 @@ export default function AgeCompare() {
     </section>
   );
 }
+
