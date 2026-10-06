@@ -3046,3 +3046,4 @@ body {
 .wtick, .wval { font-size: 14px !important; }
 .mbar .bp { background: #cf3a26 !important; color: #fff !important; }
 .mrow, .mrow .mname b, .mrow .num, .mrow[aria-pressed="true"] { color: #12301f !important; }
+.wtick, .wval { font-size: 15px !important; }
