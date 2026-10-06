@@ -11,6 +11,8 @@ type Menu = {
   name: string;
   short: string;
   tag: string;
+  who: string;
+  tips: string[];
   color: string;
   meals: Meal[];
 };
@@ -23,6 +25,8 @@ const MENUS: Menu[] = [
     name: "和食バランス",
     short: "和食",
     tag: "いちばん続けやすい、ごはん中心の定番",
+    who: "はじめての人、家族と同じ食事で進めたい人、体型を維持したい人。",
+    tips: ["ごはんは毎食150〜180gで、主食・主菜・副菜をそろえる", "朝は卵と納豆で、たんぱく質を先にとる", "間食はヨーグルトとバナナで、おやつの代わりに"],
     color: "#46c8ff",
     meals: [
       { title: "朝食", items: [{ name: "白ごはん", g: 150 }, { name: "卵", g: 100 }, { name: "納豆", g: 45 }, { name: "ほうれん草", g: 60 }] },
@@ -37,6 +41,8 @@ const MENUS: Menu[] = [
     name: "高たんぱく・筋トレ",
     short: "高たんぱく",
     tag: "体づくり向け。たんぱく質もエネルギーも多め",
+    who: "筋トレをしている人、体重を増やしたい人、運動量の多い人。",
+    tips: ["たんぱく質は体重1kgあたり約2gを目安に、3〜4回に分けて", "トレの前後は、ごはんと肉で糖質とたんぱく質をしっかり", "食べきれないときは、間食のプロテインで補う"],
     color: "#ff6b57",
     meals: [
       { title: "朝食", items: [{ name: "オートミール", g: 50 }, { name: "牛乳", g: 200 }, { name: "卵", g: 150 }, { name: "バナナ", g: 100 }] },
@@ -51,6 +57,8 @@ const MENUS: Menu[] = [
     name: "低脂質ダイエット",
     short: "低脂質",
     tag: "脂質をおさえて、量は食べられる",
+    who: "ダイエット中で、食べる量は減らしたくない人。",
+    tips: ["肉は、ささみ・むね・タラなど、脂の少ないものを選ぶ", "調理は、焼く・蒸す・ゆでるが中心。揚げ物は避ける", "脂質は1日16g前後。少なすぎると続かないので、卵黄や魚を足してもOK"],
     color: "#7ed957",
     meals: [
       { title: "朝食", items: [{ name: "全粒粉パン", g: 90 }, { name: "卵白", g: 100 }, { name: "低脂肪乳", g: 200 }] },
@@ -65,6 +73,8 @@ const MENUS: Menu[] = [
     name: "糖質オフ",
     short: "糖質オフ",
     tag: "ごはんを減らして、肉・魚・卵で満足感",
+    who: "糖質を控えたい人、食後の眠気が気になる人。糖尿病などで薬を使っている人は、必ず医師に相談を。",
+    tips: ["炭水化物は約34g。ごはんをやめて、野菜と豆腐でかさを出す", "脂質は多めになるので、体重を落としたい日は、油の量を調整", "食物繊維が不足しやすいので、野菜やきのこは毎食入れる"],
     color: "#ffd23f",
     meals: [
       { title: "朝食", items: [{ name: "卵", g: 150 }, { name: "アボカド", g: 70 }, { name: "ブロッコリー", g: 80 }, { name: "バター", g: 8 }] },
@@ -196,6 +206,7 @@ export default function MealCompare({
           {cur.menu.name}の献立
         </h3>
         <p className="mtag">{cur.menu.tag}</p>
+        <p className="mwho"><b>向いている人</b>{cur.menu.who}</p>
         <div className="mmeals">
           {cur.menu.meals.map((m) => (
             <div key={m.title} className="mmeal">
@@ -222,6 +233,14 @@ export default function MealCompare({
             </>
           )}
         </p>
+        <div className="mtips">
+          <b>続けるコツ</b>
+          <ul>
+            {cur.menu.tips.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
         <button
           className="btn"
           onClick={() => {
@@ -238,6 +257,7 @@ export default function MealCompare({
     </section>
   );
 }
+
 
 
 

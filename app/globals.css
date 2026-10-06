@@ -2998,3 +2998,46 @@ body { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
 .mrow .mname b { font-size: 0.9rem; white-space: nowrap; }
 .mletter { width: 24px !important; height: 24px !important; font-size: 0.8rem; flex: none; }
 .num { font-size: 1rem; }
+
+/* ===== v16: simpler look (softer borders, no hard shadows, calmer colors) + detail text ===== */
+body {
+  background-image: none !important;
+  background-color: #fbfaf2 !important;
+}
+.quotebg { display: none; }
+.card, .ticker, .tipcard, .ncard, .mrow, .supp-track, .sync, .wsvg, .tabs, .mmeal, .mdetail, .tn-item.on, .bb-item {
+  border-width: 2px !important;
+  border-color: #2b4a38 !important;
+  box-shadow: none !important;
+}
+.card, .ticker, .tipcard, .ncard { border-radius: 16px !important; box-shadow: 0 2px 10px rgba(30, 70, 45, 0.07) !important; }
+.tn-brand { transform: none; box-shadow: none; border-width: 2px; }
+.btn { box-shadow: none !important; border-width: 2px; }
+.btn:hover:not(:disabled) { transform: none; box-shadow: none !important; }
+.btn:active:not(:disabled) { transform: scale(0.98); }
+.tabs { box-shadow: none; }
+.chip, .anav a, .supp-tabs button { border-width: 1.5px !important; box-shadow: none !important; }
+.supp { background: #fff7d1; border-bottom: 2px solid #2b4a38; }
+.supp-price { background: #fff !important; border: 1.5px solid #2b4a38; box-shadow: none !important; }
+.supp-ico { background: #eaf6d6; border-width: 1.5px; }
+.bbar { border-top-width: 2px; box-shadow: none; gap: 6px; }
+.bb-item { box-shadow: none !important; border-width: 1.5px !important; border-radius: 14px; min-height: 54px; }
+.bb-item:active { transform: scale(0.94); box-shadow: none !important; }
+.bb-item.on { background: #ffe680; border-width: 2px !important; }
+.mrow { box-shadow: none !important; }
+.mrow.on { transform: none; }
+.num.p, .num.f, .num.c { border: 0; }
+.mdetail { background: #fff; }
+.h2, .cardtitle { font-weight: 800; }
+
+/* detail text blocks */
+.supp-more { gap: 8px; }
+.supp-more > span { display: block; }
+.supp-more b { display: block; font-size: 0.8rem; font-weight: 900; color: #08703a; margin-bottom: 1px; }
+.mwho { margin: 0 0 10px; font-size: 0.92rem; line-height: 1.6; }
+.mwho b, .mtips b { display: block; font-size: 0.8rem; font-weight: 900; color: #08703a; }
+.mtips { margin: 10px 0; padding: 8px 10px; background: #f2fbd9; border-radius: 12px; }
+.mtips ul { margin: 2px 0 0; padding-left: 1.2em; }
+.mtips li { font-size: 0.9rem; line-height: 1.6; }
+.wsub { display: block; font-size: 0.82rem; font-weight: 700; color: #26402f; margin: 0 0 3px; line-height: 1.5; }
+.wchart .wnote b { color: #08703a; }

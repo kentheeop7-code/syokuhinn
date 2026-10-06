@@ -192,6 +192,10 @@ export default function WeightChart() {
                     <b>
                       {l.label}（月{l.perMonth}kg減）
                     </b>
+                    <small className="wsub">
+                      1日あたり約{Math.round((l.perMonth * 7200) / 30)}kcalのマイナスに相当・1か月で体重の約{r1((l.perMonth / w0) * 100)}%
+                      {(l.perMonth / w0) * 100 > 5 ? "（やや速めのペース）" : ""}
+                    </small>
                     {l.reached ? (
                       <>
                         目標まで <strong>約{r1(l.months)}か月</strong>（{whenText(l.months)}）
@@ -206,6 +210,9 @@ export default function WeightChart() {
               ))}
             </ul>
 
+            <p className="wnote">
+              <b>ペースの考え方</b>　体脂肪1kgは、約7,200kcalにあたります。月2kgなら1日約480kcal、月3kgなら1日約720kcalを、食事と運動で減らす計算です。多くの目安では、1か月で体重の約3〜5%までが無理のないペースとされます。食事を減らしすぎると筋肉も減りやすいので、たんぱく質をしっかりとって、運動と組み合わせましょう。
+            </p>
             {diff / PACES[1].perMonth > 6 && (
               <p className="wcompare">
                 減らす量が大きいときは、1回で目標を決めず、まず3か月で「現在の体重の5%ほど」を目安にして、少しずつ進めるのがおすすめです。
@@ -220,5 +227,6 @@ export default function WeightChart() {
     </section>
   );
 }
+
 
 

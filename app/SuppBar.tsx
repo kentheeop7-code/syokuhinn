@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SUPPS, SUPP_UPDATED } from "./supplementsData";
+import { SUPP_DETAILS } from "./suppDetails";
 
 const INTERVAL_MS = 7000;
 
@@ -121,7 +122,13 @@ export default function SuppBar() {
                   <span className="supp-effect">{s.effect}</span>
                   {open && (
                     <span className="supp-more">
-                      <span>ポイント：{s.tip}</span>
+                      {SUPP_DETAILS[s.id] && (
+                        <>
+                          <span><b>とり方</b>{SUPP_DETAILS[s.id].how}</span>
+                          <span><b>向いている人・注意</b>{SUPP_DETAILS[s.id].who}</span>
+                        </>
+                      )}
+                      <span><b>選ぶポイント</b>{s.tip}</span>
                       <span className="supp-date">
                         {s.real
                           ? `出典：${s.src}。税込。価格は店やセールで変わります。`
@@ -142,4 +149,5 @@ export default function SuppBar() {
     </div>
   );
 }
+
 
