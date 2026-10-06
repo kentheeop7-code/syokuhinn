@@ -3041,3 +3041,8 @@ body {
 .mtips li { font-size: 0.9rem; line-height: 1.6; }
 .wsub { display: block; font-size: 0.82rem; font-weight: 700; color: #26402f; margin: 0 0 3px; line-height: 1.5; }
 .wchart .wnote b { color: #08703a; }
+
+/* v16 fixes: small SVG text, contrast */
+.wtick, .wval { font-size: 14px !important; }
+.mbar .bp { background: #cf3a26 !important; color: #fff !important; }
+.mrow, .mrow .mname b, .mrow .num, .mrow[aria-pressed="true"] { color: #12301f !important; }
