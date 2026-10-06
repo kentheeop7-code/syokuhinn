@@ -3052,3 +3052,28 @@ body {
 /* 豆知識ページは長いので、目次のボタンは「すぐ移動」にする */
 html { scroll-behavior: auto !important; }
 h2[id^="g-"] { scroll-margin-top: 76px; }
+
+/* ===== age-aware diet ===== */
+.wpace.wa { stroke: #8a4dd0; }
+.wgoaldot.wa { fill: #8a4dd0; }
+.lg.wa { border-color: #8a4dd0; }
+.wresult li.wa { background: #f3e9ff; }
+.agebox { margin-top: 12px; padding: 10px 12px; background: #fffaf0; border: 2px solid #2b4a38; border-radius: 12px; }
+.agebox > b { display: block; font-size: 0.95rem; font-weight: 900; }
+.agetitle { margin: 6px 0 4px; font-size: 0.95rem; font-weight: 800; color: #08703a; }
+.agebox ul { margin: 0; padding-left: 1.2em; }
+.agebox li { font-size: 0.9rem; line-height: 1.65; margin-bottom: 4px; }
+.agecmp { padding: 16px 12px; margin-bottom: 18px; }
+.agecmp .h2 { margin-top: 0; }
+.agelead { font-size: 0.95rem; line-height: 1.65; margin: 4px 0 10px; color: #26402f; }
+.agetable { display: flex; flex-direction: column; gap: 8px; }
+.agehead { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.agehead span:first-child { display: none; }
+.agehead .ca, .agehead .cb { text-align: center; font-weight: 900; border-radius: 10px; padding: 6px 4px; border: 2px solid #2b4a38; font-size: 0.95rem; }
+.agehead .ca, .agerow .ca { background: #e8f6ff; }
+.agehead .cb, .agerow .cb { background: #fff0e0; }
+.agerow { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 6px; border: 2px solid #2b4a38; border-radius: 12px; padding: 8px; background: #fff; }
+.agerow b { grid-column: 1 / -1; font-size: 0.9rem; font-weight: 900; color: #08703a; }
+.agerow .ca, .agerow .cb { font-size: 0.88rem; line-height: 1.55; padding: 6px 8px; border-radius: 8px; }
+.agenote { font-size: 0.9rem; line-height: 1.65; margin: 12px 0 0; color: #26402f; border: 0 !important; background: none !important; padding: 0 !important; }
+.agenote.small { font-size: 0.8rem; }

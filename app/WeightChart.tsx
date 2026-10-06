@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ageBand, BAND_LABEL, MONTHLY_CAP_PCT } from "./ageInfo";
 
 // 現在の体重と目標体重を入れると、トレーニング頻度ごとに目標まで落ちていくペースを折れ線で見せる。
 // 体重の毎日の記録はとらない（入れるのは2つの数字だけ）
@@ -26,6 +27,7 @@ export default function WeightChart() {
   const [now, setNow] = useState("");
   const [goal, setGoal] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [age, setAge] = useState(0);
 
   // 目標体重は「目標を決める」で入れた体重と連動する（入力のたびに更新される）
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function WeightChart() {
       try {
         const p = JSON.parse(localStorage.getItem("lg-profile") || "null");
         setGoal(p?.weight ? String(p.weight) : "");
+        setAge(parseFloat(p?.age) || 0);
       } catch {}
     };
     try {
@@ -60,10 +63,19 @@ export default function WeightChart() {
   const okNow = w0 >= 20 && w0 <= 300;
   const okGoal = wt >= 20 && wt <= 300;
   const diff = okNow && okGoal ? r1(w0 - wt) : 0;
+  // 年齢に合わせた、1か月に減らしてよい量の目安（体重に対する%）
+  const band = age >= 18 && age <= 99 ? ageBand(age) : null;
+  const capPct = band ? MONTHLY_CAP_PCT[band] : 0;
+  const capKg = okNow && capPct ? r1((w0 * capPct) / 100) : 0;
+  // 年齢の目安が、2つのペースよりずっとゆっくりのとき（60歳以上など）は、3本目の線を足す
+  const paces =
+    capKg > 0 && capKg < 1.9
+      ? [...PACES, { id: "age", label: "あなたの年齢の目安", perMonth: capKg, cls: "wa" }]
+      : PACES;
 
   const chart = useMemo(() => {
     if (!okNow || !okGoal || diff <= 0) return null;
-    const rows = PACES.map((p) => ({ ...p, months: diff / p.perMonth }));
+    const rows = paces.map((p) => ({ ...p, months: diff / p.perMonth }));
     const slowest = Math.max(...rows.map((r) => r.months));
     const span = Math.min(MAX_MONTHS, Math.max(2, Math.ceil(slowest)));
     const x = (m: number) => M.l + (m / span) * (W - M.l - M.r);
@@ -83,7 +95,8 @@ export default function WeightChart() {
       return { ...r, end, vEnd, reached: r.months <= span };
     });
     return { span, x, y, yTicks, xTicks, lines };
-  }, [okNow, okGoal, diff, w0, wt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [okNow, okGoal, diff, w0, wt, capKg]);
 
   return (
     <section className="card wchart" aria-label="目標体重までのペース">
@@ -194,7 +207,7 @@ export default function WeightChart() {
                     </b>
                     <small className="wsub">
                       1日あたり約{Math.round((l.perMonth * 7200) / 30)}kcalのマイナスに相当・1か月で体重の約{r1((l.perMonth / w0) * 100)}%
-                      {(l.perMonth / w0) * 100 > 5 ? "（やや速めのペース）" : ""}
+                      {capPct > 0 && l.id !== "age" && (l.perMonth / w0) * 100 > capPct ? `（${age}歳の目安・月${capPct}%を超えます。ゆっくりめがおすすめ）` : ""}
                     </small>
                     {l.reached ? (
                       <>
@@ -211,8 +224,13 @@ export default function WeightChart() {
             </ul>
 
             <p className="wnote">
-              <b>ペースの考え方</b>　体脂肪1kgは、約7,200kcalにあたります。月2kgなら1日約480kcal、月3kgなら1日約720kcalを、食事と運動で減らす計算です。多くの目安では、1か月で体重の約3〜5%までが無理のないペースとされます。食事を減らしすぎると筋肉も減りやすいので、たんぱく質をしっかりとって、運動と組み合わせましょう。
+              <b>ペースの考え方</b>　体脂肪1kgは、約7,200kcalにあたります。月2kgなら1日約480kcal、月3kgなら1日約720kcalを、食事と運動で減らす計算です。食事を減らしすぎると筋肉も減りやすいので、たんぱく質をしっかりとって、運動と組み合わせましょう。
             </p>
+            {band && (
+              <p className="wnote">
+                <b>{age}歳（{BAND_LABEL[band]}）の目安</b>　1か月に減らすのは、体重の約{capPct}%（あなたの体重で約{capKg}kg）まで。{band === "s60" ? "60歳以上は、筋肉と骨を守るため、ゆっくり進めるのが大切です。" : band === "m40" ? "40〜50代は、筋肉と骨の減りが始まる時期。急な減量は避けましょう。" : "30代前後は、骨量を保つため、BMI18.5未満にならないよう注意しましょう。"}
+              </p>
+            )}
             {diff / PACES[1].perMonth > 6 && (
               <p className="wcompare">
                 減らす量が大きいときは、1回で目標を決めず、まず3か月で「現在の体重の5%ほど」を目安にして、少しずつ進めるのがおすすめです。
@@ -227,6 +245,7 @@ export default function WeightChart() {
     </section>
   );
 }
+
 
 
 

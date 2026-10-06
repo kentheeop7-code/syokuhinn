@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import QuoteHero from "./QuoteHero";
 import WeightChart from "./WeightChart";
 import MealCompare from "./MealCompare";
+import AgeCompare, { AgeNotesBox } from "./AgeCompare";
 import TipsTicker from "./TipsTicker";
 import {
   CATEGORIES,
@@ -748,9 +749,12 @@ function calcPlan(pf: Profile) {
   const purpose = PURPOSES[pf.purpose];
   const bm = bmr(pf.sex, age, height, weight);
   const tdee = bm * PAL[pf.pal].v;
-  const target = Math.max(tdee * purpose.energy, bm * 1.1);
+  // 年齢に合わせた調整：60歳以上は、食事を減らす幅を小さく（ダイエットは1割→7%減）、たんぱく質は上限を設ける
+  const energyMul = pf.purpose === "diet" && age >= 60 ? 0.93 : purpose.energy;
+  const ageCap = age >= 60 ? (pf.purpose === "diet" ? 1.3 : 1.5) : age >= 50 ? 1.6 : 9;
+  const target = Math.max(tdee * energyMul, bm * 1.1);
   const method: Method = pf.purpose === "diet" ? pf.method : "balance";
-  let p = Math.round(weight * purpose.pPerKg);
+  let p = Math.round(weight * Math.min(purpose.pPerKg, ageCap));
   let f: number;
   let c: number;
   if (method === "keto") {
@@ -761,7 +765,7 @@ function calcPlan(pf: Profile) {
   } else if (method === "lowfat") {
     // 脂質はエネルギーの20%（厚労省の目標量の下限。体重×0.6gは下回らない）。
     // 減量中はたんぱく質を少し多めに（体重×1.8g）。残りを炭水化物で。
-    p = Math.round(weight * 1.8);
+    p = Math.round(weight * Math.min(1.8, ageCap));
     f = Math.round(Math.max((target * 0.2) / 9, weight * 0.6));
     c = Math.round(Math.max(0, (target - p * 4 - f * 9) / 4));
   } else {
@@ -1161,6 +1165,7 @@ function ProfileGoal({
                   : `（目標とする範囲 ${bLo}〜${bHi} に入っています）`}
               </dd>
             </dl>
+            <AgeNotesBox age={plan.age} sex={pf.sex} />
           </div>
 
           {menu && (
@@ -1609,6 +1614,7 @@ function HomeInner() {
             goal={goal}
           />
           <WeightChart />
+          <AgeCompare />
           <MealCompare goal={goal} onAdd={add} />
           <DayView
             date={selected}
@@ -1639,6 +1645,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
