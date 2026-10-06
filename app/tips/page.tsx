@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { TIPS, TIP_GROUPS } from "../tipsData";
 
 export const metadata: Metadata = {
   title: "豆知識 | 専属の栄養士",
-  description: "勘違いを覆すびっくり豆知識、たんぱく質・ダイエットの豆知識（2026年1月時点）",
+  description: "勘違いを覆す豆知識、年齢と代謝・筋肉のはなし、痩せない・筋肉がつかない原因、たんぱく質・ダイエットの豆知識",
 };
 
 export default function Tips() {
   return (
     <main className="container">
       <h1 className="title sm">豆知識</h1>
-      <p className="member">勘違いを覆す話から、たんぱく質・ダイエットのコツまで（2026年1月時点の情報）</p>
+      <p className="member">勘違いを覆す話から、年齢による代謝・筋肉の変化、痩せない・筋肉がつかない原因、たんぱく質・ダイエットのコツまで</p>
 
       <nav className="anav" aria-label="ページ内メニュー">
         {TIP_GROUPS.map((g) => (
@@ -69,3 +69,4 @@ export default function Tips() {
     </main>
   );
 }
+
