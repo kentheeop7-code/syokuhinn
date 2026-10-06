@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 import { Suspense } from "react";
 import QuoteBackground from "./QuoteBackground";
 import TopNav from "./TopNav";
+import BottomBar from "./BottomBar";
 
 export const metadata: Metadata = {
   title: "専属の栄養士 | LIFEGYM",
@@ -24,7 +25,11 @@ export default function RootLayout({
           <TopNav />
         </Suspense>
         {children}
+        <Suspense fallback={null}>
+          <BottomBar />
+        </Suspense>
       </body>
     </html>
   );
 }
+

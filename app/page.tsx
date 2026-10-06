@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import QuoteHero from "./QuoteHero";
 import WeightChart from "./WeightChart";
+import MealCompare from "./MealCompare";
 import TipsTicker from "./TipsTicker";
 import {
   CATEGORIES,
@@ -1608,6 +1609,7 @@ function HomeInner() {
             goal={goal}
           />
           <WeightChart />
+          <MealCompare goal={goal} onAdd={add} />
           <DayView
             date={selected}
             entries={log[selected] ?? []}
@@ -1637,6 +1639,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
