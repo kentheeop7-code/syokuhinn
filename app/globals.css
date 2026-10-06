@@ -3048,3 +3048,7 @@ body {
 .mrow, .mrow .mname b, .mrow .num, .mrow[aria-pressed="true"] { color: #12301f !important; }
 .wtick, .wval { font-size: 15px !important; }
 .wform.two { align-items: start !important; }
+
+/* 豆知識ページは長いので、目次のボタンは「すぐ移動」にする */
+html { scroll-behavior: auto !important; }
+h2[id^="g-"] { scroll-margin-top: 76px; }
