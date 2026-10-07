@@ -8,8 +8,8 @@ const INTERVAL_MS = 7000;
 
 // 種類を5つのグループにまとめて、絞り込めるようにする
 const WOMEN_IDS = [
-  "iron", "folate", "calcium", "calmag-nm", "vitd", "vitd-diana", "collagen", "collagen-fancl", "biotin", "vitc", "vitc-nm",
-  "vitb", "vitb6", "gaba-fancl", "ashwagandha", "multi", "omega3", "dha-dhc", "zinc", "zinc-nm", "probiotics", "fiber",
+  "iron", "iron-nm", "folate", "folate-nm", "calcium", "calcium-nm", "calmag-nm", "vitd", "vitd-diana", "collagen", "collagen-fancl", "biotin", "vitc", "vitc-nm",
+  "vitb", "vitbc-nm", "vitb6", "gaba-fancl", "equol-dhc", "ashwagandha", "hyaluron", "multi", "omega3", "dha-dhc", "zinc", "zinc-nm", "probiotics", "fiber",
   "vite", "vite-dhc", "magnesium", "soy", "savas-soy",
 ];
 
@@ -158,6 +158,7 @@ export default function SuppBar() {
     </div>
   );
 }
+
 
 
 
