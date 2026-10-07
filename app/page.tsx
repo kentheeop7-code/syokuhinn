@@ -8,6 +8,8 @@ import WeightChart from "./WeightChart";
 import MealCompare from "./MealCompare";
 import AgeCompare, { AgeNotesBox } from "./AgeCompare";
 import WomenGuide from "./WomenGuide";
+import WomenCare from "./WomenCare";
+import BoneMenu from "./BoneMenu";
 import TipsTicker from "./TipsTicker";
 import {
   CATEGORIES,
@@ -1617,6 +1619,8 @@ function HomeInner() {
           <WeightChart />
           <AgeCompare />
           <WomenGuide />
+          <BoneMenu onAdd={add} />
+          <WomenCare />
           <MealCompare goal={goal} onAdd={add} />
           <DayView
             date={selected}
@@ -1647,6 +1651,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

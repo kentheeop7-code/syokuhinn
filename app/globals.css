@@ -3104,3 +3104,58 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 .wgcycle summary { cursor: pointer; font-weight: 800; font-size: 0.95rem; min-height: 44px; display: flex; align-items: center; }
 .wgcycle details p { margin: 2px 0 6px; font-size: 0.9rem; line-height: 1.65; }
 .wgcycle details p b { display: block; font-size: 0.8rem; color: #08703a; }
+
+/* ===== bone menu / women care / stage extra ===== */
+.bmenu, .wcare { padding: 16px 12px; margin-bottom: 18px; }
+.bmenu .h2, .wcare .h2 { margin-top: 0; }
+.bmnote, .wcnote { font-size: 0.92rem; line-height: 1.65; color: #26402f; margin: 4px 0 10px; border: 0 !important; padding: 0 !important; background: none !important; }
+.bmnote.small, .wcnote.small { font-size: 0.8rem; margin-top: 12px; }
+.bmmeters { background: #f2fbd9; border: 2px solid #2b4a38; border-radius: 14px; padding: 10px 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+.bmmhead { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.92rem; }
+.bmmhead strong { font-size: 1.1rem; font-weight: 900; }
+.bmbar { height: 14px; border: 2px solid #2b4a38; border-radius: 999px; background: #fff; overflow: hidden; }
+.bmbar i { display: block; height: 100%; background: #46c8ff; transition: width 0.2s; }
+.bmm.done .bmbar i { background: #0a7d3b; }
+.bmfoot { margin: 2px 0 0; font-size: 0.78rem; line-height: 1.55; color: #3f5b4b; }
+.bmtabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+.bmtabs button { min-height: 46px; padding: 2px 4px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; font: inherit; font-size: 0.82rem; font-weight: 800; color: #12301f; cursor: pointer; line-height: 1.3; }
+.bmtabs button.on { background: #ffe680; }
+.bmfoods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.bmfoods button { width: 100%; min-height: 50px; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; font: inherit; color: #12301f; cursor: pointer; text-align: left; }
+.bmfoods button:active { transform: scale(0.98); background: #eaf6d6; }
+.bmname { flex: 1; font-size: 0.92rem; font-weight: 700; line-height: 1.4; }
+.bmval { font-size: 0.85rem; white-space: nowrap; }
+.bmval b { font-size: 1.1rem; font-weight: 900; color: #08703a; margin-right: 2px; }
+.bmplus { font-size: 1.3rem; font-weight: 900; color: #08703a; }
+.bmpicked { margin-top: 12px; padding: 10px 12px; background: #fff; border: 2px dashed #2b4a38; border-radius: 12px; }
+.bmpicked > b { font-size: 0.95rem; font-weight: 900; }
+.bmpicked ul { list-style: none; margin: 6px 0; padding: 0; }
+.bmpicked li { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 40px; border-bottom: 1px dashed #c9d8ce; font-size: 0.9rem; }
+.bmpicked li button { width: 40px; height: 40px; border: 0; background: none; font-size: 1.3rem; color: #c8321f; cursor: pointer; }
+.bmactions { display: flex; flex-wrap: wrap; gap: 8px; }
+.bmactions .btn { flex: 1 1 140px; min-height: 46px; }
+.wclist { display: flex; flex-direction: column; gap: 8px; }
+.wcitem { border: 2px solid #2b4a38; border-radius: 12px; background: #fff; overflow: hidden; }
+.wcitem.open { background: #fff7fa; }
+.wchead { width: 100%; min-height: 54px; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 0; background: none; font: inherit; color: #12301f; text-align: left; cursor: pointer; }
+.wchead b { flex: 1; font-size: 0.95rem; font-weight: 800; line-height: 1.4; }
+.wchead i { font-style: normal; font-size: 1.3rem; font-weight: 900; color: #08703a; }
+.wcbody { padding: 2px 12px 12px; }
+.wcwhat { margin: 4px 0 8px; font-size: 0.92rem; line-height: 1.7; }
+.wcsub { display: block; font-size: 0.82rem; font-weight: 900; color: #08703a; margin-bottom: 2px; }
+.wcbody ul, .wcblock ul { margin: 0; padding-left: 1.2em; }
+.wcbody li, .wcblock li { font-size: 0.9rem; line-height: 1.7; margin-bottom: 3px; }
+.wcsee { margin: 8px 0 0; padding: 8px 10px; background: #fff3c4; border: 2px solid #2b4a38; border-radius: 10px; font-size: 0.9rem; line-height: 1.65; }
+.wcsee b { display: block; font-size: 0.8rem; font-weight: 900; }
+.wch3 { margin: 18px 0 6px; font-size: 1.05rem; font-weight: 900; }
+.wcblock { margin-top: 10px; padding: 10px 12px; background: #fff; border: 2px solid #2b4a38; border-radius: 12px; }
+.wcblock > b { display: block; font-size: 0.9rem; font-weight: 900; color: #08703a; margin-bottom: 3px; }
+.wgmenu { margin-top: 12px; padding: 10px; background: #fffaf0; border: 2px solid #2b4a38; border-radius: 12px; }
+.wgmenu > b { font-size: 0.95rem; font-weight: 900; }
+.wgmeals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.wgmeals > div { background: #fff; border: 1.5px solid #2b4a38; border-radius: 10px; padding: 6px 8px; }
+.wgmeals strong { font-size: 0.88rem; }
+.wgmeals ul { list-style: none; margin: 2px 0 0; padding: 0; }
+.wgmeals li { font-size: 0.84rem; line-height: 1.5; }
+.wgmeals li span { font-weight: 800; color: #08703a; }
+.wgmsum { margin: 8px 0 4px; font-size: 0.88rem; line-height: 1.8; }

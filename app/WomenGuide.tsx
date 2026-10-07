@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
+import { FOODS } from "../lib/foods";
 
 type Stage = "u40" | "s40" | "s50" | "s60";
 type Block = { title: string; items: string[] };
@@ -162,7 +163,7 @@ const STAGES: StageInfo[] = [
         title: "検診・受診の目安",
         items: [
           "骨粗鬆症検診：60歳・65歳・70歳。骨密度が低いときは、薬の治療もあります。",
-          "身長が2cm以上縮んだ、背中が丸くなった、軽い転倒で骨折した、といったときは、整形外科へ。",
+          "身長が4cm以上（または1年で2cm以上）縮んだ、背中が丸くなった、軽い転倒で骨折した、といったときは、整形外科へ。",
         ],
       },
     ],
@@ -180,7 +181,7 @@ const CHECKS = [
   "運動する習慣がない（週に2回未満）",
   "喫煙している、または、お酒を毎日飲む",
   "ステロイド薬を、長く使っている",
-  "身長が、若いころより2cm以上縮んだ",
+  "身長が、若いころより4cm以上、または1年で2cm以上縮んだ",
 ];
 
 const CYCLE = [
@@ -206,6 +207,194 @@ const CYCLE = [
   },
 ];
 
+type Menu = { title: string; items: { name: string; g: number }[] }[];
+
+// 年代ごとの、骨と血を意識した1日の食事例（女性・活動量ふつうの目安）
+const MENUS: Record<Stage, { label: string; menu: Menu }> = {
+  u40: {
+    label: "30代の女性・約1,700kcalの例",
+    menu: [
+      { title: "朝食", items: [{ name: "白ごはん", g: 140 }, { name: "卵", g: 60 }, { name: "納豆", g: 45 }, { name: "ほうれん草", g: 60 }, { name: "牛乳", g: 200 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "サケ（焼き）", g: 80 }, { name: "小松菜", g: 80 }, { name: "木綿豆腐", g: 100 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 140 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "キャベツ", g: 80 }, { name: "オリーブオイル", g: 6 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "バナナ", g: 100 }] },
+    ],
+  },
+  s40: {
+    label: "40代の女性・約1,650kcalの例",
+    menu: [
+      { title: "朝食", items: [{ name: "全粒粉パン", g: 90 }, { name: "卵", g: 60 }, { name: "牛乳", g: 200 }, { name: "バナナ", g: 100 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 130 }, { name: "サバ水煮缶", g: 60 }, { name: "小松菜", g: 100 }, { name: "木綿豆腐", g: 100 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 130 }, { name: "牛もも肉（赤身）", g: 70 }, { name: "ブロッコリー", g: 80 }, { name: "えのき", g: 50 }, { name: "納豆", g: 45 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 100 }, { name: "プロセスチーズ", g: 20 }, { name: "アーモンド", g: 10 }] },
+    ],
+  },
+  s50: {
+    label: "50代の女性・約1,450kcalの例",
+    menu: [
+      { title: "朝食", items: [{ name: "白ごはん", g: 130 }, { name: "卵", g: 50 }, { name: "納豆", g: 30 }, { name: "木綿豆腐", g: 100 }, { name: "牛乳", g: 150 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 130 }, { name: "サケ（焼き）", g: 60 }, { name: "小松菜", g: 100 }, { name: "しらす干し", g: 10 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "鶏むね肉（皮なし）", g: 70 }, { name: "厚揚げ", g: 60 }, { name: "キャベツ", g: 100 }, { name: "えのき", g: 50 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 100 }, { name: "プロセスチーズ", g: 15 }, { name: "りんご", g: 100 }] },
+    ],
+  },
+  s60: {
+    label: "60代以降の女性・約1,350kcalの例",
+    menu: [
+      { title: "朝食", items: [{ name: "白ごはん", g: 120 }, { name: "卵", g: 50 }, { name: "納豆", g: 30 }, { name: "牛乳", g: 150 }, { name: "ほうれん草", g: 60 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 120 }, { name: "サバ水煮缶", g: 50 }, { name: "小松菜", g: 80 }, { name: "木綿豆腐", g: 80 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 110 }, { name: "鶏ささみ", g: 70 }, { name: "絹ごし豆腐", g: 60 }, { name: "ブロッコリー", g: 80 }, { name: "まいたけ", g: 50 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 120 }, { name: "バナナ", g: 80 }, { name: "プロセスチーズ", g: 15 }] },
+    ],
+  },
+};
+
+const WORRIES: Record<Stage, Block[]> = {
+  u40: [
+    {
+      title: "よくある悩みと対策",
+      items: [
+        "月経前にむくみ・食欲が増す：塩分ひかえめ、食物繊維、カリウム（野菜・果物）。体重は、同じ時期で比べる。",
+        "貧血ぎみ・立ちくらみ：赤身肉・レバー・あさり＋ビタミンC。食事中のお茶・コーヒーは避ける。",
+        "朝食をとれない：ヨーグルト・バナナ・ゆで卵・牛乳など、手軽なものから。",
+        "体重を減らしたい：1か月に体重の3〜4%まで。月経が乱れたら、減量を止めて、食事を戻す。",
+      ],
+    },
+  ],
+  s40: [
+    {
+      title: "よくある悩みと対策",
+      items: [
+        "同じ食事で太る・おなかまわりが気になる：筋トレ＋たんぱく質。間食・甘い飲み物・お酒を見直す。",
+        "月経が不規則・量が増えた：貧血に注意。過多月経や、周期の極端な乱れは、婦人科へ。",
+        "寝つきが悪い・疲れが抜けない：朝の日光、夕方以降のカフェインを控える、入浴は就寝1〜2時間前。",
+        "イライラ・気分の波：運動・睡眠・人に話す。つらいときは我慢せず、婦人科や心療内科へ。",
+      ],
+    },
+  ],
+  s50: [
+    {
+      title: "よくある悩みと対策",
+      items: [
+        "ほてり・汗：辛いもの・カフェイン・アルコールを控えめに、重ね着、大豆食品。つらければ、婦人科でHRTや漢方を相談。",
+        "コレステロールが高くなった：揚げ物・バター・脂身を減らし、魚・大豆・野菜・海藻・きのこを増やす。",
+        "血圧が上がった：塩分は女性で1日6.5g未満。汁物は具だくさんにして、汁を残す。",
+        "関節痛・腰痛・肩こり：動かし続ける、体重管理、たんぱく質・ビタミンD。腫れや朝のこわばりは、整形外科へ。",
+        "骨が心配：骨粗鬆症検診（50・55歳）、カルシウム700〜800mg・ビタミンD・ビタミンK、荷重運動。",
+      ],
+    },
+  ],
+  s60: [
+    {
+      title: "よくある悩みと対策",
+      items: [
+        "食欲がない・食べる量が減った：少量ずつ回数を増やす。卵・豆腐・ヨーグルト・牛乳など、食べやすい高たんぱく食品を。",
+        "体重が減ってきた：意図しない体重減少（半年で2〜3kg以上）は、低栄養や病気のサイン。受診を。",
+        "転ぶのが怖い・足が上がらない：椅子からの立ち座り、かかとの上げ下げ、片足立ち。家の段差・暗さも見直す。",
+        "尿もれ・夜間頻尿：骨盤底筋体操、就寝前の水分・カフェインを控えめに。泌尿器科で相談を。",
+        "骨粗鬆症と言われた：薬の治療と、食事・運動は、セット。歯科治療の前には、薬のことを伝える。",
+      ],
+    },
+  ],
+};
+
+const WORKOUT: Record<Stage, Block> = {
+  u40: {
+    title: "1週間の運動メニュー例",
+    items: [
+      "筋トレ（週2〜3回・各20分）：スクワット10回×3、ヒップリフト10回×3、腕立て伏せ（膝つき）8回×3、プランク20〜30秒×2。",
+      "骨に刺激：ウォーキング（早歩き）週3回30分、階段を使う、軽いジョギングやジャンプ運動を少し。",
+      "ストレッチ：入浴後に5分。肩甲骨まわり・股関節。",
+    ],
+  },
+  s40: {
+    title: "1週間の運動メニュー例",
+    items: [
+      "筋トレ（週2〜3回・各20分）：椅子スクワット10回×3、ヒップリフト10回×3、壁腕立て10回×2、プランク（膝つき）20秒×2。",
+      "骨に刺激：早歩き30分を週3回、階段、かかと落とし（つま先立ちから、かかとをストンと落とす）1日30回。",
+      "バランス：片足立ち（1分×左右）を、歯みがきのときに。",
+    ],
+  },
+  s50: {
+    title: "1週間の運動メニュー例",
+    items: [
+      "筋トレ（週2〜3回・各20分）：椅子スクワット10回×3、ヒップリフト10回×3、壁腕立て10回×2、ゴムバンドで背中の運動10回×2。",
+      "骨に刺激：早歩き30分を週3〜4回、階段、かかと落とし1日30回。",
+      "バランス：片足立ち（1分×左右）を1日3回。ほてりの強い日は、涼しい時間に。",
+    ],
+  },
+  s60: {
+    title: "1週間の運動メニュー例",
+    items: [
+      "筋トレ（週2〜3回・各15分）：椅子からの立ち座り10回×3、かかとの上げ下げ15回×2、壁腕立て8〜10回×2、タオルを使った背中の運動。",
+      "歩く：1日20〜30分のウォーキング。長く歩けない日は、10分を数回に分けて。",
+      "バランス：片足立ち（1分×左右、つかまれる場所で）。骨粗鬆症と診断されている人は、ひねる・前かがみの動作を医師に確認。",
+    ],
+  },
+};
+
+function StageExtra({ stage }: { stage: Stage }) {
+  const byName = new Map(FOODS.map((f) => [f.name, f]));
+  const m = MENUS[stage];
+  const t = { kcal: 0, p: 0, ca: 0, vd: 0, fe: 0, fi: 0, salt: 0 };
+  for (const meal of m.menu)
+    for (const i of meal.items) {
+      const f = byName.get(i.name);
+      if (!f) continue;
+      const k = i.g / 100;
+      t.kcal += (f.p * 4 + f.f * 9 + f.c * 4) * k;
+      t.p += f.p * k;
+      t.ca += f.ca * k;
+      t.vd += f.vd * k;
+      t.fe += f.fe * k;
+      t.fi += f.fi * k;
+      t.salt += f.salt * k;
+    }
+  const r = (n: number, d = 0) => (d ? Math.round(n * 10) / 10 : Math.round(n));
+  return (
+    <>
+      {WORRIES[stage].map((b) => (
+        <div key={b.title} className="wgblock">
+          <b>{b.title}</b>
+          <ul>
+            {b.items.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <div className="wgblock">
+        <b>{WORKOUT[stage].title}</b>
+        <ul>
+          {WORKOUT[stage].items.map((x) => (
+            <li key={x}>{x}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="wgmenu">
+        <b>🍱 1日の食事例（{m.label}）</b>
+        <div className="wgmeals">
+          {m.menu.map((meal) => (
+            <div key={meal.title}>
+              <strong>{meal.title}</strong>
+              <ul>
+                {meal.items.map((i) => (
+                  <li key={i.name}>
+                    {i.name} <span>{i.g}g</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="wgmsum">
+          合計 約<b>{r(t.kcal)}kcal</b>　たんぱく質 {r(t.p)}g　カルシウム <b>{r(t.ca)}mg</b>　ビタミンD <b>{r(t.vd, 1)}μg</b>　鉄 {r(t.fe, 1)}mg　食物繊維 {r(t.fi, 1)}g　塩分 {r(t.salt, 1)}g
+        </p>
+        <p className="wgnote small">これは、体重を整えたい人を意識した、控えめな量の例です。体重を維持したい人や、よく動く人は、ごはん・果物・牛乳を足して調整してください（下の「食品メーカー」で、足りない栄養を足せます）。</p>
+      </div>
+    </>
+  );
+}
 export default function WomenGuide() {
   const [stage, setStage] = useState<Stage>("s40");
   const [sex, setSex] = useState<"m" | "f" | null>(null);
@@ -280,6 +469,7 @@ export default function WomenGuide() {
             </ul>
           </div>
         ))}
+        <StageExtra stage={cur.key} />
       </div>
 
       <div className="wgcheck">
@@ -343,3 +533,6 @@ export default function WomenGuide() {
     </section>
   );
 }
+
+
+
