@@ -6,7 +6,7 @@ import SuppBar from "./SuppBar";
 
 const ITEMS = [
   { href: "/", key: "record", icon: "📝", label: "記録" },
-  { href: "/?tab=search", key: "search", icon: "🔍", label: "食品" },
+  { href: "/?tab=women", key: "women", icon: "🌸", label: "からだ" },
   { href: "/tips", key: "tips", icon: "💡", label: "豆知識" },
   { href: "/nutrients", key: "guide", icon: "📖", label: "ガイド" },
 ];
@@ -17,7 +17,7 @@ export default function TopNav() {
   const tab = useSearchParams().get("tab");
 
   const active = (key: string) => {
-    if (path === "/") return key === (tab === "search" ? "search" : "record");
+    if (path === "/") return key === (tab === "women" ? "women" : tab === "search" ? "record" : "record");
     if (path.startsWith("/tips")) return key === "tips";
     if (path.startsWith("/nutrients")) return key === "guide";
     return false;
@@ -49,4 +49,5 @@ export default function TopNav() {
     </>
   );
 }
+
 

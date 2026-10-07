@@ -436,7 +436,6 @@ export default function WomenGuide() {
       <h2 className="h2">👩 女性のからだと食事：年代別ガイド</h2>
       <p className="wgnote">
         女性は、月経・妊娠・閉経と、ホルモンが大きく変わります。年代ごとの「からだの変化」と「食事・運動・検診」を、まとめました。
-        {sex === "m" && "（性別が「男性」になっています。女性向けの内容ですが、参考にもなります）"}
       </p>
 
       <div className="wgtabs" role="tablist" aria-label="年代">
@@ -533,6 +532,7 @@ export default function WomenGuide() {
     </section>
   );
 }
+
 
 
 

@@ -10,6 +10,8 @@ import AgeCompare, { AgeNotesBox } from "./AgeCompare";
 import WomenGuide from "./WomenGuide";
 import WomenCare from "./WomenCare";
 import BoneMenu from "./BoneMenu";
+import CycleTracker from "./CycleTracker";
+import WomenDaily from "./WomenDaily";
 import TipsTicker from "./TipsTicker";
 import {
   CATEGORIES,
@@ -959,7 +961,7 @@ function ProfileGoal({
   onAddMany: (items: MenuItem[]) => void;
 }) {
   const [pf, setPf] = useState<Profile>({
-    sex: null,
+    sex: "f",
     age: "",
     height: "",
     pal: "mid",
@@ -974,7 +976,7 @@ function ProfileGoal({
     try {
       const s = JSON.parse(localStorage.getItem("lg-profile") || "null");
       if (s) {
-        latest.current = { ...latest.current, ...s };
+        latest.current = { ...latest.current, ...s, sex: "f" }; // 女性向けアプリなので、計算は女性の式に固定
         setPf(latest.current);
       }
     } catch {}
@@ -1029,22 +1031,7 @@ function ProfileGoal({
   return (
     <div className="autogoal">
       <p className="agtitle">① あなたのこと</p>
-      <div className="chips tight">
-        {(
-          [
-            ["m", "男性"],
-            ["f", "女性"],
-          ] as const
-        ).map(([k, l]) => (
-          <button
-            key={k}
-            className={pf.sex === k ? "chip on" : "chip"}
-            onClick={() => update({ sex: k })}
-          >
-            {l}
-          </button>
-        ))}
-      </div>
+      <p className="agnote">女性のからだに合わせた式（国立健康・栄養研究所の推定式）で計算します。</p>
       <div className="agrow">
         {field("年齢", "歳", "age", "30")}
         {field("身長", "cm", "height", "165")}
@@ -1523,17 +1510,18 @@ function DayView({
 }
 
 function HomeInner() {
-  const [tab, setTab] = useState<"record" | "search">("record");
+  const [tab, setTab] = useState<"record" | "search" | "women">("record");
   const sp = useSearchParams();
   // 画面右上のバーから ?tab=search で来たときも、タブを切り替える
   useEffect(() => {
-    const t = sp.get("tab") === "search" ? "search" : "record";
+    const q = sp.get("tab");
+    const t = q === "search" ? "search" : q === "women" ? "women" : "record";
     setTab(t);
     window.scrollTo(0, 0);
   }, [sp]);
-  const changeTab = (t: "record" | "search") => {
+  const changeTab = (t: "record" | "search" | "women") => {
     setTab(t);
-    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : "/");
+    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : t === "women" ? "/?tab=women" : "/");
   };
   const [log, setLog] = useState<Log>({});
   const [goal, setGoal] = useState<Goal>({ p: "", f: "", c: "" });
@@ -1583,8 +1571,8 @@ function HomeInner() {
   return (
     <main className="container">
       <h1 className="title">専属の栄養士</h1>
-      <p className="tagline">PFCをはかって、理想のカラダへ。</p>
-      <p className="member">LIFEGYM会員様専用アプリ</p>
+      <p className="tagline">女性のからだに寄りそう、食事とからだのパートナー。</p>
+      <p className="member">LIFEGYM 女性会員様のための専用アプリ</p>
 
       <QuoteHero />
       <TipsTicker />
@@ -1596,6 +1584,13 @@ function HomeInner() {
           onClick={() => changeTab("record")}
         >
           記録・目標
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === "women"}
+          onClick={() => changeTab("women")}
+        >
+          女性のからだ
         </button>
         <button
           role="tab"
@@ -1616,12 +1611,8 @@ function HomeInner() {
             log={log}
             goal={goal}
           />
+          <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
           <WeightChart />
-          <AgeCompare />
-          <WomenGuide />
-          <BoneMenu onAdd={add} />
-          <WomenCare />
-          <MealCompare goal={goal} onAdd={add} />
           <DayView
             date={selected}
             entries={log[selected] ?? []}
@@ -1632,7 +1623,15 @@ function HomeInner() {
             log={log}
           />
         </>
-      ) : (
+      ) : tab === "women" ? (
+        <>
+          <CycleTracker />
+          <WomenGuide />
+          <BoneMenu onAdd={add} />
+          <WomenCare />
+          <AgeCompare />
+          <MealCompare goal={goal} onAdd={add} />
+        </>      ) : (
         <Search
           date={selected}
           onAdd={(n, g) => {
@@ -1651,6 +1650,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

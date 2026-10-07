@@ -38,20 +38,19 @@ const MENUS: Menu[] = [
   {
     id: "muscle",
     letter: "B",
-    name: "高たんぱく・筋トレ",
-    short: "高たんぱく",
-    tag: "体づくり向け。たんぱく質もエネルギーも多め",
-    who: "筋トレをしている人、体重を増やしたい人、運動量の多い人。",
-    tips: ["たんぱく質は体重1kgあたり約2gを目安に、3〜4回に分けて", "トレの前後は、ごはんと肉で糖質とたんぱく質をしっかり", "食べきれないときは、間食のプロテインで補う"],
+    name: "鉄・骨ケア（女性向け）",
+    short: "鉄・骨",
+    tag: "貧血ぎみ・骨が気になる人に。鉄とカルシウムをしっかり",
+    who: "月経のある人、貧血ぎみの人、40代以降で骨が気になる人。",
+    tips: ["赤身肉・魚・大豆を、ローテーションで。レバーは週1〜2回まで", "鉄は、ビタミンC（ブロッコリー・果物）といっしょにとると吸収アップ", "食事中のお茶・コーヒーは避けて、食後に"],
     color: "#ff6b57",
     meals: [
-      { title: "朝食", items: [{ name: "オートミール", g: 50 }, { name: "牛乳", g: 200 }, { name: "卵", g: 150 }, { name: "バナナ", g: 100 }] },
-      { title: "昼食", items: [{ name: "白ごはん", g: 250 }, { name: "鶏むね肉（皮なし）", g: 180 }, { name: "ブロッコリー", g: 100 }, { name: "トマト", g: 100 }] },
-      { title: "夕食", items: [{ name: "白ごはん", g: 220 }, { name: "牛もも肉（赤身）", g: 150 }, { name: "納豆", g: 45 }, { name: "キャベツ", g: 100 }] },
-      { title: "間食", items: [{ name: "プロテイン（ホエイ）", g: 30 }, { name: "無糖ヨーグルト", g: 200 }, { name: "アーモンド", g: 15 }] },
+      { title: "朝食", items: [{ name: "白ごはん", g: 130 }, { name: "卵", g: 60 }, { name: "納豆", g: 45 }, { name: "小松菜", g: 60 }, { name: "牛乳", g: 200 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "サバ水煮缶", g: 70 }, { name: "ほうれん草", g: 80 }, { name: "木綿豆腐", g: 100 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 130 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "厚揚げ", g: 60 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 120 }, { name: "プロセスチーズ", g: 20 }, { name: "バナナ", g: 100 }] },
     ],
-  },
-  {
+  },  {
     id: "lowfat",
     letter: "C",
     name: "低脂質ダイエット",
@@ -93,7 +92,9 @@ function total(menu: Menu) {
     f = 0,
     c = 0,
     fi = 0,
-    salt = 0;
+    salt = 0,
+    ca = 0,
+    fe = 0;
   for (const m of menu.meals)
     for (const i of m.items) {
       const food = byName.get(i.name);
@@ -104,8 +105,10 @@ function total(menu: Menu) {
       c += food.c * k;
       fi += (food.fi ?? 0) * k;
       salt += (food.salt ?? 0) * k;
+      ca += (food.ca ?? 0) * k;
+      fe += (food.fe ?? 0) * k;
     }
-  return { p, f, c, fi, salt, kcal: p * 4 + f * 9 + c * 4 };
+  return { p, f, c, fi, salt, ca, fe, kcal: p * 4 + f * 9 + c * 4 };
 }
 
 type Goal = { p: string; f: string; c: string };
@@ -222,7 +225,7 @@ export default function MealCompare({
           ))}
         </div>
         <p className="msum">
-          合計 <b>{Math.round(cur.t.kcal)}kcal</b>　食物繊維 {r1(cur.t.fi)}g　塩分 {r1(cur.t.salt)}g
+          合計 <b>{Math.round(cur.t.kcal)}kcal</b>　カルシウム {Math.round(cur.t.ca)}mg　鉄 {r1(cur.t.fe)}mg　食物繊維 {r1(cur.t.fi)}g　塩分 {r1(cur.t.salt)}g（調味料を除く）
           {hasGoal && (
             <>
               <br />
@@ -257,6 +260,7 @@ export default function MealCompare({
     </section>
   );
 }
+
 
 
 

@@ -1268,12 +1268,13 @@ export const TIPS: Tip[] = [
 ];
 
 export const TIP_GROUPS: { key: Tip["group"]; label: string }[] = [
-  { key: "myth", label: "勘違いを覆す！びっくり豆知識" },
   { key: "women", label: "女性のからだ（40代〜）" },
+  { key: "myth", label: "勘違いを覆す！びっくり豆知識" },
   { key: "aging", label: "年齢と代謝・筋肉のはなし" },
   { key: "cause", label: "痩せない・筋肉がつかない原因" },
   { key: "protein", label: "たんぱく質の豆知識" },
   { key: "diet", label: "ダイエットの豆知識" },
   { key: "habit", label: "食品選び・生活のコツ" },
 ];
+
 

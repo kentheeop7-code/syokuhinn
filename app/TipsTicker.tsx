@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -11,7 +11,14 @@ const ORDER = (() => {
   const groups = TIP_GROUPS.map((g) => TIPS.filter((t) => t.group === g.key));
   const out: typeof TIPS = [];
   const max = Math.max(...groups.map((g) => g.length));
-  for (let i = 0; i < max; i++) for (const g of groups) if (g[i]) out.push(g[i]);
+  // 女性向けの豆知識は、1周に2つずつ出す
+  for (let i = 0; i < max; i++)
+    groups.forEach((g, gi) => {
+      if (TIP_GROUPS[gi].key === "women") {
+        if (g[2 * i]) out.push(g[2 * i]);
+        if (g[2 * i + 1]) out.push(g[2 * i + 1]);
+      } else if (g[i]) out.push(g[i]);
+    });
   return out;
 })();
 export default function TipsTicker() {
@@ -60,3 +67,4 @@ export default function TipsTicker() {
       </div>    </section>
   );
 }
+

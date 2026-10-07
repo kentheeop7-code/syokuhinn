@@ -6,8 +6,8 @@ import TopNav from "./TopNav";
 import BottomBar from "./BottomBar";
 
 export const metadata: Metadata = {
-  title: "専属の栄養士 | LIFEGYM",
-  description: "食品のPFC・ビタミン・ミネラル・塩分がわかり、目標に近づく食事を記録できるアプリ",
+  title: "専属の栄養士（女性向け） | LIFEGYM",
+  description: "月経周期・骨・更年期など、女性のからだに寄りそう栄養アプリ。PFC・鉄・カルシウム・葉酸まで、食事を記録して整えられます",
 };
 
 export const viewport = { width: "device-width", initialScale: 1 };
@@ -32,4 +32,5 @@ export default function RootLayout({
     </html>
   );
 }
+
 

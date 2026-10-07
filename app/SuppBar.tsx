@@ -7,8 +7,15 @@ import { SUPP_DETAILS } from "./suppDetails";
 const INTERVAL_MS = 7000;
 
 // 種類を5つのグループにまとめて、絞り込めるようにする
-const GROUPS = [
-  { key: "all", label: "すべて", kinds: [] as string[] },
+const WOMEN_IDS = [
+  "iron", "folate", "calcium", "calmag-nm", "vitd", "vitd-diana", "collagen", "collagen-fancl", "biotin", "vitc", "vitc-nm",
+  "vitb", "vitb6", "gaba-fancl", "ashwagandha", "multi", "omega3", "dha-dhc", "zinc", "zinc-nm", "probiotics", "fiber",
+  "vite", "vite-dhc", "magnesium", "soy", "savas-soy",
+];
+
+const GROUPS: { key: string; label: string; kinds: string[]; ids?: string[] }[] = [
+  { key: "women", label: "女性向け", kinds: [], ids: WOMEN_IDS },
+  { key: "all", label: "すべて", kinds: [] },
   { key: "protein", label: "プロテイン", kinds: ["プロテイン"] },
   { key: "amino", label: "アミノ酸", kinds: ["アミノ酸", "筋肉サポート"] },
   { key: "perf", label: "運動", kinds: ["パフォーマンス", "エネルギー"] },
@@ -19,14 +26,16 @@ const GROUPS = [
 // ヘッダーの下で、サプリの実商品の価格・種類・効果が横にスライドして流れる
 export default function SuppBar() {
   const track = useRef<HTMLDivElement>(null);
-  const [group, setGroup] = useState("all");
+  const [group, setGroup] = useState("women");
   const [i, setI] = useState(0);
   const [open, setOpen] = useState(false);
   const [hold, setHold] = useState(false);
 
   const list = useMemo(() => {
     const g = GROUPS.find((x) => x.key === group);
-    return !g || g.key === "all" ? SUPPS : SUPPS.filter((s) => g.kinds.includes(s.kind));
+    if (!g || g.key === "all") return SUPPS;
+    if (g.ids) return g.ids.map((id) => SUPPS.find((s) => s.id === id)).filter((s): s is (typeof SUPPS)[number] => !!s);
+    return SUPPS.filter((s) => g.kinds.includes(s.kind));
   }, [group]);
 
   const goto = (n: number) => {
@@ -82,7 +91,7 @@ export default function SuppBar() {
       onTouchEnd={() => setTimeout(() => setHold(false), 5000)}
     >
       <div className="supp-head">
-        <span className="supp-label">💰 最新のサプリメント値段</span>
+        <span className="supp-label">💰 サプリメントの最新の値段</span>
         <span className="supp-count">
           {i + 1} / {list.length}
         </span>
@@ -149,5 +158,7 @@ export default function SuppBar() {
     </div>
   );
 }
+
+
 
 

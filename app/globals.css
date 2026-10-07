@@ -3159,3 +3159,58 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 .wgmeals li { font-size: 0.84rem; line-height: 1.5; }
 .wgmeals li span { font-weight: 800; color: #08703a; }
 .wgmsum { margin: 8px 0 4px; font-size: 0.88rem; line-height: 1.8; }
+
+/* ===== women-first: cycle tracker / daily women check / 3 tabs ===== */
+.tabs button { font-size: 0.92rem; padding-left: 4px; padding-right: 4px; }
+.cyc, .wdaily { padding: 16px 12px; margin-bottom: 18px; background: #fff7fa; }
+.cyc .h2, .wdaily .h2 { margin-top: 0; }
+.cycnote, .wdnote { font-size: 0.92rem; line-height: 1.65; color: #26402f; margin: 4px 0 10px; border: 0 !important; padding: 0 !important; background: none !important; }
+.cycnote.small { font-size: 0.8rem; margin-top: 12px; }
+.cycform { display: flex; flex-direction: column; gap: 10px; }
+.cyclabel { display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem; font-weight: 800; }
+.cyclabel input { min-height: 48px; padding: 0 12px; font-size: 1.05rem; font-weight: 700; border: 2px solid #2b4a38 !important; border-radius: 12px !important; background: #fff; }
+.cycrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cycbtns { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.cycbtns .btn { flex: 1 1 150px; min-height: 48px; }
+.cyccard { border: 2.5px solid #2b4a38; border-radius: 16px; padding: 12px; background: color-mix(in srgb, var(--pc) 28%, #fff); }
+.cychead { display: flex; align-items: center; gap: 12px; }
+.cycicon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #fff; border: 2px solid #2b4a38; font-size: 1.9rem; flex: none; }
+.cychead b { display: block; font-size: 1.25rem; font-weight: 900; }
+.cychead span { font-size: 0.98rem; }
+.cychead strong { font-size: 1.15rem; font-weight: 900; margin-left: 4px; }
+.cycbar { position: relative; display: flex; height: 20px; margin: 12px 0 6px; border: 2px solid #2b4a38; border-radius: 999px; overflow: hidden; background: #fff; }
+.cycbar i { display: block; opacity: 0.55; }
+.cycbar i.on { opacity: 1; }
+.cycbar b { position: absolute; top: -2px; width: 4px; height: 20px; margin-left: -2px; background: #12301f; border-radius: 2px; }
+.cycdates { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 0.92rem; line-height: 1.55; }
+.cycdates b { font-weight: 900; }
+.cycdates small { color: #3f5b4b; }
+.cycwarn { margin: 10px 0 0; padding: 8px 10px; background: #fff3c4; border: 2px solid #2b4a38; border-radius: 10px; font-size: 0.88rem; line-height: 1.6; }
+.cyctips { margin-top: 12px; padding: 10px 12px; background: #fff; border: 2px solid #2b4a38; border-radius: 14px; }
+.cyctips h3 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 900; }
+.cyctips div { margin-bottom: 6px; }
+.cyctips b { display: block; font-size: 0.8rem; font-weight: 900; color: #08703a; }
+.cyctips p { margin: 0; font-size: 0.92rem; line-height: 1.7; }
+.cychist { margin-top: 6px; font-size: 0.9rem; }
+.cychist summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 800; }
+.cychist ul { list-style: none; margin: 0; padding: 0; }
+.cychist li { display: flex; justify-content: space-between; align-items: center; min-height: 40px; border-bottom: 1px dashed #c9d8ce; }
+.cychist li button { width: 40px; height: 40px; border: 0; background: none; color: #c8321f; font-size: 1.3rem; cursor: pointer; }
+.wdrows { display: flex; flex-direction: column; gap: 8px; }
+.wdhead { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.9rem; }
+.wdhead strong { font-size: 1.05rem; font-weight: 900; }
+.wdbar { height: 12px; border: 2px solid #2b4a38; border-radius: 999px; background: #fff; overflow: hidden; }
+.wdbar i { display: block; height: 100%; background: #ff8fb1; }
+.wdrow.done .wdbar i { background: #0a7d3b; }
+.wdrow.over .wdbar i { background: #c8321f; }
+.wdfoot { margin: 10px 0 0; font-size: 0.78rem; line-height: 1.55; color: #3f5b4b; }
+.wdsug { margin-top: 12px; padding: 10px 12px; background: #fff; border: 2px dashed #2b4a38; border-radius: 12px; }
+.wdsug > b { display: block; font-size: 0.9rem; font-weight: 900; margin-bottom: 4px; }
+.wdsug > div { margin-top: 6px; font-size: 0.88rem; font-weight: 700; }
+.wdchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.wdchips button { min-height: 44px; padding: 4px 10px; border: 2px solid #2b4a38; border-radius: 999px; background: #fff7fa; font: inherit; font-size: 0.85rem; font-weight: 800; color: #12301f; cursor: pointer; display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
+.wdchips button small { font-size: 0.75rem; color: #08703a; }
+.wdok, .wdempty { margin: 10px 0 0; padding: 8px 10px; border: 2px solid #2b4a38; border-radius: 10px; font-size: 0.9rem; font-weight: 700; background: #e6f9ec; }
+.wdempty { background: #fff3c4; }
+.bb-item b { font-size: 0.8rem; }
+.bbar { gap: 4px; padding-left: 6px; padding-right: 6px; }
