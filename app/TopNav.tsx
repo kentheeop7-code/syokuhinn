@@ -19,7 +19,7 @@ export default function TopNav() {
   const active = (key: string) => {
     if (path === "/") return key === (tab === "women" ? "women" : tab === "search" ? "record" : "record");
     if (path.startsWith("/tips")) return key === "tips";
-    if (path.startsWith("/nutrients") || path.startsWith("/gut")) return key === "guide";
+    if (path.startsWith("/nutrients") || path.startsWith("/gut") || path.startsWith("/additives")) return key === "guide";
     return false;
   };
 

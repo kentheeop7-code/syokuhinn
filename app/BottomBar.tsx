@@ -19,7 +19,7 @@ export default function BottomBar() {
   const active = (key: string) => {
     if (path === "/") return key === (tab === "search" ? "search" : tab === "women" ? "women" : "record");
     if (path.startsWith("/tips")) return key === "tips";
-    if (path.startsWith("/nutrients") || path.startsWith("/gut")) return key === "guide";
+    if (path.startsWith("/nutrients") || path.startsWith("/gut") || path.startsWith("/additives")) return key === "guide";
     return false;
   };
 

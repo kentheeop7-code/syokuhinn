@@ -21,6 +21,14 @@ export default function Tips() {
         </span>
         <i aria-hidden>›</i>
       </Link>
+      <Link href="/additives" className="gutlink">
+        <span aria-hidden>🏷️</span>
+        <span>
+          <b>食品表示・添加物ガイド（専用ページ）</b>
+          <small>増粘剤・乳化剤・甘味料／原材料チェッカー</small>
+        </span>
+        <i aria-hidden>›</i>
+      </Link>
 
       <nav className="anav" aria-label="ページ内メニュー">
         {TIP_GROUPS.map((g) => (

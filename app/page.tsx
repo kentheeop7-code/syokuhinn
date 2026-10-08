@@ -1633,6 +1633,14 @@ function HomeInner() {
             </span>
             <i aria-hidden>›</i>
           </Link>
+          <Link href="/additives" className="gutlink">
+            <span aria-hidden>🏷️</span>
+            <span>
+              <b>食品表示・添加物ガイド</b>
+              <small>増粘剤・乳化剤・甘味料／原材料チェッカー</small>
+            </span>
+            <i aria-hidden>›</i>
+          </Link>
           <CycleTracker />
           <WomenGuide />
           <BoneMenu onAdd={add} />

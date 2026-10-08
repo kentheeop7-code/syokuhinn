@@ -3321,3 +3321,50 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 .gtpbar i { display: block; height: 100%; background: #0a7d3b; }
 .gtday { margin-top: 8px; }
 .gtday > strong { font-size: 0.9rem; font-weight: 900; color: #7a1f43; }
+
+/* ---- additives guide ---- */
+.ad .anav { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px; margin: 0 0 8px; -webkit-overflow-scrolling: touch; }
+.ad .anav a { flex: 0 0 auto; padding: 8px 14px; min-height: 40px; display: inline-flex; align-items: center; background: #fff; border: 2px solid #2b4a38; border-radius: 999px; color: #12301f; font-weight: 800; font-size: 0.9rem; text-decoration: none; }
+.ad .adsum { background: #fff8e6; }
+.ad .adsum ul, .ad .adsec ul { margin: 6px 0 0; padding-left: 1.2em; }
+.ad .adsum li, .ad .adsec li { margin: 6px 0; line-height: 1.7; font-size: 0.95rem; }
+.ad .adsec h3 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 900; }
+.ad .adlabel { margin: 8px 0 0; font-size: 0.82rem; font-weight: 800; color: #08703a; }
+.ad .adpick { margin: 10px 0 0; padding: 10px 12px; background: #e6f9ec; border-radius: 12px; line-height: 1.7; font-size: 0.93rem; }
+.ad .adpick b { display: block; color: #08703a; font-size: 0.82rem; }
+.ad .adread, .ad .adsteps { list-style: none; margin: 0; padding: 0; }
+.ad .adread li { display: flex; gap: 10px; margin: 10px 0; padding-left: 0; }
+.ad .adread i { font-style: normal; font-weight: 900; color: #08703a; font-size: 1.1rem; }
+.ad .adread b, .ad .adsteps b { display: block; font-weight: 900; }
+.ad .adsteps li { margin: 10px 0; padding: 10px 12px; background: #f4faf6; border-radius: 12px; }
+.ad .adsteps span, .ad .adread span { line-height: 1.7; font-size: 0.93rem; }
+.ad .addl div { margin: 10px 0; padding: 10px 12px; background: #fff0f4; border-radius: 12px; }
+.ad .addl dt { font-weight: 900; }
+.ad .addl dd { margin: 4px 0 0; line-height: 1.7; font-size: 0.93rem; }
+.adbox { background: #fff; border: 2.5px solid #2b4a38; border-radius: 16px; padding: 14px; margin: 0 0 16px; }
+.adbox h3 { margin: 0 0 6px; font-size: 1.1rem; font-weight: 900; }
+.adnote { font-size: 0.88rem; line-height: 1.7; color: #26402f; margin: 6px 0; }
+.adnote.small { font-size: 0.8rem; }
+.adtext, .adsearch { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 2px solid #2b4a38; border-radius: 12px; font-size: 16px; font-family: inherit; }
+.adbtns { display: flex; gap: 8px; margin: 8px 0; }
+.adtabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.adtabs button { padding: 8px 12px; min-height: 40px; border: 2px solid #2b4a38; border-radius: 999px; background: #fff; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+.adtabs button.on { background: #2b4a38; color: #fff; }
+.adcount { font-size: 0.85rem; font-weight: 800; margin: 4px 0; }
+.adbox .adsum { background: #f4faf6; padding: 10px 12px; border-radius: 12px; margin: 10px 0; line-height: 1.7; }
+.adcard { border: 2px solid #cfe3d6; border-left-width: 6px; border-radius: 12px; padding: 10px 12px; margin: 8px 0; background: #fff; }
+.adcard.ok { border-left-color: #2fa866; }
+.adcard.mid { border-left-color: #e8a317; }
+.adcard.care { border-left-color: #d9455f; }
+.adhead { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font-family: inherit; }
+.adname { font-weight: 900; font-size: 1rem; flex: 1; }
+.adlv { font-style: normal; font-size: 0.75rem; font-weight: 800; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+.adlv.ok { background: #e6f9ec; color: #08703a; }
+.adlv.mid { background: #fff3d0; color: #8a5a00; }
+.adlv.care { background: #ffe3e8; color: #a3223a; }
+.adhead i { font-style: normal; font-weight: 900; font-size: 1.2rem; }
+.adrole, .adbody p { margin: 6px 0; line-height: 1.7; font-size: 0.92rem; }
+.adrole b, .adbody b { display: block; font-size: 0.78rem; color: #08703a; }
+.adresult { padding: 10px 12px; border-radius: 12px; line-height: 1.7; font-size: 0.88rem; margin: 10px 0 0; }
+.adresult.ok { background: #e6f9ec; }
+.adresult.mid { background: #fff3d0; }
