@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ADDITIVES, type Additive } from "./additivesData";
+import { MORE } from "./additivesMore";
 
 const LV: Record<Additive["lv"], { label: string; cls: string; note: string }> = {
   ok: { label: "気にしすぎなくてOK", cls: "ok", note: "通常の食事の量なら、心配は小さいもの" },
@@ -12,6 +13,7 @@ const LV: Record<Additive["lv"], { label: string; cls: string; note: string }> =
 function Card({ a }: { a: Additive }) {
   const [open, setOpen] = useState(false);
   const l = LV[a.lv];
+  const m = MORE[a.id];
   return (
     <div className={`adcard ${l.cls}`}>
       <button className="adhead" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
@@ -37,6 +39,22 @@ function Card({ a }: { a: Additive }) {
             <b>とくに気をつけたい人・場面</b>
             {a.who}
           </p>
+          {m && (
+            <>
+              <p>
+                <b>ラベルでの書かれ方</b>
+                {m.ex}
+              </p>
+              <p>
+                <b>量の目安</b>
+                {m.amount}
+              </p>
+              <p className="adpickbox">
+                <b>選び方・食べ方の具体策</b>
+                {m.pick}
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
