@@ -1625,6 +1625,14 @@ function HomeInner() {
         </>
       ) : tab === "women" ? (
         <>
+          <Link href="/gut" className="gutlink">
+            <span aria-hidden>🌿</span>
+            <span>
+              <b>腸内環境ガイド</b>
+              <small>便のタイプ・食物繊維・月経と便通・7日プラン</small>
+            </span>
+            <i aria-hidden>›</i>
+          </Link>
           <CycleTracker />
           <WomenGuide />
           <BoneMenu onAdd={add} />
@@ -1650,6 +1658,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

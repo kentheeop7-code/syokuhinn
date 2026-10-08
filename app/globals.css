@@ -3248,3 +3248,76 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 .wgweek li label { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 5px 0; border-bottom: 1px dashed #b7c9bb; font-size: 0.9rem; line-height: 1.55; cursor: pointer; }
 .wgweek input { flex: none; width: 22px; height: 22px; margin-top: 2px; accent-color: #d6336c; }
 .tkdo { margin: 4px 0 6px; padding: 6px 8px; background: #fff0f5; border-radius: 8px; font-size: 0.88rem; line-height: 1.55; font-weight: 700; }
+
+/* ===== gut page ===== */
+.gutlink { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; padding: 12px 14px; background: #e6f9ec; border: 2.5px solid #2b4a38; border-radius: 16px; color: #12301f; text-decoration: none; min-height: 60px; }
+.gutlink > span:first-child { font-size: 1.8rem; }
+.gutlink b { display: block; font-size: 1.02rem; font-weight: 900; }
+.gutlink small { display: block; font-size: 0.82rem; color: #26402f; }
+.gutlink i { margin-left: auto; font-style: normal; font-size: 1.6rem; font-weight: 900; color: #08703a; }
+.gut .card { margin-bottom: 14px; }
+.gtsum { background: #f2fbd9; }
+.gtsum ul, .gtsec ul { margin: 6px 0; padding-left: 1.25em; }
+.gtsum li, .gtsec li { font-size: 0.95rem; line-height: 1.75; margin-bottom: 4px; }
+.gtsec h3 { margin: 12px 0 4px; font-size: 1.05rem; font-weight: 900; color: #08703a; }
+.gtsec h3:first-child { margin-top: 0; }
+.gtsec p { font-size: 0.95rem; line-height: 1.75; margin: 4px 0; }
+.gtnote { font-size: 0.9rem; line-height: 1.7; color: #26402f; margin: 4px 0 8px; border: 0 !important; background: none !important; padding: 0 !important; }
+.gtnote.small { font-size: 0.8rem; }
+.gtwarn { padding: 8px 10px !important; background: #fff3c4; border: 2px solid #2b4a38; border-radius: 10px; }
+.gtbristol { list-style: none; padding: 0 !important; display: flex; flex-direction: column; gap: 6px; }
+.gtbristol li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; margin: 0 !important; }
+.gtbristol li i { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 2px solid #2b4a38; font-style: normal; font-weight: 900; background: #eee; }
+.gtbristol li span b { display: block; font-size: 0.92rem; }
+.gtbristol li span small { font-size: 0.82rem; font-weight: 800; }
+.gtbristol li.c i { background: #ffd7a8; } .gtbristol li.n i { background: #e6f2c4; } .gtbristol li.ok { background: #e6f9ec; } .gtbristol li.ok i { background: #7ed957; } .gtbristol li.d i { background: #bfe4ff; }
+.gtdl > div { padding: 8px 10px; margin-bottom: 6px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; }
+.gtdl dt { font-size: 0.85rem; font-weight: 900; color: #08703a; }
+.gtdl dd { margin: 2px 0 0; font-size: 0.92rem; line-height: 1.7; }
+.gtmeals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0; }
+.gtmeals > div { background: #fff; border: 1.5px solid #2b4a38; border-radius: 10px; padding: 6px 8px; }
+.gtmeals strong { font-size: 0.88rem; }
+.gtmeals ul { list-style: none; margin: 2px 0 0 !important; padding: 0 !important; }
+.gtmeals li { font-size: 0.84rem !important; line-height: 1.5 !important; margin: 0 !important; }
+.gtmeals li span { font-weight: 800; color: #08703a; }
+.gtsumline { font-size: 0.9rem !important; line-height: 1.8 !important; }
+.gtcard { margin-bottom: 14px; padding: 14px 12px; background: #fff; border: 2.5px solid #2b4a38; border-radius: 16px; }
+.gtcard h3 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 900; }
+.gtalarmh { margin-top: 14px !important; color: #c8321f; }
+.gtchecks { list-style: none; margin: 0; padding: 0; }
+.gtchecks li label { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; padding: 6px 0; border-bottom: 1px dashed #c9d8ce; font-size: 0.92rem; line-height: 1.55; cursor: pointer; }
+.gtchecks input { flex: none; width: 22px; height: 22px; margin-top: 2px; accent-color: #0a7d3b; }
+.gtchecks.alarm input { accent-color: #c8321f; }
+.gtresult { margin: 10px 0 0; padding: 10px 12px; border: 2px solid #2b4a38; border-radius: 12px; font-size: 0.92rem; line-height: 1.65; }
+.gtresult.ok { background: #e6f9ec; } .gtresult.mid { background: #fff3c4; } .gtresult.hi { background: #ffe0e0; }
+.gtmeter { padding: 10px 12px; background: #f2fbd9; border: 2px solid #2b4a38; border-radius: 12px; margin-bottom: 10px; }
+.gthead { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.92rem; }
+.gthead strong { font-size: 1.2rem; font-weight: 900; }
+.gtbar { height: 14px; margin: 4px 0; border: 2px solid #2b4a38; border-radius: 999px; background: #fff; overflow: hidden; }
+.gtbar i { display: block; height: 100%; background: #46c8ff; transition: width 0.2s; }
+.gtbar i.done { background: #0a7d3b; }
+.gtmsg { margin: 4px 0 2px; font-size: 0.9rem; font-weight: 800; }
+.gtmix { margin: 0; font-size: 0.8rem; color: #3f5b4b; }
+.gttags { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+.gttags::-webkit-scrollbar { display: none; }
+.gttags button { flex: none; min-height: 40px; padding: 0 12px; border: 2px solid #2b4a38; border-radius: 999px; background: #fff; font: inherit; font-size: 0.85rem; font-weight: 800; color: #12301f; cursor: pointer; }
+.gttags button.on { background: #ffe680; }
+.gtfoods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gtfoods button { width: 100%; min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; font: inherit; color: #12301f; text-align: left; cursor: pointer; }
+.gtfoods button:active { transform: scale(0.98); background: #eaf6d6; }
+.gtn { flex: 1; font-size: 0.9rem; font-weight: 700; line-height: 1.4; }
+.gtv { font-size: 0.82rem; white-space: nowrap; }
+.gtv b { font-size: 1.05rem; font-weight: 900; color: #08703a; }
+.gtp { font-size: 1.3rem; font-weight: 900; color: #08703a; }
+.gtpicked { margin-top: 10px; padding: 8px 10px; border: 2px dashed #2b4a38; border-radius: 12px; }
+.gtpicked ul { list-style: none; margin: 4px 0; padding: 0; }
+.gtpicked li { display: flex; justify-content: space-between; align-items: center; min-height: 38px; border-bottom: 1px dashed #c9d8ce; font-size: 0.88rem; }
+.gtpicked li button { width: 40px; height: 40px; border: 0; background: none; color: #c8321f; font-size: 1.3rem; cursor: pointer; }
+.gtactions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.gtactions .btn { flex: 1 1 140px; min-height: 46px; }
+.gtprog { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 4px 0 8px; font-size: 0.9rem; }
+.gtprog strong { font-size: 1.15rem; font-weight: 900; color: #08703a; }
+.gtpbar { flex: 1 1 120px; height: 12px; border: 2px solid #2b4a38; border-radius: 999px; background: #fff; overflow: hidden; }
+.gtpbar i { display: block; height: 100%; background: #0a7d3b; }
+.gtday { margin-top: 8px; }
+.gtday > strong { font-size: 0.9rem; font-weight: 900; color: #7a1f43; }

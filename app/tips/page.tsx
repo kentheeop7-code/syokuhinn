@@ -13,6 +13,15 @@ export default function Tips() {
       <h1 className="title sm">豆知識</h1>
       <p className="member">勘違いを覆す話から、年齢による代謝・筋肉の変化、痩せない・筋肉がつかない原因、たんぱく質・ダイエットのコツまで</p>
 
+      <Link href="/gut" className="gutlink">
+        <span aria-hidden>🌿</span>
+        <span>
+          <b>腸内環境ガイド（専用ページ）</b>
+          <small>便のタイプ・食物繊維・月経と便通・7日プラン</small>
+        </span>
+        <i aria-hidden>›</i>
+      </Link>
+
       <nav className="anav" aria-label="ページ内メニュー">
         {TIP_GROUPS.map((g) => (
           <a key={g.key} href={`#g-${g.key}`}>
@@ -75,5 +84,6 @@ export default function Tips() {
     </main>
   );
 }
+
 
 
