@@ -3368,3 +3368,9 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 .adresult { padding: 10px 12px; border-radius: 12px; line-height: 1.7; font-size: 0.88rem; margin: 10px 0 0; }
 .adresult.ok { background: #e6f9ec; }
 .adresult.mid { background: #fff3d0; }
+
+.shareqr { display: flex; gap: 14px; align-items: center; margin: 16px 0; }
+.shareqr img { width: 140px; height: 140px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; flex: 0 0 auto; }
+.shareqr p { margin: 6px 0; font-size: 0.9rem; line-height: 1.6; }
+.shareqr a { font-weight: 900; color: #08703a; }
+@media (max-width: 420px) { .shareqr { flex-direction: column; text-align: center; } }

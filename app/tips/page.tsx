@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import Link from "next/link";
+import ShareQR from "../ShareQR";
 import { TIPS, TIP_GROUPS } from "../tipsData";
 
 export const metadata: Metadata = {
@@ -89,9 +90,11 @@ export default function Tips() {
       <p className="note">
         ※ 一般的な情報で、個人の診断や治療に代わるものではありません。商品の成分は、必ずパッケージの表示をご確認ください。持病のある方・妊娠中の方・服薬中の方は、医師や管理栄養士にご相談ください。
       </p>
+      <ShareQR />
     </main>
   );
 }
+
 
 
 
