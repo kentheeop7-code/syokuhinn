@@ -60,6 +60,7 @@ export default function TipsTicker() {
               <b>{t.title}</b>
               {t.myth && <p className="tkmyth">✕ 思い込み：{t.myth}</p>}
               <p>{t.myth ? `◎ 実は… ${t.lead}` : t.lead}</p>
+              {t.todo && <p className="tkdo">✅ {t.todo}</p>}
               <Link href={`/tips#${t.id}`}>くわしく読む ›</Link>
             </div>
           );
@@ -67,4 +68,5 @@ export default function TipsTicker() {
       </div>    </section>
   );
 }
+
 

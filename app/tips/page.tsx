@@ -49,6 +49,12 @@ export default function Tips() {
                     <li key={p}>{p}</li>
                   ))}
                 </ul>
+                {t.todo && (
+                  <p className="tiptodo">
+                    <b>✅ 今日からできる一歩</b>
+                    {t.todo}
+                  </p>
+                )}
                 {t.source && (
                   <p className="tipsrc">
                     出典：
@@ -69,4 +75,5 @@ export default function Tips() {
     </main>
   );
 }
+
 

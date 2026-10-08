@@ -207,6 +207,33 @@ const CYCLE = [
   },
 ];
 
+// 年代ごとの「4週間プラン」（チェックして進める。チェックは、この端末に保存されます）
+const PLAN: Record<Stage, { week: string; tasks: string[] }[]> = {
+  u40: [
+    { week: "1週目：食事の土台", tasks: ["朝食に、たんぱく質20g（卵2個、または卵1個＋納豆1パック）をとる", "牛乳200mlか、ヨーグルト100gを、毎日とる", "体重・腹囲・体の写真を測って、基準にする"] },
+    { week: "2週目：鉄と野菜", tasks: ["赤身肉・レバー・あさり・カツオのどれかを、週3回食べる", "小松菜かブロッコリーを、毎日1品（80〜100g）", "最後の月経の開始日を、アプリに入れる"] },
+    { week: "3週目：運動", tasks: ["筋トレ（スクワット10回×3、ヒップリフト10回×3）を週2回", "早歩き30分を、週2回", "エレベーターではなく、階段を選ぶ日を週3日"] },
+    { week: "4週目：習慣と検診", tasks: ["睡眠を6時間以上とる日を、週5日", "お酒を飲まない日を、週2日つくる", "子宮頸がん検診（2年に1回）の予約・受診日を確認する"] },
+  ],
+  s40: [
+    { week: "1週目：現状を知る", tasks: ["食事を3日分、アプリに記録する", "汁物は、具だくさんにして、汁を半分残す（塩分6.5g未満）", "「今日の栄養チェック」で、カルシウム700mgに届く日を、3日つくる"] },
+    { week: "2週目：筋肉を守る", tasks: ["筋トレ（椅子スクワット10回×3、ヒップリフト10回×3、壁腕立て10回×2）を週2回", "毎食、たんぱく質20g前後をそろえる", "かかと落としを、1日30回"] },
+    { week: "3週目：眠りと体調", tasks: ["朝起きて、日光を5〜10分浴びる", "14時以降は、カフェインを控える", "月経の周期・ほてり・眠りを、1か月メモしはじめる"] },
+    { week: "4週目：検診", tasks: ["乳がん検診（2年に1回）と、骨粗鬆症検診（40・45歳）の予約を確認する", "健診の、血圧・LDLコレステロール・中性脂肪・血糖を確認する", "気になる症状があれば、婦人科の予約を入れる"] },
+  ],
+  s50: [
+    { week: "1週目：骨の栄養", tasks: ["サケ・サンマ・ブリなどの魚や、きのこを、週3回食べる", "カルシウム700〜800mgを、3日続けて達成する（牛乳200ml＋ヨーグルト100g＋小松菜100g＋豆腐150g）", "納豆か小松菜で、ビタミンKをとる（ワルファリンを飲んでいる人は、医師に確認）"] },
+    { week: "2週目：運動", tasks: ["筋トレ（椅子スクワット、ヒップリフト、壁腕立て、背中の運動）を週2〜3回", "片足立ち（1分×左右）を、1日3回", "早歩き30分を、週3〜4回"] },
+    { week: "3週目：更年期の対策", tasks: ["ほてりが出る時間と、前に食べたもの（辛いもの・カフェイン・お酒）をメモして、引き金を探す", "大豆食品（豆腐150g・納豆1パック・豆乳200mlのどれか）を、毎日とる", "夕食は、塩分を控えめに（汁は半分残す）"] },
+    { week: "4週目：検診と相談", tasks: ["骨粗鬆症検診（50・55歳）と、乳がん検診の予約を確認する", "血圧・LDLコレステロールの数値を確認する", "つらい症状があれば、婦人科を予約する（ホルモン補充・漢方などの相談）"] },
+  ],
+  s60: [
+    { week: "1週目：たんぱく質", tasks: ["毎食、たんぱく質20gをそろえる（卵1個＋納豆、魚1切れ、豆腐など）", "体重を、週1回、同じ条件（朝のトイレ後）で測る", "食欲がない日は、ヨーグルト・牛乳・卵・豆腐など、食べやすいものを"] },
+    { week: "2週目：脚と筋力", tasks: ["椅子からの立ち座り10回×3を、週3回", "かかとの上げ下げ15回×2を、毎日", "片足立ち（つかまれる場所で、1分×左右）を、毎日"] },
+    { week: "3週目：骨と安全", tasks: ["牛乳200ml・魚・納豆を、毎日どれかとる", "日光を、午前中に10〜15分浴びる", "家の段差・暗い場所・すべりやすい床を、見直す"] },
+    { week: "4週目：検診と受診", tasks: ["骨密度検査（60・65・70歳の検診）を確認する", "骨粗鬆症の薬を使っている人は、歯の治療の前に、薬のことを歯科医に伝える", "半年で2〜3kgの意図しない体重減少があれば、受診する"] },
+  ],
+};
 type Menu = { title: string; items: { name: string; g: number }[] }[];
 
 // 年代ごとの、骨と血を意識した1日の食事例（女性・活動量ふつうの目安）
@@ -401,6 +428,22 @@ export default function WomenGuide() {
   const [age, setAge] = useState(0);
   const [picked, setPicked] = useState(false);
   const [checks, setChecks] = useState<boolean[]>(CHECKS.map(() => false));
+  const [done, setDone] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem("lg-plan") || "null");
+      if (s && typeof s === "object") setDone(s);
+    } catch {}
+  }, []);
+  const toggleTask = (id: string) =>
+    setDone((d) => {
+      const n = { ...d, [id]: !d[id] };
+      try {
+        localStorage.setItem("lg-plan", JSON.stringify(n));
+      } catch {}
+      return n;
+    });
 
   useEffect(() => {
     const read = () => {
@@ -469,6 +512,39 @@ export default function WomenGuide() {
           </div>
         ))}
         <StageExtra stage={cur.key} />
+        <div className="wgplan">
+          <b>📅 4週間プラン（チェックして進めよう）</b>
+          {(() => {
+            const all = PLAN[cur.key].flatMap((w, wi) => w.tasks.map((_, ti) => `${cur.key}-${wi}-${ti}`));
+            const n = all.filter((id) => done[id]).length;
+            return (
+              <p className="wgprog">
+                <strong>{n}</strong> / {all.length} できました
+                <span className="wgpbar">
+                  <i style={{ width: `${(n / all.length) * 100}%` }} />
+                </span>
+              </p>
+            );
+          })()}
+          {PLAN[cur.key].map((wk, wi) => (
+            <div key={wk.week} className="wgweek">
+              <strong>{wk.week}</strong>
+              <ul>
+                {wk.tasks.map((tk, ti) => {
+                  const id = `${cur.key}-${wi}-${ti}`;
+                  return (
+                    <li key={id}>
+                      <label>
+                        <input type="checkbox" checked={!!done[id]} onChange={() => toggleTask(id)} />
+                        <span>{tk}</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="wgcheck">
@@ -532,6 +608,7 @@ export default function WomenGuide() {
     </section>
   );
 }
+
 
 
 

@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { FOODS } from "../lib/foods";
 
 type Phase = "mens" | "foll" | "ovul" | "lut";
 
@@ -55,6 +56,129 @@ const PHASES: Record<
   },
 };
 
+type Item = { name: string; g: number };
+type MealP = { title: string; items: Item[] };
+
+// 時期ごとの、量つきの1日献立の例（約1,600kcal前後・女性の目安）
+const PHASE_MENU: Record<Phase, { focus: string; meals: MealP[]; actions: string[]; shop: string }> = {
+  mens: {
+    focus: "鉄＋ビタミンC＋体を温める",
+    meals: [
+      { title: "朝食", items: [{ name: "白ごはん", g: 130 }, { name: "卵", g: 60 }, { name: "納豆", g: 30 }, { name: "小松菜", g: 60 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "キャベツ", g: 80 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "アサリ", g: 60 }, { name: "木綿豆腐", g: 100 }, { name: "えのき", g: 50 }, { name: "小松菜", g: 60 }] },
+      { title: "間食", items: [{ name: "豆乳（無調整）", g: 200 }, { name: "バナナ", g: 100 }] },
+    ],
+    actions: [
+      "1日に1回は、赤身肉・レバー・あさり・カツオのどれかを（鉄の目標は10.5mg）。",
+      "食事のあとに、果物かブロッコリーなど、ビタミンCのものを1品。",
+      "お茶・コーヒーは、食事の前後1時間は避けて、温かい麦茶・白湯・豆乳に。",
+    ],
+    shop: "牛赤身肉、あさり（水煮缶でもOK）、小松菜、ブロッコリー、豆乳、バナナ、卵、納豆",
+  },
+  foll: {
+    focus: "たんぱく質＋野菜＋カルシウム（見直しに最適）",
+    meals: [
+      { title: "朝食", items: [{ name: "オートミール", g: 40 }, { name: "牛乳", g: 200 }, { name: "バナナ", g: 100 }, { name: "卵", g: 60 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "鶏むね肉（皮なし）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "トマト", g: 100 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "サケ（焼き）", g: 70 }, { name: "ほうれん草", g: 80 }, { name: "木綿豆腐", g: 100 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "アーモンド", g: 10 }] },
+    ],
+    actions: [
+      "毎食、たんぱく質20g前後（卵2個、鶏むね肉90g、サケ1切れ＋豆腐など）をそろえる。",
+      "この時期に、体重・腹囲・体の写真を測って、基準にする。",
+      "筋トレ（スクワット10回×3など）を、週2〜3回のペースで始める。",
+    ],
+    shop: "オートミール、牛乳、卵、鶏むね肉、サケ、ほうれん草、ブロッコリー、豆腐、ヨーグルト、アーモンド",
+  },
+  ovul: {
+    focus: "水分＋食物繊維＋バランス",
+    meals: [
+      { title: "朝食", items: [{ name: "全粒粉パン", g: 90 }, { name: "卵", g: 60 }, { name: "牛乳", g: 200 }, { name: "りんご", g: 100 }] },
+      { title: "昼食", items: [{ name: "玄米ごはん", g: 140 }, { name: "豚ヒレ肉", g: 90 }, { name: "キャベツ", g: 100 }, { name: "しめじ", g: 50 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "タラ", g: 100 }, { name: "小松菜", g: 80 }, { name: "わかめ（生）", g: 30 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "キウイ", g: 80 }] },
+    ],
+    actions: [
+      "水分を、1日1.2〜1.5Lを目安に、こまめに（食事の汁物・お茶を含めて）。",
+      "毎食、野菜・きのこ・海藻のどれかを1品足して、食物繊維18gを目指す。",
+      "体調がよければ、ふだんどおりの運動を。違和感のある日は、無理しない。",
+    ],
+    shop: "全粒粉パン、玄米、豚ヒレ肉、タラ、キャベツ、しめじ、わかめ、キウイ、ヨーグルト",
+  },
+  lut: {
+    focus: "塩分ひかえめ＋食物繊維＋カリウム",
+    meals: [
+      { title: "朝食", items: [{ name: "オートミール", g: 40 }, { name: "牛乳", g: 200 }, { name: "バナナ", g: 100 }, { name: "卵", g: 60 }] },
+      { title: "昼食", items: [{ name: "玄米ごはん", g: 140 }, { name: "鶏むね肉（皮なし）", g: 80 }, { name: "ブロッコリー", g: 80 }, { name: "ほうれん草", g: 60 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 110 }, { name: "サケ（焼き）", g: 70 }, { name: "納豆", g: 45 }, { name: "しめじ", g: 50 }, { name: "わかめ（生）", g: 30 }] },
+      { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "りんご", g: 100 }] },
+    ],
+    actions: [
+      "塩分は6.5g未満。汁物は具だくさんで、汁は半分残す。ラーメン・漬物・加工肉は控えめに。",
+      "むくみ対策に、カリウムの多いバナナ・ほうれん草・海藻・きのこを、毎食どれか。",
+      "甘いものは、1日の量を決めて（たとえば、チョコ3かけ・小さめのヨーグルト）、先に食事をしっかり。",
+      "カフェイン・お酒は、夕方以降は控えて、早めに寝る。",
+    ],
+    shop: "オートミール、バナナ、玄米、鶏むね肉、ほうれん草、サケ、納豆、しめじ、わかめ、りんご",
+  },
+};
+
+function PhaseMenu({ phase }: { phase: Phase }) {
+  const byName = new Map(FOODS.map((f) => [f.name, f]));
+  const m = PHASE_MENU[phase];
+  const t = { kcal: 0, p: 0, ca: 0, fe: 0, fi: 0, salt: 0, k: 0 };
+  for (const meal of m.meals)
+    for (const i of meal.items) {
+      const f = byName.get(i.name);
+      if (!f) continue;
+      const k = i.g / 100;
+      t.kcal += (f.p * 4 + f.f * 9 + f.c * 4) * k;
+      t.p += f.p * k;
+      t.ca += f.ca * k;
+      t.fe += f.fe * k;
+      t.fi += f.fi * k;
+      t.salt += f.salt * k;
+      t.k += f.k * k;
+    }
+  const r = (n: number, d = 0) => (d ? Math.round(n * 10) / 10 : Math.round(n));
+  return (
+    <div className="cycmenu">
+      <h3>🍱 {PHASES[phase].name}のおすすめ献立（量つき）</h3>
+      <p className="cycfocus">
+        ねらい：<b>{m.focus}</b>
+      </p>
+      <div className="cycmeals">
+        {m.meals.map((meal) => (
+          <div key={meal.title}>
+            <strong>{meal.title}</strong>
+            <ul>
+              {meal.items.map((i) => (
+                <li key={i.name}>
+                  {i.name} <span>{i.g}g</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p className="cycsum">
+        合計 約<b>{r(t.kcal)}kcal</b>　たんぱく質 {r(t.p)}g　カルシウム {r(t.ca)}mg　鉄 <b>{r(t.fe, 1)}mg</b>　食物繊維 {r(t.fi, 1)}g　カリウム {r(t.k)}mg
+        <small>（調味料の塩分を除く。少なめの量の例なので、物足りない日は、ごはん・果物・牛乳で足してください）</small>
+      </p>
+      <b className="cycsub">今日の3つのアクション</b>
+      <ul className="cycact">
+        {m.actions.map((a) => (
+          <li key={a}>{a}</li>
+        ))}
+      </ul>
+      <p className="cycshop">
+        <b>🛒 買い物メモ</b>
+        {m.shop}
+      </p>
+    </div>
+  );
+}
 type Saved = { starts: string[]; len: number; dur: number };
 
 export default function CycleTracker() {
@@ -243,6 +367,8 @@ export default function CycleTracker() {
               </div>
             </div>
 
+            <PhaseMenu phase={info.phase} />
+
             <div className="cycbtns">
               <button className="btn" onClick={() => addStart(key(new Date()))}>
                 今日、月経が始まった
@@ -280,3 +406,5 @@ export default function CycleTracker() {
     </section>
   );
 }
+
+
