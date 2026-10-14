@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ShareQR from "../ShareQR";
 import { TIPS, TIP_GROUPS } from "../tipsData";
+import { TIP_TODO } from "../tipsTodo";
 
 export const metadata: Metadata = {
   title: "豆知識 | 専属の栄養士",
@@ -69,10 +70,10 @@ export default function Tips() {
                     <li key={p}>{p}</li>
                   ))}
                 </ul>
-                {t.todo && (
+                {(t.todo || TIP_TODO[t.id]) && (
                   <p className="tiptodo">
                     <b>✅ 今日からできる一歩</b>
-                    {t.todo}
+                    {t.todo ?? TIP_TODO[t.id]}
                   </p>
                 )}
                 {t.source && (
