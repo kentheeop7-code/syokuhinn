@@ -3376,3 +3376,11 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 @media (max-width: 420px) { .shareqr { flex-direction: column; text-align: center; } }
 
 .adpickbox { background: #e6f9ec; border-radius: 12px; padding: 10px 12px; }
+
+.kset .kset-x{}
+.ksbar { display: flex; height: 34px; border: 2px solid #2b4a38; border-radius: 10px; overflow: hidden; margin: 8px 0; font-size: 0.78rem; font-weight: 900; }
+.ksbar span { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; color: #12301f; }
+.ksbar .p { background: #ffd6a8; }
+.ksbar .f { background: #fff0a0; }
+.ksbar .c { background: #b9e9c9; }
+.ksbtns { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }

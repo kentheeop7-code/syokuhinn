@@ -1510,6 +1510,213 @@ function DayView({
   );
 }
 
+const KCAL_PRESETS = [1200, 1400, 1600, 1800, 2000, 2200];
+const KCAL_TYPES = {
+  balance: { label: "バランス型", p: 0.2, f: 0.25, c: 0.55, desc: "厚生労働省の目標量の範囲に収まる、ふつうの配分です。" },
+  protein: { label: "高たんぱく型", p: 0.28, f: 0.25, c: 0.47, desc: "筋トレ・ダイエット中に。たんぱく質を多めに、炭水化物をやや少なめに。" },
+  lowfat: { label: "低脂質型", p: 0.25, f: 0.2, c: 0.55, desc: "脂質をおさえて、減量しやすく。脂質はエネルギーの20%（目標量の下限）です。" },
+  lowcarb: { label: "低糖質型", p: 0.28, f: 0.35, c: 0.37, desc: "ごはん・パンを減らす食べ方。極端な糖質制限ではありません。" },
+} as const;
+type KcalType = keyof typeof KCAL_TYPES;
+
+// 一番上で「1日のカロリー」を決めると、PFCのバランスと、1日の食事例がすぐ分かる
+function KcalSetter({
+  setGoal,
+  onAddMany,
+}: {
+  setGoal: (g: Goal) => void;
+  onAddMany: (items: MenuItem[]) => void;
+}) {
+  const [kcal, setKcal] = useState("1800");
+  const [type, setType] = useState<KcalType>("balance");
+  const [done, setDone] = useState<"" | "goal" | "log">("");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem("lg-kcal") || "null");
+      if (s?.kcal) setKcal(String(s.kcal));
+      if (s?.type && s.type in KCAL_TYPES) setType(s.type);
+    } catch {}
+    setLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem("lg-kcal", JSON.stringify({ kcal, type }));
+    } catch {}
+  }, [kcal, type, loaded]);
+
+  const k = num(kcal);
+  const valid = k >= 800 && k <= 4000;
+  const t = KCAL_TYPES[type];
+  const plan = valid
+    ? { kcal: Math.round(k), p: Math.round((k * t.p) / 4), f: Math.round((k * t.f) / 9), c: Math.round((k * t.c) / 4) }
+    : null;
+  const menu = useMemo(
+    () => (plan ? buildMenu(plan, type === "lowfat" ? "lowfat" : "balance") : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [plan?.kcal, plan?.p, plan?.f, plan?.c, type]
+  );
+  const pc = (x: number) => Math.round(x * 100);
+
+  return (
+    <section className="card kset">
+      <h2 className="h2" style={{ marginTop: 0 }}>
+        ① 1日のカロリーを決める
+      </h2>
+      <p className="agnote">カロリーを入れると、PFCのバランスと、1日の食事例が出ます。</p>
+      <div className="chips tight">
+        {KCAL_PRESETS.map((v) => (
+          <button
+            key={v}
+            className={String(v) === kcal ? "chip on" : "chip"}
+            onClick={() => {
+              setKcal(String(v));
+              setDone("");
+            }}
+          >
+            {v}
+          </button>
+        ))}
+      </div>
+      <label className="afield">
+        <span>自分で入力</span>
+        <span className="gram">
+          <input
+            inputMode="numeric"
+            value={kcal}
+            onChange={(e) => {
+              setKcal(e.target.value);
+              setDone("");
+            }}
+            aria-label="1日のカロリー（kcal）"
+          />
+          kcal
+        </span>
+      </label>
+      <p className="aglabel">PFCの配分</p>
+      <div className="chips tight">
+        {(Object.keys(KCAL_TYPES) as KcalType[]).map((x) => (
+          <button
+            key={x}
+            className={type === x ? "chip on" : "chip"}
+            onClick={() => {
+              setType(x);
+              setDone("");
+            }}
+          >
+            {KCAL_TYPES[x].label}
+          </button>
+        ))}
+      </div>
+      <p className="note">{t.desc}</p>
+
+      {!plan && <p className="note">800〜4000kcalの範囲で入力してください。</p>}
+
+      {plan && (
+        <>
+          <div className="agresult">
+            <div className="agkcal">
+              1日 <b>{plan.kcal}</b> kcal
+            </div>
+            <div className="ksbar" role="img" aria-label={`P${pc(t.p)}% F${pc(t.f)}% C${pc(t.c)}%`}>
+              <span className="p" style={{ width: `${pc(t.p)}%` }}>
+                P {pc(t.p)}%
+              </span>
+              <span className="f" style={{ width: `${pc(t.f)}%` }}>
+                F {pc(t.f)}%
+              </span>
+              <span className="c" style={{ width: `${pc(t.c)}%` }}>
+                C {pc(t.c)}%
+              </span>
+            </div>
+            <PfcRow p={plan.p} f={plan.f} c={plan.c} />
+            <p className="agnote">
+              たんぱく質 {plan.p}g（{plan.p * 4}kcal）／脂質 {plan.f}g（{plan.f * 9}kcal）／炭水化物 {plan.c}g（{plan.c * 4}kcal）。
+              たんぱく質1g・炭水化物1gは4kcal、脂質1gは9kcalで計算しています。
+            </p>
+            <p className="agnote">
+              目安：ごはん（茶碗1杯150g）で炭水化物 約{Math.round(150 * 0.372)}g。炭水化物{plan.c}gは、ごはん約{Math.round(plan.c / 0.372 / 10) * 10}g分にあたります。
+            </p>
+            {(plan.kcal < 1200 || plan.kcal > 3200) && (
+              <p className="caution">
+                {plan.kcal < 1200
+                  ? "⚠ 1日1200kcal未満は、栄養不足になりやすい量です。続ける前に、管理栄養士・医師に相談してください。"
+                  : "⚠ かなり多めの設定です。活動量に合っているか、確認してください。"}
+              </p>
+            )}
+          </div>
+
+          {menu && (
+            <div className="agmenu">
+              <p className="agtitle">この目標に近づく、1日の食事の例</p>
+              {menu.meals.map((m) => {
+                const mt = sum(m.items.map((i) => ({ id: "", name: i.name, grams: i.g })));
+                return (
+                  <div key={m.title} className="agmeal">
+                    <b>
+                      {m.title}
+                      <span className="muted">
+                        {" "}
+                        約{Math.round(mt.kcal)}kcal ／ P{r1(mt.p)} F{r1(mt.f)} C{r1(mt.c)}
+                      </span>
+                    </b>
+                    <ul>
+                      {m.items.map((i) => {
+                        const food = byName.get(i.name)!;
+                        const hint = describeAmount(food, i.g);
+                        return (
+                          <li key={i.name}>
+                            {i.name} <span className="muted">約{i.g}g{hint && `（${hint}）`}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })}
+              <p className="agnote">
+                この例の合計: {Math.round(menu.total.kcal)}kcal ／ P{r1(menu.total.p)}g F{r1(menu.total.f)}g C{r1(menu.total.c)}g（目標との差 P
+                {menu.total.p - plan.p >= 0 ? "+" : ""}
+                {r1(menu.total.p - plan.p)}g F{menu.total.f - plan.f >= 0 ? "+" : ""}
+                {r1(menu.total.f - plan.f)}g C{menu.total.c - plan.c >= 0 ? "+" : ""}
+                {r1(menu.total.c - plan.c)}g）
+              </p>
+            </div>
+          )}
+
+          <div className="ksbtns">
+            <button
+              className="small"
+              onClick={() => {
+                setGoal({ p: String(plan.p), f: String(plan.f), c: String(plan.c) });
+                setDone("goal");
+              }}
+            >
+              {done === "goal" ? "✓ 目標に設定しました" : "この数字を、目標にする"}
+            </button>
+            {menu && (
+              <button
+                className="small"
+                onClick={() => {
+                  onAddMany(menu.meals.flatMap((m) => m.items));
+                  setDone("log");
+                }}
+              >
+                {done === "log" ? "✓ 今日の記録に追加しました" : "＋ 食事例を、今日の記録に追加"}
+              </button>
+            )}
+          </div>
+          <p className="agnote">
+            食材は一例です。同じ栄養の食品に置きかえても大丈夫です。年齢・体重から自動で決めたい人は、下の「目標を決める」を使ってください。
+          </p>
+        </>
+      )}
+    </section>
+  );
+}
+
 function HomeInner() {
   const [tab, setTab] = useState<"record" | "search" | "women">("record");
   const sp = useSearchParams();
@@ -1604,6 +1811,10 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
+          <KcalSetter
+            setGoal={setGoal}
+            onAddMany={(items) => items.forEach((i) => add(i.name, i.g))}
+          />
           <Calendar
             month={month}
             setMonth={setMonth}
