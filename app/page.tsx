@@ -1519,6 +1519,60 @@ const KCAL_TYPES = {
 } as const;
 type KcalType = keyof typeof KCAL_TYPES;
 
+const KCAL_DETAIL: Record<KcalType, { who: string; how: string; watch: string }> = {
+  balance: {
+    who: "とくに目的がない人・体重を保ちたい人・40代以降で、バランスよく食べたい人。",
+    how: "主食・主菜・副菜をそろえる。ごはんは毎食、肉・魚・卵・大豆を手のひら1枚ぶん、野菜は両手1杯ぶんが目安。",
+    watch: "脂質が少なすぎないように。極端に減らすと、脂溶性ビタミンの吸収やホルモンの材料が不足しやすくなります。",
+  },
+  protein: {
+    who: "筋トレをしている人・減量中に筋肉を守りたい人・40代以降で筋肉が落ちやすい人。",
+    how: "毎食、たんぱく質を20g前後（肉・魚なら80〜100g、卵2個、納豆2パックなど）とる。朝食に足りない人が多いので、まず朝から。",
+    watch: "腎臓の病気がある人は、医師の指示を優先。水分と野菜（カリウム・食物繊維）も、あわせてとる。",
+  },
+  lowfat: {
+    who: "揚げ物・菓子など、脂質をとりすぎている自覚がある人。減量の最初のステップに。",
+    how: "肉は鶏むね（皮なし）・ヒレ、魚は白身魚、調理は「焼く・蒸す・ゆでる」に。油は小さじ1（4g）を量って使う。",
+    watch: "脂質は、エネルギーの20%を下回らないように。ナッツ・魚の油・オリーブオイルは、少量でも続けたい。",
+  },
+  lowcarb: {
+    who: "ごはん・パン・麺を食べすぎている人。血糖値が気になる人（持病がある人は、医師に相談を）。",
+    how: "ごはんを毎食、茶碗半分〜2/3杯に。減らした分は、たんぱく質のおかず・野菜・きのこ・海藻で、満腹感を補う。",
+    watch: "食物繊維が不足しやすいので、雑穀・豆・野菜を意識して。便秘や、だるさが出たら、主食を少し戻す。",
+  },
+};
+
+function kcalComment(k: number): string {
+  if (k < 1200) return "かなり少なめです。栄養不足・筋肉の減少・月経不順につながりやすいため、続けるのはおすすめできません。";
+  if (k < 1500) return "小柄な人・座り仕事が中心の人の減量向け。体重が減りにくく感じたら、無理に減らさず、活動量を増やす・睡眠をとる、を先に。";
+  if (k < 1800) return "多くの女性の、ゆるやかな減量〜維持の範囲。1か月に体重の2〜4%を減らす目安に合います。";
+  if (k < 2100) return "活動量がふつう〜やや多い人の維持、または筋トレをしている人の減量向け。";
+  if (k < 2500) return "活動量が多い人・運動習慣のある人の維持、または体を大きくしたい人向け。";
+  return "かなり多めです。活動量が非常に多い人・増量中の人向けです。";
+}
+
+const MEAL_TIPS: Record<string, string> = {
+  朝食: "たんぱく質を忘れずに（卵・納豆・ヨーグルト）。血糖値の上がりすぎをおさえ、午前中の集中力にも。",
+  昼食: "いちばんしっかり食べる時間。主食・主菜・野菜を、そろえやすい。外食のときは、定食を選ぶと整えやすい。",
+  夕食: "寝る2〜3時間前までに。炭水化物は少なめにしすぎず、野菜・きのこで量を出す。",
+  間食: "ヨーグルト・果物・ナッツなど、栄養のあるものを。お菓子にしたいときは、量を決めて食べる。",
+};
+
+const SWAPS: { from: string; to: string }[] = [
+  { from: "鶏むね肉 100g（たんぱく質 約23g）", to: "サケ 100g／卵 4個／納豆 3パック／木綿豆腐 350g" },
+  { from: "白ごはん 150g（炭水化物 約55g）", to: "食パン 6枚切り 2枚／ゆでうどん 250g／もち麦ごはん 150g（食物繊維が増える）" },
+  { from: "オリーブオイル 10g（脂質 10g）", to: "アーモンド 17g／バター 12g／マヨネーズ 14g" },
+  { from: "バナナ 100g（炭水化物 約22g）", to: "りんご 150g／みかん 180g／さつまいも 70g" },
+];
+
+const REF_NUTRI: { key: "fi" | "ca" | "fe" | "vc" | "salt"; label: string; unit: string; ref: string; kind: "min" | "max"; v: number }[] = [
+  { key: "fi", label: "食物繊維", unit: "g", ref: "18g以上", kind: "min", v: 18 },
+  { key: "ca", label: "カルシウム", unit: "mg", ref: "650mg前後", kind: "min", v: 650 },
+  { key: "fe", label: "鉄", unit: "mg", ref: "10mg前後（月経がある人）", kind: "min", v: 10 },
+  { key: "vc", label: "ビタミンC", unit: "mg", ref: "100mg", kind: "min", v: 100 },
+  { key: "salt", label: "食塩相当量", unit: "g", ref: "6.5g未満", kind: "max", v: 6.5 },
+];
+
 // 一番上で「1日のカロリー」を決めると、PFCのバランスと、1日の食事例がすぐ分かる
 function KcalSetter({
   setGoal,
@@ -1611,6 +1665,14 @@ function KcalSetter({
         ))}
       </div>
       <p className="note">{t.desc}</p>
+      <dl className="agdl ksdl">
+        <dt>こんな人に</dt>
+        <dd>{KCAL_DETAIL[type].who}</dd>
+        <dt>食べ方</dt>
+        <dd>{KCAL_DETAIL[type].how}</dd>
+        <dt>注意</dt>
+        <dd>{KCAL_DETAIL[type].watch}</dd>
+      </dl>
 
       {!plan && <p className="note">800〜4000kcalの範囲で入力してください。</p>}
 
@@ -1638,6 +1700,12 @@ function KcalSetter({
             </p>
             <p className="agnote">
               目安：ごはん（茶碗1杯150g）で炭水化物 約{Math.round(150 * 0.372)}g。炭水化物{plan.c}gは、ごはん約{Math.round(plan.c / 0.372 / 10) * 10}g分にあたります。
+            </p>
+            <p className="agnote">
+              <b>{plan.kcal}kcalは？</b> {kcalComment(plan.kcal)}
+            </p>
+            <p className="agnote">
+              1食の目安（3食＋間食）：朝 {Math.round(plan.kcal * 0.25)}kcal・昼 {Math.round(plan.kcal * 0.3)}kcal・夕 {Math.round(plan.kcal * 0.3)}kcal・間食 {Math.round(plan.kcal * 0.15)}kcal。たんぱく質は、1食 {Math.round(plan.p / 3.5)}g前後を、毎食に分けると、からだが使いやすい。
             </p>
             {(plan.kcal < 1200 || plan.kcal > 3200) && (
               <p className="caution">
@@ -1673,9 +1741,41 @@ function KcalSetter({
                         );
                       })}
                     </ul>
+                    {MEAL_TIPS[m.title] && <p className="agnote">💡 {MEAL_TIPS[m.title]}</p>}
                   </div>
                 );
               })}
+              <p className="aglabel">この例の栄養のようす（目安との比較）</p>
+              <ul className="ksnut">
+                {REF_NUTRI.map((n) => {
+                  const v = menu.total[n.key];
+                  const ok = n.kind === "min" ? v >= n.v : v < n.v;
+                  return (
+                    <li key={n.key} className={ok ? "ok" : "ng"}>
+                      <b>{n.label}</b>
+                      <span>
+                        {r1(v)}
+                        {n.unit}
+                      </span>
+                      <em>
+                        目安 {n.ref} {ok ? "✓" : n.kind === "min" ? "→ 足りません" : "→ 多めです"}
+                      </em>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="agnote">
+                ※ この食事例は、味つけ（しょうゆ・みそ・塩など）を含まないため、食塩は実際より少なく出ます。カルシウム・鉄が足りないときは、小魚・牛乳・チーズ・小松菜・豆腐、赤身肉・レバー・あさり・ほうれん草を足すと補えます。
+              </p>
+              <p className="aglabel">食材の置きかえ（目的の栄養が、ほぼ同じ量になる目安）</p>
+              <ul className="kswap">
+                {SWAPS.map((s) => (
+                  <li key={s.from}>
+                    <b>{s.from}</b>
+                    <span>＝ {s.to}</span>
+                  </li>
+                ))}
+              </ul>
               <p className="agnote">
                 この例の合計: {Math.round(menu.total.kcal)}kcal ／ P{r1(menu.total.p)}g F{r1(menu.total.f)}g C{r1(menu.total.c)}g（目標との差 P
                 {menu.total.p - plan.p >= 0 ? "+" : ""}
@@ -1879,6 +1979,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
