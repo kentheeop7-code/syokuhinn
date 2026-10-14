@@ -1,6 +1,7 @@
 ﻿import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ITEMS_MORE } from "./itemsMore";
 
 export const metadata: Metadata = {
   title: "栄養素ガイド | 専属の栄養士（女性向け）",
@@ -653,6 +654,14 @@ export default function Nutrients() {
               <dt>1日の目安</dt>
               <dd>{x.target}</dd>
             </dl>
+            {ITEMS_MORE[x.name] && (
+              <>
+                <p className="aglabel">女性の視点</p>
+                <p className="nrole">{ITEMS_MORE[x.name].woman}</p>
+                <p className="aglabel">具体的なとり方</p>
+                <p className="nrole">{ITEMS_MORE[x.name].howto}</p>
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -666,6 +675,7 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 
 
