@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+﻿import MyKcal from "../MyKcal";
+import type { Metadata } from "next";
 import Link from "next/link";
 import ShareQR from "../ShareQR";
 import { TIPS, TIP_GROUPS } from "../tipsData";
@@ -14,6 +15,7 @@ export default function Tips() {
       <h1 className="title sm">豆知識</h1>
       <p className="member">勘違いを覆す話から、年齢による代謝・筋肉の変化、痩せない・筋肉がつかない原因、たんぱく質・ダイエットのコツまで</p>
 
+      <MyKcal topic="tips" />
       <Link href="/gut" className="gutlink">
         <span aria-hidden>🌿</span>
         <span>
@@ -94,6 +96,7 @@ export default function Tips() {
     </main>
   );
 }
+
 
 
 

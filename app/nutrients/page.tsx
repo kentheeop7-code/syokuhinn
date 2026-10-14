@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+﻿import MyKcal from "../MyKcal";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -534,6 +535,7 @@ export default function Nutrients() {
       <h1 className="title sm">栄養素ガイド</h1>
       <p className="member">目的別のとり方と、栄養素のはたらき（日本人の食事摂取基準 2025年版）</p>
 
+      <MyKcal topic="nutrients" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#goals">目的別ガイド</a>
         <a href="#diets">ダイエット方法</a>
@@ -664,5 +666,6 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 

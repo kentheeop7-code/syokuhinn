@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+﻿import MyKcal from "../MyKcal";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FOODS } from "../../lib/foods";
 import GutTools from "./GutTools";
@@ -129,6 +130,7 @@ export default function Gut() {
       <h1 className="title sm">腸内環境ガイド</h1>
       <p className="member">腸活の基本から、便のチェック、1日の食事、女性ならではの悩みまで</p>
 
+      <MyKcal topic="gut" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">しくみ</a>
         <a href="#women">女性の腸</a>
@@ -410,5 +412,6 @@ export default function Gut() {
     </main>
   );
 }
+
 
 

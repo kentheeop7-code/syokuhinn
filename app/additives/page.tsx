@@ -1,4 +1,5 @@
-﻿import type { Metadata } from "next";
+﻿import MyKcal from "../MyKcal";
+import type { Metadata } from "next";
 import Link from "next/link";
 import AdditiveTools from "./AdditiveTools";
 import { FOOD_TYPES } from "./additivesData";
@@ -77,6 +78,7 @@ export default function Additives() {
       <h1 className="title sm">食品表示・添加物ガイド</h1>
       <p className="member">増粘剤・乳化剤・甘味料…食品選びで知っておきたいこと</p>
 
+      <MyKcal topic="additives" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">基本</a>
         <a href="#read">表示の読み方</a>
@@ -233,4 +235,5 @@ export default function Additives() {
     </main>
   );
 }
+
 

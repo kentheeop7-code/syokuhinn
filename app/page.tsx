@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import { KCAL_TYPES, type KcalType } from "./MyKcal";
+import MyKcal from "./MyKcal";
 import ShareQR from "./ShareQR";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -1511,13 +1513,7 @@ function DayView({
 }
 
 const KCAL_PRESETS = [1200, 1400, 1600, 1800, 2000, 2200];
-const KCAL_TYPES = {
-  balance: { label: "バランス型", p: 0.2, f: 0.25, c: 0.55, desc: "厚生労働省の目標量の範囲に収まる、ふつうの配分です。" },
-  protein: { label: "高たんぱく型", p: 0.28, f: 0.25, c: 0.47, desc: "筋トレ・ダイエット中に。たんぱく質を多めに、炭水化物をやや少なめに。" },
-  lowfat: { label: "低脂質型", p: 0.25, f: 0.2, c: 0.55, desc: "脂質をおさえて、減量しやすく。脂質はエネルギーの20%（目標量の下限）です。" },
-  lowcarb: { label: "低糖質型", p: 0.28, f: 0.35, c: 0.37, desc: "ごはん・パンを減らす食べ方。極端な糖質制限ではありません。" },
-} as const;
-type KcalType = keyof typeof KCAL_TYPES;
+
 
 const KCAL_DETAIL: Record<KcalType, { who: string; how: string; watch: string }> = {
   balance: {
@@ -1953,6 +1949,7 @@ function HomeInner() {
             </span>
             <i aria-hidden>›</i>
           </Link>
+          <MyKcal topic="women" />
           <CycleTracker />
           <WomenGuide />
           <BoneMenu onAdd={add} />
@@ -1979,6 +1976,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
