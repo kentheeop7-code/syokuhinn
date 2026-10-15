@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -9,12 +9,14 @@ export default function Fold({
   title,
   sub,
   defaultOpen = false,
+  cls = "",
   children,
 }: {
   id: string;
   title: string;
   sub?: string;
   defaultOpen?: boolean;
+  cls?: string;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -36,7 +38,7 @@ export default function Fold({
   }, [id]);
 
   return (
-    <section className={open ? "fold open" : "fold"}>
+    <section className={`fold${open ? " open" : ""}${cls ? " " + cls : ""}`}>
       <h2 className="h2 foldh" id={id}>
         <button type="button" aria-expanded={open} aria-controls={`${id}-body`} onClick={() => setOpen((o) => !o)}>
           <span>
@@ -52,3 +54,4 @@ export default function Fold({
     </section>
   );
 }
+

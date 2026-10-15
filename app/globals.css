@@ -3418,3 +3418,7 @@ link.mykcal{}
 .kgoal b { font-size: 0.98rem; font-weight: 900; }
 .kgoal small { font-size: 0.8rem; color: #4b6455; }
 .kgoal.on { background: #e6f9ec; border-width: 3px; }
+.wfold .foldbody > * > .h2:first-child, .wfold .foldbody > .h2:first-child { display: none; }
+.guidetabs { display: flex; gap: 8px; margin: 0 0 12px; }
+.guidetabs a { flex: 1; text-align: center; padding: 10px 6px; min-height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; color: #12301f; font-weight: 800; font-size: 0.88rem; text-decoration: none; }
+.guidetabs a.on { background: #ffe680; border-width: 3px; }

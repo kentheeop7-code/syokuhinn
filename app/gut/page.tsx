@@ -1,4 +1,5 @@
-﻿import Fold from "../Fold";
+﻿import GuideTabs from "../GuideTabs";
+import Fold from "../Fold";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -132,6 +133,7 @@ export default function Gut() {
       <h1 className="title sm">腸内環境ガイド</h1>
       <p className="member">腸活の基本から、便のチェック、1日の食事、女性ならではの悩みまで</p>
 
+      <GuideTabs current="gut" />
       <MyKcal topic="gut" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">しくみ</a>
@@ -401,6 +403,7 @@ export default function Gut() {
     </main>
   );
 }
+
 
 
 
