@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
 import { GOALS_MORE } from "./goalsMore";
+import { DIETS_MORE } from "./dietsMore";
 
 export const metadata: Metadata = {
   title: "栄養素ガイド | 専属の栄養士（女性向け）",
@@ -621,6 +622,30 @@ export default function Nutrients() {
               <dt>向いている人</dt>
               <dd>{d.fit}</dd>
             </dl>
+            {DIETS_MORE[d.title] && (
+              <>
+                <p className="aglabel">1日の食べ方の例</p>
+                <ul className="plist">
+                  {DIETS_MORE[d.title].day.map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+                <p className="aglabel">進め方（4週間）</p>
+                <ul className="plist">
+                  {DIETS_MORE[d.title].weeks.map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+                <p className="agnote">
+                  <b>女性の視点：</b>
+                  {DIETS_MORE[d.title].woman}
+                </p>
+                <p className="agnote">
+                  <b>やめどき・見直しどき：</b>
+                  {DIETS_MORE[d.title].stop}
+                </p>
+              </>
+            )}
             {d.caution && <p className="caution">⚠ {d.caution}</p>}
           </li>
         ))}
@@ -692,6 +717,7 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 
 
