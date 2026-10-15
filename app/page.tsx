@@ -1601,6 +1601,7 @@ function KcalSetter({
   const [prof, setProf] = useState<{ age: number; height: number; pal: Pal } | null>(null);
   const [done, setDone] = useState<"" | "goal" | "log">("");
   const [loaded, setLoaded] = useState(false);
+  const [touched, setTouched] = useState(false);
 
   useEffect(() => {
     try {
@@ -1641,7 +1642,7 @@ function KcalSetter({
   const eaFloor = wOk ? Math.round(30 * w * 0.72) : null; // 体脂肪率28%と仮定した、除脂肪体重×30kcal
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || !touched) return;
     try {
       localStorage.setItem(
         "lg-kcal",
@@ -1659,7 +1660,7 @@ function KcalSetter({
       );
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kcal, kgoal, train, weight, loaded, plan?.p, plan?.f, plan?.c]);
+  }, [kcal, kgoal, train, weight, loaded, touched, plan?.p, plan?.f, plan?.c]);
 
   const menu = useMemo(
     () => (plan ? buildMenu(plan, kgoal === "cut" && plan.f / (plan.kcal / 9) < 0.23 ? "lowfat" : "balance") : null),
@@ -1670,7 +1671,10 @@ function KcalSetter({
   const pe = plan ? (plan.p * 4) / plan.kcal : 0;
   const fe = plan ? (plan.f * 9) / plan.kcal : 0;
   const ce = plan ? (plan.c * 4) / plan.kcal : 0;
-  const reset = () => setDone("");
+  const reset = () => {
+    setDone("");
+    setTouched(true);
+  };
   const range = K_PROT[kgoal][train];
 
   return (
@@ -2035,6 +2039,7 @@ function HomeInner() {
   const [log, setLog] = useState<Log>({});
   const [goal, setGoal] = useState<Goal>({ p: "", f: "", c: "" });
   const [loaded, setLoaded] = useState(false);
+  const [hasKcal, setHasKcal] = useState(false);
   const [selected, setSelected] = useState(key(new Date()));
   const [month, setMonth] = useState(new Date());
 
@@ -2044,6 +2049,7 @@ function HomeInner() {
       if (l) setLog(l);
       const g = JSON.parse(localStorage.getItem("lg-goal") || "null");
       if (g) setGoal(g);
+      setHasKcal(!!localStorage.getItem("lg-kcal"));
     } catch {}
     setLoaded(true);
   }, []);
@@ -2112,10 +2118,11 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
-          <KcalSetter
-            setGoal={setGoal}
-            onAddMany={(items) => items.forEach((i) => add(i.name, i.g))}
-          />
+          {loaded && (
+            <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 1日のカロリー・PFCを決める" sub={hasKcal ? "設定ずみ。タップで見なおす・変える" : "目的・体重・カロリーから、PFCと食事例を計算"} cls="wfold" defaultOpen={!hasKcal}>
+              <KcalSetter setGoal={setGoal} onAddMany={(items) => items.forEach((i) => add(i.name, i.g))} />
+            </Fold>
+          )}
           <Calendar
             month={month}
             setMonth={setMonth}
@@ -2124,8 +2131,6 @@ function HomeInner() {
             log={log}
             goal={goal}
           />
-          <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
-          <WeightChart />
           <DayView
             date={selected}
             entries={log[selected] ?? []}
@@ -2135,6 +2140,12 @@ function HomeInner() {
             onRemove={remove}
             log={log}
           />
+          <Fold id="r-women" title="✅ 今日の女性チェック" sub="女性に大切な栄養を、足りているか確認" cls="wfold">
+            <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
+          </Fold>
+          <Fold id="r-weight" title="⚖️ 目標体重までのペース" sub="折れ線グラフで、いまの位置を見る" cls="wfold">
+            <WeightChart />
+          </Fold>
         </>
       ) : tab === "women" ? (
         <>
@@ -2181,6 +2192,8 @@ export default function Home() {
     </Suspense>
   );
 }
+
+
 
 
 
