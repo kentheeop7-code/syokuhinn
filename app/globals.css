@@ -3496,3 +3496,7 @@ input:focus, textarea:focus { outline: 2px solid var(--s-accent); outline-offset
 .tkcat, .tk .tag, .tktag { background: var(--s-soft) !important; border: 1px solid #c8d8cd !important; color: var(--s-accent) !important; }
 
 main:has(.fold) > .anav { display: none; }
+.ticker { border: 1px solid var(--s-line) !important; box-shadow: none !important; border-radius: 14px !important; }
+.tkgroup { background: var(--s-soft) !important; border: 1px solid #c8d8cd !important; color: var(--s-accent) !important; box-shadow: none !important; }
+.supp-tabs button.on { background: var(--s-accent) !important; border-color: var(--s-accent) !important; color: #fff !important; }
+.supp-tabs button { border-color: #e4d9a8 !important; }
