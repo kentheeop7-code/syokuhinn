@@ -3422,3 +3422,77 @@ link.mykcal{}
 .guidetabs { display: flex; gap: 8px; margin: 0 0 12px; }
 .guidetabs a { flex: 1; text-align: center; padding: 10px 6px; min-height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; color: #12301f; font-weight: 800; font-size: 0.88rem; text-decoration: none; }
 .guidetabs a.on { background: #ffe680; border-width: 3px; }
+
+/* ================= simple v1：シンプル・見やすい仕上げ ================= */
+:root { --s-line: #dfe9e2; --s-ink: #1f3a2b; --s-sub: #5c7266; --s-accent: #2f7d5b; --s-soft: #f1f8f3; }
+body { background: #fafcfa; color: var(--s-ink); }
+
+/* 見出し：飾りをなくして、読みやすく */
+.title { font-size: 1.55rem; line-height: 1.35; background: none !important; padding: 0 !important; box-shadow: none !important; }
+.title::before, .title::after { display: none !important; }
+.title.sm { font-size: 1.35rem; }
+.tagline { font-size: 0.95rem; font-weight: 600; color: var(--s-sub); margin: 2px 0 4px; }
+.member { background: none !important; color: var(--s-sub) !important; padding: 0 !important; border: 0 !important; font-size: 0.85rem !important; font-weight: 600 !important; border-radius: 0 !important; box-shadow: none !important; margin: 0 0 10px; }
+.h2 { font-size: 1.1rem; font-weight: 800; }
+.h2::before, .h2::after { display: none !important; }
+h2.h2 { border-left: 0 !important; padding-left: 0 !important; }
+
+/* カード：細い線・影なし */
+.card, .ncard, .adbox, .gtsec, .adsec, .tipcard, .mykcal, .kset, .agresult, .agmenu, .autogoal {
+  border: 1px solid var(--s-line) !important; box-shadow: none !important; border-radius: 14px !important; background: #fff;
+}
+.agresult, .agmenu { background: var(--s-soft) !important; }
+.mykcal { background: var(--s-soft) !important; }
+.kset .agresult, .kset .agmenu { margin-top: 10px; }
+
+/* ボタン・チップ：やさしい線。選んだものだけ、はっきり */
+.chip, .anav a, .adtabs button, .guidetabs a, .tabs button, .ksmore summary, .kgoal, .mcard, .gutlink {
+  border: 1px solid #c8d8cd !important; box-shadow: none !important; font-weight: 700;
+}
+.chip.on, .adtabs button.on, .tabs button[aria-selected="true"], .guidetabs a.on, .kgoal.on, .mcard.on {
+  background: var(--s-accent) !important; color: #fff !important; border-color: var(--s-accent) !important;
+}
+.kgoal.on small, .kgoal.on b { color: #fff !important; }
+button.small, .btn { background: var(--s-accent) !important; color: #fff !important; border: 0 !important; box-shadow: none !important; border-radius: 12px !important; font-weight: 800; }
+.btn.ghost { background: #fff !important; color: var(--s-accent) !important; border: 1px solid var(--s-accent) !important; }
+.gutlink { background: var(--s-soft) !important; color: var(--s-ink) !important; }
+.gutlink i { color: var(--s-accent); }
+
+/* 折りたたみ見出し */
+.fold .foldh button { border: 1px solid var(--s-line) !important; box-shadow: none !important; border-radius: 12px; font-size: 1rem; font-weight: 800; }
+.fold.open .foldh button { background: var(--s-soft); border-color: #bfd6c6 !important; }
+.fold .foldh button i { color: var(--s-accent); }
+
+/* 上のバー・下のバー */
+.topnav { border-bottom: 1px solid var(--s-line) !important; box-shadow: none !important; }
+.tn-brand { background: none !important; border: 0 !important; box-shadow: none !important; color: var(--s-accent) !important; font-weight: 900; letter-spacing: 0.04em; }
+.tn-item { border: 0 !important; box-shadow: none !important; }
+.tn-item.on { background: var(--s-soft) !important; color: var(--s-accent) !important; border-radius: 12px; }
+.bb-item { border: 0 !important; background: transparent !important; box-shadow: none !important; }
+.bb-item.on { background: var(--s-soft) !important; color: var(--s-accent); }
+.bb-item.on b { color: var(--s-accent); }
+
+/* サプリのスライド：目立たせすぎない */
+.supp-card { border: 1px solid var(--s-line) !important; box-shadow: none !important; }
+.supp-tabs button { border: 1px solid #e4d9a8 !important; box-shadow: none !important; }
+.supp-price { border: 0 !important; background: transparent !important; padding: 0 !important; font-size: 1.15rem; color: var(--s-accent); }
+.totop { border: 0 !important; background: var(--s-accent) !important; color: #fff !important; box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important; }
+
+/* 本文：行間をゆったり */
+.plist li, .agnote, .note, .nrole { line-height: 1.75; }
+input, textarea, select { border: 1px solid #c8d8cd !important; border-radius: 10px !important; box-shadow: none !important; }
+input:focus, textarea:focus { outline: 2px solid var(--s-accent); outline-offset: 1px; }
+
+/* simple v1 (続き)：サプリ帯・今日の豆知識 */
+.supp { background: #fffbe9 !important; border-bottom: 1px solid #efe6bd !important; box-shadow: none !important; }
+.supp-count, .tickctl button, .tickctl span { border: 1px solid #c8d8cd !important; box-shadow: none !important; }
+.supp-arrow { color: var(--s-accent) !important; }
+.ticker { background: #fff !important; }
+.tickctl button { width: 36px !important; height: 36px !important; min-width: 36px; min-height: 36px; }
+.tkdo { background: var(--s-soft) !important; border: 0 !important; }
+.tk, .tkmyth { box-shadow: none !important; }
+.tabs { border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; gap: 6px; }
+.tabs button { box-shadow: none !important; border-radius: 12px !important; }
+.tkcat, .tk .tag, .tktag { background: var(--s-soft) !important; border: 1px solid #c8d8cd !important; color: var(--s-accent) !important; }
+
+main:has(.fold) > .anav { display: none; }
