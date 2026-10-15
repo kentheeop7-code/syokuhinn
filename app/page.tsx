@@ -3,6 +3,7 @@
 import type { KcalType } from "./MyKcal";
 import MyKcal from "./MyKcal";
 import Fold from "./Fold";
+import ProductSearch from "./ProductSearch";
 import ShareQR from "./ShareQR";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -2023,18 +2024,18 @@ function KcalSetter({
 }
 
 function HomeInner() {
-  const [tab, setTab] = useState<"record" | "search" | "women">("record");
+  const [tab, setTab] = useState<"record" | "search" | "women" | "products">("record");
   const sp = useSearchParams();
   // 画面右上のバーから ?tab=search で来たときも、タブを切り替える
   useEffect(() => {
     const q = sp.get("tab");
-    const t = q === "search" ? "search" : q === "women" ? "women" : "record";
+    const t = q === "search" ? "search" : q === "women" ? "women" : q === "products" ? "products" : "record";
     setTab(t);
     window.scrollTo(0, 0);
   }, [sp]);
-  const changeTab = (t: "record" | "search" | "women") => {
+  const changeTab = (t: "record" | "search" | "women" | "products") => {
     setTab(t);
-    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : t === "women" ? "/?tab=women" : "/");
+    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : t === "women" ? "/?tab=women" : t === "products" ? "/?tab=products" : "/");
   };
   const [log, setLog] = useState<Log>({});
   const [goal, setGoal] = useState<Goal>({ p: "", f: "", c: "" });
@@ -2098,21 +2099,28 @@ function HomeInner() {
           aria-selected={tab === "record"}
           onClick={() => changeTab("record")}
         >
-          記録・目標
+          記録
         </button>
         <button
           role="tab"
           aria-selected={tab === "women"}
           onClick={() => changeTab("women")}
         >
-          女性のからだ
+          からだ
         </button>
         <button
           role="tab"
           aria-selected={tab === "search"}
           onClick={() => changeTab("search")}
         >
-          食品を探す
+          食品
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === "products"}
+          onClick={() => changeTab("products")}
+        >
+          商品
         </button>
       </div>
 
@@ -2173,7 +2181,9 @@ function HomeInner() {
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
           <ShareQR />
-        </>      ) : (
+        </>      ) : tab === "products" ? (
+        <ProductSearch />
+      ) : (
         <Search
           date={selected}
           onAdd={(n, g) => {
@@ -2192,6 +2202,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

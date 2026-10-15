@@ -17,6 +17,7 @@ export default function TopNav() {
   const tab = useSearchParams().get("tab");
 
   const active = (key: string) => {
+    if (path === "/" && (tab === "products" || tab === "search")) return false;
     if (path === "/") return key === (tab === "women" ? "women" : tab === "search" ? "record" : "record");
     if (path.startsWith("/tips")) return key === "tips";
     if (path.startsWith("/nutrients") || path.startsWith("/gut") || path.startsWith("/additives")) return key === "guide";
@@ -49,6 +50,7 @@ export default function TopNav() {
     </>
   );
 }
+
 
 
 
