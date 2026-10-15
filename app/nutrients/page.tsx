@@ -1,4 +1,5 @@
-﻿import MyKcal from "../MyKcal";
+﻿import Fold from "../Fold";
+import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
@@ -543,9 +544,7 @@ export default function Nutrients() {
         <a href="#nutrients">栄養素のはたらき</a>
       </nav>
 
-      <h2 className="h2" id="goals">
-        目的別ガイド
-      </h2>
+      <Fold defaultOpen id="goals" title="目的別ガイド">
       <ul className="nlist">
         {GOALS_SORTED.map((g) => (
           <li key={g.id} className="card ncard" id={g.id}>
@@ -573,10 +572,8 @@ export default function Nutrients() {
           </li>
         ))}
       </ul>
-
-      <h2 className="h2" id="diets">
-        ダイエット方法の比較（研究のまとめ）
-      </h2>
+      </Fold>
+      <Fold id="diets" title="ダイエット方法の比較（研究のまとめ）">
       <p className="note">
         どの方法でも、減量の中心はエネルギー収支（食べる量が使う量より少ないこと）です。カロリーとたんぱく質をそろえると、PFCの配分による差は小さいため、続けやすさで選ぶのが現実的です。アプリのPFCは、ここに書いた考え方で計算しています。
       </p>
@@ -621,9 +618,8 @@ export default function Nutrients() {
           </li>
         ))}
       </ul>
-
-      <h2 className="h2" id="nutrients">        栄養素のはたらき
-      </h2>
+      </Fold>
+      <Fold id="nutrients" title="栄養素のはたらき">
       <p className="note">
         「アプリで計算」と書かれた栄養素は、記録タブで合計を確認できます。それ以外は、食品の選び方の参考にしてください。
       </p>
@@ -665,7 +661,7 @@ export default function Nutrients() {
           </li>
         ))}
       </ul>
-
+      </Fold>
       <p className="note">
         ※ 一般的な成人向けの目安で、「日本人の食事摂取基準（2025年版）」（厚生労働省）を参考にしています。年齢・体格・持病・服薬・妊娠中などで必要量は変わります。気になる症状や、サプリを使う場合は、医師や管理栄養士に相談してください。
       </p>
@@ -675,6 +671,8 @@ export default function Nutrients() {
     </main>
   );
 }
+
+
 
 
 

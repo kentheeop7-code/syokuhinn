@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import QuoteBackground from "./QuoteBackground";
 import TopNav from "./TopNav";
 import BottomBar from "./BottomBar";
+import ToTop from "./ToTop";
 
 export const metadata: Metadata = {
   title: "専属の栄養士（女性向け） | LIFEGYM",
@@ -25,6 +26,7 @@ export default function RootLayout({
           <TopNav />
         </Suspense>
         {children}
+        <ToTop />
         <Suspense fallback={null}>
           <BottomBar />
         </Suspense>
@@ -32,5 +34,6 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 

@@ -1,4 +1,5 @@
 ﻿import MyKcal from "../MyKcal";
+import Fold from "../Fold";
 import type { Metadata } from "next";
 import Link from "next/link";
 import ShareQR from "../ShareQR";
@@ -43,10 +44,7 @@ export default function Tips() {
       </nav>
 
       {TIP_GROUPS.map((g) => (
-        <section key={g.key}>
-          <h2 className="h2" id={`g-${g.key}`}>
-            {g.label}
-          </h2>
+        <Fold key={g.key} id={`g-${g.key}`} title={g.label} sub={`${TIPS.filter((t) => t.group === g.key).length}件`}>
           <ul className="nlist">
             {TIPS.filter((t) => t.group === g.key).map((t) => (
               <li key={t.id} id={t.id} className="card ncard tipcard">
@@ -87,7 +85,7 @@ export default function Tips() {
               </li>
             ))}
           </ul>
-        </section>
+        </Fold>
       ))}
 
       <p className="note">
@@ -97,6 +95,7 @@ export default function Tips() {
     </main>
   );
 }
+
 
 
 

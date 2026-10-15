@@ -1,8 +1,10 @@
-﻿import MyKcal from "../MyKcal";
+﻿import Fold from "../Fold";
+import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FOODS } from "../../lib/foods";
 import GutTools from "./GutTools";
+import GutMore from "./GutMore";
 
 export const metadata: Metadata = {
   title: "腸内環境ガイド | 専属の栄養士（女性向け）",
@@ -138,6 +140,12 @@ export default function Gut() {
         <a href="#food">食事</a>
         <a href="#menu">1日メニュー</a>
         <a href="#habit">生活習慣</a>
+        <a href="#mistake">失敗しがち</a>
+        <a href="#plan4">4週ステップ</a>
+        <a href="#scene">場面別</a>
+        <a href="#ferment">発酵食品</a>
+        <a href="#fodmap">張る人へ</a>
+        <a href="#pattern">便のようす別</a>
         <a href="#tools">チェック・プラン</a>
         <a href="#care">受診の目安</a>
         <a href="#qa">Q&A</a>
@@ -157,9 +165,7 @@ export default function Gut() {
         </ul>
       </section>
 
-      <h2 className="h2" id="basic">
-        腸内環境の、しくみ
-      </h2>
+      <Fold defaultOpen id="basic" title="腸内環境の、しくみ">
       <section className="card gtsec">
         <h3>腸内フローラとは</h3>
         <p>
@@ -187,10 +193,8 @@ export default function Gut() {
           「腸内環境」は、日々の食事・睡眠・運動・ストレスで変わります。「飲むだけで変わる」「これを食べれば若返る」といった話は、過大な期待をしないで。
         </p>
       </section>
-
-      <h2 className="h2" id="women">
-        女性の腸は、ホルモンの影響を受ける
-      </h2>
+      </Fold>
+      <Fold id="women" title="女性の腸は、ホルモンの影響を受ける">
       <section className="card gtsec">
         <ul>
           <li>
@@ -216,10 +220,8 @@ export default function Gut() {
           このアプリの「<Link href="/?tab=women">女性のからだ</Link>」で、月経周期を入れると、今の時期に合った食事の例が見られます。
         </p>
       </section>
-
-      <h2 className="h2" id="bristol">
-        便のタイプをチェック（ブリストルスケール）
-      </h2>
+      </Fold>
+      <Fold id="bristol" title="便のタイプをチェック（ブリストルスケール）">
       <section className="card gtsec">
         <p>便の形は、腸の状態を知る手がかり。理想は<b>タイプ4</b>、タイプ3〜5なら、ふつうの範囲です。</p>
         <ul className="gtbristol">
@@ -243,10 +245,8 @@ export default function Gut() {
         <h3>回数の目安</h3>
         <p>毎日でも、2〜3日に1回でも、タイプ3〜5で、すっきり出ていれば、問題ありません。「毎日出ること」が、目的ではありません。</p>
       </section>
-
-      <h2 className="h2" id="food">
-        食事で整える：3つの柱
-      </h2>
+      </Fold>
+      <Fold id="food" title="食事で整える：3つの柱">
       {FOOD_GROUPS.map((g) => (
         <section key={g.title} className="card gtsec">
           <h3>{g.title}</h3>
@@ -261,10 +261,8 @@ export default function Gut() {
           </dl>
         </section>
       ))}
-
-      <h2 className="h2" id="menu">
-        1日の腸活メニュー（量つき）
-      </h2>
+      </Fold>
+      <Fold id="menu" title="1日の腸活メニュー（量つき）">
       {MENUS.map((m) => {
         const t = total(m);
         return (
@@ -304,10 +302,8 @@ export default function Gut() {
           </section>
         );
       })}
-
-      <h2 className="h2" id="habit">
-        生活習慣で整える
-      </h2>
+      </Fold>
+      <Fold id="habit" title="生活習慣で整える">
       <section className="card gtsec">
         <h3>朝のルーティン（起きて、水、朝食、トイレ）</h3>
         <ul>
@@ -331,15 +327,12 @@ export default function Gut() {
           <li>入浴は、湯船に、40℃前後で10〜15分。おなかを温めると、腸が動きやすくなります。</li>
         </ul>
       </section>
-
-      <h2 className="h2" id="tools">
-        チェック・食物繊維メーカー・7日プラン
-      </h2>
+      </Fold>
+      <GutMore />
+      <Fold id="tools" title="チェック・食物繊維メーカー・7日プラン">
       <GutTools />
-
-      <h2 className="h2" id="supp">
-        サプリ・市販薬の選び方
-      </h2>
+      </Fold>
+      <Fold id="supp" title="サプリ・市販薬の選び方">
       <section className="card gtsec">
         <ul>
           <li>
@@ -356,10 +349,8 @@ export default function Gut() {
           </li>
         </ul>
       </section>
-
-      <h2 className="h2" id="care">
-        こんなときは、受診を
-      </h2>
+      </Fold>
+      <Fold id="care" title="こんなときは、受診を">
       <section className="card gtsec">
         <ul>
           <li>血が混じる便、黒い便、白っぽい便。</li>
@@ -374,10 +365,8 @@ export default function Gut() {
           受診先は、消化器内科（内科）。月経と関係して、下痢・便秘・腹痛が強い場合は、婦人科にも相談できます。
         </p>
       </section>
-
-      <h2 className="h2" id="qa">
-        よくある疑問
-      </h2>
+      </Fold>
+      <Fold id="qa" title="よくある疑問">
       <ul className="nlist">
         {QA.map((x) => (
           <li key={x.q} className="card ncard">
@@ -388,7 +377,7 @@ export default function Gut() {
           </li>
         ))}
       </ul>
-
+      </Fold>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。持病や服薬のある人、妊娠中・授乳中の人、強い症状のある人は、医師に相談してください。
         <br />
@@ -412,6 +401,9 @@ export default function Gut() {
     </main>
   );
 }
+
+
+
 
 
 

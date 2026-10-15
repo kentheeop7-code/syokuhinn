@@ -1741,7 +1741,8 @@ function KcalSetter({
                   </div>
                 );
               })}
-              <p className="aglabel">この例の栄養のようす（目安との比較）</p>
+              <details className="ksmore"><summary>栄養のようす・食材の置きかえを見る</summary>
+<p className="aglabel">この例の栄養のようす（目安との比較）</p>
               <ul className="ksnut">
                 {REF_NUTRI.map((n) => {
                   const v = menu.total[n.key];
@@ -1772,6 +1773,7 @@ function KcalSetter({
                   </li>
                 ))}
               </ul>
+              </details>
               <p className="agnote">
                 この例の合計: {Math.round(menu.total.kcal)}kcal ／ P{r1(menu.total.p)}g F{r1(menu.total.f)}g C{r1(menu.total.c)}g（目標との差 P
                 {menu.total.p - plan.p >= 0 ? "+" : ""}
@@ -1976,6 +1978,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

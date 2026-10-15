@@ -3397,3 +3397,18 @@ h2[id^="g-"] { scroll-margin-top: 76px; }
 .mykcal { background: #fff8e6; }
 .mykcal .agkcal small { font-size: 0.8rem; font-weight: 800; }
 link.mykcal{}
+
+/* ---- fold (開閉できる見出し) / totop ---- */
+.fold { margin: 0 0 10px; }
+.fold .foldh { margin: 0; scroll-margin-top: 92px; }
+.fold .foldh button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 12px 14px; background: #fff; border: 2.5px solid #2b4a38; border-radius: 16px; font: inherit; font-weight: 900; font-size: 1.05rem; line-height: 1.4; text-align: left; color: #12301f; cursor: pointer; }
+.fold .foldh button span { flex: 1; }
+.fold .foldh button small { display: block; font-size: 0.78rem; font-weight: 700; color: #4b6455; margin-top: 2px; }
+.fold .foldh button i { font-style: normal; font-size: 1.5rem; color: #08703a; }
+.fold.open .foldh button { background: #e6f9ec; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
+.fold .foldbody { padding-top: 10px; }
+.foldbar { display: flex; gap: 8px; margin: 0 0 10px; }
+.totop { position: fixed; right: 14px; bottom: 92px; z-index: 40; width: 48px; height: 48px; border-radius: 50%; border: 2.5px solid #2b4a38; background: #ffe680; color: #12301f; font-size: 1.4rem; font-weight: 900; cursor: pointer; }
+.ksmore { margin: 8px 0; }
+.ksmore summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; padding: 8px 12px; border: 2px solid #2b4a38; border-radius: 12px; background: #fff; font-weight: 800; font-size: 0.92rem; }
+.ksmore[open] summary { background: #e6f9ec; }

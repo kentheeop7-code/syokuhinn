@@ -1,4 +1,5 @@
-﻿import MyKcal from "../MyKcal";
+﻿import Fold from "../Fold";
+import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
 import AdditiveTools from "./AdditiveTools";
@@ -102,9 +103,7 @@ export default function Additives() {
         </ul>
       </section>
 
-      <h2 className="h2" id="basic">
-        基本：添加物って、何？
-      </h2>
+      <Fold defaultOpen id="basic" title="基本：添加物って、何？">
       {BASICS.map((b) => (
         <section key={b.title} className="card adsec">
           <h3>{b.title}</h3>
@@ -115,10 +114,8 @@ export default function Additives() {
           </ul>
         </section>
       ))}
-
-      <h2 className="h2" id="read">
-        表示の読み方
-      </h2>
+      </Fold>
+      <Fold id="read" title="表示の読み方">
       <section className="card adsec">
         <ul className="adread">
           {READ.map((r) => (
@@ -132,15 +129,11 @@ export default function Additives() {
           ))}
         </ul>
       </section>
-
-      <h2 className="h2" id="tool">
-        原材料チェッカー・添加物じてん
-      </h2>
+      </Fold>
+      <Fold id="tool" title="原材料チェッカー・添加物じてん">
       <AdditiveTools />
-
-      <h2 className="h2" id="types">
-        食品のタイプ別：見るポイント
-      </h2>
+      </Fold>
+      <Fold id="types" title="食品のタイプ別：見るポイント">
       {FOOD_TYPES.map((f) => (
         <section key={f.name} className="card adsec">
           <h3>
@@ -158,10 +151,8 @@ export default function Additives() {
           </p>
         </section>
       ))}
-
-      <h2 className="h2" id="women">
-        女性の視点：場面別の、気をつけどころ
-      </h2>
+      </Fold>
+      <Fold id="women" title="女性の視点：場面別の、気をつけどころ">
       <section className="card adsec">
         <dl className="addl">
           {WOMEN.map((w) => (
@@ -175,10 +166,8 @@ export default function Additives() {
           くわしくは、<Link href="/gut">腸内環境ガイド</Link>・<Link href="/?tab=women">女性のからだ</Link>もあわせてどうぞ。
         </p>
       </section>
-
-      <h2 className="h2" id="steps">
-        買い物の、4ステップ
-      </h2>
+      </Fold>
+      <Fold id="steps" title="買い物の、4ステップ">
       <section className="card adsec">
         <ol className="adsteps">
           {STEPS.map((s) => (
@@ -189,10 +178,8 @@ export default function Additives() {
           ))}
         </ol>
       </section>
-
-      <h2 className="h2" id="qa">
-        よくある疑問
-      </h2>
+      </Fold>
+      <Fold id="qa" title="よくある疑問">
       <ul className="nlist">
         {QA.map((x) => (
           <li key={x.q} className="card ncard">
@@ -203,7 +190,7 @@ export default function Additives() {
           </li>
         ))}
       </ul>
-
+      </Fold>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。アレルギー・喘息・腎臓病・妊娠中・服薬中の人は、医師・薬剤師・管理栄養士に相談してください。数値は、公表されている資料をもとにした目安で、商品によって異なります。
         <br />
@@ -235,5 +222,7 @@ export default function Additives() {
     </main>
   );
 }
+
+
 
 
