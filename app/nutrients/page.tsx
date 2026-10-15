@@ -4,6 +4,7 @@ import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
+import { GOALS_MORE } from "./goalsMore";
 
 export const metadata: Metadata = {
   title: "栄養素ガイド | 専属の栄養士（女性向け）",
@@ -570,6 +571,24 @@ export default function Nutrients() {
                 <li key={p}>{p}</li>
               ))}
             </ul>
+            {GOALS_MORE[g.id] && (
+              <>
+                <p className="aglabel">1日の食べ方の例</p>
+                <ul className="plist">
+                  {GOALS_MORE[g.id].menu.map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+                <p className="tiptodo">
+                  <b>✅ 今日からできる一歩</b>
+                  {GOALS_MORE[g.id].step}
+                </p>
+                <p className="agnote">
+                  <b>変化の見かた：</b>
+                  {GOALS_MORE[g.id].check}
+                </p>
+              </>
+            )}
             {g.caution && <p className="caution">⚠ {g.caution}</p>}
           </li>
         ))}
@@ -673,6 +692,7 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 
 
