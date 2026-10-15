@@ -2140,10 +2140,10 @@ function HomeInner() {
             onRemove={remove}
             log={log}
           />
-          <Fold id="r-women" title="✅ 今日の女性チェック" sub="女性に大切な栄養を、足りているか確認" cls="wfold">
+          <Fold key="r-women" id="r-women" title="✅ 今日の女性チェック" sub="女性に大切な栄養を、足りているか確認" cls="wfold">
             <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
           </Fold>
-          <Fold id="r-weight" title="⚖️ 目標体重までのペース" sub="折れ線グラフで、いまの位置を見る" cls="wfold">
+          <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重までのペース" sub="折れ線グラフで、いまの位置を見る" cls="wfold">
             <WeightChart />
           </Fold>
         </>
@@ -2166,12 +2166,12 @@ function HomeInner() {
             <i aria-hidden>›</i>
           </Link>
           <MyKcal topic="women" />
-          <Fold id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold" defaultOpen><CycleTracker /></Fold>
-          <Fold id="w-guide" title="👩 年代別ガイド" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>
-          <Fold id="w-bone" title="🥛 骨と血をつくる食品メーカー" sub="カルシウム・鉄の食事" cls="wfold"><BoneMenu onAdd={add} /></Fold>
-          <Fold id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>
-          <Fold id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
-          <Fold id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
+          <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold" defaultOpen><CycleTracker /></Fold>
+          <Fold key="w-guide" id="w-guide" title="👩 年代別ガイド" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>
+          <Fold key="w-bone" id="w-bone" title="🥛 骨と血をつくる食品メーカー" sub="カルシウム・鉄の食事" cls="wfold"><BoneMenu onAdd={add} /></Fold>
+          <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>
+          <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
+          <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
           <ShareQR />
         </>      ) : (
         <Search
@@ -2192,6 +2192,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
