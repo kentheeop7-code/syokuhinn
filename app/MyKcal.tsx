@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -15,13 +15,13 @@ type Props = { topic: "nutrients" | "tips" | "gut" | "women" | "additives" };
 
 // どのページでも、トップで決めた「1日のカロリー」と、PFCの目安を見られるカード
 export default function MyKcal({ topic }: Props) {
-  const [s, setS] = useState<{ kcal: number; type: KcalType } | null>(null);
+  const [s, setS] = useState<{ kcal: number; type: KcalType; p?: number; f?: number; c?: number; label?: string } | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
     try {
       const v = JSON.parse(localStorage.getItem("lg-kcal") || "null");
       const k = parseFloat(v?.kcal);
-      if (k >= 800 && k <= 4000) setS({ kcal: Math.round(k), type: v.type in KCAL_TYPES ? v.type : "balance" });
+      if (k >= 800 && k <= 4000) setS({ kcal: Math.round(k), type: v.type in KCAL_TYPES ? v.type : "balance", p: v.p, f: v.f, c: v.c, label: v.label });
     } catch {}
     setReady(true);
   }, []);
@@ -40,9 +40,9 @@ export default function MyKcal({ topic }: Props) {
     );
 
   const t = KCAL_TYPES[s.type];
-  const p = Math.round((s.kcal * t.p) / 4);
-  const f = Math.round((s.kcal * t.f) / 9);
-  const c = Math.round((s.kcal * t.c) / 4);
+  const p = s.p ?? Math.round((s.kcal * t.p) / 4);
+  const f = s.f ?? Math.round((s.kcal * t.f) / 9);
+  const c = s.c ?? Math.round((s.kcal * t.c) / 4);
   const fiber = Math.max(18, Math.round((s.kcal / 1000) * 8));
   const line: Record<Props["topic"], string> = {
     nutrients: `たんぱく質${p}g・脂質${f}g・炭水化物${c}gが、あなたの1日の目安です。下の栄養素のはたらきと見くらべて、どの食品でとるかを考えましょう。`,
@@ -56,7 +56,7 @@ export default function MyKcal({ topic }: Props) {
     <section className="card mykcal">
       <p className="agtitle">🔥 あなたの1日のカロリーと、PFC</p>
       <div className="agkcal">
-        1日 <b>{s.kcal}</b> kcal　<small>{t.label}</small>
+        1日 <b>{s.kcal}</b> kcal　<small>{s.label ?? t.label}</small>
       </div>
       <div className="pfc">
         <div>
@@ -76,3 +76,4 @@ export default function MyKcal({ topic }: Props) {
     </section>
   );
 }
+

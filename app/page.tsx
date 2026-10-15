@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { KCAL_TYPES, type KcalType } from "./MyKcal";
+import type { KcalType } from "./MyKcal";
 import MyKcal from "./MyKcal";
 import ShareQR from "./ShareQR";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
@@ -1512,41 +1512,6 @@ function DayView({
   );
 }
 
-const KCAL_PRESETS = [1200, 1400, 1600, 1800, 2000, 2200];
-
-
-const KCAL_DETAIL: Record<KcalType, { who: string; how: string; watch: string }> = {
-  balance: {
-    who: "とくに目的がない人・体重を保ちたい人・40代以降で、バランスよく食べたい人。",
-    how: "主食・主菜・副菜をそろえる。ごはんは毎食、肉・魚・卵・大豆を手のひら1枚ぶん、野菜は両手1杯ぶんが目安。",
-    watch: "脂質が少なすぎないように。極端に減らすと、脂溶性ビタミンの吸収やホルモンの材料が不足しやすくなります。",
-  },
-  protein: {
-    who: "筋トレをしている人・減量中に筋肉を守りたい人・40代以降で筋肉が落ちやすい人。",
-    how: "毎食、たんぱく質を20g前後（肉・魚なら80〜100g、卵2個、納豆2パックなど）とる。朝食に足りない人が多いので、まず朝から。",
-    watch: "腎臓の病気がある人は、医師の指示を優先。水分と野菜（カリウム・食物繊維）も、あわせてとる。",
-  },
-  lowfat: {
-    who: "揚げ物・菓子など、脂質をとりすぎている自覚がある人。減量の最初のステップに。",
-    how: "肉は鶏むね（皮なし）・ヒレ、魚は白身魚、調理は「焼く・蒸す・ゆでる」に。油は小さじ1（4g）を量って使う。",
-    watch: "脂質は、エネルギーの20%を下回らないように。ナッツ・魚の油・オリーブオイルは、少量でも続けたい。",
-  },
-  lowcarb: {
-    who: "ごはん・パン・麺を食べすぎている人。血糖値が気になる人（持病がある人は、医師に相談を）。",
-    how: "ごはんを毎食、茶碗半分〜2/3杯に。減らした分は、たんぱく質のおかず・野菜・きのこ・海藻で、満腹感を補う。",
-    watch: "食物繊維が不足しやすいので、雑穀・豆・野菜を意識して。便秘や、だるさが出たら、主食を少し戻す。",
-  },
-};
-
-function kcalComment(k: number): string {
-  if (k < 1200) return "かなり少なめです。栄養不足・筋肉の減少・月経不順につながりやすいため、続けるのはおすすめできません。";
-  if (k < 1500) return "小柄な人・座り仕事が中心の人の減量向け。体重が減りにくく感じたら、無理に減らさず、活動量を増やす・睡眠をとる、を先に。";
-  if (k < 1800) return "多くの女性の、ゆるやかな減量〜維持の範囲。1か月に体重の2〜4%を減らす目安に合います。";
-  if (k < 2100) return "活動量がふつう〜やや多い人の維持、または筋トレをしている人の減量向け。";
-  if (k < 2500) return "活動量が多い人・運動習慣のある人の維持、または体を大きくしたい人向け。";
-  return "かなり多めです。活動量が非常に多い人・増量中の人向けです。";
-}
-
 const MEAL_TIPS: Record<string, string> = {
   朝食: "たんぱく質を忘れずに（卵・納豆・ヨーグルト）。血糖値の上がりすぎをおさえ、午前中の集中力にも。",
   昼食: "いちばんしっかり食べる時間。主食・主菜・野菜を、そろえやすい。外食のときは、定食を選ぶと整えやすい。",
@@ -1569,6 +1534,57 @@ const REF_NUTRI: { key: "fi" | "ca" | "fe" | "vc" | "salt"; label: string; unit:
   { key: "salt", label: "食塩相当量", unit: "g", ref: "6.5g未満", kind: "max", v: 6.5 },
 ];
 
+const KCAL_PRESETS = [1200, 1400, 1600, 1800, 2000, 2200];
+
+type KGoal = "cut" | "keep" | "gain";
+type KTrain = "none" | "some" | "much";
+
+const K_GOALS: Record<KGoal, { label: string; icon: string; desc: string; fatPct: number; type: KcalType }> = {
+  cut: { label: "ダイエット（体脂肪を減らす）", icon: "🔻", desc: "筋肉を守りながら、体脂肪を落とす。", fatPct: 0.22, type: "protein" },
+  keep: { label: "いまの体型をキープ", icon: "⚖️", desc: "体重・体脂肪を保ちながら、体調を整える。", fatPct: 0.25, type: "balance" },
+  gain: { label: "筋肉をつける（ボディメイク）", icon: "💪", desc: "筋肉を増やす。少し多めに食べて、筋トレで刺激を。", fatPct: 0.25, type: "balance" },
+};
+const K_TRAIN: Record<KTrain, string> = { none: "筋トレはしていない", some: "週1〜2回", much: "週3回以上" };
+
+// 体重1kgあたりのたんぱく質（g）：[目安, 下限, 上限]
+const K_PROT: Record<KGoal, Record<KTrain, [number, number, number]>> = {
+  cut: { none: [1.4, 1.2, 1.6], some: [1.8, 1.6, 2.2], much: [2.0, 1.8, 2.4] },
+  keep: { none: [1.1, 1.0, 1.2], some: [1.4, 1.2, 1.6], much: [1.6, 1.4, 2.0] },
+  gain: { none: [1.4, 1.2, 1.6], some: [1.7, 1.6, 2.0], much: [1.9, 1.6, 2.2] },
+};
+
+const K_EVID: Record<KGoal, { title: string; items: string[] }> = {
+  cut: {
+    title: "ダイエットの根拠",
+    items: [
+      "減量の中心は、エネルギー収支（食べる量＜使う量）。配分（PFC）の違いより、続けられる量と、たんぱく質の確保が大切です。",
+      "減らす幅は、消費カロリーの10〜25%、体重の減るペースは、週に体重の0.5〜1%以内が目安。急ぎすぎると、筋肉も減りやすくなります（Helms 2014）。",
+      "筋トレをしている人が、カロリー制限中に筋肉を守るには、通常より多めのたんぱく質（体重1kgあたり約1.6〜2.2g、研究によってはそれ以上）が有利です（ISSN 2017）。",
+      "脂質は、エネルギーの20%前後を下回らないように。ホルモンの材料・脂溶性ビタミンの吸収に必要です。炭水化物は、のこりで。トレーニングの日は、減らしすぎない。",
+      "女性は、エネルギー不足が続くと、月経不順・骨密度の低下・疲労骨折につながります（低エネルギー・アベイラビリティ／RED-S、IOC 2018）。",
+      "長い減量では、2週間ほど、消費カロリーに近い食事に戻す「ダイエットブレイク」が、体重減少の効率を上げた研究があります（男性・肥満者対象のMATADOR試験）。女性での確立された方法ではないため、参考程度に。",
+    ],
+  },
+  keep: {
+    title: "キープの根拠",
+    items: [
+      "消費カロリーと、食べるカロリーを、そろえる。体重の増減が、1か月で±1%以内なら、ほぼ維持できています。",
+      "たんぱく質は、体重1kgあたり1.0〜1.6g。40代以降は、筋肉が減りやすいので、少し多めに、毎食に分けます（食事摂取基準2025・ISSN 2017）。",
+      "PFCは、食事摂取基準の目標量の範囲：たんぱく質13〜20%（50歳以上14〜20%）、脂質20〜30%、炭水化物50〜65%。",
+    ],
+  },
+  gain: {
+    title: "筋肉をつける根拠",
+    items: [
+      "筋肉が増えるには、①筋トレなどの刺激、②たんぱく質、③消費より少し多いエネルギー、の3つが必要です。",
+      "筋トレをしている人のたんぱく質は、体重1kgあたり1.4〜2.0gで足りる人が多い（ISSN 2017）。約1.6g/日を超えても、筋肉の増加は、それ以上は増えにくいという分析があります（Morton 2018）。",
+      "エネルギーは、消費の+5〜15%ほどを、目安に。食べすぎると、体脂肪が先に増えるので、体重は、月に0.5〜1%の増加を目安にします。",
+      "1食のたんぱく質は、体重1kgあたり0.3〜0.5g（体重55kgで約17〜28g）を、1日3〜4回に分けると、筋肉の合成に、使いやすい。",
+      "炭水化物は、トレーニングの前後に、しっかり。不足すると、トレーニングの質が落ちます。睡眠は7時間以上、回復も大切です。",
+    ],
+  },
+};
+
 // 一番上で「1日のカロリー」を決めると、PFCのバランスと、1日の食事例がすぐ分かる
 function KcalSetter({
   setGoal,
@@ -1578,7 +1594,10 @@ function KcalSetter({
   onAddMany: (items: MenuItem[]) => void;
 }) {
   const [kcal, setKcal] = useState("1800");
-  const [type, setType] = useState<KcalType>("balance");
+  const [kgoal, setKgoal] = useState<KGoal>("cut");
+  const [train, setTrain] = useState<KTrain>("some");
+  const [weight, setWeight] = useState("");
+  const [prof, setProf] = useState<{ age: number; height: number; pal: Pal } | null>(null);
   const [done, setDone] = useState<"" | "goal" | "log">("");
   const [loaded, setLoaded] = useState(false);
 
@@ -1586,36 +1605,135 @@ function KcalSetter({
     try {
       const s = JSON.parse(localStorage.getItem("lg-kcal") || "null");
       if (s?.kcal) setKcal(String(s.kcal));
-      if (s?.type && s.type in KCAL_TYPES) setType(s.type);
+      if (s?.kgoal && s.kgoal in K_GOALS) setKgoal(s.kgoal);
+      if (s?.train && s.train in K_TRAIN) setTrain(s.train);
+      const now = localStorage.getItem("lg-now");
+      if (s?.weight) setWeight(String(s.weight));
+      else if (now) setWeight(String(now));
+      const p = JSON.parse(localStorage.getItem("lg-profile") || "null");
+      if (p && num(p.age) >= 18 && num(p.height) >= 120) setProf({ age: num(p.age), height: num(p.height), pal: (p.pal in PAL ? p.pal : "mid") as Pal });
     } catch {}
     setLoaded(true);
   }, []);
+
+  const k = num(kcal);
+  const w = num(weight);
+  const wOk = w >= 30 && w <= 200;
+  const valid = k >= 800 && k <= 4000;
+  const g = K_GOALS[kgoal];
+
+  // たんぱく質は体重あたり、脂質はエネルギー比と体重あたりの下限、のこりが炭水化物
+  const plan = (() => {
+    if (!valid) return null;
+    const [pk] = K_PROT[kgoal][train];
+    let p = wOk ? Math.round(w * pk) : Math.round((k * 0.22) / 4);
+    p = Math.min(p, Math.round((k * 0.35) / 4));
+    const f = Math.round(Math.max((k * g.fatPct) / 9, wOk ? w * 0.6 : 0));
+    const c = Math.max(0, Math.round((k - p * 4 - f * 9) / 4));
+    return { kcal: Math.round(k), p, f, c };
+  })();
+
+  // 消費カロリーの推定（プロフィールがあるとき）
+  const tdee = prof && wOk ? bmr("f", prof.age, prof.height, w) * PAL[prof.pal].v : null;
+  const diff = tdee && plan ? ((plan.kcal - tdee) / tdee) * 100 : null;
+  const pace = tdee && plan && wOk ? (((plan.kcal - tdee) * 7) / 7200 / w) * 100 : null; // 週の体重変化（%）
+  const eaFloor = wOk ? Math.round(30 * w * 0.72) : null; // 体脂肪率28%と仮定した、除脂肪体重×30kcal
+
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-kcal", JSON.stringify({ kcal, type }));
+      localStorage.setItem(
+        "lg-kcal",
+        JSON.stringify({
+          kcal,
+          type: g.type,
+          kgoal,
+          train,
+          weight,
+          label: g.label,
+          p: plan?.p,
+          f: plan?.f,
+          c: plan?.c,
+        })
+      );
     } catch {}
-  }, [kcal, type, loaded]);
-
-  const k = num(kcal);
-  const valid = k >= 800 && k <= 4000;
-  const t = KCAL_TYPES[type];
-  const plan = valid
-    ? { kcal: Math.round(k), p: Math.round((k * t.p) / 4), f: Math.round((k * t.f) / 9), c: Math.round((k * t.c) / 4) }
-    : null;
-  const menu = useMemo(
-    () => (plan ? buildMenu(plan, type === "lowfat" ? "lowfat" : "balance") : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [plan?.kcal, plan?.p, plan?.f, plan?.c, type]
+  }, [kcal, kgoal, train, weight, loaded, plan?.p, plan?.f, plan?.c]);
+
+  const menu = useMemo(
+    () => (plan ? buildMenu(plan, kgoal === "cut" && plan.f / (plan.kcal / 9) < 0.23 ? "lowfat" : "balance") : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [plan?.kcal, plan?.p, plan?.f, plan?.c, kgoal]
   );
   const pc = (x: number) => Math.round(x * 100);
+  const pe = plan ? (plan.p * 4) / plan.kcal : 0;
+  const fe = plan ? (plan.f * 9) / plan.kcal : 0;
+  const ce = plan ? (plan.c * 4) / plan.kcal : 0;
+  const reset = () => setDone("");
+  const range = K_PROT[kgoal][train];
 
   return (
     <section className="card kset">
       <h2 className="h2" style={{ marginTop: 0 }}>
-        ① 1日のカロリーを決める
+        1日のカロリー・PFCを決める
       </h2>
-      <p className="agnote">カロリーを入れると、PFCのバランスと、1日の食事例が出ます。</p>
+      <p className="agnote">
+        最新のスポーツ栄養学（ISSN 2017・IOC 2018・日本人の食事摂取基準2025年版）をもとに、目的に合った、たんぱく質・脂質・炭水化物を計算します。
+      </p>
+
+      <p className="agtitle">① 目的</p>
+      <div className="kgoals">
+        {(Object.keys(K_GOALS) as KGoal[]).map((x) => (
+          <button
+            key={x}
+            className={kgoal === x ? "kgoal on" : "kgoal"}
+            onClick={() => {
+              setKgoal(x);
+              reset();
+            }}
+          >
+            <span aria-hidden>{K_GOALS[x].icon}</span>
+            <b>{K_GOALS[x].label}</b>
+            <small>{K_GOALS[x].desc}</small>
+          </button>
+        ))}
+      </div>
+
+      <p className="agtitle">② からだと、トレーニング</p>
+      <label className="afield">
+        <span>いまの体重</span>
+        <span className="gram">
+          <input
+            inputMode="decimal"
+            value={weight}
+            onChange={(e) => {
+              setWeight(e.target.value);
+              reset();
+            }}
+            placeholder="55"
+            aria-label="いまの体重（kg）"
+          />
+          kg
+        </span>
+      </label>
+      <p className="aglabel">筋トレ（ウエイト・自重）の頻度</p>
+      <div className="chips tight">
+        {(Object.keys(K_TRAIN) as KTrain[]).map((x) => (
+          <button
+            key={x}
+            className={train === x ? "chip on" : "chip"}
+            onClick={() => {
+              setTrain(x);
+              reset();
+            }}
+          >
+            {K_TRAIN[x]}
+          </button>
+        ))}
+      </div>
+      {!wOk && <p className="note">体重を入れると、体重1kgあたりのたんぱく質で、計算します（入れないときは、エネルギーの22%で計算）。</p>}
+
+      <p className="agtitle">③ 1日のカロリー</p>
       <div className="chips tight">
         {KCAL_PRESETS.map((v) => (
           <button
@@ -1623,7 +1741,7 @@ function KcalSetter({
             className={String(v) === kcal ? "chip on" : "chip"}
             onClick={() => {
               setKcal(String(v));
-              setDone("");
+              reset();
             }}
           >
             {v}
@@ -1638,37 +1756,25 @@ function KcalSetter({
             value={kcal}
             onChange={(e) => {
               setKcal(e.target.value);
-              setDone("");
+              reset();
             }}
             aria-label="1日のカロリー（kcal）"
           />
           kcal
         </span>
       </label>
-      <p className="aglabel">PFCの配分</p>
-      <div className="chips tight">
-        {(Object.keys(KCAL_TYPES) as KcalType[]).map((x) => (
-          <button
-            key={x}
-            className={type === x ? "chip on" : "chip"}
-            onClick={() => {
-              setType(x);
-              setDone("");
-            }}
-          >
-            {KCAL_TYPES[x].label}
-          </button>
-        ))}
-      </div>
-      <p className="note">{t.desc}</p>
-      <dl className="agdl ksdl">
-        <dt>こんな人に</dt>
-        <dd>{KCAL_DETAIL[type].who}</dd>
-        <dt>食べ方</dt>
-        <dd>{KCAL_DETAIL[type].how}</dd>
-        <dt>注意</dt>
-        <dd>{KCAL_DETAIL[type].watch}</dd>
-      </dl>
+      {tdee ? (
+        <p className="agnote">
+          あなたの1日の消費カロリーの目安：約<b>{Math.round(tdee / 10) * 10}</b>kcal（目標の体重・身長・年齢・活動量から推定）。
+          {kgoal === "cut" && " ダイエットは、ここから10〜25%少なめが、目安です。"}
+          {kgoal === "gain" && " 筋肉をつけるときは、ここから5〜15%多めが、目安です。"}
+          {kgoal === "keep" && " キープは、ここに近い量です。"}
+        </p>
+      ) : (
+        <p className="agnote">
+          「目標を決める」（下の欄）で、年齢・身長・活動量を入れると、あなたの消費カロリーと、設定の差が表示されます。体重の入力も必要です。
+        </p>
+      )}
 
       {!plan && <p className="note">800〜4000kcalの範囲で入力してください。</p>}
 
@@ -1676,33 +1782,85 @@ function KcalSetter({
         <>
           <div className="agresult">
             <div className="agkcal">
-              1日 <b>{plan.kcal}</b> kcal
+              1日 <b>{plan.kcal}</b> kcal　<small>{g.label}</small>
             </div>
-            <div className="ksbar" role="img" aria-label={`P${pc(t.p)}% F${pc(t.f)}% C${pc(t.c)}%`}>
-              <span className="p" style={{ width: `${pc(t.p)}%` }}>
-                P {pc(t.p)}%
+            <div className="ksbar" role="img" aria-label={`P${pc(pe)}% F${pc(fe)}% C${pc(ce)}%`}>
+              <span className="p" style={{ width: `${pc(pe)}%` }}>
+                P {pc(pe)}%
               </span>
-              <span className="f" style={{ width: `${pc(t.f)}%` }}>
-                F {pc(t.f)}%
+              <span className="f" style={{ width: `${pc(fe)}%` }}>
+                F {pc(fe)}%
               </span>
-              <span className="c" style={{ width: `${pc(t.c)}%` }}>
-                C {pc(t.c)}%
+              <span className="c" style={{ width: `${pc(ce)}%` }}>
+                C {pc(ce)}%
               </span>
             </div>
             <PfcRow p={plan.p} f={plan.f} c={plan.c} />
-            <p className="agnote">
-              たんぱく質 {plan.p}g（{plan.p * 4}kcal）／脂質 {plan.f}g（{plan.f * 9}kcal）／炭水化物 {plan.c}g（{plan.c * 4}kcal）。
-              たんぱく質1g・炭水化物1gは4kcal、脂質1gは9kcalで計算しています。
-            </p>
-            <p className="agnote">
-              目安：ごはん（茶碗1杯150g）で炭水化物 約{Math.round(150 * 0.372)}g。炭水化物{plan.c}gは、ごはん約{Math.round(plan.c / 0.372 / 10) * 10}g分にあたります。
-            </p>
-            <p className="agnote">
-              <b>{plan.kcal}kcalは？</b> {kcalComment(plan.kcal)}
-            </p>
-            <p className="agnote">
-              1食の目安（3食＋間食）：朝 {Math.round(plan.kcal * 0.25)}kcal・昼 {Math.round(plan.kcal * 0.3)}kcal・夕 {Math.round(plan.kcal * 0.3)}kcal・間食 {Math.round(plan.kcal * 0.15)}kcal。たんぱく質は、1食 {Math.round(plan.p / 3.5)}g前後を、毎食に分けると、からだが使いやすい。
-            </p>
+            <dl className="agdl">
+              <dt>たんぱく質</dt>
+              <dd>
+                {plan.p}g
+                {wOk && (
+                  <>
+                    （体重1kgあたり {r1(plan.p / w)}g ／ 目安の範囲 {range[1]}〜{range[2]}g）
+                  </>
+                )}
+                。1食あたり {Math.round(plan.p / 4)}〜{Math.round(plan.p / 3)}g（3〜4回に分けて）
+                {wOk && <>、1食の目安 {Math.round(w * 0.3)}〜{Math.round(w * 0.5)}g</>}。
+              </dd>
+              <dt>脂質</dt>
+              <dd>
+                {plan.f}g（エネルギーの{pc(fe)}%）。20〜30%の範囲・体重1kgあたり0.6g以上を、下回らないように。
+              </dd>
+              <dt>炭水化物</dt>
+              <dd>
+                {plan.c}g（エネルギーの{pc(ce)}%）
+                {wOk && <>、体重1kgあたり {r1(plan.c / w)}g</>}。ごはんにすると、約{Math.round(plan.c / 0.372 / 10) * 10}g分。
+                {train !== "none" && wOk && plan.c / w < 3 && " トレーニングする日は、やや少なめです。前後に、補給を。"}
+              </dd>
+              <dt>食物繊維</dt>
+              <dd>{Math.max(18, Math.round((plan.kcal / 1000) * 8))}g以上（18g以上、または1000kcalあたり 約8g）。</dd>
+              {diff !== null && (
+                <>
+                  <dt>消費との差</dt>
+                  <dd>
+                    {diff >= 0 ? "+" : ""}
+                    {Math.round(diff)}%（{Math.round(plan.kcal - tdee!) >= 0 ? "+" : ""}
+                    {Math.round(plan.kcal - tdee!)}kcal）
+                    {pace !== null && (
+                      <>
+                        ／ 体重の変化の目安：週に {pace >= 0 ? "+" : ""}
+                        {r1(pace)}%（約{r1((pace / 100) * w)}kg）
+                      </>
+                    )}
+                  </dd>
+                </>
+              )}
+              {eaFloor && (
+                <>
+                  <dt>最低ライン</dt>
+                  <dd>
+                    食事は、約{eaFloor}kcal（除脂肪体重×30kcalの目安）に、運動で使った分を足した量を、下回らないように。
+                  </dd>
+                </>
+              )}
+            </dl>
+
+            {kgoal === "cut" && diff !== null && diff < -25 && (
+              <p className="caution">⚠ 消費より25%以上少ない設定です。筋肉・骨・月経に影響が出やすいので、減らす幅を小さくするか、期間を短くしてください。</p>
+            )}
+            {kgoal === "cut" && pace !== null && pace < -1 && (
+              <p className="caution">⚠ 週に体重の1%より速いペースです。研究では、体重の0.5〜1%／週が、筋肉を守りやすいとされています。</p>
+            )}
+            {kgoal === "cut" && diff !== null && diff > -5 && (
+              <p className="agnote">※ 消費とほぼ同じ量です。体脂肪を減らすなら、10〜25%少ない量が、目安です。</p>
+            )}
+            {kgoal === "gain" && diff !== null && diff > 20 && (
+              <p className="caution">⚠ 消費より20%以上多い設定です。体脂肪が先に増えやすいので、+5〜15%を、目安にしてください。</p>
+            )}
+            {kgoal === "gain" && diff !== null && diff < 0 && (
+              <p className="agnote">※ 消費より少ない設定です。筋肉をつけるなら、消費と同じか、+5〜15%が、目安です。</p>
+            )}
             {(plan.kcal < 1200 || plan.kcal > 3200) && (
               <p className="caution">
                 {plan.kcal < 1200
@@ -1710,7 +1868,50 @@ function KcalSetter({
                   : "⚠ かなり多めの設定です。活動量に合っているか、確認してください。"}
               </p>
             )}
+            {eaFloor && plan.kcal < eaFloor && (
+              <p className="caution">
+                ⚠ 運動で使うカロリーを引くと、エネルギー不足（低エネルギー・アベイラビリティ）になりやすい量です。月経不順・疲れやすさ・骨の弱りが出たら、食事を増やして、婦人科・医師へ。
+              </p>
+            )}
           </div>
+
+          <details className="ksmore" open>
+            <summary>{K_EVID[kgoal].title}（研究にもとづく目安）</summary>
+            <ul className="plist">
+              {K_EVID[kgoal].items.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+            <p className="agnote">
+              体の大きさ・年齢・活動量・体調で、必要量は変わります。2〜3週間続けて、体重（週平均）・ウエスト・疲れやすさ・月経の変化を見ながら、100〜200kcalずつ調整するのが現実的です。
+            </p>
+            <p className="agnote">
+              出典：
+              <a href="https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0177-8" target="_blank" rel="noopener noreferrer">
+                ISSN たんぱく質と運動（2017）
+              </a>
+              ／
+              <a href="https://pubmed.ncbi.nlm.nih.gov/28698222/" target="_blank" rel="noopener noreferrer">
+                Morton 2018（たんぱく質補給と筋力トレーニング）
+              </a>
+              ／
+              <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4033492/" target="_blank" rel="noopener noreferrer">
+                Helms 2014（減量中の栄養）
+              </a>
+              ／
+              <a href="https://bjsm.bmj.com/content/52/11/687" target="_blank" rel="noopener noreferrer">
+                IOC RED-S 2018
+              </a>
+              ／
+              <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5803575" target="_blank" rel="noopener noreferrer">
+                MATADOR（Byrne 2018）
+              </a>
+              ／
+              <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/eiyou/syokuji_kijyun.html" target="_blank" rel="noopener noreferrer">
+                日本人の食事摂取基準（2025年版）
+              </a>
+            </p>
+          </details>
 
           {menu && (
             <div className="agmenu">
@@ -1741,38 +1942,39 @@ function KcalSetter({
                   </div>
                 );
               })}
-              <details className="ksmore"><summary>栄養のようす・食材の置きかえを見る</summary>
-<p className="aglabel">この例の栄養のようす（目安との比較）</p>
-              <ul className="ksnut">
-                {REF_NUTRI.map((n) => {
-                  const v = menu.total[n.key];
-                  const ok = n.kind === "min" ? v >= n.v : v < n.v;
-                  return (
-                    <li key={n.key} className={ok ? "ok" : "ng"}>
-                      <b>{n.label}</b>
-                      <span>
-                        {r1(v)}
-                        {n.unit}
-                      </span>
-                      <em>
-                        目安 {n.ref} {ok ? "✓" : n.kind === "min" ? "→ 足りません" : "→ 多めです"}
-                      </em>
+              <details className="ksmore">
+                <summary>栄養のようす・食材の置きかえを見る</summary>
+                <p className="aglabel">この例の栄養のようす（目安との比較）</p>
+                <ul className="ksnut">
+                  {REF_NUTRI.map((n) => {
+                    const v = menu.total[n.key];
+                    const ok = n.kind === "min" ? v >= n.v : v < n.v;
+                    return (
+                      <li key={n.key} className={ok ? "ok" : "ng"}>
+                        <b>{n.label}</b>
+                        <span>
+                          {r1(v)}
+                          {n.unit}
+                        </span>
+                        <em>
+                          目安 {n.ref} {ok ? "✓" : n.kind === "min" ? "→ 足りません" : "→ 多めです"}
+                        </em>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="agnote">
+                  ※ この食事例は、味つけ（しょうゆ・みそ・塩など）を含まないため、食塩は実際より少なく出ます。カルシウム・鉄が足りないときは、小魚・牛乳・チーズ・小松菜・豆腐、赤身肉・レバー・あさり・ほうれん草を足すと補えます。
+                </p>
+                <p className="aglabel">食材の置きかえ（目的の栄養が、ほぼ同じ量になる目安）</p>
+                <ul className="kswap">
+                  {SWAPS.map((s) => (
+                    <li key={s.from}>
+                      <b>{s.from}</b>
+                      <span>＝ {s.to}</span>
                     </li>
-                  );
-                })}
-              </ul>
-              <p className="agnote">
-                ※ この食事例は、味つけ（しょうゆ・みそ・塩など）を含まないため、食塩は実際より少なく出ます。カルシウム・鉄が足りないときは、小魚・牛乳・チーズ・小松菜・豆腐、赤身肉・レバー・あさり・ほうれん草を足すと補えます。
-              </p>
-              <p className="aglabel">食材の置きかえ（目的の栄養が、ほぼ同じ量になる目安）</p>
-              <ul className="kswap">
-                {SWAPS.map((s) => (
-                  <li key={s.from}>
-                    <b>{s.from}</b>
-                    <span>＝ {s.to}</span>
-                  </li>
-                ))}
-              </ul>
+                  ))}
+                </ul>
               </details>
               <p className="agnote">
                 この例の合計: {Math.round(menu.total.kcal)}kcal ／ P{r1(menu.total.p)}g F{r1(menu.total.f)}g C{r1(menu.total.c)}g（目標との差 P
@@ -1807,7 +2009,7 @@ function KcalSetter({
             )}
           </div>
           <p className="agnote">
-            食材は一例です。同じ栄養の食品に置きかえても大丈夫です。年齢・体重から自動で決めたい人は、下の「目標を決める」を使ってください。
+            食材は一例です。同じ栄養の食品に置きかえても大丈夫です。持病・妊娠中・授乳中・摂食障害の経験がある人は、医師・管理栄養士に相談してください。
           </p>
         </>
       )}
@@ -1978,6 +2180,8 @@ export default function Home() {
     </Suspense>
   );
 }
+
+
 
 
 
