@@ -2091,8 +2091,9 @@ function HomeInner() {
       <p className="tagline">女性のからだに寄りそう、食事とからだのパートナー。</p>
       <p className="member">LIFEGYM 女性会員様のための専用アプリ</p>
 
-      <QuoteHero />
-      <TipsTicker />
+      <Fold key="h-tip" id="h-tip" title="💡 今日の豆知識" sub="1日1つ、ひとことで" cls="wfold">
+        <TipsTicker />
+      </Fold>
 
       <div className="tabs" role="tablist">
         <button
@@ -2152,7 +2153,7 @@ function HomeInner() {
           <Fold key="r-women" id="r-women" title="✅ 今日の女性チェック" sub="女性に大切な栄養を、足りているか確認" cls="wfold">
             <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
           </Fold>
-          <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重までのペース" sub="折れ線グラフで、いまの位置を見る" cls="wfold">
+          <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
             <WeightChart />
           </Fold>
         </>
@@ -2205,6 +2206,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

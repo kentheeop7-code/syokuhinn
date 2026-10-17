@@ -4,6 +4,7 @@ import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
+import Disclosure from "../Disclosure";
 import { GOALS_MORE } from "./goalsMore";
 import RelatedProducts from "../RelatedProducts";
 const GOAL_PRODUCT: Record<string, string> = { pms: "ビタミンB6", menopause: "カルシウム", pregnancy: "葉酸", muscle: "プロテイン", anemia: "鉄", performance: "クレアチン", sleep: "GABA", diet: "プロテイン", fatigue: "ビタミンB", immune: "ビタミンC", bone: "カルシウム", beauty: "コラーゲン", gut: "乳酸菌" };
@@ -554,6 +555,8 @@ export default function Nutrients() {
       <ul className="nlist">
         {GOALS_SORTED.map((g) => (
           <li key={g.id} className="card ncard" id={g.id}>
+            <Disclosure id={g.id} head={
+              <>
             <div className="nhead">
               <h2>{g.title}</h2>
             </div>
@@ -565,6 +568,8 @@ export default function Nutrients() {
                 </span>
               ))}
             </div>
+              </>
+            }>
             <dl className="ndl">
               <dt>おすすめ食品</dt>
               <dd>{g.foods}</dd>
@@ -594,6 +599,7 @@ export default function Nutrients() {
             )}
             {GOAL_PRODUCT[g.id] && <RelatedProducts q={GOAL_PRODUCT[g.id]} />}
             {g.caution && <p className="caution">⚠ {g.caution}</p>}
+            </Disclosure>
           </li>
         ))}
       </ul>
@@ -605,10 +611,14 @@ export default function Nutrients() {
       <ul className="nlist">
         {DIETS.map((d) => (
           <li key={d.title} className="card ncard">
+            <Disclosure head={
+              <>
             <div className="nhead">
               <h2>{d.title}</h2>
             </div>
             <p className="nrole">{d.setting}</p>
+              </>
+            }>
             <p className="aglabel">研究で分かっていること</p>
             <ul className="plist">
               {d.evidence.map((e) => (
@@ -650,6 +660,7 @@ export default function Nutrients() {
               </>
             )}
             {d.caution && <p className="caution">⚠ {d.caution}</p>}
+            </Disclosure>
           </li>
         ))}
       </ul>
@@ -675,12 +686,16 @@ export default function Nutrients() {
       <ul className="nlist">
         {ITEMS.map((x) => (
           <li key={x.name} className="card ncard">
+            <Disclosure head={
+              <>
             <div className="nhead">
               <h2>{x.name}</h2>
               <span className="ntag">{x.tag}</span>
             </div>
             {x.inApp && <p className="inapp">アプリで計算</p>}
             <p className="nrole">{x.role}</p>
+              </>
+            }>
             <dl className="ndl">
               <dt>多い食品</dt>
               <dd>{x.foods}</dd>
@@ -707,6 +722,7 @@ export default function Nutrients() {
                 <p className="nrole">{ITEMS_MORE[x.name].howto}</p>
               </>
             )}
+            </Disclosure>
           </li>
         ))}
       </ul>
@@ -720,6 +736,7 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 
 

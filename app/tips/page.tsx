@@ -1,5 +1,6 @@
 ﻿import MyKcal from "../MyKcal";
 import Fold from "../Fold";
+import Disclosure from "../Disclosure";
 import RelatedProducts from "../RelatedProducts";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -49,7 +50,11 @@ export default function Tips() {
           {g.key === "protein" && <RelatedProducts q="プロテイン" title="プロテインの商品" />}
           <ul className="nlist">
             {TIPS.filter((t) => t.group === g.key).map((t) => (
-              <li key={t.id} id={t.id} className="card ncard tipcard">
+              <li key={t.id} className="card ncard tipcard" id={t.id}>
+                <Disclosure
+                  id={t.id}
+                  head={
+                    <>
                 <div className="nhead">
                   <h2>{t.title}</h2>
                 </div>
@@ -65,6 +70,10 @@ export default function Tips() {
                     </p>
                   </div>
                 )}
+                {!t.myth && <p className="tiplead">{t.lead}</p>}
+                    </>
+                  }
+                >
                 <ul className="plist">
                   {t.points.map((p) => (
                     <li key={p}>{p}</li>
@@ -84,6 +93,7 @@ export default function Tips() {
                     </a>
                   </p>
                 )}
+                </Disclosure>
               </li>
             ))}
           </ul>
@@ -97,6 +107,7 @@ export default function Tips() {
     </main>
   );
 }
+
 
 
 

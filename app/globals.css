@@ -3526,3 +3526,54 @@ main:has(.fold) > .anav { display: none; }
 .relprod li:last-child { border-bottom: 0; }
 .relprod li b { display: block; font-size: 0.9rem; }
 .relprod li small { display: block; font-size: 0.82rem; color: var(--s-accent); font-weight: 700; line-height: 1.5; }
+
+/* ---- 体重の予測グラフ（見やすい版） ---- */
+.wchart2 { padding: 14px; }
+.wc2in { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; margin: 6px 0 12px; }
+.wc2box { display: flex; flex-direction: column; gap: 4px; padding: 10px; background: var(--s-soft); border-radius: 12px; }
+.wc2box > span { font-size: 0.8rem; font-weight: 800; color: var(--s-sub); }
+.wc2box small { font-size: 0.72rem; color: var(--s-sub); }
+.wc2box small a { color: var(--s-accent); font-weight: 800; }
+.wc2goalv { font-size: 1.6rem; font-weight: 900; color: var(--s-accent); line-height: 1.2; }
+.wc2step { display: flex; align-items: center; gap: 6px; }
+.wc2step button { flex: 0 0 44px; height: 44px; border-radius: 12px; border: 1px solid #c8d8cd; background: #fff; font-size: 1.4rem; font-weight: 900; color: var(--s-accent); cursor: pointer; padding: 0; }
+.wc2step button:active { background: var(--s-soft); }
+.wc2step input { flex: 1; min-width: 0; height: 44px; text-align: center; font-size: 1.3rem; font-weight: 900; padding: 0 4px; }
+.wc2label { margin: 6px 0 4px; font-size: 0.82rem; font-weight: 800; color: var(--s-sub); }
+.wc2paces { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.wc2paces button { display: flex; flex-direction: column; gap: 2px; padding: 10px 6px; min-height: 56px; border-radius: 12px; border: 2px solid #c8d8cd; background: #fff; font-family: inherit; color: var(--s-ink); cursor: pointer; }
+.wc2paces button b { font-size: 0.98rem; font-weight: 900; }
+.wc2paces button small { font-size: 0.7rem; line-height: 1.3; }
+.wc2paces button.on { color: #fff; }
+.wc2hero { margin: 12px 0 4px; padding: 12px 14px; border: 2px solid; border-radius: 14px; text-align: center; background: #fff; }
+.wc2hero span { font-size: 0.82rem; font-weight: 800; color: var(--s-sub); }
+.wc2hero b { display: block; font-size: 2.2rem; font-weight: 900; line-height: 1.2; }
+.wc2hero p { margin: 4px 0 0; font-size: 0.95rem; }
+.wc2svg { width: 100%; height: auto; display: block; margin: 6px 0; }
+.wc2slide { padding: 10px 12px; background: var(--s-soft); border-radius: 12px; }
+.wc2slide label { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; font-size: 0.95rem; }
+.wc2slide label span { font-size: 0.8rem; color: var(--s-sub); }
+.wc2slide label em { margin-left: auto; font-style: normal; font-weight: 800; }
+.wc2slide input[type="range"] { width: 100%; height: 36px; accent-color: var(--s-accent); margin: 6px 0 2px; border: 0 !important; padding: 0; }
+.wc2slide small { color: var(--s-sub); font-size: 0.75rem; }
+.wc2more { margin: 10px 0; }
+.wc2more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; padding: 8px 12px; border: 1px solid #c8d8cd; border-radius: 12px; background: #fff; font-weight: 800; font-size: 0.9rem; }
+.wc2more p { font-size: 0.88rem; line-height: 1.7; margin: 8px 2px; }
+.wc2warn { color: #b3261e; font-weight: 700; }
+.wc2empty { padding: 14px; text-align: center; background: var(--s-soft); border-radius: 12px; color: var(--s-sub); font-size: 0.9rem; line-height: 1.7; }
+.wc2foot { font-size: 0.78rem; color: var(--s-sub); line-height: 1.6; margin: 10px 0 0; }
+
+/* ---- 開閉カード（要点だけ先に見せる） ---- */
+.disc-btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; margin: 8px 0 0; border: 1px solid #c8d8cd; border-radius: 12px; background: #fff; color: var(--s-accent); font-weight: 800; font-size: 0.9rem; font-family: inherit; cursor: pointer; }
+.disc.open .disc-btn { background: var(--s-soft); }
+.disc-body { padding-top: 6px; }
+.tiplead { margin: 4px 0 0; font-size: 0.95rem; line-height: 1.7; color: var(--s-ink); }
+
+/* ---- 上の帯をコンパクトに ---- */
+.supp:not(.open) .supp-effect { display: none; }
+.supp-card { padding: 8px 10px !important; }
+.supp .supp-head { margin-bottom: 4px; }
+.supp-hint, .supp-date { font-size: 0.72rem !important; }
+.tagline { display: none; }
+.title { margin-bottom: 4px; }
+.ticker { margin: 0 !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
