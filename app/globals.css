@@ -3679,3 +3679,34 @@ body { padding-bottom: 96px; }
 .supp-card { border: 0 !important; }
 .balopts { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); gap: 6px; }
 .balopts button { min-width: 0 !important; padding: 6px 2px !important; font-size: 0.82rem !important; white-space: nowrap; }
+
+/* ---- いまのバランス：グループ表示 ---- */
+.balgroups { display: grid; gap: 8px; margin: 10px 0 12px; }
+.balg { background: var(--s-soft); border-radius: 16px; overflow: hidden; }
+.balg.open { background: #fff; box-shadow: 0 0 0 2px #cfe9dc inset; }
+.balgh { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; min-height: 58px; background: none; border: 0; text-align: left; font-family: inherit; color: var(--s-ink); cursor: pointer; }
+.balgi { font-size: 1.5rem; }
+.balgt { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.balgt b { font-size: 0.98rem; font-weight: 900; }
+.balgt small { font-size: 0.76rem; color: var(--s-sub); line-height: 1.4; white-space: normal; }
+.balgh i { font-style: normal; width: 26px; height: 26px; border-radius: 50%; background: var(--g2); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; flex: 0 0 26px; }
+.balgb { padding: 4px 12px 12px; }
+.balit { padding: 8px 0; border-top: 1px solid var(--s-line); }
+.balit:first-child { border-top: 0; }
+.balit .balqt { margin: 0 0 6px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+.balit .balqt b { font-size: 0.92rem; }
+.balit .balqt small { font-size: 0.74rem; color: var(--s-sub); }
+.balh.sub { margin-top: 12px; }
+.balchk { list-style: none; margin: 6px 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.balchk li { display: grid; grid-template-columns: 1fr auto; gap: 2px 6px; padding: 8px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.96); color: var(--s-ink); font-size: 0.82rem; align-items: center; }
+.balchk li b { font-size: 0.85rem; }
+.balchk li span { grid-column: 1 / 2; font-size: 1rem; font-weight: 900; }
+.balchk li small { grid-column: 1 / 2; color: var(--s-sub); font-size: 0.7rem; }
+.balchk li em { grid-column: 2 / 3; grid-row: 1 / 3; font-style: normal; font-weight: 800; font-size: 0.76rem; padding: 2px 8px; border-radius: 999px; align-self: center; }
+.balchk li.ok em { background: #e1f4e8; color: #1c7a47; }
+.balchk li.low em { background: #fff1cf; color: #8a5a00; }
+.balchk li.high em { background: #ffe3e3; color: #a3223a; }
+
+/* ---- 全体の整理：上のバーは、ロゴと商品帯だけに（移動は、下のバー） ---- */
+.tn-items { display: none !important; }
+.topnav-in { justify-content: center; }

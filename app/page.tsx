@@ -2061,44 +2061,16 @@ function HomeInner() {
       <p className="tagline">女性のからだに寄りそう、食事とからだのパートナー。</p>
       <p className="member">LIFEGYM 女性会員様のための専用アプリ</p>
 
-      <Fold key="h-tip" id="h-tip" title="💡 今日の豆知識" sub="1日1つ、ひとことで" cls="wfold">
-        <TipsTicker />
-      </Fold>
 
-      <div className="tabs" role="tablist">
-        <button
-          role="tab"
-          aria-selected={tab === "record"}
-          onClick={() => changeTab("record")}
-        >
-          ホーム
-        </button>
-        <button
-          role="tab"
-          aria-selected={tab === "women"}
-          onClick={() => changeTab("women")}
-        >
-          からだ
-        </button>
-        <button
-          role="tab"
-          aria-selected={tab === "search"}
-          onClick={() => changeTab("search")}
-        >
-          食品
-        </button>
-        <button
-          role="tab"
-          aria-selected={tab === "products"}
-          onClick={() => changeTab("products")}
-        >
-          商品
-        </button>
-      </div>
+
+
 
       {tab === "record" ? (
         <>
           <BalanceCheck />
+          <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
+            <WeightChart />
+          </Fold>
           {loaded && (
             <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 1日のカロリー・PFCを決める" sub={hasKcal ? "設定ずみ。タップで見なおす・変える" : "目的・体重・カロリーから、PFCと食事例を計算"} cls="wfold">
               <KcalSetter setGoal={setGoal} />
@@ -2107,9 +2079,10 @@ function HomeInner() {
           <Fold key="r-goal" id="r-goal" title="🎯 目標体重・年齢などを入れる" sub="体重の予測と、カロリーの計算に使います" cls="wfold">
             <ProfileGoal setGoal={setGoal} />
           </Fold>
-          <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
-            <WeightChart />
-          </Fold>
+
+          <Fold key="h-tip" id="h-tip" title="💡 今日の豆知識" sub="1日1つ、ひとことで" cls="wfold">
+        <TipsTicker />
+      </Fold>
           <Fold key="r-diary" id="r-diary" title="📝 食べたものを記録したい人へ（任意）" sub="このアプリでは、記録は、すすめていません" cls="wfold">
             <p className="agnote">記録は、負担になりやすいので、必須ではありません。細かく確かめたい日だけ、お使いください。</p>
             <Calendar month={month} setMonth={setMonth} selected={selected} setSelected={pick} log={log} goal={goal} />
@@ -2166,6 +2139,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
