@@ -176,7 +176,7 @@ export default function BalanceCheck() {
 
         {shown.length > 0 ? (
           <div className="baltips">
-            <p className="balh">今日から、ひとつだけ</p>
+            <p className="balh">今日から、できること</p>
             <ul>
               {shown.map((x) => (
                 <li key={x}>{x}</li>
@@ -191,4 +191,5 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
 
