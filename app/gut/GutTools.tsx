@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { FOODS } from "../../lib/foods";
@@ -210,14 +210,11 @@ function FiberMaker() {
             ))}
           </ul>
           <div className="gtactions">
-            <button className="btn" onClick={addToLog}>
-              {added ? "✓ 今日の記録に追加しました" : "＋ 今日の記録に追加"}
-            </button>
+
             <button className="btn ghost" onClick={() => setPicked([])}>
               全部外す
             </button>
           </div>
-          {added && <p className="gtnote">「記録」の画面で、確認できます。</p>}
         </div>
       )}
       <p className="gtnote small">
@@ -298,3 +295,5 @@ export default function GutTools() {
     </>
   );
 }
+
+

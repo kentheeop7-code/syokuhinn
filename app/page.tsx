@@ -282,16 +282,7 @@ function FoodRow({
       </div>
 
       <div className="rowbtns">
-        <button
-          className="small"
-          disabled={g <= 0}
-          onClick={() => {
-            onAdd(food.name, num(grams));
-            setAdded(true);
-          }}
-        >
-          {added ? "✓ 追加しました" : "＋ 記録に追加"}
-        </button>
+
         <button
           className={picked ? "small cmp on" : "small cmp"}
           disabled={!picked && !canPick}
@@ -520,8 +511,7 @@ function Search({
       )}
 
       <p className="note">
-        {shown.length}件。初めは100gあたりの値です。目安ボタンやグラム数で量を変えられます。「記録に追加」で{" "}
-        {label(date)} の記録に入ります。
+        {shown.length}件。初めは100gあたりの値です。目安ボタンやグラム数で、量ごとの栄養を確かめられます（記録は、いりません）。
       </p>
       <p className="note">
         数値は文部科学省「日本食品標準成分表（八訂）増補2023年」を元にしています（「概算値」は公式に同じ食品がないものです）。
@@ -2176,6 +2166,8 @@ export default function Home() {
     </Suspense>
   );
 }
+
+
 
 
 

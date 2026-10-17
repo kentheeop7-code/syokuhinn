@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { FOODS } from "../lib/foods";
@@ -169,15 +169,7 @@ export default function BoneMenu({ onAdd }: { onAdd: (name: string, grams: numbe
               ))}
             </ul>
             <div className="bmactions">
-              <button
-                className="btn"
-                onClick={() => {
-                  picked.forEach((p) => onAdd(p.name, p.g));
-                  setAdded(true);
-                }}
-              >
-                {added ? "✓ 今日の記録に追加しました" : "＋ 今日の記録に追加"}
-              </button>
+
               <button className="btn ghost" onClick={() => setPicked([])}>
                 全部外す
               </button>
@@ -191,3 +183,4 @@ export default function BoneMenu({ onAdd }: { onAdd: (name: string, grams: numbe
     </section>
   );
 }
+

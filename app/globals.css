@@ -3603,3 +3603,79 @@ main:has(.fold) > .anav { display: none; }
 .baltips ul { margin: 4px 0 0; padding-left: 1.2em; }
 .baltips li { margin: 6px 0; line-height: 1.65; font-size: 0.9rem; }
 .baltips.ok { color: #1c7a47; font-weight: 700; }
+
+/* ================= style v2：かっこよく・見やすく ================= */
+:root { --g1: #0f3d2e; --g2: #1f6f54; --g3: #2f9e75; --pop: #ffb84d; --s-accent: #1f6f54; --s-soft: #eaf6ef; --s-line: #e3ece6; --s-ink: #16302a; --s-sub: #5b7468; --sh: 0 8px 24px rgba(15, 61, 46, 0.09); }
+body { background: linear-gradient(180deg, #e9f4ee 0%, #f6faf8 360px, #f6faf8 100%) !important; color: var(--s-ink); }
+
+/* 上のバー */
+.topnav { background: rgba(255, 255, 255, 0.88) !important; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 0 !important; box-shadow: 0 1px 0 rgba(15, 61, 46, 0.06), 0 6px 18px rgba(15, 61, 46, 0.05) !important; }
+.tn-brand { background: linear-gradient(135deg, var(--g1), var(--g3)); -webkit-background-clip: text; background-clip: text; color: transparent !important; font-weight: 900; letter-spacing: 0.06em; }
+.tn-item.on { background: linear-gradient(135deg, #d6f1e4, #eaf8f0) !important; color: var(--g2) !important; }
+
+/* サプリ帯：濃い緑で、引き締める */
+.supp { background: linear-gradient(135deg, var(--g1), var(--g2)) !important; border-bottom: 0 !important; color: #fff; }
+.supp-label { color: #fff !important; }
+.supp-count { background: rgba(255, 255, 255, 0.14) !important; color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.35) !important; }
+.supp-tabs button { background: rgba(255, 255, 255, 0.12) !important; color: #e7fff3 !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; }
+.supp-tabs button.on { background: #fff !important; color: var(--g1) !important; border-color: #fff !important; }
+.supp-arrow { color: #fff !important; }
+.supp-card { background: #fff; border: 0 !important; border-radius: 18px !important; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22) !important; }
+.supp-hint, .supp-date { color: rgba(255, 255, 255, 0.8) !important; }
+
+/* タイトル */
+.title { font-size: 1.9rem !important; font-weight: 900; letter-spacing: 0.02em; background: linear-gradient(135deg, var(--g1), var(--g3)) !important; -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important; }
+.title.sm { font-size: 1.5rem !important; }
+.member { color: var(--s-sub) !important; }
+.h2 { color: var(--g1); }
+
+/* カード：影で浮かせる */
+.card, .ncard, .adbox, .gtsec, .adsec, .tipcard, .kset, .autogoal, .ticker { border: 0 !important; box-shadow: var(--sh) !important; border-radius: 20px !important; background: #fff; }
+.mykcal { background: linear-gradient(135deg, #f1faf5, #e6f5ed) !important; }
+.agresult, .agmenu { background: linear-gradient(135deg, #f4fbf7, #eaf6ef) !important; border: 0 !important; box-shadow: none !important; }
+
+/* 折りたたみ見出し */
+.fold .foldh button { border: 0 !important; background: #fff; box-shadow: var(--sh) !important; border-radius: 18px; padding: 14px 16px; }
+.fold.open .foldh button { background: linear-gradient(135deg, #d9f2e5, #eaf8f0); box-shadow: 0 4px 14px rgba(15, 61, 46, 0.1) !important; }
+.fold .foldh button i { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--g2); color: #fff !important; font-size: 1.2rem; flex: 0 0 30px; }
+
+/* ボタン・チップ */
+.chip.on, .adtabs button.on, .tabs button[aria-selected="true"], .guidetabs a.on, .kgoal.on, .mcard.on, .balopts button.on, .supp-tabs button.on.x {
+  background: linear-gradient(135deg, var(--g2), var(--g3)) !important; border-color: transparent !important; color: #fff !important; box-shadow: 0 6px 14px rgba(31, 111, 84, 0.3) !important;
+}
+button.small, .btn { background: linear-gradient(135deg, var(--g2), var(--g3)) !important; box-shadow: 0 6px 14px rgba(31, 111, 84, 0.28) !important; }
+.btn.ghost { background: #fff !important; box-shadow: none !important; }
+.tabs button { border: 0 !important; background: #fff !important; box-shadow: 0 3px 10px rgba(15, 61, 46, 0.08) !important; border-radius: 14px !important; min-height: 46px; }
+.tabs button[aria-selected="true"] { background: linear-gradient(135deg, var(--g2), var(--g3)) !important; }
+.anav a, .chip { border: 1px solid #d3e2d9 !important; }
+.disc-btn { border: 0; background: var(--s-soft); border-radius: 14px; }
+.gutlink { background: linear-gradient(135deg, #ffffff, #eaf6ef) !important; border: 0 !important; box-shadow: var(--sh) !important; border-radius: 18px !important; }
+
+/* 食事バランス：ダッシュボード風 */
+.balres { background: linear-gradient(145deg, var(--g1), var(--g2)) !important; color: #fff; border-radius: 20px !important; }
+.balres .balh { color: #a6f0cf; }
+.balres .balk { color: #fff; }
+.balres .balk b { color: var(--pop); font-size: 2.4rem; }
+.balres .balk small { color: rgba(255, 255, 255, 0.8); }
+.balres .agnote { color: rgba(255, 255, 255, 0.85); }
+.balres .agnote.small { color: rgba(255, 255, 255, 0.65); }
+.balres .balrows li { background: rgba(255, 255, 255, 0.96); color: var(--s-ink); }
+.balres .baltips { background: rgba(255, 255, 255, 0.96); color: var(--s-ink); }
+.balres .baltips .balh { color: var(--g2); }
+.balres .ksbar { border: 0; height: 38px; }
+
+/* 体重予測：数字を主役に */
+.wc2hero { background: linear-gradient(135deg, #ffffff, #f1faf5); box-shadow: var(--sh); border-width: 2px; }
+.wc2hero b { font-size: 2.6rem; }
+.wc2box { background: linear-gradient(135deg, #f4fbf7, #eaf6ef); }
+
+/* 下のバー：浮かぶカプセル */
+.bbar { left: 10px !important; right: 10px !important; bottom: 10px !important; width: auto !important; border-radius: 24px !important; border: 0 !important; background: rgba(255, 255, 255, 0.92) !important; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px rgba(15, 61, 46, 0.22) !important; padding: 6px 6px !important; }
+.bb-item.on { background: linear-gradient(135deg, #d6f1e4, #eaf8f0) !important; }
+.totop { bottom: 100px; background: linear-gradient(135deg, var(--g2), var(--g3)) !important; }
+body { padding-bottom: 96px; }
+
+.tn-brand { background: linear-gradient(135deg, var(--g1), var(--g3)) !important; -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent; }
+.supp-card { border: 0 !important; }
+.balopts { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); gap: 6px; }
+.balopts button { min-width: 0 !important; padding: 6px 2px !important; font-size: 0.82rem !important; white-space: nowrap; }

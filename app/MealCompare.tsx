@@ -244,15 +244,7 @@ export default function MealCompare({
             ))}
           </ul>
         </div>
-        <button
-          className="btn"
-          onClick={() => {
-            cur.menu.meals.forEach((m) => m.items.forEach((i) => onAdd(i.name, i.g)));
-            setAdded(cur.menu.id);
-          }}
-        >
-          {added === cur.menu.id ? "✓ 今日の記録に追加しました" : "＋ この献立を今日の記録に追加"}
-        </button>
+
       </div>
       <p className="mnote small">
         食材は一例です。同じ栄養の食品に置きかえても大丈夫です。必要なエネルギーは、年齢・体格・活動量で変わります。
@@ -260,6 +252,7 @@ export default function MealCompare({
     </section>
   );
 }
+
 
 
 
