@@ -2111,7 +2111,7 @@ function HomeInner() {
           </Link>
           <Fold key="w-sym" id="w-sym" title="🩺 気になることから、足したい栄養を探す" sub="選ぶだけ。記録は、いりません" cls="wfold" defaultOpen><SymptomCheck /></Fold>
           <MyKcal topic="women" />
-          <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold" defaultOpen><CycleTracker /></Fold>
+          <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold"><CycleTracker /></Fold>
           <Fold key="w-guide" id="w-guide" title="👩 年代別ガイド" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>
           <Fold key="w-bone" id="w-bone" title="🥛 骨と血をつくる食品メーカー" sub="カルシウム・鉄の食事" cls="wfold"><BoneMenu onAdd={add} />
             <RelatedProducts q="カルシウム" title="カルシウムの商品" />
@@ -2141,6 +2141,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
