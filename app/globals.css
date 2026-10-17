@@ -3577,3 +3577,29 @@ main:has(.fold) > .anav { display: none; }
 .tagline { display: none; }
 .title { margin-bottom: 4px; }
 .ticker { margin: 0 !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
+
+/* ---- いまのバランス（記録なし） ---- */
+.bal { padding: 14px; }
+.balq { list-style: none; margin: 8px 0 0; padding: 0; }
+.balq li { padding: 10px 0; border-bottom: 1px solid var(--s-line); }
+.balq li:last-child { border-bottom: 0; }
+.balqt { margin: 0 0 6px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; font-size: 0.98rem; }
+.balqt small { flex-basis: 100%; font-size: 0.76rem; color: var(--s-sub); line-height: 1.5; }
+.balopts { display: flex; flex-wrap: wrap; gap: 6px; }
+.balopts button { flex: 1 1 auto; min-width: 56px; min-height: 44px; padding: 6px 10px; border: 1px solid #c8d8cd; border-radius: 12px; background: #fff; font-family: inherit; font-weight: 700; font-size: 0.88rem; color: var(--s-ink); cursor: pointer; }
+.balopts button.on { background: var(--s-accent); border-color: var(--s-accent); color: #fff; }
+.balres { margin-top: 12px; padding: 12px; background: var(--s-soft); border-radius: 14px; }
+.balh { margin: 0 0 6px; font-weight: 900; font-size: 0.95rem; color: var(--s-accent); }
+.balk { font-size: 1.1rem; margin-bottom: 6px; }
+.balk b { font-size: 2rem; font-weight: 900; color: var(--s-accent); }
+.balk small { margin-left: 8px; font-size: 0.78rem; color: var(--s-sub); }
+.balrows { list-style: none; margin: 8px 0; padding: 0; }
+.balrows li { display: grid; grid-template-columns: 14px 5.5em 1fr auto; gap: 6px; align-items: center; padding: 8px 10px; margin: 4px 0; border-radius: 10px; background: #fff; font-size: 0.88rem; }
+.balrows li em { font-style: normal; font-weight: 800; font-size: 0.8rem; padding: 2px 8px; border-radius: 999px; }
+.balrows li.ok em { background: #e1f4e8; color: #1c7a47; }
+.balrows li.low em { background: #fff1cf; color: #8a5a00; }
+.balrows li.high em { background: #ffe3e3; color: #a3223a; }
+.baltips { margin-top: 10px; padding: 10px 12px; background: #fff; border-radius: 12px; }
+.baltips ul { margin: 4px 0 0; padding-left: 1.2em; }
+.baltips li { margin: 6px 0; line-height: 1.65; font-size: 0.9rem; }
+.baltips.ok { color: #1c7a47; font-weight: 700; }

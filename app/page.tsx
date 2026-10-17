@@ -4,6 +4,7 @@ import type { KcalType } from "./MyKcal";
 import MyKcal from "./MyKcal";
 import Fold from "./Fold";
 import ProductSearch from "./ProductSearch";
+import BalanceCheck from "./BalanceCheck";
 import RelatedProducts from "./RelatedProducts";
 import ShareQR from "./ShareQR";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
@@ -964,7 +965,7 @@ function ProfileGoal({
   onAddMany,
 }: {
   setGoal: (g: Goal) => void;
-  onAddMany: (items: MenuItem[]) => void;
+  onAddMany?: (items: MenuItem[]) => void;
 }) {
   const [pf, setPf] = useState<Profile>({
     sex: "f",
@@ -1190,15 +1191,6 @@ function ProfileGoal({
                 {r1(menu.total.f - plan.f)}g C{menu.total.c - plan.c >= 0 ? "+" : ""}
                 {r1(menu.total.c - plan.c)}g）
               </p>
-              <button
-                className="small"
-                onClick={() => {
-                  onAddMany(menu.meals.flatMap((m) => m.items));
-                  setAdded(true);
-                }}
-              >
-                {added ? "✓ この日の記録に追加しました" : "＋ この例を今日の記録に追加"}
-              </button>
               <p className="agnote">
                 食材は一例です。同じ栄養の食品に置きかえても大丈夫です（「食品を探す」で調べられます）。
               </p>
@@ -1365,7 +1357,6 @@ function DayView({
       </h3>
       <div className="card">
         <p className="cardtitle">目標のPFC</p>
-        <ProfileGoal setGoal={setGoal} onAddMany={(items) => items.forEach((i) => onAdd(i.name, i.g))} />
         <p className="cardtitle">目標の量（g）— 手動で調整もできます</p>
         <div className="inputs">
           {(
@@ -1594,7 +1585,7 @@ function KcalSetter({
   onAddMany,
 }: {
   setGoal: (g: Goal) => void;
-  onAddMany: (items: MenuItem[]) => void;
+  onAddMany?: (items: MenuItem[]) => void;
 }) {
   const [kcal, setKcal] = useState("1800");
   const [kgoal, setKgoal] = useState<KGoal>("cut");
@@ -2003,17 +1994,6 @@ function KcalSetter({
             >
               {done === "goal" ? "✓ 目標に設定しました" : "この数字を、目標にする"}
             </button>
-            {menu && (
-              <button
-                className="small"
-                onClick={() => {
-                  onAddMany(menu.meals.flatMap((m) => m.items));
-                  setDone("log");
-                }}
-              >
-                {done === "log" ? "✓ 今日の記録に追加しました" : "＋ 食事例を、今日の記録に追加"}
-              </button>
-            )}
           </div>
           <p className="agnote">
             食材は一例です。同じ栄養の食品に置きかえても大丈夫です。持病・妊娠中・授乳中・摂食障害の経験がある人は、医師・管理栄養士に相談してください。
@@ -2101,7 +2081,7 @@ function HomeInner() {
           aria-selected={tab === "record"}
           onClick={() => changeTab("record")}
         >
-          記録
+          ホーム
         </button>
         <button
           role="tab"
@@ -2128,33 +2108,23 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
+          <BalanceCheck />
           {loaded && (
             <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 1日のカロリー・PFCを決める" sub={hasKcal ? "設定ずみ。タップで見なおす・変える" : "目的・体重・カロリーから、PFCと食事例を計算"} cls="wfold">
-              <KcalSetter setGoal={setGoal} onAddMany={(items) => items.forEach((i) => add(i.name, i.g))} />
+              <KcalSetter setGoal={setGoal} />
             </Fold>
           )}
-          <Calendar
-            month={month}
-            setMonth={setMonth}
-            selected={selected}
-            setSelected={pick}
-            log={log}
-            goal={goal}
-          />
-          <DayView
-            date={selected}
-            entries={log[selected] ?? []}
-            goal={goal}
-            setGoal={setGoal}
-            onAdd={add}
-            onRemove={remove}
-            log={log}
-          />
-          <Fold key="r-women" id="r-women" title="✅ 今日の女性チェック" sub="女性に大切な栄養を、足りているか確認" cls="wfold">
-            <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
+          <Fold key="r-goal" id="r-goal" title="🎯 目標体重・年齢などを入れる" sub="体重の予測と、カロリーの計算に使います" cls="wfold">
+            <ProfileGoal setGoal={setGoal} />
           </Fold>
           <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
             <WeightChart />
+          </Fold>
+          <Fold key="r-diary" id="r-diary" title="📝 食べたものを記録したい人へ（任意）" sub="このアプリでは、記録は、すすめていません" cls="wfold">
+            <p className="agnote">記録は、負担になりやすいので、必須ではありません。細かく確かめたい日だけ、お使いください。</p>
+            <Calendar month={month} setMonth={setMonth} selected={selected} setSelected={pick} log={log} goal={goal} />
+            <DayView date={selected} entries={log[selected] ?? []} goal={goal} setGoal={setGoal} onAdd={add} onRemove={remove} log={log} />
+            <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
           </Fold>
         </>
       ) : tab === "women" ? (
@@ -2206,6 +2176,8 @@ export default function Home() {
     </Suspense>
   );
 }
+
+
 
 
 

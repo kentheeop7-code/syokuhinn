@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const ITEMS = [
-  { href: "/", key: "record", icon: "📝", label: "記録" },
+  { href: "/", key: "record", icon: "🏠", label: "ホーム" },
   { href: "/?tab=women", key: "women", icon: "🌸", label: "からだ" },
   { href: "/?tab=search", key: "search", icon: "🔍", label: "食品" },
   { href: "/?tab=products", key: "products", icon: "🛒", label: "商品" },
@@ -54,6 +54,7 @@ export default function BottomBar() {
     </nav>
   );
 }
+
 
 
 

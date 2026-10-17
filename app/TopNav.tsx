@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import SuppBar from "./SuppBar";
 
 const ITEMS = [
-  { href: "/", key: "record", icon: "📝", label: "記録" },
+  { href: "/", key: "record", icon: "🏠", label: "ホーム" },
   { href: "/?tab=women", key: "women", icon: "🌸", label: "からだ" },
   { href: "/tips", key: "tips", icon: "💡", label: "豆知識" },
   { href: "/nutrients", key: "guide", icon: "📖", label: "ガイド" },
@@ -50,6 +50,7 @@ export default function TopNav() {
     </>
   );
 }
+
 
 
 
