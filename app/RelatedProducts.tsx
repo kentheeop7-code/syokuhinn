@@ -5,7 +5,9 @@ import { SUPPS } from "./supplementsData";
 
 // 各ページから、関係する商品（実商品の価格）を、少しだけ見せて、「商品」タブにつなぐ
 export default function RelatedProducts({ q, title = "関連する商品" }: { q: string; title?: string }) {
-  const list = SUPPS.filter((x) => [x.name, x.kind, x.effect, x.tip].some((t) => t.includes(q))).slice(0, 3);
+  // まず、商品名・種類に、その言葉があるものを。なければ、効果の説明に出てくるもの
+  const main = SUPPS.filter((x) => x.name.includes(q) || x.kind.includes(q));
+  const list = (main.length > 0 ? main : SUPPS.filter((x) => x.effect.includes(q))).slice(0, 3);
   if (list.length === 0) return null;
   return (
     <div className="relprod">
@@ -28,3 +30,4 @@ export default function RelatedProducts({ q, title = "関連する商品" }: { q
     </div>
   );
 }
+
