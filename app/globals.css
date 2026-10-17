@@ -3520,3 +3520,9 @@ main:has(.fold) > .anav { display: none; }
 .pbody b { display: block; font-size: 0.78rem; color: var(--s-accent); }
 .psrc { color: var(--s-sub); font-size: 0.8rem !important; }
 .bb-item b { font-size: 0.74rem !important; }
+.relprod { margin: 10px 0; padding: 10px 12px; background: var(--s-soft); border-radius: 12px; }
+.relprod ul { list-style: none; margin: 6px 0; padding: 0; }
+.relprod li { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--s-line); }
+.relprod li:last-child { border-bottom: 0; }
+.relprod li b { display: block; font-size: 0.9rem; }
+.relprod li small { display: block; font-size: 0.82rem; color: var(--s-accent); font-weight: 700; line-height: 1.5; }

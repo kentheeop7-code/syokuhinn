@@ -1,5 +1,6 @@
 ﻿import MyKcal from "../MyKcal";
 import Fold from "../Fold";
+import RelatedProducts from "../RelatedProducts";
 import type { Metadata } from "next";
 import Link from "next/link";
 import ShareQR from "../ShareQR";
@@ -45,6 +46,7 @@ export default function Tips() {
 
       {TIP_GROUPS.map((g) => (
         <Fold key={g.key} id={`g-${g.key}`} title={g.label} sub={`${TIPS.filter((t) => t.group === g.key).length}件`}>
+          {g.key === "protein" && <RelatedProducts q="プロテイン" title="プロテインの商品" />}
           <ul className="nlist">
             {TIPS.filter((t) => t.group === g.key).map((t) => (
               <li key={t.id} id={t.id} className="card ncard tipcard">
@@ -95,6 +97,7 @@ export default function Tips() {
     </main>
   );
 }
+
 
 
 

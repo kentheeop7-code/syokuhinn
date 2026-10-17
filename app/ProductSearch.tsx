@@ -1,6 +1,7 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SUPPS, SUPP_UPDATED, type Supp } from "./supplementsData";
 import { SUPP_DETAILS } from "./suppDetails";
 import { WOMEN_IDS } from "./SuppBar";
@@ -78,6 +79,15 @@ export default function ProductSearch() {
   const [group, setGroup] = useState("women");
   const [sort, setSort] = useState<Sort>("rec");
   const [realOnly, setRealOnly] = useState(false);
+  const sp = useSearchParams();
+  // ほかのページの「もっと見る」から来たとき、その言葉で探す
+  useEffect(() => {
+    const k = sp.get("q");
+    if (k) {
+      setQ(k);
+      setGroup("all");
+    }
+  }, [sp]);
 
   const list = useMemo(() => {
     const g = GROUPS.find((x) => x.key === group) ?? GROUPS[0];
@@ -137,3 +147,4 @@ export default function ProductSearch() {
     </section>
   );
 }
+

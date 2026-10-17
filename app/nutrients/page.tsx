@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
 import { GOALS_MORE } from "./goalsMore";
+import RelatedProducts from "../RelatedProducts";
+const GOAL_PRODUCT: Record<string, string> = { pms: "ビタミンB6", menopause: "カルシウム", pregnancy: "葉酸", muscle: "プロテイン", anemia: "鉄", performance: "クレアチン", sleep: "GABA", diet: "プロテイン", fatigue: "ビタミンB", immune: "ビタミンC", bone: "カルシウム", beauty: "コラーゲン", gut: "乳酸菌" };
 import { DIETS_MORE } from "./dietsMore";
 
 export const metadata: Metadata = {
@@ -590,6 +592,7 @@ export default function Nutrients() {
                 </p>
               </>
             )}
+            {GOAL_PRODUCT[g.id] && <RelatedProducts q={GOAL_PRODUCT[g.id]} />}
             {g.caution && <p className="caution">⚠ {g.caution}</p>}
           </li>
         ))}
@@ -717,6 +720,7 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 
 

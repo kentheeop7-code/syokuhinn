@@ -4,6 +4,7 @@ import type { KcalType } from "./MyKcal";
 import MyKcal from "./MyKcal";
 import Fold from "./Fold";
 import ProductSearch from "./ProductSearch";
+import RelatedProducts from "./RelatedProducts";
 import ShareQR from "./ShareQR";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -2176,7 +2177,9 @@ function HomeInner() {
           <MyKcal topic="women" />
           <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold" defaultOpen><CycleTracker /></Fold>
           <Fold key="w-guide" id="w-guide" title="👩 年代別ガイド" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>
-          <Fold key="w-bone" id="w-bone" title="🥛 骨と血をつくる食品メーカー" sub="カルシウム・鉄の食事" cls="wfold"><BoneMenu onAdd={add} /></Fold>
+          <Fold key="w-bone" id="w-bone" title="🥛 骨と血をつくる食品メーカー" sub="カルシウム・鉄の食事" cls="wfold"><BoneMenu onAdd={add} />
+            <RelatedProducts q="カルシウム" title="カルシウムの商品" />
+            <RelatedProducts q="鉄" title="鉄の商品" /></Fold>
           <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
@@ -2202,6 +2205,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

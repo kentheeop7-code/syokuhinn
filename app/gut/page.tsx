@@ -1,4 +1,5 @@
 ﻿import GuideTabs from "../GuideTabs";
+import RelatedProducts from "../RelatedProducts";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -351,6 +352,10 @@ export default function Gut() {
           </li>
         </ul>
       </section>
+        <section className="card gtsec">
+          <RelatedProducts q="乳酸菌" title="乳酸菌・ビフィズス菌の商品" />
+          <RelatedProducts q="食物繊維" title="食物繊維の商品" />
+        </section>
       </Fold>
       <Fold id="care" title="こんなときは、受診を">
       <section className="card gtsec">
@@ -403,6 +408,7 @@ export default function Gut() {
     </main>
   );
 }
+
 
 
 
