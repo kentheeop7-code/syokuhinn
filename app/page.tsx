@@ -2129,7 +2129,7 @@ function HomeInner() {
       {tab === "record" ? (
         <>
           {loaded && (
-            <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 1日のカロリー・PFCを決める" sub={hasKcal ? "設定ずみ。タップで見なおす・変える" : "目的・体重・カロリーから、PFCと食事例を計算"} cls="wfold" defaultOpen={!hasKcal}>
+            <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 1日のカロリー・PFCを決める" sub={hasKcal ? "設定ずみ。タップで見なおす・変える" : "目的・体重・カロリーから、PFCと食事例を計算"} cls="wfold">
               <KcalSetter setGoal={setGoal} onAddMany={(items) => items.forEach((i) => add(i.name, i.g))} />
             </Fold>
           )}
@@ -2206,6 +2206,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
