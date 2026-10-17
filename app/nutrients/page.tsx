@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
 import Disclosure from "../Disclosure";
+import SymptomCheck from "../SymptomCheck";
 import { GOALS_MORE } from "./goalsMore";
 import RelatedProducts from "../RelatedProducts";
 const GOAL_PRODUCT: Record<string, string> = { pms: "ビタミンB6", menopause: "カルシウム", pregnancy: "葉酸", muscle: "プロテイン", anemia: "鉄", performance: "クレアチン", sleep: "GABA", diet: "プロテイン", fatigue: "ビタミンB", immune: "ビタミンC", bone: "カルシウム", beauty: "コラーゲン", gut: "乳酸菌" };
@@ -546,12 +547,14 @@ export default function Nutrients() {
       <GuideTabs current="nutrients" />
       <MyKcal topic="nutrients" />
       <nav className="anav" aria-label="ページ内メニュー">
+        <a href="#sym">気になることから探す</a>
         <a href="#goals">目的別ガイド</a>
         <a href="#diets">ダイエット方法</a>
         <a href="#nutrients">栄養素のはたらき</a>
       </nav>
 
-      <Fold defaultOpen id="goals" title="目的別ガイド">
+      <Fold defaultOpen id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
+      <Fold id="goals" title="目的別ガイド">
       <ul className="nlist">
         {GOALS_SORTED.map((g) => (
           <li key={g.id} className="card ncard" id={g.id}>
@@ -736,6 +739,7 @@ export default function Nutrients() {
     </main>
   );
 }
+
 
 
 

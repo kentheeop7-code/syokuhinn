@@ -5,6 +5,7 @@ import MyKcal from "./MyKcal";
 import Fold from "./Fold";
 import ProductSearch from "./ProductSearch";
 import BalanceCheck from "./BalanceCheck";
+import SymptomCheck from "./SymptomCheck";
 import RelatedProducts from "./RelatedProducts";
 import ShareQR from "./ShareQR";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
@@ -2108,6 +2109,7 @@ function HomeInner() {
             </span>
             <i aria-hidden>›</i>
           </Link>
+          <Fold key="w-sym" id="w-sym" title="🩺 気になることから、足したい栄養を探す" sub="選ぶだけ。記録は、いりません" cls="wfold" defaultOpen><SymptomCheck /></Fold>
           <MyKcal topic="women" />
           <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold" defaultOpen><CycleTracker /></Fold>
           <Fold key="w-guide" id="w-guide" title="👩 年代別ガイド" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>
@@ -2139,6 +2141,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

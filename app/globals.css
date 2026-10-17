@@ -3710,3 +3710,22 @@ body { padding-bottom: 96px; }
 /* ---- 全体の整理：上のバーは、ロゴと商品帯だけに（移動は、下のバー） ---- */
 .tn-items { display: none !important; }
 .topnav-in { justify-content: center; }
+
+/* ---- 気になることから探す ---- */
+.symchips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.symchips button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 12px; border: 1px solid #d3e2d9; border-radius: 999px; background: #fff; font-family: inherit; font-size: 0.86rem; font-weight: 700; color: var(--s-ink); cursor: pointer; }
+.symchips button.on { background: linear-gradient(135deg, var(--g2), var(--g3)); color: #fff; border-color: transparent; box-shadow: 0 6px 14px rgba(31, 111, 84, 0.3); }
+.symempty { padding: 12px; text-align: center; background: var(--s-soft); border-radius: 12px; color: var(--s-sub); font-size: 0.88rem; }
+.symres { margin-top: 8px; }
+.symrank { list-style: none; margin: 6px 0 12px; padding: 0; display: grid; gap: 6px; }
+.symrank li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: linear-gradient(135deg, var(--g1), var(--g2)); color: #fff; }
+.symrank li i { font-style: normal; width: 26px; height: 26px; border-radius: 50%; background: var(--pop); color: var(--g1); font-weight: 900; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 26px; }
+.symrank li b { font-size: 1rem; }
+.symrank li em { margin-left: auto; font-style: normal; font-size: 0.74rem; opacity: 0.85; }
+.symlist { list-style: none; margin: 6px 0; padding: 0; display: grid; gap: 10px; }
+.symlist li { padding: 12px; border-radius: 14px; background: var(--s-soft); }
+.symlist p { margin: 4px 0; font-size: 0.9rem; line-height: 1.65; }
+.symlist small { display: block; font-size: 0.72rem; font-weight: 800; color: var(--g2); }
+.symt { font-size: 1rem !important; }
+.symwarn { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: #fff1f1; color: #a3223a; font-size: 0.84rem; line-height: 1.65; }
+.symclear { margin-top: 10px; }
