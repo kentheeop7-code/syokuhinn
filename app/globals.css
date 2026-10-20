@@ -3819,3 +3819,15 @@ body { padding-bottom: 112px !important; }
 .linebtn:active { transform: translateY(2px); }
 .linesub { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
 .linetext { width: 100%; margin-top: 10px; font-size: 16px !important; line-height: 1.6; }
+
+/* ---- 年齢・性別による目安 ---- */
+.balneed { margin: 6px 0 8px; line-height: 1.7; }
+.balneed b { font-size: 1.2rem; color: var(--pop); }
+.balneed em { display: inline-block; margin-left: 6px; padding: 2px 10px; border-radius: 999px; font-style: normal; font-weight: 800; font-size: 0.85rem; background: #e1f4e8; color: #1c7a47; }
+.balneed em.low { background: #fff1cf; color: #8a5a00; }
+.balneed em.high { background: #ffe3e3; color: #a3223a; }
+.balage { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.96); color: var(--s-ink); }
+.balage .balh { color: var(--g2); }
+.balage ul { margin: 6px 0; padding-left: 1.2em; }
+.balage li { margin: 6px 0; line-height: 1.7; }
+.balfocus { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--s-soft); font-size: 0.95rem; }

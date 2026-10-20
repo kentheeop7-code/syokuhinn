@@ -42,6 +42,72 @@ const U: Record<string, Unit> = {
   base: u(0, 8, 4, 0, 90, 1.2, 0), // 調理の油・調味料（平均）
 };
 
+// 鉄（mg）のおおよその量（1回あたり）
+const FE: Record<string, number> = { rice: 0.2, brown: 0.5, bread: 0.5, noodle: 1, imo: 0.5, meat: 1.6, fish: 0.9, egg: 0.9, soy: 1.8, veg: 0.7, mush: 0.8, milk: 0.02, yogurt: 0.1, fruit: 0.2, nuts: 0.8, soup: 0.6, pickle: 0.2, processed: 0.6, fried: 0.5, stir: 0.5, instant: 1.5, out: 0.3, cake: 0.5, snack: 0.5, base: 0.3 };
+
+// 年齢の区分（日本人の食事摂取基準 2025年版 の区分）
+const BANDS = ["中学生（12〜14歳）", "高校生（15〜17歳）", "18〜29歳", "30〜49歳", "50〜64歳", "65〜74歳", "75歳以上"];
+const BAND_SHORT = ["12〜14歳", "15〜17歳", "18〜29歳", "30〜49歳", "50〜64歳", "65〜74歳", "75歳以上"];
+// 性別・年齢ごとの目安（食事摂取基準 2025年版。エネルギーは、身体活動レベル 低い／ふつう／高い）
+const REF = {
+  f: {
+    kcal: [[2150, 2400, 2700], [2050, 2300, 2550], [1700, 1950, 2250], [1750, 2050, 2350], [1700, 1950, 2250], [1650, 1850, 2050], [1450, 1750, 1750]],
+    protein: [55, 55, 50, 50, 50, 50, 50],
+    ca: [800, 650, 650, 650, 650, 650, 600],
+    fe: [12.5, 11, 10, 10.5, 10.5, 6, 5.5], // 月経がある人（65歳以上は月経なし）
+    fiber: [16, 18, 18, 18, 18, 18, 17],
+    salt: [6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5],
+  },
+  m: {
+    kcal: [[2300, 2600, 2900], [2500, 2850, 3150], [2250, 2600, 3000], [2350, 2750, 3150], [2250, 2650, 3000], [2100, 2350, 2650], [1850, 2250, 2250]],
+    protein: [60, 65, 65, 65, 65, 60, 60],
+    ca: [1000, 800, 800, 750, 750, 750, 750],
+    fe: [9, 9, 7, 7.5, 7, 7, 6.5],
+    fiber: [17, 19, 20, 22, 22, 21, 20],
+    salt: [7, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5],
+  },
+};
+const P_LO = [13, 13, 13, 13, 14, 15, 15];
+
+// 年齢による、からだと食事への影響（一般的な内容）
+const AGE_INFO: { title: string; points: string[]; focus: string }[] = [
+  {
+    title: "中学生：からだが大きく育つ時期",
+    points: ["骨が、いちばん育つ時期。カルシウムが、一生のうちで最も必要です（男子1,000mg・女子800mg）。", "女子は、月経が始まると、鉄が不足しやすくなります（1日12.5mg）。", "エネルギーが足りないと、身長・骨・月経に影響が出ます。ダイエットは、おすすめしません。", "朝ごはん・牛乳・魚・肉・卵・野菜を、毎日。部活動の日は、主食もしっかり。"],
+    focus: "カルシウム・鉄・朝ごはん",
+  },
+  {
+    title: "高校生：骨をつくる、最後の大切な時期",
+    points: ["骨量は、20歳ごろまでにほぼ決まります。カルシウム・たんぱく質・運動が大切です。", "女子は、鉄（11mg）が不足しがち。やせたい気持ちから、食事を減らしすぎないように。", "夜更かし・夜食・甘い飲み物・カップ麺が増えやすい年ごろです。", "不安や悩みがあるときは、保護者・学校の先生・医師に、相談を。"],
+    focus: "カルシウム・鉄・食べすぎ飲みすぎ",
+  },
+  {
+    title: "18〜29歳：骨量のピークを保つ時期",
+    points: ["骨量が最大になる年代。ここで蓄えた骨が、将来の骨粗鬆症予防になります。", "女性は、やせすぎ（BMI18.5未満）が、月経・骨・妊娠に影響します。", "外食・飲酒・夜型の生活で、食事が乱れやすい時期。朝食を抜かないように。"],
+    focus: "たんぱく質・鉄・朝ごはん",
+  },
+  {
+    title: "30〜49歳：代謝が下がりはじめる時期",
+    points: ["基礎代謝が、少しずつ下がり、同じ食事で太りやすくなります。", "女性は、月経・妊娠・出産で、鉄・葉酸・カルシウムが大切です。", "仕事・育児で忙しく、食事が偏りがち。食塩・脂質・お酒が増えていないか確認を。"],
+    focus: "野菜・食塩・たんぱく質",
+  },
+  {
+    title: "50〜64歳：からだの変わり目",
+    points: ["筋肉が減りはじめ、内臓脂肪がつきやすくなります。血圧・血糖・コレステロールも気になる時期。", "女性は、更年期で骨密度が下がりやすくなります。カルシウム・ビタミンD・運動を。", "たんぱく質は、エネルギーの14〜20%を目安に、毎食とりましょう。"],
+    focus: "カルシウム・たんぱく質・食塩",
+  },
+  {
+    title: "65〜74歳：筋肉と骨を、守る時期",
+    points: ["筋肉が減る「サルコペニア」や、弱りやすい状態「フレイル」を防ぐことが大切です。", "やせすぎ（低栄養）に注意。たんぱく質は、エネルギーの15〜20%を目安に、毎食しっかり。", "食べる量が減っていないか、体重が減っていないか、確認を。水分も、こまめに。"],
+    focus: "たんぱく質・食べる量・水分",
+  },
+  {
+    title: "75歳以上：しっかり食べて、弱らない",
+    points: ["食が細くなり、低栄養になりやすい時期。減塩より、「しっかり食べる」ことを優先してください。", "少量でも栄養が多いもの（卵・乳製品・魚・豆腐）を、1日3食と間食に。", "噛みにくい・飲み込みにくいときは、やわらかく調理を。体重が減ってきたら、早めに相談を。"],
+    focus: "低栄養の予防・水分・たんぱく質",
+  },
+];
+
 type Opt = { v: number; t: string };
 const O = (vals: number[], unit: string, zero = "ほぼなし"): Opt[] => vals.map((v) => ({ v, t: v === 0 ? zero : `${v}${unit}` }));
 
@@ -49,6 +115,16 @@ type Item = { key: string; label: string; short: string; hint: string; opts: Opt
 type Group = { id: string; icon: string; title: string; items: Item[] };
 
 const GROUPS: Group[] = [
+  {
+    id: "me",
+    icon: "🙋",
+    title: "あなたについて",
+    items: [
+      { key: "sex", label: "性別", short: "", hint: "目安の量が、男女で変わります", habit: true, opts: [{ v: 1, t: "女性" }, { v: 2, t: "男性" }] },
+      { key: "band", label: "年齢", short: "", hint: "年齢で、必要な量と気をつけることが変わります", habit: true, opts: BANDS.map((t, v) => ({ v, t })) },
+      { key: "pal", label: "ふだんの活動量", short: "活動量", hint: "仕事・学校・部活・家事・運動をあわせて", habit: true, opts: [{ v: 0, t: "低い（座りがち）" }, { v: 1, t: "ふつう（通勤・立ち仕事）" }, { v: 2, t: "高い（運動・力仕事）" }] },
+    ],
+  },
   {
     id: "staple",
     icon: "🍚",
@@ -138,7 +214,7 @@ const GROUPS: Group[] = [
   },
 ];
 
-const DEFAULT: Record<string, number> = { rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 2, mush: 1, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
+const DEFAULT: Record<string, number> = { sex: 1, band: 3, pal: 1, rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 2, mush: 1, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
 const HABIT_KEYS = new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
 const r0 = (n: number) => Math.round(n);
 
@@ -155,7 +231,7 @@ export default function BalanceCheck() {
   const [target, setTarget] = useState<Target>(null);
   const [loaded, setLoaded] = useState(false);
   const [touched, setTouched] = useState(false);
-  const [open, setOpen] = useState<string>("staple");
+  const [open, setOpen] = useState<string>("me");
   const [nick, setNick] = useState("");
   const [copied, setCopied] = useState(false);
   const [showText, setShowText] = useState(false);
@@ -181,7 +257,7 @@ export default function BalanceCheck() {
   }, [a, loaded, touched]);
 
   const t = useMemo(() => {
-    const s = { p: 0, f: 0, c: 0, fi: 0, kcal: 0, salt: 0, ca: 0 };
+    const s = { p: 0, f: 0, c: 0, fi: 0, kcal: 0, salt: 0, ca: 0, fe: 0 };
     const add = (x: Unit, n: number) => {
       s.p += x.p * n;
       s.f += x.f * n;
@@ -191,9 +267,21 @@ export default function BalanceCheck() {
       s.salt += x.salt * n;
       s.ca += x.ca * n;
     };
-    for (const k of Object.keys(U)) add(U[k], k === "base" ? 1 : HABIT_KEYS.has(k) ? 0 : a[k] ?? 0);
+    for (const k of Object.keys(U)) {
+      const n = k === "base" ? 1 : HABIT_KEYS.has(k) ? 0 : a[k] ?? 0;
+      add(U[k], n);
+      s.fe += (FE[k] ?? 0) * n;
+    }
     return s;
   }, [a]);
+
+  const sexKey: "f" | "m" = (a.sex ?? 1) === 2 ? "m" : "f";
+  const band = Math.min(6, Math.max(0, a.band ?? 3));
+  const pal = Math.min(2, Math.max(0, a.pal ?? 1));
+  const ref = REF[sexKey];
+  const needKcal = ref.kcal[band][pal];
+  const isYouth = band <= 1;
+  const sexText = sexKey === "f" ? "女性" : "男性";
 
   const en = t.p * 4 + t.f * 9 + t.c * 4;
   const pe = (t.p * 4) / en;
@@ -203,44 +291,55 @@ export default function BalanceCheck() {
   const judge = (v: number, lo: number, hi: number): St => (v < lo ? "low" : v > hi ? "high" : "ok");
 
   const rows = [
-    { name: "たんぱく質", cls: "p", g: t.p, pct: pe, st: target ? judge(t.p, target.p * 0.85, target.p * 1.2) : judge(pe, 0.13, 0.2) },
+    { name: "たんぱく質", cls: "p", g: t.p, pct: pe, st: target ? judge(t.p, target.p * 0.85, target.p * 1.2) : judge(pe, P_LO[band] / 100, 0.2) },
     { name: "脂質", cls: "f", g: t.f, pct: fe, st: target ? judge(t.f, target.f * 0.8, target.f * 1.2) : judge(fe, 0.2, 0.3) },
     { name: "炭水化物", cls: "c", g: t.c, pct: ce, st: target ? judge(t.c, target.c * 0.8, target.c * 1.2) : judge(ce, 0.5, 0.65) },
   ];
   const stText: Record<St, string> = { low: "少なめ", ok: "ちょうどよい", high: "多め" };
   const vegG = (a.veg ?? 0) * 70;
 
+  const saltLimit = ref.salt[band];
   const checks: { name: string; value: string; goal: string; st: St }[] = [
-    { name: "食塩", value: `約${(Math.round(t.salt * 10) / 10).toFixed(1)}g`, goal: "6.5g未満", st: t.salt >= 6.5 ? "high" : "ok" },
-    { name: "食物繊維", value: `約${r0(t.fi)}g`, goal: "18g以上", st: t.fi >= 18 ? "ok" : "low" },
-    { name: "カルシウム", value: `約${r0(t.ca)}mg`, goal: "650mg前後", st: t.ca >= 600 ? "ok" : "low" },
+    { name: "たんぱく質", value: `約${r0(t.p)}g`, goal: `${ref.protein[band]}g以上`, st: t.p >= ref.protein[band] * 0.9 ? "ok" : "low" },
+    { name: "食塩", value: `約${(Math.round(t.salt * 10) / 10).toFixed(1)}g`, goal: `${saltLimit}g未満`, st: t.salt >= saltLimit ? "high" : "ok" },
+    { name: "食物繊維", value: `約${r0(t.fi)}g`, goal: `${ref.fiber[band]}g以上`, st: t.fi >= ref.fiber[band] ? "ok" : "low" },
+    { name: "カルシウム", value: `約${r0(t.ca)}mg`, goal: `${ref.ca[band]}mg前後`, st: t.ca >= ref.ca[band] * 0.85 ? "ok" : "low" },
+    { name: "鉄", value: `約${(Math.round(t.fe * 10) / 10).toFixed(1)}mg`, goal: `${ref.fe[band]}mg前後`, st: t.fe >= ref.fe[band] * 0.8 ? "ok" : "low" },
     { name: "野菜", value: `約${vegG}g`, goal: "350g（小鉢5つ）", st: vegG >= 300 ? "ok" : "low" },
   ];
+  const kcalDiff = ((t.kcal - needKcal) / needKcal) * 100;
+  const kcalSt: St = kcalDiff < -15 ? "low" : kcalDiff > 15 ? "high" : "ok";
 
   const tips: string[] = [];
-  if (rows[0].st === "low") tips.push("たんぱく質が少なめ：毎食に、卵1個か納豆1パックか、手のひらサイズの肉・魚を足しましょう。");
+  if (isYouth && kcalSt === "low") tips.push("成長期は、食べる量が足りないと、身長・骨・月経に影響します。主食（ごはん）を減らさず、しっかり食べましょう。");
+  if (!isYouth && kcalSt === "high") tips.push(`食べる量が、あなたの目安（約${needKcal}kcal）より、多めです。ごはん・お菓子・飲み物を、少しずつ減らしましょう。`);
+  if (!isYouth && kcalSt === "low" && band >= 5) tips.push("食べる量が、少なめです。やせ・筋肉の減少（フレイル）を防ぐため、1日3食と間食で、しっかり食べましょう。");
+  if (rows[0].st === "low" || checks[0].st === "low") tips.push(band >= 5 ? "たんぱく質が少なめ：毎食、卵・魚・肉・豆腐・牛乳のどれかを、必ず入れましょう（筋肉を守るため）。" : "たんぱく質が少なめ：毎食に、卵1個か納豆1パックか、手のひらサイズの肉・魚を足しましょう。");
   if (rows[1].st === "high") tips.push("脂質が多め：揚げ物・炒め物を1回へらして、焼く・蒸す・ゆでるに。");
   if (rows[2].st === "high" && (a.cake ?? 0) + (a.snack ?? 0) + (a.sugar ?? 0) + (a.alcohol ?? 0) >= 1) tips.push("炭水化物が多め：お菓子・甘い飲み物・お酒を1回ぶん、ヨーグルトや果物・お茶に置きかえましょう。");
-  else if (rows[2].st === "high") tips.push("炭水化物が多め：ごはんを、1杯→2/3杯にして、野菜とたんぱく質を先に食べましょう。");
+  else if (rows[2].st === "high" && !isYouth) tips.push("炭水化物が多め：ごはんを、1杯→2/3杯にして、野菜とたんぱく質を先に食べましょう。");
   if (rows[2].st === "low") tips.push("炭水化物が少なめ：主食を抜かず、ごはん・もち麦・パンでエネルギーを確保しましょう。");
-  if (checks[0].st === "high") tips.push("食塩が多め：汁物・漬物・麺の汁・加工品を1つ減らし、調味料は「かける」より「つける」に。");
-  if (checks[3].st === "low") tips.push("野菜が少なめ：小鉢を、あと1〜2つ。みそ汁に野菜・きのこを足すと、手軽です。");
-  if (checks[1].st === "low") tips.push("食物繊維が不足：白米を玄米・もち麦に変える、納豆・海藻・きのこ・果物を足しましょう。");
-  if (checks[2].st === "low") tips.push("カルシウムが不足：牛乳・ヨーグルト・小魚・豆腐を、1日1〜2つ足しましょう。");
-  if ((a.alcohol ?? 0) >= 1) tips.push("お酒はエネルギーが高め。飲む日は、枝豆・冷奴など、たんぱく質のおつまみに。");
+  if (checks[1].st === "high") tips.push(band >= 6 ? "食塩が多めです。ただし、食べる量が減っている方は、減塩より、まず「しっかり食べる」ことを優先してください。" : "食塩が多め：汁物・漬物・麺の汁・加工品を1つ減らし、調味料は「かける」より「つける」に。");
+  if (checks[5].st === "low") tips.push("野菜が少なめ：小鉢を、あと1〜2つ。みそ汁に野菜・きのこを足すと、手軽です。");
+  if (checks[2].st === "low") tips.push("食物繊維が不足：白米を玄米・もち麦に変える、納豆・海藻・きのこ・果物を足しましょう。");
+  if (checks[3].st === "low") tips.push(isYouth ? "カルシウムが不足：成長期は、骨をつくる大切な時期です。牛乳・ヨーグルト・小魚・豆腐を、毎日。" : "カルシウムが不足：牛乳・ヨーグルト・小魚・豆腐を、1日1〜2つ足しましょう。");
+  if (checks[4].st === "low") tips.push(sexKey === "f" && band <= 4 ? "鉄が不足ぎみ（月経で失われやすい）：赤身肉・レバー・あさり・小松菜を、ビタミンCの野菜・果物といっしょに。" : "鉄が不足ぎみ：赤身肉・魚・卵・大豆・小松菜を、毎日どれか。");
+  if ((a.alcohol ?? 0) >= 1 && !isYouth) tips.push("お酒はエネルギーが高め。飲む日は、枝豆・冷奴など、たんぱく質のおつまみに。");
   if ((a.breakfast ?? 7) <= 4) tips.push("朝ごはんが少ない：卵・納豆・ヨーグルト・バナナなど、手軽なものから、1品始めましょう。");
   if ((a.late ?? 0) >= 5) tips.push("夜遅い食事が多い：遅い日は、ごはんを減らして、スープ・豆腐・野菜などの軽いものに。");
   if ((a.water ?? 5) <= 2) tips.push("水分が少なめ：朝起きたとき・食事ごとに、コップ1杯の水かお茶を足しましょう。");
-  if ((a.walk ?? 2) === 0) tips.push("運動がほぼない：食後に10分歩くところから。階段を使うだけでも、違います。");
-  if ((a.sleep ?? 6) <= 5) tips.push("睡眠が短め：6〜7時間を目標に。睡眠不足は、食欲を増やします。");
+  if ((a.walk ?? 2) === 0) tips.push(band >= 5 ? "運動がほぼない：筋肉を守るため、毎日の散歩と、いすからの立ち座りを。" : "運動がほぼない：食後に10分歩くところから。階段を使うだけでも、違います。");
+  if ((a.sleep ?? 6) <= 5) tips.push(isYouth ? "睡眠が短め：成長期は、8時間以上が目安です。夜更かしは、食欲や成長にも影響します。" : "睡眠が短め：6〜7時間を目標に。睡眠不足は、食欲を増やします。");
   const shown = tips.slice(0, 5);
-
+  const ageInfo = AGE_INFO[band];
   const set = (k: string, v: number) => {
     setA((x) => ({ ...x, [k]: v }));
     setTouched(true);
   };
 
+  const PAL_TEXT = ["低い", "ふつう", "高い"];
   const summary = (g: Group) => {
+    if (g.id === "me") return `${sexText}・${BAND_SHORT[band]}・活動量${PAL_TEXT[pal]}`;
     const parts = g.items.filter((i) => (g.id === "habit" ? true : (a[i.key] ?? 0) > 0)).map((i) => `${i.short}${i.opts.find((o) => o.v === a[i.key])?.t ?? ""}`);
     return parts.length ? parts.join("・") : "なし";
   };
@@ -252,15 +351,16 @@ export default function BalanceCheck() {
     lines.push("【LIFEGYM 食事バランスチェック】");
     lines.push(`${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日${nick.trim() ? `　${nick.trim()}さん` : ""}`);
     lines.push("");
-    lines.push(`■ いまの食事（1日の目安）：約${(Math.round(t.kcal / 50) * 50).toLocaleString()}kcal`);
+    lines.push(`■ ${sexText}・${BANDS[band]}・活動量${PAL_TEXT[pal]}`);
+    lines.push(`■ いまの食事（1日の目安）：約${(Math.round(t.kcal / 50) * 50).toLocaleString()}kcal（必要な目安：約${needKcal}kcal）`);
     lines.push(`P たんぱく質 約${r0(t.p)}g（${pc(pe)}%）${stText[rows[0].st]}`);
     lines.push(`F 脂質 約${r0(t.f)}g（${pc(fe)}%）${stText[rows[1].st]}`);
     lines.push(`C 炭水化物 約${r0(t.c)}g（${pc(ce)}%）${stText[rows[2].st]}`);
-    lines.push(`食塩 約${(Math.round(t.salt * 10) / 10).toFixed(1)}g／食物繊維 約${r0(t.fi)}g／カルシウム 約${r0(t.ca)}mg／野菜 約${vegG}g`);
+    lines.push(`食塩 約${(Math.round(t.salt * 10) / 10).toFixed(1)}g／食物繊維 約${r0(t.fi)}g／カルシウム 約${r0(t.ca)}mg／鉄 約${(Math.round(t.fe * 10) / 10).toFixed(1)}mg／野菜 約${vegG}g`);
     if (target) lines.push(`（目標：${r0(target.kcal)}kcal・P${target.p}g・F${target.f}g・C${target.c}g）`);
     lines.push("");
     lines.push("■ いつもの食事");
-    for (const g of GROUPS) lines.push(`${g.icon} ${g.title.replace(/（.*?）/g, "")}：${summary(g)}`);
+    for (const g of GROUPS) if (g.id !== "me") lines.push(`${g.icon} ${g.title.replace(/（.*?）/g, "")}：${summary(g)}`);
     if (shown.length > 0) {
       lines.push("");
       lines.push("■ 気になる点");
@@ -270,7 +370,7 @@ export default function BalanceCheck() {
     lines.push("※ ざっくり計算した目安です。");
     return lines.join("\n");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [a, nick, target]);
+  }, [a, nick, target, band, sexKey, pal]);
 
   const sendLine = () => {
     window.open(lineUrl(message), "_blank", "noopener");
@@ -362,6 +462,10 @@ export default function BalanceCheck() {
           約 <b>{(Math.round(t.kcal / 50) * 50).toLocaleString()}</b> kcal
           {target && <small>（あなたの設定：{r0(target.kcal)}kcal）</small>}
         </div>
+        <p className="balneed">
+          あなたに必要なエネルギーの目安：約<b>{needKcal.toLocaleString()}</b>kcal（{sexText}・{BAND_SHORT[band]}・活動量{PAL_TEXT[pal]}）
+          <em className={kcalSt}>{kcalSt === "ok" ? "ほぼ合っています" : kcalSt === "low" ? "少なめです" : "多めです"}</em>
+        </p>
         <div className="ksbar" role="img" aria-label={`P${pc(pe)}% F${pc(fe)}% C${pc(ce)}%`}>
           <span className="p" style={{ width: `${pc(pe)}%` }}>
             P {pc(pe)}%
@@ -397,7 +501,7 @@ export default function BalanceCheck() {
           ))}
         </ul>
         <p className="agnote">
-          {target ? `PFCは、あなたが決めた目標（P${target.p}g・F${target.f}g・C${target.c}g）との比較です。` : "PFCは、食事摂取基準の割合（P13〜20%・F20〜30%・C50〜65%）との比較です。目標を決めると、目標との比較になります。"}
+          {target ? `PFCは、あなたが決めた目標（P${target.p}g・F${target.f}g・C${target.c}g）との比較です。` : `PFCは、食事摂取基準の割合（P${P_LO[band]}〜20%・F20〜30%・C50〜65%）との比較です。目標を決めると、目標との比較になります。`}
         </p>
 
         {shown.length > 0 ? (
@@ -412,7 +516,19 @@ export default function BalanceCheck() {
         ) : (
           <p className="baltips ok">バランスは、よい状態です。この調子で、続けましょう。</p>
         )}
-        <p className="agnote small">※ 一般的な1人前の量から、ざっくり計算した目安で、実際の食事とは差があります。調理の油・調味料は、平均的な量を足しています。</p>
+        <div className="balage">
+          <p className="balh">🌱 {ageInfo.title}</p>
+          <ul>
+            {ageInfo.points.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+          <p className="balfocus">
+            <b>この年代の重点：</b>
+            {ageInfo.focus}
+          </p>
+        </div>
+        <p className="agnote small">※ 一般的な1人前の量から、ざっくり計算した目安で、実際の食事とは差があります。必要な量は、日本人の食事摂取基準（2025年版）の目安です。</p>
       </div>
 
       <div className="linebox">
@@ -438,8 +554,13 @@ export default function BalanceCheck() {
           </button>
         </div>
         {showText && <textarea className="linetext" readOnly value={message} rows={12} aria-label="LINEに送る文章" onFocus={(e) => e.currentTarget.select()} />}
+        {isYouth && <p className="agnote">中学生・高校生は、保護者の方と一緒に、内容を確認してから送りましょう。</p>}
         <p className="agnote small">※ お名前は、送る文章にだけ入ります（このアプリには、保存されません）。診断ではなく、ざっくりした目安です。</p>
       </div>
     </section>
   );
 }
+
+
+
+
