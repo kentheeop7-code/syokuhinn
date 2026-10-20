@@ -3788,3 +3788,5 @@ body { padding-bottom: 112px !important; }
 .kgoals { gap: 12px; }
 .fold { margin-bottom: 14px; }
 .card { margin-bottom: 16px; }
+.balopts { grid-template-columns: repeat(auto-fit, minmax(4.6em, 1fr)) !important; }
+.balopts button { white-space: normal !important; line-height: 1.3; word-break: keep-all; padding: 8px 2px !important; font-size: 0.95rem !important; }
