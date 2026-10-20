@@ -3774,5 +3774,17 @@ body { padding-bottom: 112px !important; }
 .textsize { display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 6px 14px; border: 2px solid var(--g2); border-radius: 999px; background: #fff; color: var(--g1); font-family: inherit; font-size: 0.85rem; font-weight: 800; cursor: pointer; }
 .textsize b { font-size: 1.4rem; line-height: 1; color: var(--g2); }
 .tn-brand { font-size: 1.1rem !important; }
-.supp-track, .supp-body { height: auto !important; min-height: 0 !important; }
-.supp-card { height: auto !important; }
+.supp-track { background: transparent !important; scrollbar-width: none; }
+.supp-track::-webkit-scrollbar { display: none; }
+
+
+/* 選びやすく：気になること・選択肢は、1つずつ大きく */
+.symchips { flex-direction: column; align-items: stretch; gap: 10px !important; }
+.symchips button { width: 100%; justify-content: flex-start; border-radius: 16px !important; padding: 12px 16px !important; font-size: 1.05rem !important; }
+.symchips button span { font-size: 1.4rem; }
+.symchips button.on { box-shadow: none !important; }
+.symchips button.on::after { content: "✓"; margin-left: auto; font-weight: 900; font-size: 1.3rem; }
+.balopts button.on::before { content: "✓ "; }
+.kgoals { gap: 12px; }
+.fold { margin-bottom: 14px; }
+.card { margin-bottom: 16px; }

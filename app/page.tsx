@@ -2058,7 +2058,7 @@ function HomeInner() {
 
   return (
     <main className="container">
-      <h1 className="title">専属の栄養士</h1>
+      <h1 className="title">{tab === "women" ? "からだのケア" : tab === "search" ? "食品をしらべる" : tab === "products" ? "商品をさがす" : "専属の栄養士"}</h1>
       <p className="tagline">女性のからだに寄りそう、食事とからだのパートナー。</p>
       <p className="member">LIFEGYM 女性会員様のための専用アプリ</p>
 
@@ -2141,6 +2141,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
