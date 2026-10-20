@@ -3790,3 +3790,15 @@ body { padding-bottom: 112px !important; }
 .card { margin-bottom: 16px; }
 .balopts { grid-template-columns: repeat(auto-fit, minmax(4.6em, 1fr)) !important; }
 .balopts button { white-space: normal !important; line-height: 1.3; word-break: keep-all; padding: 8px 2px !important; font-size: 0.95rem !important; }
+
+/* ================= senior v2：中のカードも、同じ読みやすさに ================= */
+.foldbody :is(p, li, dd, dt, span, b, a, label, small, em, strong, div, td, th, summary):not(.ksbar *):not(.pbadges *):not(.balchk *):not(.wc2svg *),
+.disc-body :is(p, li, dd, dt, span, b, a, label, small, em, strong, div, td, th) { font-size: max(1rem, 1em); line-height: 1.8; }
+.foldbody .ksbar span { font-size: 0.85rem; }
+.foldbody button:not(.disc-btn):not(.balgh):not(.foldh *) { font-size: max(1rem, 1em); }
+.foldbody table { width: 100%; table-layout: auto; }
+.foldbody td, .foldbody th { padding: 8px 6px; }
+.foldbody ul, .foldbody ol { padding-left: 1.3em; }
+.foldbody .card, .foldbody section { overflow-wrap: anywhere; }
+.foldbody img, .foldbody svg { max-width: 100%; height: auto; }
+.foldbody details > summary { min-height: 52px; }
