@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TIPS, TIP_GROUPS } from "./tipsData";
 
-const INTERVAL_MS = 7000;
+const INTERVAL_MS = 0;
 
 // 3つの分類の豆知識が、順番に交ざって自動で流れる
 const ORDER = (() => {
@@ -25,6 +25,7 @@ export default function TipsTicker() {
   const [i, setI] = useState(0);
 
   useEffect(() => {
+    if (INTERVAL_MS <= 0) return; // 自動で切りかわらない（矢印で見る）
     const id = setInterval(() => {
       setI((cur) => (cur + 1) % ORDER.length);
     }, INTERVAL_MS);
@@ -68,5 +69,6 @@ export default function TipsTicker() {
       </div>    </section>
   );
 }
+
 
 

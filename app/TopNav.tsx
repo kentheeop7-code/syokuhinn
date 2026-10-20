@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import SuppBar from "./SuppBar";
+import TextSize from "./TextSize";
 
 const ITEMS = [
   { href: "/", key: "record", icon: "🏠", label: "ホーム" },
@@ -44,12 +45,14 @@ export default function TopNav() {
             </Link>
           ))}
         </nav>
+        <TextSize />
       </div>
     </header>
     <SuppBar />
     </>
   );
 }
+
 
 
 

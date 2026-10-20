@@ -3729,3 +3729,50 @@ body { padding-bottom: 96px; }
 .symt { font-size: 1rem !important; }
 .symwarn { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: #fff1f1; color: #a3223a; font-size: 0.84rem; line-height: 1.65; }
 .symclear { margin-top: 10px; }
+
+/* ================= senior v1：年齢が高い方にも、見やすく・押しやすく ================= */
+html { font-size: 18px; }
+:root { --s-ink: #0f2a22; --s-sub: #3b5448; }
+body { line-height: 1.85; color: var(--s-ink); }
+.agnote, .note, .nrole, .plist li, .symlist p, .pbody p, .balit .balqt small, .balgt small, .wnote, .gtnote, .adnote { color: var(--s-ink); }
+small, .muted, .balqt small { color: var(--s-sub) !important; }
+small, .agnote.small, .note.small, .adnote.small, .balchk li small { font-size: 0.88rem !important; }
+
+/* 押しやすさ：ボタンは、高さ52px以上 */
+button, .chip, summary, .gutlink, .evlink, .anav a, .guidetabs a { min-height: 52px; }
+.chip, .adtabs button, .symchips button, .balopts button, .kgoal, .wc2paces button, .supp-tabs button { min-height: 52px !important; font-size: 1rem !important; }
+.balopts { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)) !important; }
+.balopts button { font-size: 1rem !important; padding: 8px 4px !important; }
+.balgh, .fold .foldh button { min-height: 68px !important; }
+.fold .foldh button { font-size: 1.12rem !important; }
+.fold .foldh button i, .balgh i { width: 36px !important; height: 36px !important; flex: 0 0 36px !important; font-size: 1.4rem !important; }
+.disc-btn { min-height: 56px; font-size: 1rem; }
+.wc2step button { flex: 0 0 56px !important; height: 56px !important; font-size: 1.7rem !important; }
+.wc2step input { height: 56px !important; font-size: 1.5rem !important; }
+.wc2slide input[type="range"] { height: 48px; }
+input, textarea, select { font-size: 18px !important; min-height: 52px; }
+
+/* 下のバー：大きく */
+.bbar { padding: 8px !important; }
+.bb-item { min-height: 64px !important; }
+.bb-item b { font-size: 0.8rem !important; }
+.bb-ico { font-size: 1.7rem !important; }
+body { padding-bottom: 112px !important; }
+.totop { width: 56px; height: 56px; bottom: 118px !important; }
+
+/* 見出し・文字 */
+.h2 { font-size: 1.3rem; }
+.title { font-size: 2rem !important; }
+.balk b { font-size: 2.6rem !important; }
+
+/* タグ（小さな飾りの札）は、なくして、すっきり */
+.keyrow, .ntag, .inapp, .tkgroup, .supp-tabs, .supp-hint, .supp-count, .member, .symrank li em { display: none !important; }
+.pbadges em:not(.preal), .supp-badges em:not(.sb-real) { display: none; }
+
+/* 文字の大きさボタン */
+.topnav-in { justify-content: space-between !important; padding-left: 12px; padding-right: 12px; }
+.textsize { display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 6px 14px; border: 2px solid var(--g2); border-radius: 999px; background: #fff; color: var(--g1); font-family: inherit; font-size: 0.85rem; font-weight: 800; cursor: pointer; }
+.textsize b { font-size: 1.4rem; line-height: 1; color: var(--g2); }
+.tn-brand { font-size: 1.1rem !important; }
+.supp-track, .supp-body { height: auto !important; min-height: 0 !important; }
+.supp-card { height: auto !important; }

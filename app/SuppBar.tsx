@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SUPPS, SUPP_UPDATED } from "./supplementsData";
 import { SUPP_DETAILS } from "./suppDetails";
 
-const INTERVAL_MS = 7000;
+const INTERVAL_MS = 0;
 
 // 種類を5つのグループにまとめて、絞り込めるようにする
 export const WOMEN_IDS = [
@@ -54,7 +54,8 @@ export default function SuppBar() {
   };
 
   useEffect(() => {
-    if (hold || open) return;
+    // 自動で流れると読みにくいので、自動送りはしない（矢印・スワイプで見る）
+    if (hold || open || INTERVAL_MS <= 0) return;
     const id = setInterval(() => goto(i + 1), INTERVAL_MS);
     return () => clearInterval(id);
   });
@@ -158,6 +159,7 @@ export default function SuppBar() {
     </div>
   );
 }
+
 
 
 
