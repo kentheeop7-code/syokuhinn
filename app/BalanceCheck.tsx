@@ -352,7 +352,7 @@ export default function BalanceCheck() {
     lines.push(`${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日${nick.trim() ? `　${nick.trim()}さん` : ""}`);
     lines.push("");
     lines.push(`■ ${sexText}・${BANDS[band]}・活動量${PAL_TEXT[pal]}`);
-    lines.push(`■ いまの食事（1日の目安）：約${(Math.round(t.kcal / 50) * 50).toLocaleString()}kcal（必要な目安：約${needKcal}kcal）`);
+    lines.push(`■ いまの食事（1日の目安）：約${(Math.round(t.kcal / 50) * 50).toLocaleString()}kcal（必要な目安：約${needKcal.toLocaleString()}kcal）`);
     lines.push(`P たんぱく質 約${r0(t.p)}g（${pc(pe)}%）${stText[rows[0].st]}`);
     lines.push(`F 脂質 約${r0(t.f)}g（${pc(fe)}%）${stText[rows[1].st]}`);
     lines.push(`C 炭水化物 約${r0(t.c)}g（${pc(ce)}%）${stText[rows[2].st]}`);
@@ -560,6 +560,7 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
 
 
 
