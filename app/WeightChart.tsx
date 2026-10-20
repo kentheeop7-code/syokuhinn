@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ageBand, BAND_LABEL, MONTHLY_CAP_PCT } from "./ageInfo";
 import { REF, useMe } from "./me";
+import LineShare from "./LineShare";
 
 // 現在の体重と目標体重から、目標に着く時期を予測する。毎日の記録はとらない。
 // ペースをタップで選び、スライダーで「○か月後の体重」を見られる。
@@ -271,6 +272,16 @@ export default function WeightChart() {
               <small>つまみを動かして、○か月後の体重を見られます</small>
             </div>
 
+            <LineShare
+              title="目標体重の予測"
+              build={() =>
+                [
+                  `■ いまの体重 ${w0}kg → 目標 ${wt}kg（あと${diff}kg）`,
+                  `■ ペース：${cur.label}（${cur.sub}・月${cur.perMonth}kg）`,
+                  `■ 到達の目安：約${r1(row.months)}か月（${ymText(row.months)}）`,
+                ].join("\n")
+              }
+            />
             <details className="wc2more">
               <summary>ペースの考え方・年齢の目安を見る</summary>
               <p>
@@ -295,4 +306,5 @@ export default function WeightChart() {
     </section>
   );
 }
+
 

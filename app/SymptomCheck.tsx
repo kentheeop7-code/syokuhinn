@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useMe } from "./me";
+import LineShare from "./LineShare";
 
 // 記録はとらない。「いまの気になること」を選ぶだけで、足したい栄養と食べ物が分かる。
 type Sym = { id: string; icon: string; label: string; nutrients: string[]; foods: string; tip: string; guide?: string };
@@ -124,6 +125,12 @@ export default function SymptomCheck() {
           {me.isYouth && <p className="symage">🌱 中学生・高校生は、成長期です。ダイエットや食事を減らす対策は、せず、気になるときは、保護者・学校の先生・医師に相談しましょう。</p>}
           {me.band >= 5 && <p className="symage">🌱 65歳以上の方は、食べる量が減っていないか、体重が減っていないかを、あわせて確認しましょう。「しっかり食べる」ことを、優先してください。</p>}
           {me.band === 4 && me.sexKey === "f" && <p className="symage">🌱 50代の女性は、更年期で、骨・血圧・コレステロールが変わりやすい時期です。年1回の健診も、忘れずに。</p>}
+          <LineShare
+            title="気になること"
+            build={() =>
+              ["■ 気になること", ...chosen.map((s) => `・${s.label}`), "", "■ 足したい栄養（多く関わる順）", ranking.map(([n]) => n).join("・"), "", "■ おすすめの食べ物", ...chosen.map((s) => `・${s.label}：${s.foods}`)].join("\n")
+            }
+          />
           <p className="symwarn">
             ⚠ 症状が強い・長く続く・急に出たときは、食事で様子を見ず、医師に相談してください。サプリを使う場合も、先に医師・薬剤師へ。
           </p>
@@ -137,5 +144,6 @@ export default function SymptomCheck() {
     </section>
   );
 }
+
 
 

@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import MeCard from "./MeCard";
+import LineShare from "./LineShare";
 import { readMe, useMe, REF as ME_REF } from "./me";
 import type { KcalType } from "./MyKcal";
 import MyKcal from "./MyKcal";
@@ -2014,6 +2015,20 @@ function KcalSetter({
           <p className="agnote">
             食材は一例です。同じ栄養の食品に置きかえても大丈夫です。持病・妊娠中・授乳中・摂食障害の経験がある人は、医師・管理栄養士に相談してください。
           </p>
+          <LineShare
+            title="1日の目標カロリー・PFC"
+            build={() =>
+              [
+                `■ 目的：${g.label}`,
+                `■ 体重 ${wOk ? `${w}kg` : "未入力"}／筋トレ ${K_TRAIN[train]}`,
+                `■ 1日の目標：${plan.kcal}kcal`,
+                `P たんぱく質 ${plan.p}g／F 脂質 ${plan.f}g／C 炭水化物 ${plan.c}g`,
+                diff !== null ? `■ 消費との差：${diff >= 0 ? "+" : ""}${Math.round(diff)}%${pace !== null ? `（体重の変化の目安：週に${pace >= 0 ? "+" : ""}${r1(pace)}%）` : ""}` : "",
+              ]
+                .filter(Boolean)
+                .join("\n")
+            }
+          />
         </>
       )}
     </section>
@@ -2168,6 +2183,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 
