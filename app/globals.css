@@ -3831,3 +3831,23 @@ body { padding-bottom: 112px !important; }
 .balage ul { margin: 6px 0; padding-left: 1.2em; }
 .balage li { margin: 6px 0; line-height: 1.7; }
 .balfocus { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--s-soft); font-size: 0.95rem; }
+
+/* ---- あなたの目安（性別・年齢） ---- */
+.mecard .meh { margin: 10px 0 6px; font-weight: 800; font-size: 0.9rem; color: var(--s-sub); }
+.mechips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mechips.two, .mechips.three { grid-template-columns: repeat(auto-fit, minmax(5em, 1fr)); }
+.mechips button { min-height: 52px; padding: 8px 6px; border: 1px solid #d3e2d9; border-radius: 14px; background: #fff; font-family: inherit; font-weight: 700; font-size: 1rem; color: var(--s-ink); cursor: pointer; }
+.mechips button.on { background: linear-gradient(135deg, var(--g2), var(--g3)); color: #fff; border-color: transparent; }
+.mechips button.on::before { content: "✓ "; }
+.mereflist { list-style: none; margin: 14px 0 6px; padding: 0 !important; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mereflist li { display: flex; flex-direction: column; padding: 10px 12px; border-radius: 12px; background: var(--s-soft); }
+.mereflist li span { font-size: 0.85rem; color: var(--s-sub); }
+.mereflist li b { font-size: 1.05rem; color: var(--g1); }
+.meage { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #f1faf5, #e6f5ed); }
+.meage .balh { color: var(--g2); }
+.meage ul { margin: 6px 0; padding-left: 1.2em; }
+.meage li { margin: 6px 0; line-height: 1.7; }
+.mecard.mini { padding: 12px 14px; border-radius: 16px; background: linear-gradient(135deg, #f1faf5, #e6f5ed); margin-bottom: 14px; box-shadow: none; }
+.mecard.mini p { margin: 0 0 4px; line-height: 1.7; }
+.mecard.mini b { display: block; }
+.symage { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--s-soft); line-height: 1.7; }

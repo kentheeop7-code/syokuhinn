@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ageBand, BAND_LABEL, MONTHLY_CAP_PCT } from "./ageInfo";
+import { REF, useMe } from "./me";
 
 // 現在の体重と目標体重から、目標に着く時期を予測する。毎日の記録はとらない。
 // ペースをタップで選び、スライダーで「○か月後の体重」を見られる。
@@ -29,6 +30,7 @@ const ymText = (months: number) => {
 const mLabel = (months: number) => `${addMonths(months).getMonth() + 1}月`;
 
 export default function WeightChart() {
+  const me = useMe();
   const [now, setNow] = useState("");
   const [goal, setGoal] = useState("");
   const [loaded, setLoaded] = useState(false);
@@ -109,6 +111,17 @@ export default function WeightChart() {
   const m = Math.min(slide, maxSlide) / 2;
   const wAt = row ? Math.max(wt, r1(w0 - row.perMonth * m)) : 0;
   const reached = row ? row.months <= (chart?.span ?? 0) : false;
+
+  if (me.ready && me.isYouth) {
+    return (
+      <section className="card wchart2" aria-label="体重と成長">
+        <h2 className="h2">⚖️ 体重と成長</h2>
+        <p className="caution">
+          ⚠ 中学生・高校生は、からだが大きく育つ時期です。体重を減らす目標や、到達の予測は、おすすめしません。1日に必要なエネルギーの目安は、約{REF[me.sexKey].kcal[me.band][me.pal].toLocaleString()}kcalです。食事を減らさず、毎日の朝・昼・夕のごはんと、運動・睡眠で、からだを整えましょう。体型や体重で悩んでいるときは、保護者・学校の先生・医師に相談してください。
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="card wchart2" aria-label="目標体重までの予測">
@@ -282,3 +295,4 @@ export default function WeightChart() {
     </section>
   );
 }
+

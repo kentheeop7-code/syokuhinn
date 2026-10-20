@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import MeCard from "./MeCard";
+import { readMe, useMe, REF as ME_REF } from "./me";
 import type { KcalType } from "./MyKcal";
 import MyKcal from "./MyKcal";
 import Fold from "./Fold";
@@ -974,11 +976,21 @@ function ProfileGoal({
     try {
       const s = JSON.parse(localStorage.getItem("lg-profile") || "null");
       if (s) {
-        latest.current = { ...latest.current, ...s, sex: "f" }; // 女性向けアプリなので、計算は女性の式に固定
+        latest.current = { ...latest.current, ...s, sex: readMe().sex === 2 ? "m" : "f" }; // 性別は、全ページ共通の設定を使う
         setPf(latest.current);
       }
     } catch {}
   }, []);
+
+  const me = useMe();
+  useEffect(() => {
+    if (latest.current.sex === me.sexKey) return;
+    latest.current = { ...latest.current, sex: me.sexKey };
+    setPf(latest.current);
+    const r = calcPlan(latest.current);
+    if (r) setGoal({ p: String(r.p), f: String(r.f), c: String(r.c) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me.sexKey]);
 
   const update = (patch: Partial<Profile>) => {
     const next = { ...latest.current, ...patch };
@@ -1029,7 +1041,14 @@ function ProfileGoal({
   return (
     <div className="autogoal">
       <p className="agtitle">① あなたのこと</p>
-      <p className="agnote">女性のからだに合わせた式（国立健康・栄養研究所の推定式）で計算します。</p>
+      <div className="mechips two">
+        {[1, 2].map((v) => (
+          <button key={v} type="button" aria-pressed={me.sex === v} className={me.sex === v ? "on" : ""} onClick={() => me.set({ sex: v as 1 | 2 })}>
+            {v === 1 ? "女性" : "男性"}
+          </button>
+        ))}
+      </div>
+      <p className="agnote">{me.sexKey === "f" ? "女性" : "男性"}のからだに合わせた式（国立健康・栄養研究所の推定式）で計算します。</p>
       <div className="agrow">
         {field("年齢", "歳", "age", "30")}
         {field("身長", "cm", "height", "165")}
@@ -1104,7 +1123,7 @@ function ProfileGoal({
 
       {!plan && (
         <p className="note">
-          性別・年齢（18歳以上）・身長・目標体重を入れて、目的を選ぶと、目標のPFCが自動で入ります。
+          年齢（18歳以上）・身長・目標体重を入れて、目的を選ぶと、目標のPFCが自動で入ります。{num(pf.age) > 0 && num(pf.age) < 18 && " 中学生・高校生は、成長期のため、体重を減らす目標の自動計算は、おすすめしません。上の「あなたの1日の目安」で、必要な量を確認してください。"}
         </p>
       )}
 
@@ -1578,6 +1597,7 @@ function KcalSetter({
   setGoal: (g: Goal) => void;
   onAddMany?: (items: MenuItem[]) => void;
 }) {
+  const me = useMe();
   const [kcal, setKcal] = useState("1800");
   const [kgoal, setKgoal] = useState<KGoal>("cut");
   const [train, setTrain] = useState<KTrain>("some");
@@ -1620,7 +1640,7 @@ function KcalSetter({
   })();
 
   // 消費カロリーの推定（プロフィールがあるとき）
-  const tdee = prof && wOk ? bmr("f", prof.age, prof.height, w) * PAL[prof.pal].v : null;
+  const tdee = prof && wOk ? bmr(me.sexKey, prof.age, prof.height, w) * PAL[prof.pal].v : null;
   const diff = tdee && plan ? ((plan.kcal - tdee) / tdee) * 100 : null;
   const pace = tdee && plan && wOk ? (((plan.kcal - tdee) * 7) / 7200 / w) * 100 : null; // 週の体重変化（%）
   const eaFloor = wOk ? Math.round(30 * w * 0.72) : null; // 体脂肪率28%と仮定した、除脂肪体重×30kcal
@@ -1670,6 +1690,11 @@ function KcalSetter({
         最新のスポーツ栄養学（ISSN 2017・IOC 2018・日本人の食事摂取基準2025年版）をもとに、目的に合った、たんぱく質・脂質・炭水化物を計算します。
       </p>
 
+      {me.isYouth && (
+        <p className="caution">
+          ⚠ 中学生・高校生は、からだをつくる成長期です。体重を減らすための食事は、おすすめしません。1日に必要なエネルギーの目安は、約{ME_REF[me.sexKey].kcal[me.band][me.pal].toLocaleString()}kcalです。体型で悩んでいるときは、保護者・学校の先生・医師に相談してください。
+        </p>
+      )}
       <p className="agtitle">① 目的</p>
       <div className="kgoals">
         {(Object.keys(K_GOALS) as KGoal[]).map((x) => (
@@ -2013,6 +2038,7 @@ function HomeInner() {
   const [goal, setGoal] = useState<Goal>({ p: "", f: "", c: "" });
   const [loaded, setLoaded] = useState(false);
   const [hasKcal, setHasKcal] = useState(false);
+  const meHook = useMe();
   const [selected, setSelected] = useState(key(new Date()));
   const [month, setMonth] = useState(new Date());
 
@@ -2109,14 +2135,15 @@ function HomeInner() {
             </span>
             <i aria-hidden>›</i>
           </Link>
+          <Fold key="w-me" id="w-me" title="👤 あなたの1日の目安" sub="性別・年齢で、目安が変わります" cls="wfold" defaultOpen><MeCard /></Fold>
           <Fold key="w-sym" id="w-sym" title="🩺 気になることから、足したい栄養を探す" sub="選ぶだけ。記録は、いりません" cls="wfold" defaultOpen><SymptomCheck /></Fold>
           <MyKcal topic="women" />
-          <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold"><CycleTracker /></Fold>
-          <Fold key="w-guide" id="w-guide" title="👩 年代別ガイド" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>
+          {meHook.sexKey === "f" && <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold"><CycleTracker /></Fold>}
+          {meHook.sexKey === "f" && <Fold key="w-guide" id="w-guide" title="👩 年代別ガイド（女性）" sub="月経・妊活・更年期・骨など" cls="wfold"><WomenGuide /></Fold>}
           <Fold key="w-bone" id="w-bone" title="🥛 骨と血をつくる食品メーカー" sub="カルシウム・鉄の食事" cls="wfold"><BoneMenu onAdd={add} />
             <RelatedProducts q="カルシウム" title="カルシウムの商品" />
             <RelatedProducts q="鉄" title="鉄の商品" /></Fold>
-          <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>
+          {meHook.sexKey === "f" && meHook.band >= 3 && <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>}
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
           <ShareQR />
@@ -2141,6 +2168,10 @@ export default function Home() {
     </Suspense>
   );
 }
+
+
+
+
 
 
 

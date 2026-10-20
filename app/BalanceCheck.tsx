@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 
 // 記録はとらない。「いつもの1日」を、ざっくり選ぶだけで、いまの食事のバランスが分かる。
 // 最後に、結果を「公式LINE」に、ワンタップで送れる。
@@ -44,69 +45,6 @@ const U: Record<string, Unit> = {
 
 // 鉄（mg）のおおよその量（1回あたり）
 const FE: Record<string, number> = { rice: 0.2, brown: 0.5, bread: 0.5, noodle: 1, imo: 0.5, meat: 1.6, fish: 0.9, egg: 0.9, soy: 1.8, veg: 0.7, mush: 0.8, milk: 0.02, yogurt: 0.1, fruit: 0.2, nuts: 0.8, soup: 0.6, pickle: 0.2, processed: 0.6, fried: 0.5, stir: 0.5, instant: 1.5, out: 0.3, cake: 0.5, snack: 0.5, base: 0.3 };
-
-// 年齢の区分（日本人の食事摂取基準 2025年版 の区分）
-const BANDS = ["中学生（12〜14歳）", "高校生（15〜17歳）", "18〜29歳", "30〜49歳", "50〜64歳", "65〜74歳", "75歳以上"];
-const BAND_SHORT = ["12〜14歳", "15〜17歳", "18〜29歳", "30〜49歳", "50〜64歳", "65〜74歳", "75歳以上"];
-// 性別・年齢ごとの目安（食事摂取基準 2025年版。エネルギーは、身体活動レベル 低い／ふつう／高い）
-const REF = {
-  f: {
-    kcal: [[2150, 2400, 2700], [2050, 2300, 2550], [1700, 1950, 2250], [1750, 2050, 2350], [1700, 1950, 2250], [1650, 1850, 2050], [1450, 1750, 1750]],
-    protein: [55, 55, 50, 50, 50, 50, 50],
-    ca: [800, 650, 650, 650, 650, 650, 600],
-    fe: [12.5, 11, 10, 10.5, 10.5, 6, 5.5], // 月経がある人（65歳以上は月経なし）
-    fiber: [16, 18, 18, 18, 18, 18, 17],
-    salt: [6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5],
-  },
-  m: {
-    kcal: [[2300, 2600, 2900], [2500, 2850, 3150], [2250, 2600, 3000], [2350, 2750, 3150], [2250, 2650, 3000], [2100, 2350, 2650], [1850, 2250, 2250]],
-    protein: [60, 65, 65, 65, 65, 60, 60],
-    ca: [1000, 800, 800, 750, 750, 750, 750],
-    fe: [9, 9, 7, 7.5, 7, 7, 6.5],
-    fiber: [17, 19, 20, 22, 22, 21, 20],
-    salt: [7, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5],
-  },
-};
-const P_LO = [13, 13, 13, 13, 14, 15, 15];
-
-// 年齢による、からだと食事への影響（一般的な内容）
-const AGE_INFO: { title: string; points: string[]; focus: string }[] = [
-  {
-    title: "中学生：からだが大きく育つ時期",
-    points: ["骨が、いちばん育つ時期。カルシウムが、一生のうちで最も必要です（男子1,000mg・女子800mg）。", "女子は、月経が始まると、鉄が不足しやすくなります（1日12.5mg）。", "エネルギーが足りないと、身長・骨・月経に影響が出ます。ダイエットは、おすすめしません。", "朝ごはん・牛乳・魚・肉・卵・野菜を、毎日。部活動の日は、主食もしっかり。"],
-    focus: "カルシウム・鉄・朝ごはん",
-  },
-  {
-    title: "高校生：骨をつくる、最後の大切な時期",
-    points: ["骨量は、20歳ごろまでにほぼ決まります。カルシウム・たんぱく質・運動が大切です。", "女子は、鉄（11mg）が不足しがち。やせたい気持ちから、食事を減らしすぎないように。", "夜更かし・夜食・甘い飲み物・カップ麺が増えやすい年ごろです。", "不安や悩みがあるときは、保護者・学校の先生・医師に、相談を。"],
-    focus: "カルシウム・鉄・食べすぎ飲みすぎ",
-  },
-  {
-    title: "18〜29歳：骨量のピークを保つ時期",
-    points: ["骨量が最大になる年代。ここで蓄えた骨が、将来の骨粗鬆症予防になります。", "女性は、やせすぎ（BMI18.5未満）が、月経・骨・妊娠に影響します。", "外食・飲酒・夜型の生活で、食事が乱れやすい時期。朝食を抜かないように。"],
-    focus: "たんぱく質・鉄・朝ごはん",
-  },
-  {
-    title: "30〜49歳：代謝が下がりはじめる時期",
-    points: ["基礎代謝が、少しずつ下がり、同じ食事で太りやすくなります。", "女性は、月経・妊娠・出産で、鉄・葉酸・カルシウムが大切です。", "仕事・育児で忙しく、食事が偏りがち。食塩・脂質・お酒が増えていないか確認を。"],
-    focus: "野菜・食塩・たんぱく質",
-  },
-  {
-    title: "50〜64歳：からだの変わり目",
-    points: ["筋肉が減りはじめ、内臓脂肪がつきやすくなります。血圧・血糖・コレステロールも気になる時期。", "女性は、更年期で骨密度が下がりやすくなります。カルシウム・ビタミンD・運動を。", "たんぱく質は、エネルギーの14〜20%を目安に、毎食とりましょう。"],
-    focus: "カルシウム・たんぱく質・食塩",
-  },
-  {
-    title: "65〜74歳：筋肉と骨を、守る時期",
-    points: ["筋肉が減る「サルコペニア」や、弱りやすい状態「フレイル」を防ぐことが大切です。", "やせすぎ（低栄養）に注意。たんぱく質は、エネルギーの15〜20%を目安に、毎食しっかり。", "食べる量が減っていないか、体重が減っていないか、確認を。水分も、こまめに。"],
-    focus: "たんぱく質・食べる量・水分",
-  },
-  {
-    title: "75歳以上：しっかり食べて、弱らない",
-    points: ["食が細くなり、低栄養になりやすい時期。減塩より、「しっかり食べる」ことを優先してください。", "少量でも栄養が多いもの（卵・乳製品・魚・豆腐）を、1日3食と間食に。", "噛みにくい・飲み込みにくいときは、やわらかく調理を。体重が減ってきたら、早めに相談を。"],
-    focus: "低栄養の予防・水分・たんぱく質",
-  },
-];
 
 type Opt = { v: number; t: string };
 const O = (vals: number[], unit: string, zero = "ほぼなし"): Opt[] => vals.map((v) => ({ v, t: v === 0 ? zero : `${v}${unit}` }));
@@ -241,7 +179,7 @@ export default function BalanceCheck() {
       const s = JSON.parse(localStorage.getItem("lg-bal2") || "null");
       if (s) {
         setA({ ...DEFAULT, ...s });
-        setTouched(true);
+        if (Object.keys(s).some((k) => !["sex", "band", "pal"].includes(k))) setTouched(true);
       }
       const k = JSON.parse(localStorage.getItem("lg-kcal") || "null");
       if (k?.kcal && k.p && k.f && k.c) setTarget({ kcal: parseFloat(k.kcal), p: k.p, f: k.f, c: k.c });
@@ -253,8 +191,19 @@ export default function BalanceCheck() {
     if (!loaded || !touched) return;
     try {
       localStorage.setItem("lg-bal2", JSON.stringify(a));
+      window.dispatchEvent(new Event("lg-me-change"));
     } catch {}
   }, [a, loaded, touched]);
+
+  // ほかのページで、性別・年齢を変えたときも、ここに反映する
+  useEffect(() => {
+    const sync = () => {
+      const m = readMe();
+      setA((x) => (x.sex === m.sex && x.band === m.band && x.pal === m.pal ? x : { ...x, sex: m.sex, band: m.band, pal: m.pal }));
+    };
+    window.addEventListener("lg-me-change", sync);
+    return () => window.removeEventListener("lg-me-change", sync);
+  }, []);
 
   const t = useMemo(() => {
     const s = { p: 0, f: 0, c: 0, fi: 0, kcal: 0, salt: 0, ca: 0, fe: 0 };
@@ -337,7 +286,6 @@ export default function BalanceCheck() {
     setTouched(true);
   };
 
-  const PAL_TEXT = ["低い", "ふつう", "高い"];
   const summary = (g: Group) => {
     if (g.id === "me") return `${sexText}・${BAND_SHORT[band]}・活動量${PAL_TEXT[pal]}`;
     const parts = g.items.filter((i) => (g.id === "habit" ? true : (a[i.key] ?? 0) > 0)).map((i) => `${i.short}${i.opts.find((o) => o.v === a[i.key])?.t ?? ""}`);
@@ -560,6 +508,8 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
+
 
 
 

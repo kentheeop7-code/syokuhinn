@@ -1,4 +1,5 @@
-﻿import GuideTabs from "../GuideTabs";
+﻿import MeCard from "../MeCard";
+import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -547,12 +548,14 @@ export default function Nutrients() {
       <GuideTabs current="nutrients" />
       <MyKcal topic="nutrients" />
       <nav className="anav" aria-label="ページ内メニュー">
+        <a href="#me">あなたの目安</a>
         <a href="#sym">気になることから探す</a>
         <a href="#goals">目的別ガイド</a>
         <a href="#diets">ダイエット方法</a>
         <a href="#nutrients">栄養素のはたらき</a>
       </nav>
 
+      <Fold defaultOpen id="me" title="あなたの1日の目安（性別・年齢）"><MeCard /></Fold>
       <Fold defaultOpen id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
       <Fold id="goals" title="目的別ガイド">
       <ul className="nlist">
@@ -739,6 +742,9 @@ export default function Nutrients() {
     </main>
   );
 }
+
+
+
 
 
 

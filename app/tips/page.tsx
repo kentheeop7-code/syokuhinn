@@ -1,4 +1,5 @@
-﻿import MyKcal from "../MyKcal";
+﻿import MeCard from "../MeCard";
+import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import Disclosure from "../Disclosure";
 import RelatedProducts from "../RelatedProducts";
@@ -19,7 +20,7 @@ export default function Tips() {
       <h1 className="title sm">豆知識</h1>
       <p className="member">勘違いを覆す話から、年齢による代謝・筋肉の変化、痩せない・筋肉がつかない原因、たんぱく質・ダイエットのコツまで</p>
 
-      <MyKcal topic="tips" />
+      <MeCard variant="mini" topic="tips" />
       <Link href="/gut" className="gutlink">
         <span aria-hidden>🌿</span>
         <span>
@@ -107,6 +108,8 @@ export default function Tips() {
     </main>
   );
 }
+
+
 
 
 

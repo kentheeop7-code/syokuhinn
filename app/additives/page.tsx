@@ -1,4 +1,5 @@
-﻿import GuideTabs from "../GuideTabs";
+﻿import MeCard from "../MeCard";
+import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -81,7 +82,7 @@ export default function Additives() {
       <p className="member">増粘剤・乳化剤・甘味料…食品選びで知っておきたいこと</p>
 
       <GuideTabs current="additives" />
-      <MyKcal topic="additives" />
+      <MeCard variant="mini" topic="additives" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">基本</a>
         <a href="#read">表示の読み方</a>
@@ -224,6 +225,8 @@ export default function Additives() {
     </main>
   );
 }
+
+
 
 
 

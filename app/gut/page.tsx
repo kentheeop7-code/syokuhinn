@@ -1,4 +1,5 @@
-﻿import GuideTabs from "../GuideTabs";
+﻿import MeCard from "../MeCard";
+import GuideTabs from "../GuideTabs";
 import RelatedProducts from "../RelatedProducts";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
@@ -135,7 +136,7 @@ export default function Gut() {
       <p className="member">腸活の基本から、便のチェック、1日の食事、女性ならではの悩みまで</p>
 
       <GuideTabs current="gut" />
-      <MyKcal topic="gut" />
+      <MeCard variant="mini" topic="gut" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">しくみ</a>
         <a href="#women">女性の腸</a>
@@ -408,6 +409,8 @@ export default function Gut() {
     </main>
   );
 }
+
+
 
 
 
