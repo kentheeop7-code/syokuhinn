@@ -3,14 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 
 // 記録はとらない。「いつもの1日」を、ざっくり選ぶだけで、いまの食事のバランスが分かる。
+// 最後に、結果を「公式LINE」に、ワンタップで送れる。
 type Unit = { p: number; f: number; c: number; fi: number; kcal: number; salt: number; ca: number };
 const u = (p: number, f: number, c: number, fi: number, kcal: number, salt: number, ca: number): Unit => ({ p, f, c, fi, kcal, salt, ca });
 
+// 公式LINEのID（例："@123abcde"）。入れると、LINEの公式アカウントのトークに、直接つながる。
+// 空のままなら、LINEの「送り先を選ぶ画面」が開く（そこで公式アカウントを選ぶ）。
+const LINE_OA_ID: string = process.env.NEXT_PUBLIC_LINE_OA_ID ?? "";
+
 // 1回（1杯・1つ・1切れ）あたりの目安（日本食品標準成分表をもとにした、おおよその値）
 const U: Record<string, Unit> = {
-  rice: u(3.8, 0.5, 55.7, 0.5, 252, 0, 5), // ごはん茶碗1杯（150g）
+  rice: u(3.8, 0.5, 55.7, 0.5, 252, 0, 5), // 白ごはん茶碗1杯（150g）
+  brown: u(4.2, 1.5, 53, 2.1, 248, 0, 11), // 玄米・もち麦ごはん茶碗1杯
   bread: u(5.3, 2.5, 28, 1.3, 158, 0.8, 14), // 食パン6枚切り1枚
   noodle: u(10, 5, 60, 2.5, 330, 3.5, 30), // 麺類1食（汁・ソースを含む）
+  imo: u(1.4, 0.1, 22, 1.6, 95, 0, 8), // いも・かぼちゃ・とうもろこし（約100g）
   meat: u(19, 8, 0, 0, 170, 0.2, 8), // 肉（手のひら1枚・約90g）
   fish: u(17, 6, 0, 0, 135, 0.8, 40), // 魚（1切れ・約80g）
   egg: u(6, 5, 0.2, 0, 75, 0.2, 25), // 卵1個
@@ -21,20 +28,24 @@ const U: Record<string, Unit> = {
   yogurt: u(5, 4, 7, 0, 85, 0.3, 130), // ヨーグルト1個・チーズ1切れ
   fruit: u(0.6, 0.2, 15, 1.5, 60, 0, 8), // 果物（約100g）
   nuts: u(4, 10.5, 3, 2, 120, 0, 30), // ナッツ（ひとつかみ・約20g）
+  soup: u(2, 1, 3, 0.8, 35, 1.3, 15), // みそ汁・スープ1杯
+  pickle: u(0.5, 0, 2, 0.8, 12, 1, 12), // 漬物・梅干し・佃煮など1回
+  processed: u(7, 15, 1, 0, 170, 1.5, 5), // ハム・ソーセージ・ベーコン・練り物など1回
   fried: u(3, 14, 10, 0.5, 190, 0.8, 10), // 揚げ物1回
-  stir: u(2, 9, 6, 0.5, 110, 1.0, 8), // 炒め物・こってり1回
+  stir: u(2, 9, 6, 0.5, 110, 1, 8), // 炒め物・こってり1回
+  instant: u(9, 16, 55, 2, 420, 5, 90), // カップ麺・インスタント1個
   out: u(0, 6, 0, 0, 120, 1.2, 0), // 外食・コンビニ・惣菜1回の、上乗せ（油・塩分）
   cake: u(4, 12, 40, 0.5, 290, 0.5, 30), // 菓子パン・ケーキ1個
   snack: u(2, 10, 22, 0.5, 180, 0.5, 20), // チョコ・スナック1回
   sugar: u(0, 0, 25, 0, 100, 0, 0), // 甘い飲み物1杯
   alcohol: u(0, 0, 5, 0, 140, 0, 0), // お酒1杯
-  base: u(0, 8, 4, 0, 90, 2.5, 0), // 調理の油・みそ汁・調味料（平均）
+  base: u(0, 8, 4, 0, 90, 1.2, 0), // 調理の油・調味料（平均）
 };
 
 type Opt = { v: number; t: string };
 const O = (vals: number[], unit: string, zero = "ほぼなし"): Opt[] => vals.map((v) => ({ v, t: v === 0 ? zero : `${v}${unit}` }));
 
-type Item = { key: string; label: string; short: string; hint: string; opts: Opt[] };
+type Item = { key: string; label: string; short: string; hint: string; opts: Opt[]; habit?: boolean };
 type Group = { id: string; icon: string; title: string; items: Item[] };
 
 const GROUPS: Group[] = [
@@ -43,9 +54,11 @@ const GROUPS: Group[] = [
     icon: "🍚",
     title: "主食",
     items: [
-      { key: "rice", label: "ごはん", short: "ごはん", hint: "茶碗1杯（150g）", opts: O([0, 1, 2, 3, 4], "杯") },
+      { key: "rice", label: "白ごはん", short: "白ごはん", hint: "茶碗1杯（150g）", opts: O([0, 1, 2, 3, 4], "杯") },
+      { key: "brown", label: "玄米・もち麦ごはん", short: "玄米もち麦", hint: "茶碗1杯（150g）", opts: O([0, 1, 2, 3], "杯") },
       { key: "bread", label: "パン", short: "パン", hint: "食パン6枚切り1枚", opts: O([0, 1, 2, 3], "枚") },
       { key: "noodle", label: "麺類（うどん・ラーメン・パスタ）", short: "麺", hint: "1食ぶん", opts: O([0, 1, 2], "食") },
+      { key: "imo", label: "いも・かぼちゃ・とうもろこし", short: "いも類", hint: "約100g（さつまいも1/2本）", opts: O([0, 1, 2], "つ") },
     ],
   },
   {
@@ -64,7 +77,7 @@ const GROUPS: Group[] = [
     icon: "🥦",
     title: "副菜（野菜・きのこ・海藻）",
     items: [
-      { key: "veg", label: "野菜", short: "野菜", hint: "小鉢1つ（約70g）。サラダ・煮物・みそ汁の具", opts: [{ v: 0, t: "ほぼなし" }, { v: 2, t: "1〜2つ" }, { v: 4, t: "3〜4つ" }, { v: 6, t: "5つ〜" }] },
+      { key: "veg", label: "野菜", short: "野菜", hint: "小鉢1つ（約70g）。サラダ・煮物・おひたしなど", opts: [{ v: 0, t: "ほぼなし" }, { v: 2, t: "1〜2つ" }, { v: 4, t: "3〜4つ" }, { v: 6, t: "5つ〜" }] },
       { key: "mush", label: "きのこ・海藻", short: "きのこ海藻", hint: "1回（わかめ・しいたけなど）", opts: O([0, 1, 2], "回") },
     ],
   },
@@ -80,12 +93,23 @@ const GROUPS: Group[] = [
     ],
   },
   {
+    id: "salt",
+    icon: "🍲",
+    title: "汁物・漬物・加工品",
+    items: [
+      { key: "soup", label: "みそ汁・スープ", short: "汁物", hint: "1杯", opts: O([0, 1, 2, 3], "杯") },
+      { key: "pickle", label: "漬物・梅干し・佃煮", short: "漬物", hint: "1回（小皿1つ）", opts: O([0, 1, 2], "回") },
+      { key: "processed", label: "ハム・ソーセージ・練り物", short: "加工品", hint: "1回（ハム2枚・ソーセージ2本）", opts: O([0, 1, 2], "回") },
+    ],
+  },
+  {
     id: "rich",
     icon: "🍤",
     title: "こってり・外食",
     items: [
       { key: "fried", label: "揚げ物", short: "揚げ物", hint: "とんかつ・から揚げ・天ぷら", opts: O([0, 1, 2, 3], "回") },
       { key: "stir", label: "炒め物・こってり", short: "炒め物", hint: "炒め物・カレー・ドレッシングたっぷり", opts: O([0, 1, 2, 3], "回") },
+      { key: "instant", label: "カップ麺・インスタント", short: "インスタント", hint: "1個・1食", opts: O([0, 1, 2], "回") },
       { key: "out", label: "外食・コンビニ・惣菜", short: "外食", hint: "1食を外で済ませた回数", opts: O([0, 1, 2, 3], "回") },
     ],
   },
@@ -100,13 +124,31 @@ const GROUPS: Group[] = [
       { key: "alcohol", label: "お酒", short: "お酒", hint: "ビール中ジョッキ・ワイン2杯弱・チューハイ1缶", opts: [{ v: 0, t: "飲まない" }, { v: 0.2, t: "週1〜2回" }, { v: 1, t: "毎日1杯" }, { v: 2, t: "毎日2杯〜" }] },
     ],
   },
+  {
+    id: "habit",
+    icon: "⏰",
+    title: "食べ方・生活のリズム",
+    items: [
+      { key: "breakfast", label: "朝ごはん", short: "朝食", hint: "1週間のうち", habit: true, opts: [{ v: 7, t: "毎日" }, { v: 4, t: "週3〜5日" }, { v: 1, t: "ほぼ食べない" }] },
+      { key: "late", label: "夜遅い食事（21時以降）", short: "夜食", hint: "1週間のうち", habit: true, opts: [{ v: 0, t: "ほぼなし" }, { v: 2, t: "週1〜2日" }, { v: 5, t: "週3日以上" }] },
+      { key: "water", label: "水・お茶（甘くないもの）", short: "水分", hint: "1日にコップ何杯（1杯＝200ml）", habit: true, opts: [{ v: 2, t: "〜3杯" }, { v: 5, t: "4〜6杯" }, { v: 8, t: "7杯〜" }] },
+      { key: "walk", label: "運動・歩く（30分以上）", short: "運動", hint: "1週間のうち", habit: true, opts: [{ v: 0, t: "ほぼなし" }, { v: 2, t: "週1〜2日" }, { v: 4, t: "週3日以上" }] },
+      { key: "sleep", label: "睡眠時間", short: "睡眠", hint: "1日の平均", habit: true, opts: [{ v: 5, t: "〜5時間" }, { v: 6, t: "6時間" }, { v: 7, t: "7時間〜" }] },
+    ],
+  },
 ];
 
-const DEFAULT: Record<string, number> = { rice: 2, bread: 1, noodle: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 2, mush: 1, milk: 1, yogurt: 0, fruit: 1, nuts: 0, fried: 1, stir: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0 };
+const DEFAULT: Record<string, number> = { rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 2, mush: 1, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
+const HABIT_KEYS = new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
 const r0 = (n: number) => Math.round(n);
 
 type Target = { kcal: number; p: number; f: number; c: number } | null;
 type St = "low" | "ok" | "high";
+
+function lineUrl(text: string): string {
+  const q = encodeURIComponent(text);
+  return LINE_OA_ID ? `https://line.me/R/oaMessage/${encodeURIComponent(LINE_OA_ID)}/?${q}` : `https://line.me/R/msg/text/?${q}`;
+}
 
 export default function BalanceCheck() {
   const [a, setA] = useState<Record<string, number>>(DEFAULT);
@@ -114,6 +156,9 @@ export default function BalanceCheck() {
   const [loaded, setLoaded] = useState(false);
   const [touched, setTouched] = useState(false);
   const [open, setOpen] = useState<string>("staple");
+  const [nick, setNick] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [showText, setShowText] = useState(false);
 
   useEffect(() => {
     try {
@@ -146,7 +191,7 @@ export default function BalanceCheck() {
       s.salt += x.salt * n;
       s.ca += x.ca * n;
     };
-    for (const k of Object.keys(U)) add(U[k], k === "base" ? 1 : a[k] ?? 0);
+    for (const k of Object.keys(U)) add(U[k], k === "base" ? 1 : HABIT_KEYS.has(k) ? 0 : a[k] ?? 0);
     return s;
   }, [a]);
 
@@ -178,12 +223,17 @@ export default function BalanceCheck() {
   if (rows[2].st === "high" && (a.cake ?? 0) + (a.snack ?? 0) + (a.sugar ?? 0) + (a.alcohol ?? 0) >= 1) tips.push("炭水化物が多め：お菓子・甘い飲み物・お酒を1回ぶん、ヨーグルトや果物・お茶に置きかえましょう。");
   else if (rows[2].st === "high") tips.push("炭水化物が多め：ごはんを、1杯→2/3杯にして、野菜とたんぱく質を先に食べましょう。");
   if (rows[2].st === "low") tips.push("炭水化物が少なめ：主食を抜かず、ごはん・もち麦・パンでエネルギーを確保しましょう。");
-  if (checks[0].st === "high") tips.push("食塩が多め：麺の汁を残す・漬物や加工食品を減らす・調味料は「かける」より「つける」に。");
+  if (checks[0].st === "high") tips.push("食塩が多め：汁物・漬物・麺の汁・加工品を1つ減らし、調味料は「かける」より「つける」に。");
   if (checks[3].st === "low") tips.push("野菜が少なめ：小鉢を、あと1〜2つ。みそ汁に野菜・きのこを足すと、手軽です。");
-  if (checks[1].st === "low") tips.push("食物繊維が不足：白米にもち麦を混ぜる、納豆・海藻・きのこ・果物を足しましょう。");
+  if (checks[1].st === "low") tips.push("食物繊維が不足：白米を玄米・もち麦に変える、納豆・海藻・きのこ・果物を足しましょう。");
   if (checks[2].st === "low") tips.push("カルシウムが不足：牛乳・ヨーグルト・小魚・豆腐を、1日1〜2つ足しましょう。");
   if ((a.alcohol ?? 0) >= 1) tips.push("お酒はエネルギーが高め。飲む日は、枝豆・冷奴など、たんぱく質のおつまみに。");
-  const shown = tips.slice(0, 4);
+  if ((a.breakfast ?? 7) <= 4) tips.push("朝ごはんが少ない：卵・納豆・ヨーグルト・バナナなど、手軽なものから、1品始めましょう。");
+  if ((a.late ?? 0) >= 5) tips.push("夜遅い食事が多い：遅い日は、ごはんを減らして、スープ・豆腐・野菜などの軽いものに。");
+  if ((a.water ?? 5) <= 2) tips.push("水分が少なめ：朝起きたとき・食事ごとに、コップ1杯の水かお茶を足しましょう。");
+  if ((a.walk ?? 2) === 0) tips.push("運動がほぼない：食後に10分歩くところから。階段を使うだけでも、違います。");
+  if ((a.sleep ?? 6) <= 5) tips.push("睡眠が短め：6〜7時間を目標に。睡眠不足は、食欲を増やします。");
+  const shown = tips.slice(0, 5);
 
   const set = (k: string, v: number) => {
     setA((x) => ({ ...x, [k]: v }));
@@ -191,8 +241,48 @@ export default function BalanceCheck() {
   };
 
   const summary = (g: Group) => {
-    const parts = g.items.filter((i) => (a[i.key] ?? 0) > 0).map((i) => `${i.short}${i.opts.find((o) => o.v === a[i.key])?.t ?? ""}`);
+    const parts = g.items.filter((i) => (g.id === "habit" ? true : (a[i.key] ?? 0) > 0)).map((i) => `${i.short}${i.opts.find((o) => o.v === a[i.key])?.t ?? ""}`);
     return parts.length ? parts.join("・") : "なし";
+  };
+
+  // 公式LINEに送る文章
+  const message = useMemo(() => {
+    const d = new Date();
+    const lines: string[] = [];
+    lines.push("【LIFEGYM 食事バランスチェック】");
+    lines.push(`${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日${nick.trim() ? `　${nick.trim()}さん` : ""}`);
+    lines.push("");
+    lines.push(`■ いまの食事（1日の目安）：約${(Math.round(t.kcal / 50) * 50).toLocaleString()}kcal`);
+    lines.push(`P たんぱく質 約${r0(t.p)}g（${pc(pe)}%）${stText[rows[0].st]}`);
+    lines.push(`F 脂質 約${r0(t.f)}g（${pc(fe)}%）${stText[rows[1].st]}`);
+    lines.push(`C 炭水化物 約${r0(t.c)}g（${pc(ce)}%）${stText[rows[2].st]}`);
+    lines.push(`食塩 約${(Math.round(t.salt * 10) / 10).toFixed(1)}g／食物繊維 約${r0(t.fi)}g／カルシウム 約${r0(t.ca)}mg／野菜 約${vegG}g`);
+    if (target) lines.push(`（目標：${r0(target.kcal)}kcal・P${target.p}g・F${target.f}g・C${target.c}g）`);
+    lines.push("");
+    lines.push("■ いつもの食事");
+    for (const g of GROUPS) lines.push(`${g.icon} ${g.title.replace(/（.*?）/g, "")}：${summary(g)}`);
+    if (shown.length > 0) {
+      lines.push("");
+      lines.push("■ 気になる点");
+      shown.slice(0, 3).forEach((x) => lines.push(`・${x.split("：")[0]}`));
+    }
+    lines.push("");
+    lines.push("※ ざっくり計算した目安です。");
+    return lines.join("\n");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [a, nick, target]);
+
+  const sendLine = () => {
+    window.open(lineUrl(message), "_blank", "noopener");
+  };
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch {
+      setShowText(true);
+    }
   };
 
   return (
@@ -201,8 +291,20 @@ export default function BalanceCheck() {
         🥗 いまの食事のバランス
       </h2>
       <p className="agnote">
-        <b>記録は、いりません。</b>「いつもの1日」に近いものを選ぶだけで、いまの大体のバランスが分かります。気になる項目だけでOKです。
+        <b>記録は、いりません。</b>「いつもの1日」に近いものを選ぶだけで、いまの大体のバランスが分かります。最後に、結果を公式LINEに送れます。
       </p>
+
+      <ol className="balsteps">
+        <li>
+          <b>1</b>選ぶ
+        </li>
+        <li>
+          <b>2</b>結果を見る
+        </li>
+        <li>
+          <b>3</b>LINEで送る
+        </li>
+      </ol>
 
       <div className="balgroups">
         {GROUPS.map((g) => {
@@ -235,6 +337,19 @@ export default function BalanceCheck() {
                     </div>
                   </div>
                 ))}
+                {(() => {
+                  const idx = GROUPS.findIndex((x) => x.id === g.id);
+                  const next = GROUPS[idx + 1];
+                  return next ? (
+                    <button type="button" className="balnext" onClick={() => setOpen(next.id)}>
+                      次へ：{next.title.replace(/（.*?）/g, "")} ›
+                    </button>
+                  ) : (
+                    <button type="button" className="balnext" onClick={() => document.querySelector(".balres")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                      結果を見る ↓
+                    </button>
+                  );
+                })()}
               </div>
             </div>
           );
@@ -297,9 +412,34 @@ export default function BalanceCheck() {
         ) : (
           <p className="baltips ok">バランスは、よい状態です。この調子で、続けましょう。</p>
         )}
-        <p className="agnote small">※ 一般的な1人前の量から、ざっくり計算した目安で、実際の食事とは差があります。調理の油・みそ汁・調味料は、平均的な量を足しています。</p>
+        <p className="agnote small">※ 一般的な1人前の量から、ざっくり計算した目安で、実際の食事とは差があります。調理の油・調味料は、平均的な量を足しています。</p>
+      </div>
+
+      <div className="linebox">
+        <p className="balh">📨 結果を、公式LINEに送る</p>
+        <ol className="linesteps">
+          <li>下のボタンを押す</li>
+          <li>LINEが開く → {LINE_OA_ID ? "公式アカウントのトークに、文章が入ります" : "送り先に、LINEの公式アカウントを選ぶ"}</li>
+          <li>「送信」を押して、完了</li>
+        </ol>
+        <label className="linenick">
+          <span>お名前（あれば）</span>
+          <input type="text" value={nick} onChange={(e) => setNick(e.target.value)} placeholder="例：さくら" maxLength={20} aria-label="お名前（任意）" />
+        </label>
+        <button type="button" className="linebtn" onClick={sendLine}>
+          <span aria-hidden>💬</span> LINEで送る
+        </button>
+        <div className="linesub">
+          <button type="button" className="btn ghost" onClick={copy}>
+            {copied ? "✓ コピーしました" : "文章をコピー"}
+          </button>
+          <button type="button" className="btn ghost" onClick={() => setShowText((v) => !v)}>
+            {showText ? "送る内容を閉じる" : "送る内容を見る"}
+          </button>
+        </div>
+        {showText && <textarea className="linetext" readOnly value={message} rows={12} aria-label="LINEに送る文章" onFocus={(e) => e.currentTarget.select()} />}
+        <p className="agnote small">※ お名前は、送る文章にだけ入ります（このアプリには、保存されません）。診断ではなく、ざっくりした目安です。</p>
       </div>
     </section>
   );
 }
-
