@@ -36,6 +36,7 @@ export default function WeightChart() {
   const [goal, setGoal] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [age, setAge] = useState(0);
+  const [height, setHeight] = useState(0);
   const [pace, setPace] = useState("w1");
   const [slide, setSlide] = useState(0); // 半月単位
 
@@ -46,6 +47,7 @@ export default function WeightChart() {
         const p = JSON.parse(localStorage.getItem("lg-profile") || "null");
         setGoal(p?.weight ? String(p.weight) : "");
         setAge(parseFloat(p?.age) || 0);
+        setHeight(parseFloat(p?.height) || 0);
       } catch {}
     };
     try {
@@ -216,6 +218,58 @@ export default function WeightChart() {
               </p>
             </div>
 
+            <div className="wc2change">
+              <p className="wc2cht">📍 この体重から、どれだけ変われる？</p>
+              <ul className="wc2ms">
+                {[1, 3, 6].map((mo) => {
+                  const vals = chart.rows.map((r) => Math.max(wt, w0 - r.perMonth * mo));
+                  const mine = Math.max(wt, w0 - row.perMonth * mo);
+                  const lo = Math.min(...vals);
+                  const hi = Math.max(...vals);
+                  const d = r1(w0 - mine);
+                  const reachedNow = mine <= wt;
+                  return (
+                    <li key={mo}>
+                      <span className="wc2when">{mo}か月後</span>
+                      <b style={{ color: cur.color }}>{r1(mine)}kg</b>
+                      <em>
+                        −{d}kg（−{r1((d / w0) * 100)}%）
+                      </em>
+                      {lo !== hi && (
+                        <small>
+                          見込み：{r1(lo)}〜{r1(hi)}kg
+                        </small>
+                      )}
+                      {reachedNow && <small className="wc2ok">🎯 目標に到達</small>}
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="wc2bar" aria-label={`目標までの道のり ${diff}kg`}>
+                <span style={{ width: `${Math.min(100, Math.round(((row.perMonth * 3) / diff) * 100))}%`, background: cur.color }} />
+              </div>
+              <p className="wc2barnote">3か月で、目標までの約{Math.min(100, Math.round(((row.perMonth * 3) / diff) * 100))}%に進みます（あと{diff}kg）。</p>
+              {height > 100 && (() => {
+                const h = height / 100;
+                const bmiNow = w0 / (h * h);
+                const bmiGoal = wt / (h * h);
+                const lowB = band === "s60" ? 21.5 : 18.5;
+                const wlo = r1(lowB * h * h);
+                const whi = r1(24.9 * h * h);
+                const inRange = bmiGoal >= lowB && bmiGoal <= 24.9;
+                return (
+                  <p className="wc2bmi">
+                    <b>BMI</b>：いま {r1(bmiNow)} → 目標 {r1(bmiGoal)}。適正な体重の範囲は、{wlo}〜{whi}kg（BMI{lowB}〜24.9）です。
+                    {inRange ? " 目標は、この範囲に入っています。" : bmiGoal < lowB ? " 目標が、やせすぎの範囲です。もう少し高めの目標をおすすめします。" : " 目標は、まだ範囲より重めです。まず、この範囲を目指しましょう。"}
+                  </p>
+                );
+              })()}
+              {capKg > 0 && (
+                <p className="wc2bmi">
+                  <b>無理のない上限</b>：あなたの年齢では、1か月に最大でも約{capKg}kg（体重の約{capPct}%）までが目安です。{row.perMonth > capKg ? "選んだペースは、これを超えています。" : "選んだペースは、この範囲内です。"}
+                </p>
+              )}
+            </div>
             <svg viewBox={`0 0 ${W} ${H}`} className="wc2svg" role="img" aria-label="目標体重までの体重の変化の予測">
               {chart.yTicks.map((v) => (
                 <g key={v}>
@@ -279,6 +333,7 @@ export default function WeightChart() {
                   `■ いまの体重 ${w0}kg → 目標 ${wt}kg（あと${diff}kg）`,
                   `■ ペース：${cur.label}（${cur.sub}・月${cur.perMonth}kg）`,
                   `■ 到達の目安：約${r1(row.months)}か月（${ymText(row.months)}）`,
+                  `■ 変われる目安：${[1, 3, 6].map((mo) => `${mo}か月後 ${r1(Math.max(wt, w0 - row.perMonth * mo))}kg`).join("／")}`,
                 ].join("\n")
               }
             />
@@ -306,5 +361,7 @@ export default function WeightChart() {
     </section>
   );
 }
+
+
 
 

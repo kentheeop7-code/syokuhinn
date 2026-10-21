@@ -3851,3 +3851,25 @@ body { padding-bottom: 112px !important; }
 .mecard.mini p { margin: 0 0 4px; line-height: 1.7; }
 .mecard.mini b { display: block; }
 .symage { margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--s-soft); line-height: 1.7; }
+
+/* ---- この体重から、どれだけ変われる？ ---- */
+.wc2change { margin: 12px 0; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #f4fbf7, #eaf6ef); }
+.wc2cht { margin: 0 0 10px; font-weight: 900; font-size: 1.05rem; color: var(--g1); }
+.wc2ms { list-style: none; margin: 0 0 10px; padding: 0 !important; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.wc2ms li { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px; border-radius: 14px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(15, 61, 46, 0.06); }
+.wc2when { font-size: 0.85rem; font-weight: 800; color: var(--s-sub); }
+.wc2ms li b { font-size: 1.5rem; font-weight: 900; line-height: 1.2; }
+.wc2ms li em { font-style: normal; font-size: 0.85rem; font-weight: 800; color: #c0392b; }
+.wc2ms li small { font-size: 0.75rem; color: var(--s-sub) !important; line-height: 1.3; }
+.wc2ms li small.wc2ok { color: #1c7a47 !important; font-weight: 800; }
+.wc2bar { height: 16px; border-radius: 999px; background: #dbe9e0; overflow: hidden; }
+.wc2bar span { display: block; height: 100%; border-radius: 999px; }
+.wc2barnote { margin: 6px 0 0; font-size: 0.9rem; font-weight: 700; }
+.wc2bmi { margin: 8px 0 0; padding: 10px 12px; border-radius: 12px; background: #fff; font-size: 0.92rem; line-height: 1.7; }
+.wc2bmi b { color: var(--g2); }
+
+/* ---- P・F・Cを、大きなカードで ---- */
+.kset .pfc, .mykcal .pfc { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0; }
+.kset .pfc > div, .mykcal .pfc > div { display: flex; flex-direction: column; align-items: center; padding: 10px 4px; border-radius: 14px; background: #fff; font-weight: 800; font-size: 0.9rem; box-shadow: 0 2px 8px rgba(15, 61, 46, 0.06); }
+.kset .pfc b, .mykcal .pfc b { font-size: 1.7rem; font-weight: 900; line-height: 1.2; color: var(--g1); }
+.kset .agkcal b, .mykcal .agkcal b { font-size: 2.4rem; color: var(--g2); }
