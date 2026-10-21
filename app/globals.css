@@ -3873,3 +3873,10 @@ body { padding-bottom: 112px !important; }
 .kset .pfc > div, .mykcal .pfc > div { display: flex; flex-direction: column; align-items: center; padding: 10px 4px; border-radius: 14px; background: #fff; font-weight: 800; font-size: 0.9rem; box-shadow: 0 2px 8px rgba(15, 61, 46, 0.06); }
 .kset .pfc b, .mykcal .pfc b { font-size: 1.7rem; font-weight: 900; line-height: 1.2; color: var(--g1); }
 .kset .agkcal b, .mykcal .agkcal b { font-size: 2.4rem; color: var(--g2); }
+
+/* 体重入力：スマホでは、縦に並べる（目標体重が細くつぶれないように） */
+.wc2in { grid-template-columns: 1fr !important; }
+.wc2box { align-items: stretch; }
+.wc2goalv { font-size: 1.8rem; }
+.wc2box.goal { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.wc2box.goal small { flex-basis: 100%; }
