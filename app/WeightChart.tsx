@@ -256,11 +256,11 @@ export default function WeightChart() {
                 const lowB = band === "s60" ? 21.5 : 18.5;
                 const wlo = r1(lowB * h * h);
                 const whi = r1(24.9 * h * h);
-                const inRange = bmiGoal >= lowB && bmiGoal <= 24.9;
+                const inRange = r1(bmiGoal) >= lowB && r1(bmiGoal) <= 24.9;
                 return (
                   <p className="wc2bmi">
                     <b>BMI</b>：いま {r1(bmiNow)} → 目標 {r1(bmiGoal)}。適正な体重の範囲は、{wlo}〜{whi}kg（BMI{lowB}〜24.9）です。
-                    {inRange ? " 目標は、この範囲に入っています。" : bmiGoal < lowB ? " 目標が、やせすぎの範囲です。もう少し高めの目標をおすすめします。" : " 目標は、まだ範囲より重めです。まず、この範囲を目指しましょう。"}
+                    {inRange ? " 目標は、この範囲に入っています。" : r1(bmiGoal) < lowB ? " 目標が、やせすぎの範囲です。もう少し高めの目標をおすすめします。" : " 目標は、まだ範囲より重めです。まず、この範囲を目指しましょう。"}
                   </p>
                 );
               })()}
@@ -361,6 +361,7 @@ export default function WeightChart() {
     </section>
   );
 }
+
 
 
 
