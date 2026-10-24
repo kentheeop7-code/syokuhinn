@@ -41,7 +41,7 @@ function Card({ s }: { s: Supp }) {
           </span>
           <span className="pprice">{s.price}</span>
         </span>
-        <i aria-hidden>{open ? "−" : "＋"}</i>
+        <i aria-hidden>{open ? "閉じる" : "開く"}</i>
       </button>
       <p className="peffect">{s.effect}</p>
       {open && (
@@ -147,4 +147,5 @@ export default function ProductSearch() {
     </section>
   );
 }
+
 

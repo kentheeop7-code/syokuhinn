@@ -3931,3 +3931,22 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 .balopts.k-band, .balopts.k-sex { grid-template-columns: 1fr 1fr !important; }
 .balopts.k-pal { grid-template-columns: 1fr !important; }
 .balopts.k-breakfast, .balopts.k-late, .balopts.k-walk, .balopts.k-water, .balopts.k-sleep { grid-template-columns: 1fr 1fr !important; }
+
+/* ================= buttons v2：ほかのページのボタンも、同じ見やすさに ================= */
+main button, main summary { min-height: 48px !important; }
+/* 絞り込みのタグ（腸内環境の食品一覧など） */
+.gttags { display: flex; flex-wrap: wrap; gap: 8px; }
+.gttags button { min-height: 52px !important; padding: 8px 14px; border: 2px solid #9fc4b0 !important; border-radius: 999px !important; background: #fff !important; color: #14543f !important; font-family: inherit; font-weight: 800; font-size: 1rem; }
+.gttags button.on { background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; border-color: #1a6a4f !important; color: #fff !important; }
+.gttags button.on::before { content: "✓ "; }
+/* 食品一覧の「くわしく」ボタン */
+.linkbtn { min-height: 48px !important; padding: 8px 14px; border: 2px solid #2f9e75 !important; border-radius: 14px !important; background: #fff !important; color: #14543f !important; font-weight: 800; font-family: inherit; }
+/* 添加物じてん・症状ケアなどの、開閉カード */
+.adhead, .wchead { min-height: 64px !important; border: 0; }
+.adcard, .wccard { border: 2px solid #cfe3d6 !important; border-radius: 16px !important; background: #fff; margin: 10px 0; }
+.adhead i, .wchead i, .wchead .wcarrow { font-style: normal; display: inline-flex; align-items: center; justify-content: center; min-width: 4.2em; padding: 6px 12px; border-radius: 999px; background: #e9f6ef; border: 2px solid #2f9e75; color: #14543f; font-size: 0.9rem; font-weight: 900; }
+.adcard .adlv { font-size: 0.85rem !important; }
+.wcitem { border: 2px solid #cfe3d6; border-radius: 16px; background: #fff; margin: 10px 0; overflow: hidden; }
+.wcitem.open { border-color: #2f9e75; }
+.phead i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; min-width: 4.2em; padding: 6px 12px; border-radius: 999px; background: #e9f6ef; border: 2px solid #2f9e75; color: #14543f; font-size: 0.9rem !important; font-weight: 900; align-self: flex-start; }
+.pcard { border: 2px solid #dbe9e0 !important; }

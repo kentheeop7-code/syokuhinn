@@ -225,7 +225,7 @@ export default function WomenCare() {
             <button className="wchead" aria-expanded={open === i} onClick={() => setOpen(open === i ? null : i)}>
               <span aria-hidden>{s.icon}</span>
               <b>{s.name}</b>
-              <i aria-hidden>{open === i ? "−" : "＋"}</i>
+              <i aria-hidden>{open === i ? "閉じる" : "開く"}</i>
             </button>
             {open === i && (
               <div className="wcbody">
@@ -293,5 +293,6 @@ export default function WomenCare() {
     </section>
   );
 }
+
 
 

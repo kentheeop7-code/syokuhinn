@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { ADDITIVES, type Additive } from "./additivesData";
@@ -19,7 +19,7 @@ function Card({ a }: { a: Additive }) {
       <button className="adhead" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <span className="adname">{a.name}</span>
         <em className={`adlv ${l.cls}`}>{l.label}</em>
-        <i aria-hidden>{open ? "−" : "＋"}</i>
+        <i aria-hidden>{open ? "閉じる" : "開く"}</i>
       </button>
       <p className="adrole">
         <b>用途</b>
@@ -169,3 +169,4 @@ export default function AdditiveTools() {
     </>
   );
 }
+
