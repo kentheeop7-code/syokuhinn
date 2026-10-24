@@ -1,4 +1,6 @@
-﻿import MeCard from "../MeCard";
+﻿import EvidenceBox from "../EvidenceBox";
+import { GOAL_EVIDENCE } from "../evidence";
+import MeCard from "../MeCard";
 import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
@@ -604,6 +606,7 @@ export default function Nutrients() {
               </>
             )}
             {GOAL_PRODUCT[g.id] && <RelatedProducts q={GOAL_PRODUCT[g.id]} />}
+            {GOAL_EVIDENCE[g.id] && <EvidenceBox ids={GOAL_EVIDENCE[g.id].ids} level={GOAL_EVIDENCE[g.id].level} note={GOAL_EVIDENCE[g.id].why} />}
             {g.caution && <p className="caution">⚠ {g.caution}</p>}
             </Disclosure>
           </li>
@@ -665,6 +668,7 @@ export default function Nutrients() {
                 </p>
               </>
             )}
+            <EvidenceBox ids={d.title.startsWith("ケト") ? ["obesity2022", "ioc2018", "dri2025"] : d.title.startsWith("ロー") ? ["dri2025", "obesity2022"] : ["dri2025", "obesity2022", "helms2014"]} level={d.title.startsWith("ケト") ? "弱い（長期の安全性は未確立）" : "中くらい"} note="どの方法でも、減量の中心はエネルギー収支です。方法による差は小さく、続けやすさが大切です。極端な糖質制限は、長期の安全性が確立していません。" />
             {d.caution && <p className="caution">⚠ {d.caution}</p>}
             </Disclosure>
           </li>
@@ -732,6 +736,7 @@ export default function Nutrients() {
           </li>
         ))}
       </ul>
+      <EvidenceBox ids={["dri2025", "ods", "food8"]} level="強い（国の基準）" note="1日の目安量・上限・不足したときの症状は、食事摂取基準（2025年版）と、NIHの資料にもとづきます。「多い食品」は、食品成分表にもとづく一般的な内容です。サプリでの量は、上限に注意してください。" />
       </Fold>
       <p className="note">
         ※ 一般的な成人向けの目安で、「日本人の食事摂取基準（2025年版）」（厚生労働省）を参考にしています。年齢・体格・持病・服薬・妊娠中などで必要量は変わります。気になる症状や、サプリを使う場合は、医師や管理栄養士に相談してください。
@@ -742,6 +747,8 @@ export default function Nutrients() {
     </main>
   );
 }
+
+
 
 
 

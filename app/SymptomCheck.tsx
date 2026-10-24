@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import EvidenceBox from "./EvidenceBox";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useMe } from "./me";
@@ -125,6 +126,7 @@ export default function SymptomCheck() {
           {me.isYouth && <p className="symage">🌱 中学生・高校生は、成長期です。ダイエットや食事を減らす対策は、せず、気になるときは、保護者・学校の先生・医師に相談しましょう。</p>}
           {me.band >= 5 && <p className="symage">🌱 65歳以上の方は、食べる量が減っていないか、体重が減っていないかを、あわせて確認しましょう。「しっかり食べる」ことを、優先してください。</p>}
           {me.band === 4 && me.sexKey === "f" && <p className="symage">🌱 50代の女性は、更年期で、骨・血圧・コレステロールが変わりやすい時期です。年1回の健診も、忘れずに。</p>}
+          <EvidenceBox ids={["dri2025", "ods"]} level="栄養の基本は強い／症状との対応は、一般的" note="それぞれの栄養素のはたらきと、必要な量は、国の基準と、NIHの資料にもとづきます。「この症状には、この栄養」という対応は、一般的な栄養学の知識で、症状の原因は人によって違います。食事だけで治らないことも多く、続くときは、受診してください。" />
           <LineShare
             title="気になること"
             build={() =>
@@ -144,6 +146,8 @@ export default function SymptomCheck() {
     </section>
   );
 }
+
+
 
 
 

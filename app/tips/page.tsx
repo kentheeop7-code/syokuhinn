@@ -1,4 +1,5 @@
-﻿import MeCard from "../MeCard";
+﻿import { TIP_SOURCES } from "../evidence";
+import MeCard from "../MeCard";
 import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import Disclosure from "../Disclosure";
@@ -86,14 +87,27 @@ export default function Tips() {
                     {t.todo ?? TIP_TODO[t.id]}
                   </p>
                 )}
-                {t.source && (
-                  <p className="tipsrc">
-                    出典：
-                    <a href={t.source.url} target="_blank" rel="noopener noreferrer">
-                      {t.source.label}
-                    </a>
-                  </p>
-                )}
+                {t.source ? (
+                      <p className="tipsrc">
+                        出典：
+                        <a href={t.source.url} target="_blank" rel="noopener noreferrer">
+                          {t.source.label}
+                        </a>
+                      </p>
+                    ) : TIP_SOURCES[t.id] ? (
+                      <p className="tipsrc">
+                        出典（{TIP_SOURCES[t.id].kind}）：
+                        {TIP_SOURCES[t.id].url ? (
+                          <a href={TIP_SOURCES[t.id].url} target="_blank" rel="noopener noreferrer">
+                            {TIP_SOURCES[t.id].label}
+                          </a>
+                        ) : (
+                          TIP_SOURCES[t.id].label
+                        )}
+                      </p>
+                    ) : (
+                      <p className="tipsrc weak">根拠の強さ：個別の出典は、未掲載（一般的な栄養学の内容）です。気になるときは、医師・管理栄養士に確認してください。</p>
+                    )}
                 </Disclosure>
               </li>
             ))}
@@ -108,6 +122,7 @@ export default function Tips() {
     </main>
   );
 }
+
 
 
 

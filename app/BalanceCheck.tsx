@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import EvidenceBox from "./EvidenceBox";
 import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 
 // 記録はとらない。「いつもの1日」を、ざっくり選ぶだけで、いまの食事のバランスが分かる。
@@ -476,7 +477,7 @@ export default function BalanceCheck() {
             {ageInfo.focus}
           </p>
         </div>
-        <p className="agnote small">※ 一般的な1人前の量から、ざっくり計算した目安で、実際の食事とは差があります。必要な量は、日本人の食事摂取基準（2025年版）の目安です。</p>
+        <EvidenceBox ids={["dri2025", "food8"]} level="目安の基準は強い／食事の量は、ざっくり" note="必要なエネルギー・たんぱく質・カルシウム・鉄・食物繊維・食塩・PFCの割合は、国の基準（性別・年齢別）です。「いつもの1日」から出した食事の量は、食品1回ぶんの、おおまかな換算で、実際とは差があります。" />
       </div>
 
       <div className="linebox">
@@ -508,6 +509,8 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
+
 
 
 

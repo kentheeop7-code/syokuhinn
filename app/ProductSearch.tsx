@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import EvidenceBox from "./EvidenceBox";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SUPPS, SUPP_UPDATED, type Supp } from "./supplementsData";
@@ -141,11 +142,13 @@ export default function ProductSearch() {
         ))}
       </ul>
       {list.length === 0 && <p className="note">見つかりませんでした。別の言葉や、種類で探してみてください。</p>}
+      <EvidenceBox ids={["ods"]} level="サプリの効果は、成分・人によって違う" note="価格は、各社の公式ページ・販売店の表示（確認日つき）です。サプリは、食事の補助です。効果の有無や安全な量は、成分ごとに違い、NIHなどの資料で確認できます。持病・妊娠中・服薬中の方は、使う前に医師・薬剤師へ。" />
       <p className="note">
         ※ 一般的な情報で、商品をすすめるものではありません。持病・妊娠中・授乳中・服薬中の人は、サプリを使う前に、医師・薬剤師に相談してください。成分・価格は、必ず公式サイトで確認を。
       </p>
     </section>
   );
 }
+
 
 

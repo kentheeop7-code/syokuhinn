@@ -1,4 +1,5 @@
-﻿import MeCard from "../MeCard";
+﻿import EvidenceBox from "../EvidenceBox";
+import MeCard from "../MeCard";
 import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
@@ -182,6 +183,9 @@ export default function Additives() {
         </ol>
       </section>
       </Fold>
+      <Fold id="evidence" title="根拠（エビデンス）">
+        <EvidenceBox ids={["caaAdditive", "mb2023", "who2023nss", "iarcAspartame", "whoMeat", "dri2025"]} level="国の評価は強い／体への影響は、量・体質しだい" note="添加物は、食品安全委員会の評価（ADI）にもとづいて、使える量が決まっています。実際の摂取量は、調査で、ADIを大きく下回っています。「天然＝安全」「合成＝危険」ではありません。一部（甘味料・加工肉など）は、国際機関が、量や頻度に注意を呼びかけています。" />
+      </Fold>
       <Fold id="qa" title="よくある疑問">
       <ul className="nlist">
         {QA.map((x) => (
@@ -225,6 +229,7 @@ export default function Additives() {
     </main>
   );
 }
+
 
 
 

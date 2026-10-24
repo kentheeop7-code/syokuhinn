@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import EvidenceBox from "./EvidenceBox";
 import { useEffect, useMemo, useState } from "react";
 import { ageBand, BAND_LABEL, MONTHLY_CAP_PCT } from "./ageInfo";
 import { REF, useMe } from "./me";
@@ -326,6 +327,7 @@ export default function WeightChart() {
               <small>つまみを動かして、○か月後の体重を見られます</small>
             </div>
 
+            <EvidenceBox ids={["obesity2022", "helms2014", "hall2011", "dri2025"]} level="目標の立て方は強い／到達時期は、目安" note="減量の目標（現体重の3%以上など）とペース（週に体重の0.5〜1%以内）には、ガイドラインと研究があります。ただし、到達の時期は、「体脂肪1kg＝7,200kcal」の単純計算です。実際は、体重が減るほど減りにくくなり（停滞期）、予測より遅れるのがふつうです。あくまで、目安として使ってください。" />
             <LineShare
               title="目標体重の予測"
               build={() =>
@@ -361,6 +363,8 @@ export default function WeightChart() {
     </section>
   );
 }
+
+
 
 
 

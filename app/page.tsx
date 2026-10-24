@@ -1911,7 +1911,7 @@ function KcalSetter({
               </a>
               ／
               <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4033492/" target="_blank" rel="noopener noreferrer">
-                Helms 2014（減量中の栄養）
+                Helms 2014（競技者の減量期の総説・一般の方は目安）
               </a>
               ／
               <a href="https://bjsm.bmj.com/content/52/11/687" target="_blank" rel="noopener noreferrer">
@@ -2183,6 +2183,7 @@ export default function Home() {
     </Suspense>
   );
 }
+
 
 
 

@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
+import EvidenceBox from "./EvidenceBox";
 import { AGE_INFO, BANDS, BAND_SHORT, PAL_TEXT, REF, VITD, useMe } from "./me";
 
 // 性別・年齢を選ぶと、1日の目安と、年齢による影響が出る。どのページでも共通。
@@ -103,6 +104,7 @@ export default function MeCard({ variant = "full", topic }: { variant?: "full" |
       </ul>
       <p className="agnote small">日本人の食事摂取基準（2025年版）の目安です。身体活動レベルは、{PAL_TEXT[me.pal]}の場合。</p>
 
+      <EvidenceBox ids={["dri2025", "osteo2015"]} level="強い（国の基準）" note="性別・年齢別の目安は、食事摂取基準（2025年版）の表です。年齢ごとの注意（骨・筋肉・低栄養など）は、基準の考え方と、骨粗鬆症ガイドラインにもとづく、一般的な内容です。" />
       <div className="meage">
         <p className="balh">🌱 {info.title}</p>
         <ul>
@@ -118,3 +120,5 @@ export default function MeCard({ variant = "full", topic }: { variant?: "full" |
     </section>
   );
 }
+
+
