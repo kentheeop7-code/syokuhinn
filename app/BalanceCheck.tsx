@@ -376,7 +376,7 @@ export default function BalanceCheck() {
                       <b>{it.label}</b>
                       <small>{it.hint}</small>
                     </p>
-                    <div className="balopts" role="radiogroup" aria-label={it.label}>
+                    <div className={`balopts k-${it.key}`} role="radiogroup" aria-label={it.label}>
                       {it.opts.map((o) => (
                         <button key={o.t} type="button" role="radio" aria-checked={a[it.key] === o.v} className={a[it.key] === o.v ? "on" : ""} onClick={() => set(it.key, o.v)}>
                           {o.t}
@@ -508,6 +508,7 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
 
 
 

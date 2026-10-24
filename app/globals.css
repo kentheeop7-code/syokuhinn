@@ -3928,3 +3928,6 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 4px soli
 button:disabled { opacity: 0.45; cursor: not-allowed; }
 .linebtn { min-height: 68px !important; font-size: 1.3rem !important; }
 .totop { width: 60px !important; height: 60px !important; font-size: 1.6rem !important; border: 3px solid #fff !important; }
+.balopts.k-band, .balopts.k-sex { grid-template-columns: 1fr 1fr !important; }
+.balopts.k-pal { grid-template-columns: 1fr !important; }
+.balopts.k-breakfast, .balopts.k-late, .balopts.k-walk, .balopts.k-water, .balopts.k-sleep { grid-template-columns: 1fr 1fr !important; }
