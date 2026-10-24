@@ -3967,3 +3967,5 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .bb-item b { font-size: 0.85rem !important; }
 .supp-name, .supp-price { font-size: 1.05rem !important; }
 .fold .foldh button small { font-size: 0.95rem !important; font-weight: 700; }
+.gtmeals li, .gtsec li, .gtdl dd, .gtdl dt, .gtmeals strong, .gtsumline, .gtpicked li { font-size: 1rem !important; line-height: 1.8; }
+.mletter, .bp, .bf, .bc, .bmval, .bmfoot, .wgnote, .wcsub, .cycnote, .bmnote, .wcnote, .agenote, .mnote { font-size: 1rem !important; }
