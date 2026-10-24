@@ -9,9 +9,18 @@ import ToTop from "./ToTop";
 export const metadata: Metadata = {
   title: "専属の栄養士（女性向け） | LIFEGYM",
   description: "月経周期・骨・更年期など、女性のからだに寄りそう栄養アプリ。PFC・鉄・カルシウム・葉酸まで、食事を記録して整えられます",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon-64.png", sizes: "64x64", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  appleWebApp: { capable: true, title: "LIFEGYM", statusBarStyle: "default" },
 };
 
-export const viewport = { width: "device-width", initialScale: 1 };
+export const viewport = { width: "device-width", initialScale: 1, themeColor: "#1a6a4f" };
 
 export default function RootLayout({
   children,
@@ -34,6 +43,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 
