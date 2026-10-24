@@ -3880,3 +3880,51 @@ body { padding-bottom: 112px !important; }
 .wc2goalv { font-size: 1.8rem; }
 .wc2box.goal { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
 .wc2box.goal small { flex-basis: 100%; }
+
+/* ================= buttons v1：ボタンを、役割ごとに、はっきり ================= */
+:root { --btn-h: 56px; }
+
+/* ① 主なボタン（いちばん大事な操作）：濃い緑・白い文字・影 */
+.btn:not(.ghost), button.small, .balnext.primary {
+  min-height: var(--btn-h); padding: 12px 20px; border: 0 !important; border-radius: 16px !important;
+  background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; color: #fff !important;
+  font-family: inherit; font-size: 1.05rem !important; font-weight: 900 !important; letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px rgba(26, 106, 79, 0.35) !important; cursor: pointer;
+}
+/* ② 副のボタン：白地・太い緑の枠・緑の文字 */
+.btn.ghost, .disc-btn, .balnext, .ksmore summary, .wc2more summary, .textsize {
+  min-height: var(--btn-h); border: 2px solid #2f9e75 !important; border-radius: 16px !important; background: #fff !important; color: #14543f !important;
+  font-family: inherit; font-size: 1.02rem !important; font-weight: 900 !important; box-shadow: none !important; cursor: pointer;
+}
+.disc-btn, .balnext { display: flex; align-items: center; justify-content: center; }
+.disc.open .disc-btn { background: #e9f6ef !important; }
+/* ③ 選択ボタン（チップ）：選ぶ前も、枠がはっきり見える */
+.chip, .adtabs button, .symchips button, .balopts button, .kgoal, .mechips button, .wc2paces button {
+  border: 2px solid #9fc4b0 !important; background: #fff !important; color: #14543f !important; font-weight: 800 !important; box-shadow: none !important;
+}
+.chip.on, .adtabs button.on, .symchips button.on, .balopts button.on, .kgoal.on, .mechips button.on {
+  border-color: #1a6a4f !important; background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; color: #fff !important; box-shadow: 0 4px 12px rgba(26, 106, 79, 0.35) !important;
+}
+.kgoal.on b, .kgoal.on small { color: #fff !important; }
+.wc2paces button.on { color: #fff !important; }
+/* ④ 開く・閉じるのボタン：文字つき */
+.fold .foldh button i, .balgh i {
+  width: auto !important; height: auto !important; min-width: 4.2em; flex: 0 0 auto !important; padding: 6px 12px; border-radius: 999px !important;
+  background: #e9f6ef !important; color: #14543f !important; border: 2px solid #2f9e75; font-size: 0.9rem !important; font-weight: 900; text-align: center; line-height: 1.2;
+}
+.fold.open .foldh button i, .balg.open .balgh i { background: #1a6a4f !important; color: #fff !important; border-color: #1a6a4f; }
+/* ⑤ リンクのボタン（›）：ボタンの形に */
+.evlink { display: flex; align-items: center; justify-content: center; min-height: var(--btn-h); margin: 10px 0; padding: 10px 16px; border: 2px solid #2f9e75; border-radius: 16px; background: #fff; color: #14543f !important; font-weight: 900; text-decoration: none; }
+.gutlink { min-height: 72px; }
+/* ⑥ 下のバー・数量ボタン */
+.bb-item { border-radius: 16px !important; }
+.bb-item.on { background: #1a6a4f !important; }
+.bb-item.on b, .bb-item.on .bb-ico { color: #fff !important; }
+.wc2step button { border: 2px solid #2f9e75 !important; color: #14543f !important; background: #fff !important; }
+/* ⑦ 押したときの反応・フォーカス・押せないとき */
+button, a.evlink, a.gutlink, .linebtn { transition: transform 0.08s, box-shadow 0.12s; -webkit-tap-highlight-color: transparent; }
+button:active:not(:disabled), a.evlink:active, a.gutlink:active { transform: scale(0.97); }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 4px solid #ffb84d !important; outline-offset: 2px; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.linebtn { min-height: 68px !important; font-size: 1.3rem !important; }
+.totop { width: 60px !important; height: 60px !important; font-size: 1.6rem !important; border: 3px solid #fff !important; }

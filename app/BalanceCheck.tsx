@@ -367,7 +367,7 @@ export default function BalanceCheck() {
                   <b>{g.title}</b>
                   <small>{summary(g)}</small>
                 </span>
-                <i aria-hidden>{isOpen ? "−" : "＋"}</i>
+                <i aria-hidden>{isOpen ? "閉じる" : "開く"}</i>
               </button>
               <div className="balgb" hidden={!isOpen}>
                 {g.items.map((it) => (
@@ -508,6 +508,7 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
 
 
 

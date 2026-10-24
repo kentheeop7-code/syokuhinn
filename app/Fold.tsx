@@ -45,7 +45,7 @@ export default function Fold({
             {title}
             {sub && <small>{sub}</small>}
           </span>
-          <i aria-hidden>{open ? "−" : "＋"}</i>
+          <i aria-hidden>{open ? "閉じる" : "開く"}</i>
         </button>
       </h2>
       <div id={`${id}-body`} className="foldbody" hidden={!open}>
@@ -54,4 +54,5 @@ export default function Fold({
     </section>
   );
 }
+
 
