@@ -3950,3 +3950,20 @@ main button, main summary { min-height: 48px !important; }
 .wcitem.open { border-color: #2f9e75; }
 .phead i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; min-width: 4.2em; padding: 6px 12px; border-radius: 999px; background: #e9f6ef; border: 2px solid #2f9e75; color: #14543f; font-size: 0.9rem !important; font-weight: 900; align-self: flex-start; }
 .pcard { border: 2px solid #dbe9e0 !important; }
+
+/* ================= スマホで読みやすい文字の大きさ ================= */
+html { font-size: 19px; }
+main :is(small, em) { font-size: max(0.95rem, 0.85em) !important; }
+main .agnote, main .note, main .wnote, main .gtnote, main .adnote { font-size: 1rem; }
+main .agnote.small, main .note.small { font-size: 0.92rem !important; }
+.balchk li b, .balchk li span, .balrows li, .balrows li b, .balneed, .balgt small, .balqt small { font-size: 1rem !important; }
+.balchk li small { font-size: 0.88rem !important; }
+.balrows li em, .balchk li em, .balneed em { font-size: 0.9rem !important; }
+.ksbar span { font-size: 0.95rem !important; }
+.pfc > div, .pfc > div b { font-size: max(1rem, 1em); }
+.wc2ms li small, .wc2when, .wc2ms li em { font-size: 0.9rem !important; }
+.mereflist li span, .meh { font-size: 0.95rem !important; }
+.tn-brand { font-size: 1.15rem !important; }
+.bb-item b { font-size: 0.85rem !important; }
+.supp-name, .supp-price { font-size: 1.05rem !important; }
+.fold .foldh button small { font-size: 0.95rem !important; font-weight: 700; }
