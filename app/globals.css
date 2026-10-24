@@ -3969,3 +3969,9 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .fold .foldh button small { font-size: 0.95rem !important; font-weight: 700; }
 .gtmeals li, .gtsec li, .gtdl dd, .gtdl dt, .gtmeals strong, .gtsumline, .gtpicked li { font-size: 1rem !important; line-height: 1.8; }
 .mletter, .bp, .bf, .bc, .bmval, .bmfoot, .wgnote, .wcsub, .cycnote, .bmnote, .wcnote, .agenote, .mnote { font-size: 1rem !important; }
+
+/* 症状ケアの見出し：1〜2行におさめる */
+.wchead { padding: 8px 12px !important; gap: 10px !important; }
+.wchead > span:first-child { font-size: 1.5rem; flex: 0 0 auto; }
+.wchead b { font-size: 1.02rem !important; line-height: 1.35 !important; }
+.wchead i { min-width: 0 !important; padding: 4px 10px !important; font-size: 0.82rem !important; flex: 0 0 auto; white-space: nowrap; }
