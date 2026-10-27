@@ -1,5 +1,6 @@
 ﻿import EvidenceBox from "../EvidenceBox";
 import MeCard from "../MeCard";
+import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
@@ -84,6 +85,7 @@ export default function Additives() {
 
       <GuideTabs current="additives" />
       <MeCard variant="mini" topic="additives" />
+      <CauseMini ids={["swell"]} title="🔍 あなたの食事から見た、塩分・むくみの原因" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">基本</a>
         <a href="#read">表示の読み方</a>

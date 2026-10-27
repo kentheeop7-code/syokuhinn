@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useMe } from "./me";
 import LineShare from "./LineShare";
+import CauseMini from "./CauseMini";
+
+// 気になること → 原因予測の悩み
+const TO_COMPLAINT: Record<string, string> = { tired: "tired", anemia: "tired", swell: "swell", const: "const", skin: "skin", hair: "skin", cold: "cold", sleep: "sleep", sweet: "sweet" };
 
 // 記録はとらない。「いまの気になること」を選ぶだけで、足したい栄養と食べ物が分かる。
 type Sym = { id: string; icon: string; label: string; nutrients: string[]; foods: string; tip: string; guide?: string };
@@ -102,6 +106,11 @@ export default function SymptomCheck() {
               </li>
             ))}
           </ul>
+
+          {(() => {
+            const ids = [...new Set(chosen.map((s) => TO_COMPLAINT[s.id]).filter(Boolean))];
+            return ids.length > 0 ? <CauseMini ids={ids} title="🔍 あなたの食事から見た、原因の予測" /> : null;
+          })()}
 
           <p className="balh">項目ごとの、食べ物とひとこと</p>
           <ul className="symlist">

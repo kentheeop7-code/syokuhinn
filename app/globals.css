@@ -4056,3 +4056,11 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .causeact { margin: 4px 0; font-size: 1.1rem; font-weight: 800; line-height: 1.6; }
 .causepred { margin: 6px 0 0; font-size: 0.95rem; line-height: 1.6; }
 .causeok { padding: 12px; border-radius: 14px; background: var(--s-soft); line-height: 1.7; }
+
+/* 他のページの、原因の予測（短い版） */
+.causemini { margin: 12px 0; padding: 14px; border-radius: 16px; border: 2px solid #1a6a4f; background: #fff; line-height: 1.7; }
+.causemini .balh { margin-top: 0; }
+.causemini p { margin: 6px 0; font-size: 1rem; }
+.causemini ol { list-style: none; margin: 6px 0; padding: 0 !important; display: grid; gap: 8px; }
+.causemini li { display: flex; flex-direction: column; padding: 10px 12px; border-radius: 12px; background: var(--s-soft); }
+.causemini li span { font-size: 0.95rem; color: var(--s-sub); }

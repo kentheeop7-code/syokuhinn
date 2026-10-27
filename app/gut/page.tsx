@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FOODS } from "../../lib/foods";
 import GutTools from "./GutTools";
+import CauseMini from "../CauseMini";
 import GutMore from "./GutMore";
 
 export const metadata: Metadata = {
@@ -140,6 +141,7 @@ export default function Gut() {
 
       <GuideTabs current="gut" />
       <MeCard variant="mini" topic="gut" />
+      <CauseMini ids={["const"]} />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">しくみ</a>
         <a href="#women">女性の腸</a>

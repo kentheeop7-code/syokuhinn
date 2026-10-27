@@ -419,6 +419,17 @@ export default function BalanceCheck() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [a, nick, target, band, sexKey, pal, cx]);
 
+  // 他のページ（腸活・気になること など）でも、同じ予測を使えるように、保存しておく
+  const causeKey = JSON.stringify(causeIn);
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem("lg-cin", JSON.stringify({ touched, input: causeIn }));
+      window.dispatchEvent(new Event("lg-status-change"));
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, touched, causeKey]);
+
   const sendLine = () => {
     window.open(lineUrl(message), "_blank", "noopener");
   };
