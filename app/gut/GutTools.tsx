@@ -104,6 +104,15 @@ const FIBER_FOODS: F[] = [
   { name: "無糖ヨーグルト", g: 150, label: "無糖ヨーグルト 150g", tag: "ferm" },
   { name: "ライ麦パン", g: 60, label: "ライ麦パン 60g", tag: "insol" },
   { name: "チアシード", g: 10, label: "チアシード 10g", tag: "water" },
+  { name: "おから", g: 50, label: "おから 50g", tag: "insol" },
+  { name: "きな粉", g: 10, label: "きな粉 大さじ1強（10g）", tag: "insol" },
+  { name: "ゆでひよこ豆", g: 50, label: "ひよこ豆（ゆで）50g", tag: "insol" },
+  { name: "レンズ豆（ゆで）", g: 50, label: "レンズ豆（ゆで）50g", tag: "insol" },
+  { name: "いんげん豆（ゆで）", g: 50, label: "いんげん豆（ゆで）50g", tag: "insol" },
+  { name: "モロヘイヤ", g: 50, label: "モロヘイヤ 50g", tag: "water" },
+  { name: "芽キャベツ", g: 60, label: "芽キャベツ 4個（60g）", tag: "insol" },
+  { name: "ほうれん草", g: 70, label: "ほうれん草 70g（小鉢1つ）", tag: "insol" },
+  { name: "干しぶどう", g: 15, label: "干しぶどう 15g", tag: "insol" },
 ];
 const TAGS: { key: F["tag"] | "all"; label: string }[] = [
   { key: "all", label: "すべて" },
