@@ -243,7 +243,7 @@ const MENUS: Record<Stage, { label: string; menu: Menu }> = {
     menu: [
       { title: "朝食", items: [{ name: "白ごはん", g: 140 }, { name: "卵", g: 60 }, { name: "納豆", g: 45 }, { name: "ほうれん草", g: 60 }, { name: "牛乳", g: 200 }] },
       { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "サケ（焼き）", g: 80 }, { name: "小松菜", g: 80 }, { name: "木綿豆腐", g: 100 }] },
-      { title: "夕食", items: [{ name: "白ごはん", g: 140 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "キャベツ", g: 80 }, { name: "オリーブオイル", g: 6 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 140 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "キャベツ", g: 80 }, { name: "オリーブオイル", g: 6 }, { name: "にんじん", g: 40 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "バナナ", g: 100 }] },
     ],
   },
@@ -252,7 +252,7 @@ const MENUS: Record<Stage, { label: string; menu: Menu }> = {
     menu: [
       { title: "朝食", items: [{ name: "全粒粉パン", g: 90 }, { name: "卵", g: 60 }, { name: "牛乳", g: 200 }, { name: "バナナ", g: 100 }] },
       { title: "昼食", items: [{ name: "白ごはん", g: 130 }, { name: "サバ水煮缶", g: 60 }, { name: "小松菜", g: 100 }, { name: "木綿豆腐", g: 100 }] },
-      { title: "夕食", items: [{ name: "白ごはん", g: 130 }, { name: "牛もも肉（赤身）", g: 70 }, { name: "ブロッコリー", g: 80 }, { name: "えのき", g: 50 }, { name: "納豆", g: 45 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 130 }, { name: "牛もも肉（赤身）", g: 70 }, { name: "ブロッコリー", g: 80 }, { name: "えのき", g: 50 }, { name: "納豆", g: 45 }, { name: "かぼちゃ", g: 60 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 100 }, { name: "プロセスチーズ", g: 20 }, { name: "アーモンド", g: 10 }] },
     ],
   },
@@ -261,7 +261,7 @@ const MENUS: Record<Stage, { label: string; menu: Menu }> = {
     menu: [
       { title: "朝食", items: [{ name: "白ごはん", g: 130 }, { name: "卵", g: 50 }, { name: "納豆", g: 30 }, { name: "木綿豆腐", g: 100 }, { name: "牛乳", g: 150 }] },
       { title: "昼食", items: [{ name: "白ごはん", g: 130 }, { name: "サケ（焼き）", g: 60 }, { name: "小松菜", g: 100 }, { name: "しらす干し", g: 10 }] },
-      { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "鶏むね肉（皮なし）", g: 70 }, { name: "厚揚げ", g: 60 }, { name: "キャベツ", g: 100 }, { name: "えのき", g: 50 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "鶏むね肉（皮なし）", g: 70 }, { name: "厚揚げ", g: 60 }, { name: "キャベツ", g: 100 }, { name: "えのき", g: 50 }, { name: "ごぼう", g: 40 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 100 }, { name: "プロセスチーズ", g: 15 }, { name: "りんご", g: 100 }] },
     ],
   },
@@ -270,7 +270,7 @@ const MENUS: Record<Stage, { label: string; menu: Menu }> = {
     menu: [
       { title: "朝食", items: [{ name: "白ごはん", g: 120 }, { name: "卵", g: 50 }, { name: "納豆", g: 30 }, { name: "牛乳", g: 150 }, { name: "ほうれん草", g: 60 }] },
       { title: "昼食", items: [{ name: "白ごはん", g: 120 }, { name: "サバ水煮缶", g: 50 }, { name: "小松菜", g: 80 }, { name: "木綿豆腐", g: 80 }] },
-      { title: "夕食", items: [{ name: "白ごはん", g: 110 }, { name: "鶏ささみ", g: 70 }, { name: "絹ごし豆腐", g: 60 }, { name: "ブロッコリー", g: 80 }, { name: "まいたけ", g: 50 }] },
+      { title: "夕食", items: [{ name: "白ごはん", g: 110 }, { name: "鶏ささみ", g: 70 }, { name: "絹ごし豆腐", g: 60 }, { name: "ブロッコリー", g: 80 }, { name: "まいたけ", g: 50 }, { name: "ピーマン", g: 40 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 120 }, { name: "バナナ", g: 80 }, { name: "プロセスチーズ", g: 15 }] },
     ],
   },
