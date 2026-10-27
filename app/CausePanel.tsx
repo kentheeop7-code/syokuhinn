@@ -185,7 +185,7 @@ export function analyze(i: CIn, picked: string[]): Cause[] {
   for (const c of picked) {
     for (const [id, w] of MAP[c] ?? []) {
       const f = fx[id];
-      if (!f || f.sev <= 0) continue;
+      if (!f || f.sev < 0.3) continue; // 弱いものは、原因として出さない
       const cur = sc.get(id) ?? { score: 0, rel: [] };
       cur.score += w * f.sev;
       cur.rel.push(COMPLAINTS.find((x) => x.id === c)?.label ?? c);
