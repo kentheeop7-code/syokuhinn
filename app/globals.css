@@ -3989,3 +3989,46 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .evlist small { color: var(--s-sub) !important; font-size: 0.92rem !important; }
 .evfoot { margin: 6px 14px 12px; font-size: 0.85rem; color: var(--s-sub); line-height: 1.6; }
 .tipsrc.weak { color: #8a5a00; background: #fff6df; padding: 8px 10px; border-radius: 10px; }
+
+/* ---- ステータスバー ---- */
+.statbar { padding: 14px; background: linear-gradient(135deg, #ffffff, #f1faf5); }
+.stgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sttile { padding: 12px; border-radius: 16px; background: #fff; border: 2px solid #dbe9e0; display: flex; flex-direction: column; gap: 6px; }
+.sttile.wide { grid-column: 1 / -1; }
+.sttile.ok { border-color: #2fa866; }
+.sttile.low { border-color: #e8a317; }
+.sttile.high { border-color: #d9455f; }
+.stlabel { margin: 0; font-size: 0.9rem; font-weight: 800; color: var(--s-sub); }
+.stval { margin: 0; font-size: 1rem; line-height: 1.4; }
+.stval b { font-size: 1.5rem; font-weight: 900; color: var(--g1); }
+.stval small { font-size: 0.85rem; }
+.stnone { color: var(--s-sub); font-weight: 700; }
+.stnote { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--s-sub); }
+.stbar { position: relative; height: 16px; border-radius: 999px; background: #dbe9e0; overflow: visible; }
+.stbar span { display: block; height: 100%; border-radius: 999px; background: #2fa866; }
+.sttile.low .stbar span { background: #e8a317; }
+.sttile.high .stbar span { background: #d9455f; }
+.stbar i { position: absolute; top: -4px; bottom: -4px; width: 3px; background: #14543f; border-radius: 2px; }
+.bmibar { position: relative; height: 22px; margin: 22px 8px 26px; border-radius: 999px; background: linear-gradient(90deg, #ffe3a8, #ffe3a8 18%, #dbe9e0 18%, #dbe9e0 70%, #ffd0d0 70%); }
+.bmibar .bmiok { position: absolute; top: 0; bottom: 0; background: #2fa866; border-radius: 999px; opacity: 0.85; }
+.bmibar b { position: absolute; top: -6px; width: 6px; height: 34px; background: #14543f; border-radius: 3px; transform: translateX(-50%); }
+.bmibar b span { position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.8rem; font-weight: 900; white-space: nowrap; color: #14543f; }
+.bmibar .bminow span { top: -22px; }
+.bmibar .bmigoal { background: #e07a3f; }
+.bmibar .bmigoal span { bottom: -24px; color: #b5521a; }
+.stpfc { display: flex; height: 34px; border-radius: 10px; overflow: hidden; font-size: 0.9rem; font-weight: 900; }
+.stpfc span { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; color: #12301f; }
+.stpfc .p { background: #ffd6a8; }
+.stpfc .f { background: #fff0a0; }
+.stpfc .c { background: #b9e9c9; }
+
+/* ---- 食事バランス：進み具合と、ゲージ ---- */
+.balprog { margin: 6px 0 10px; }
+.balprogbar { height: 14px; border-radius: 999px; background: #dbe9e0; overflow: hidden; }
+.balprogbar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #1a6a4f, #34b585); transition: width 0.3s; }
+.balprog p { margin: 4px 0 0; font-size: 0.92rem; font-weight: 700; color: var(--s-sub); text-align: right; }
+.balprog b { color: var(--g2); font-size: 1.1rem; }
+.balchk li .gauge { grid-column: 1 / -1; display: block; height: 10px; border-radius: 999px; background: #dbe9e0; overflow: hidden; margin-top: 4px; }
+.balchk li .gauge u { display: block; height: 100%; border-radius: 999px; background: #2fa866; text-decoration: none; }
+.balchk li.low .gauge u { background: #e8a317; }
+.balchk li.high .gauge u { background: #d9455f; }

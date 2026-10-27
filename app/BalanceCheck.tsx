@@ -171,6 +171,11 @@ export default function BalanceCheck() {
   const [loaded, setLoaded] = useState(false);
   const [touched, setTouched] = useState(false);
   const [open, setOpen] = useState<string>("me");
+  const [visited, setVisited] = useState<string[]>(["me"]);
+  const openGroup = (id: string) => {
+    setOpen(id);
+    if (id) setVisited((v) => (v.includes(id) ? v : [...v, id]));
+  };
   const [nick, setNick] = useState("");
   const [copied, setCopied] = useState(false);
   const [showText, setShowText] = useState(false);
@@ -249,13 +254,13 @@ export default function BalanceCheck() {
   const vegG = (a.veg ?? 0) * 70;
 
   const saltLimit = ref.salt[band];
-  const checks: { name: string; value: string; goal: string; st: St }[] = [
-    { name: "たんぱく質", value: `約${r0(t.p)}g`, goal: `${ref.protein[band]}g以上`, st: t.p >= ref.protein[band] * 0.9 ? "ok" : "low" },
-    { name: "食塩", value: `約${(Math.round(t.salt * 10) / 10).toFixed(1)}g`, goal: `${saltLimit}g未満`, st: t.salt >= saltLimit ? "high" : "ok" },
-    { name: "食物繊維", value: `約${r0(t.fi)}g`, goal: `${ref.fiber[band]}g以上`, st: t.fi >= ref.fiber[band] ? "ok" : "low" },
-    { name: "カルシウム", value: `約${r0(t.ca)}mg`, goal: `${ref.ca[band]}mg前後`, st: t.ca >= ref.ca[band] * 0.85 ? "ok" : "low" },
-    { name: "鉄", value: `約${(Math.round(t.fe * 10) / 10).toFixed(1)}mg`, goal: `${ref.fe[band]}mg前後`, st: t.fe >= ref.fe[band] * 0.8 ? "ok" : "low" },
-    { name: "野菜", value: `約${vegG}g`, goal: "350g（小鉢5つ）", st: vegG >= 300 ? "ok" : "low" },
+  const checks: { name: string; value: string; goal: string; st: St; pct: number }[] = [
+    { name: "たんぱく質", value: `約${r0(t.p)}g`, goal: `${ref.protein[band]}g以上`, st: t.p >= ref.protein[band] * 0.9 ? "ok" : "low", pct: t.p / ref.protein[band] },
+    { name: "食塩", value: `約${(Math.round(t.salt * 10) / 10).toFixed(1)}g`, goal: `${saltLimit}g未満`, st: t.salt >= saltLimit ? "high" : "ok", pct: t.salt / saltLimit },
+    { name: "食物繊維", value: `約${r0(t.fi)}g`, goal: `${ref.fiber[band]}g以上`, st: t.fi >= ref.fiber[band] ? "ok" : "low", pct: t.fi / ref.fiber[band] },
+    { name: "カルシウム", value: `約${r0(t.ca)}mg`, goal: `${ref.ca[band]}mg前後`, st: t.ca >= ref.ca[band] * 0.85 ? "ok" : "low", pct: t.ca / ref.ca[band] },
+    { name: "鉄", value: `約${(Math.round(t.fe * 10) / 10).toFixed(1)}mg`, goal: `${ref.fe[band]}mg前後`, st: t.fe >= ref.fe[band] * 0.8 ? "ok" : "low", pct: t.fe / ref.fe[band] },
+    { name: "野菜", value: `約${vegG}g`, goal: "350g（小鉢5つ）", st: vegG >= 300 ? "ok" : "low", pct: vegG / 350 },
   ];
   const kcalDiff = ((t.kcal - needKcal) / needKcal) * 100;
   const kcalSt: St = kcalDiff < -15 ? "low" : kcalDiff > 15 ? "high" : "ok";
@@ -282,6 +287,18 @@ export default function BalanceCheck() {
   if ((a.sleep ?? 6) <= 5) tips.push(isYouth ? "睡眠が短め：成長期は、8時間以上が目安です。夜更かしは、食欲や成長にも影響します。" : "睡眠が短め：6〜7時間を目標に。睡眠不足は、食欲を増やします。");
   const shown = tips.slice(0, 5);
   const ageInfo = AGE_INFO[band];
+
+  // ホームの「いまのステータス」に、結果を渡す
+  const okCount = rows.filter((r) => r.st === "ok").length + checks.filter((c) => c.st === "ok").length;
+  const totalCount = rows.length + checks.length;
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem("lg-status", JSON.stringify({ touched, kcal: Math.round(t.kcal), need: needKcal, kcalSt, ok: okCount, total: totalCount, p: Math.round(pe * 100), f: Math.round(fe * 100), c: Math.round(ce * 100) }));
+      window.dispatchEvent(new Event("lg-status-change"));
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, touched, t.kcal, needKcal, okCount]);
   const set = (k: string, v: number) => {
     setA((x) => ({ ...x, [k]: v }));
     setTouched(true);
@@ -355,12 +372,21 @@ export default function BalanceCheck() {
         </li>
       </ol>
 
+      <div className="balprog" aria-label={`入力の進み具合 ${visited.length}/${GROUPS.length}`}>
+        <div className="balprogbar">
+          <span style={{ width: `${Math.round((visited.length / GROUPS.length) * 100)}%` }} />
+        </div>
+        <p>
+          入力の進み具合：<b>{visited.length}</b> / {GROUPS.length}
+        </p>
+      </div>
+
       <div className="balgroups">
         {GROUPS.map((g) => {
           const isOpen = open === g.id;
           return (
             <div key={g.id} className={isOpen ? "balg open" : "balg"}>
-              <button type="button" className="balgh" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? "" : g.id)}>
+              <button type="button" className="balgh" aria-expanded={isOpen} onClick={() => openGroup(isOpen ? "" : g.id)}>
                 <span className="balgi" aria-hidden>
                   {g.icon}
                 </span>
@@ -390,7 +416,7 @@ export default function BalanceCheck() {
                   const idx = GROUPS.findIndex((x) => x.id === g.id);
                   const next = GROUPS[idx + 1];
                   return next ? (
-                    <button type="button" className="balnext" onClick={() => setOpen(next.id)}>
+                    <button type="button" className="balnext" onClick={() => openGroup(next.id)}>
                       次へ：{next.title.replace(/（.*?）/g, "")} ›
                     </button>
                   ) : (
@@ -446,6 +472,9 @@ export default function BalanceCheck() {
               <span>{c.value}</span>
               <small>目安 {c.goal}</small>
               <em>{c.st === "ok" ? "OK" : c.st === "low" ? "足りない" : "多め"}</em>
+              <i className="gauge" aria-hidden>
+                <u style={{ width: `${Math.min(100, Math.round(c.pct * 100))}%` }} />
+              </i>
             </li>
           ))}
         </ul>
@@ -509,6 +538,8 @@ export default function BalanceCheck() {
     </section>
   );
 }
+
+
 
 
 
