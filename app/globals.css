@@ -4064,3 +4064,11 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .causemini ol { list-style: none; margin: 6px 0; padding: 0 !important; display: grid; gap: 8px; }
 .causemini li { display: flex; flex-direction: column; padding: 10px 12px; border-radius: 12px; background: var(--s-soft); }
 .causemini li span { font-size: 0.95rem; color: var(--s-sub); }
+
+/* ダイエットに必要な栄養素 */
+.dnrules { margin: 6px 0 12px; padding-left: 0 !important; list-style: none; display: grid; gap: 8px; }
+.dnrules li { padding: 12px; border-radius: 14px; background: #e7f4ec; line-height: 1.7; font-size: 1rem; }
+.dnrules li b { display: block; color: #1a6a4f; font-size: 1.05rem; }
+.dnwhy { margin: 6px 0 2px; font-size: 0.95rem; line-height: 1.65; grid-column: 1 / -1; }
+.dnfoods { margin: 2px 0 0; font-size: 0.95rem; line-height: 1.65; grid-column: 1 / -1; }
+.dnfoods small { display: block; font-size: 0.8rem; font-weight: 800; color: #1a6a4f; }
