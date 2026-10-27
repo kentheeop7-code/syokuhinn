@@ -4076,3 +4076,11 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 /* ダイエットの栄養素：読みやすいよう1列に */
 section[aria-label="ダイエットに必要な栄養素"] .balchk { grid-template-columns: 1fr !important; }
 section[aria-label="ダイエットに必要な栄養素"] .balchk li { grid-template-columns: 1fr auto !important; }
+
+/* 献立カード：スマホでは1列にして、読みやすく */
+@media (max-width: 520px) {
+  .mmeals, .cycmeals, .gtmeals { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .mmeal, .cycmeals > div, .gtmeals > div { padding: 12px 14px !important; }
+  .mmeal b, .cycmeals strong, .gtmeals strong, .gtmeals b { font-size: 1.05rem !important; }
+  .mmeal li, .cycmeals li, .gtmeals li { font-size: 1rem !important; line-height: 1.65 !important; }
+}
