@@ -4084,3 +4084,12 @@ section[aria-label="ダイエットに必要な栄養素"] .balchk li { grid-tem
   .mmeal b, .cycmeals strong, .gtmeals strong, .gtmeals b { font-size: 1.05rem !important; }
   .mmeal li, .cycmeals li, .gtmeals li { font-size: 1rem !important; line-height: 1.65 !important; }
 }
+
+/* 女性ガイドの献立・目安の一覧：スマホでは1列 */
+@media (max-width: 520px) {
+  .wgmeals { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .wgmeals > div { padding: 12px 14px !important; }
+  .wgmeals li { font-size: 1rem !important; line-height: 1.65 !important; }
+  .wgmeals strong, .wgmeals b { font-size: 1.05rem !important; }
+  .mereflist { grid-template-columns: 1fr !important; }
+}
