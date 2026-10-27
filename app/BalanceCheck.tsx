@@ -39,13 +39,25 @@ const U: Record<string, Unit> = {
   out: u(0, 6, 0, 0, 120, 1.2, 0), // 外食・コンビニ・惣菜1回の、上乗せ（油・塩分）
   cake: u(4, 12, 40, 0.5, 290, 0.5, 30), // 菓子パン・ケーキ1個
   snack: u(2, 10, 22, 0.5, 180, 0.5, 20), // チョコ・スナック1回
+  oats: u(3.5, 1.7, 20, 3, 114, 0, 15), // オートミール・シリアル（約30g）
+  wbread: u(5.5, 2.4, 27, 3.3, 150, 0.8, 14), // 全粒粉パン・ライ麦パン1枚
+  chicken: u(21, 2, 0, 0, 100, 0.1, 4), // 鶏むね・ささみ（約90g）
+  liver: u(9.5, 1.9, 0.3, 0, 55, 0.1, 3), // レバー（約50g）
+  seafood: u(15, 1, 1, 0, 80, 0.5, 40), // えび・いか・貝類（約80g）
+  beans: u(5.5, 2, 9, 3.5, 80, 0.2, 20), // 豆類（煮豆・ひよこ豆・レンズ豆・約50g）
+  greenveg: u(1.8, 0.3, 3, 2.5, 22, 0, 50), // 緑黄色野菜（ほうれん草・小松菜・ブロッコリー・にんじん・トマト・かぼちゃ 約70g）
+  rootveg: u(0.8, 0.1, 8, 2.5, 36, 0, 25), // 根菜（ごぼう・れんこん・大根・にんじん 約70g）
+  salad: u(0.8, 0.1, 3, 1.2, 15, 0, 20), // 生野菜サラダ（キャベツ・レタス・きゅうり 約70g）
+  konjac: u(0.1, 0, 1, 2, 5, 0, 40), // こんにゃく・しらたき（約50g）
+  soymilk: u(7.2, 4, 6, 0.4, 88, 0, 30), // 豆乳（無調整）コップ1杯
+  smallfish: u(4, 0.5, 0, 0, 25, 0.5, 100), // 小魚（煮干し・ちりめんじゃこ・約10g）
   sugar: u(0, 0, 25, 0, 100, 0, 0), // 甘い飲み物1杯
   alcohol: u(0, 0, 5, 0, 140, 0, 0), // お酒1杯
   base: u(0, 8, 4, 0, 90, 1.2, 0), // 調理の油・調味料（平均）
 };
 
 // 鉄（mg）のおおよその量（1回あたり）
-const FE: Record<string, number> = { rice: 0.2, brown: 0.5, bread: 0.5, noodle: 1, imo: 0.5, meat: 1.6, fish: 0.9, egg: 0.9, soy: 1.8, veg: 0.7, mush: 0.8, milk: 0.02, yogurt: 0.1, fruit: 0.2, nuts: 0.8, soup: 0.6, pickle: 0.2, processed: 0.6, fried: 0.5, stir: 0.5, instant: 1.5, out: 0.3, cake: 0.5, snack: 0.5, base: 0.3 };
+const FE: Record<string, number> = { rice: 0.2, brown: 0.5, bread: 0.5, noodle: 1, imo: 0.5, meat: 1.6, fish: 0.9, egg: 0.9, soy: 1.8, veg: 0.7, mush: 0.8, milk: 0.02, yogurt: 0.1, fruit: 0.2, nuts: 0.8, soup: 0.6, pickle: 0.2, processed: 0.6, fried: 0.5, stir: 0.5, instant: 1.5, out: 0.3, cake: 0.5, snack: 0.5, base: 0.3, oats: 1.2, wbread: 0.8, chicken: 0.3, liver: 4.5, seafood: 1.2, beans: 1, greenveg: 1.2, rootveg: 0.4, salad: 0.3, konjac: 0.2, soymilk: 1.2, smallfish: 0.5 };
 
 type Opt = { v: number; t: string };
 const O = (vals: number[], unit: string, zero = "ほぼなし"): Opt[] => vals.map((v) => ({ v, t: v === 0 ? zero : `${v}${unit}` }));
@@ -71,7 +83,9 @@ const GROUPS: Group[] = [
     items: [
       { key: "rice", label: "白ごはん", short: "白ごはん", hint: "茶碗1杯（150g）", opts: O([0, 1, 2, 3, 4], "杯") },
       { key: "brown", label: "玄米・もち麦ごはん", short: "玄米もち麦", hint: "茶碗1杯（150g）", opts: O([0, 1, 2, 3], "杯") },
-      { key: "bread", label: "パン", short: "パン", hint: "食パン6枚切り1枚", opts: O([0, 1, 2, 3], "枚") },
+      { key: "bread", label: "パン（食パン・ロールなど）", short: "パン", hint: "食パン6枚切り1枚", opts: O([0, 1, 2, 3], "枚") },
+      { key: "wbread", label: "全粒粉パン・ライ麦パン", short: "全粒パン", hint: "1枚（食物繊維が多め）", opts: O([0, 1, 2, 3], "枚") },
+      { key: "oats", label: "オートミール・シリアル", short: "オーツ", hint: "約30g（大さじ4〜5）", opts: O([0, 1, 2], "回") },
       { key: "noodle", label: "麺類（うどん・ラーメン・パスタ）", short: "麺", hint: "1食ぶん", opts: O([0, 1, 2], "食") },
       { key: "imo", label: "いも・かぼちゃ・とうもろこし", short: "いも類", hint: "約100g（さつまいも1/2本）", opts: O([0, 1, 2], "つ") },
     ],
@@ -81,10 +95,14 @@ const GROUPS: Group[] = [
     icon: "🍗",
     title: "主菜（たんぱく質）",
     items: [
-      { key: "meat", label: "肉", short: "肉", hint: "手のひら1枚（約90g）", opts: O([0, 1, 2, 3], "つ") },
+      { key: "meat", label: "豚肉・牛肉", short: "豚牛肉", hint: "手のひら1枚（約90g）", opts: O([0, 1, 2, 3], "つ") },
+      { key: "chicken", label: "鶏肉（むね・ささみ・もも）", short: "鶏肉", hint: "手のひら1枚（約90g）", opts: O([0, 1, 2, 3], "つ") },
+      { key: "liver", label: "レバー", short: "レバー", hint: "約50g（鉄が多い）", opts: O([0, 1, 2], "回") },
       { key: "fish", label: "魚", short: "魚", hint: "1切れ（約80g）・缶詰も", opts: O([0, 1, 2, 3], "切れ") },
+      { key: "seafood", label: "えび・いか・貝類", short: "貝えび", hint: "約80g（あさり・えび・いか）", opts: O([0, 1, 2], "回") },
       { key: "egg", label: "卵", short: "卵", hint: "1個", opts: O([0, 1, 2, 3, 4], "個") },
       { key: "soy", label: "豆腐・納豆などの大豆", short: "大豆", hint: "豆腐1/2丁・納豆1パック", opts: O([0, 1, 2, 3], "つ") },
+      { key: "beans", label: "豆類（煮豆・ひよこ豆・レンズ豆）", short: "豆類", hint: "約50g（食物繊維が多い）", opts: O([0, 1, 2], "回") },
     ],
   },
   {
@@ -92,8 +110,12 @@ const GROUPS: Group[] = [
     icon: "🥦",
     title: "副菜（野菜・きのこ・海藻）",
     items: [
-      { key: "veg", label: "野菜", short: "野菜", hint: "小鉢1つ（約70g）。サラダ・煮物・おひたしなど", opts: [{ v: 0, t: "ほぼなし" }, { v: 2, t: "1〜2つ" }, { v: 4, t: "3〜4つ" }, { v: 6, t: "5つ〜" }] },
+      { key: "greenveg", label: "緑黄色野菜", short: "緑黄色", hint: "小鉢1つ（約70g）。ほうれん草・小松菜・ブロッコリー・にんじん・トマト・かぼちゃ", opts: O([0, 1, 2, 3, 4], "つ") },
+      { key: "veg", label: "その他の野菜", short: "野菜", hint: "小鉢1つ（約70g）。キャベツ・玉ねぎ・なす・白菜・もやしなど", opts: O([0, 1, 2, 3, 4], "つ") },
+      { key: "rootveg", label: "根菜", short: "根菜", hint: "小鉢1つ（約70g）。ごぼう・れんこん・大根・かぶ", opts: O([0, 1, 2], "つ") },
+      { key: "salad", label: "生野菜サラダ", short: "サラダ", hint: "小皿1つ（約70g）。キャベツ・レタス・きゅうり", opts: O([0, 1, 2, 3], "つ") },
       { key: "mush", label: "きのこ・海藻", short: "きのこ海藻", hint: "1回（わかめ・しいたけなど）", opts: O([0, 1, 2], "回") },
+      { key: "konjac", label: "こんにゃく・しらたき", short: "こんにゃく", hint: "約50g（食物繊維・低エネルギー）", opts: O([0, 1, 2], "回") },
     ],
   },
   {
@@ -102,7 +124,9 @@ const GROUPS: Group[] = [
     title: "乳製品・果物・ナッツ",
     items: [
       { key: "milk", label: "牛乳", short: "牛乳", hint: "コップ1杯（200ml）", opts: O([0, 1, 2, 3], "杯") },
+      { key: "soymilk", label: "豆乳（無調整）", short: "豆乳", hint: "コップ1杯（200ml）", opts: O([0, 1, 2], "杯") },
       { key: "yogurt", label: "ヨーグルト・チーズ", short: "ヨーグルト", hint: "ヨーグルト1個・チーズ1切れ", opts: O([0, 1, 2], "つ") },
+      { key: "smallfish", label: "小魚（煮干し・ちりめんじゃこ）", short: "小魚", hint: "ひとつまみ（約10g）。塩分にも注意", opts: O([0, 1, 2], "回") },
       { key: "fruit", label: "果物", short: "果物", hint: "りんご1/2個・バナナ1本・みかん1個", opts: O([0, 1, 2], "つ") },
       { key: "nuts", label: "ナッツ", short: "ナッツ", hint: "ひとつかみ（約20g）", opts: O([0, 1, 2], "回") },
     ],
@@ -153,7 +177,7 @@ const GROUPS: Group[] = [
   },
 ];
 
-const DEFAULT: Record<string, number> = { sex: 1, band: 3, pal: 1, rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 2, mush: 1, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
+const DEFAULT: Record<string, number> = { sex: 1, band: 3, pal: 1, rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 1, greenveg: 1, rootveg: 0, salad: 0, mush: 1, konjac: 0, oats: 0, wbread: 0, chicken: 0, liver: 0, seafood: 0, beans: 0, soymilk: 0, smallfish: 0, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
 const HABIT_KEYS = new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
 const r0 = (n: number) => Math.round(n);
 
@@ -251,7 +275,7 @@ export default function BalanceCheck() {
     { name: "炭水化物", cls: "c", g: t.c, pct: ce, st: target ? judge(t.c, target.c * 0.8, target.c * 1.2) : judge(ce, 0.5, 0.65) },
   ];
   const stText: Record<St, string> = { low: "少なめ", ok: "ちょうどよい", high: "多め" };
-  const vegG = (a.veg ?? 0) * 70;
+  const vegG = ((a.veg ?? 0) + (a.greenveg ?? 0) + (a.rootveg ?? 0) + (a.salad ?? 0)) * 70;
 
   const saltLimit = ref.salt[band];
   const checks: { name: string; value: string; goal: string; st: St; pct: number }[] = [
