@@ -65,7 +65,7 @@ const PHASE_MENU: Record<Phase, { focus: string; meals: MealP[]; actions: string
     focus: "鉄＋ビタミンC＋体を温める",
     meals: [
       { title: "朝食", items: [{ name: "白ごはん", g: 130 }, { name: "卵", g: 60 }, { name: "納豆", g: 30 }, { name: "小松菜", g: 60 }] },
-      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "キャベツ", g: 80 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "牛もも肉（赤身）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "キャベツ", g: 80 }, { name: "にんじん", g: 40 }] },
       { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "アサリ", g: 60 }, { name: "木綿豆腐", g: 100 }, { name: "えのき", g: 50 }, { name: "小松菜", g: 60 }] },
       { title: "間食", items: [{ name: "豆乳（無調整）", g: 200 }, { name: "バナナ", g: 100 }] },
     ],
@@ -80,7 +80,7 @@ const PHASE_MENU: Record<Phase, { focus: string; meals: MealP[]; actions: string
     focus: "たんぱく質＋野菜＋カルシウム（見直しに最適）",
     meals: [
       { title: "朝食", items: [{ name: "オートミール", g: 40 }, { name: "牛乳", g: 200 }, { name: "バナナ", g: 100 }, { name: "卵", g: 60 }] },
-      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "鶏むね肉（皮なし）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "トマト", g: 100 }] },
+      { title: "昼食", items: [{ name: "白ごはん", g: 140 }, { name: "鶏むね肉（皮なし）", g: 90 }, { name: "ブロッコリー", g: 80 }, { name: "トマト", g: 100 }, { name: "かぼちゃ", g: 60 }] },
       { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "サケ（焼き）", g: 70 }, { name: "ほうれん草", g: 80 }, { name: "木綿豆腐", g: 100 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "アーモンド", g: 10 }] },
     ],
@@ -95,7 +95,7 @@ const PHASE_MENU: Record<Phase, { focus: string; meals: MealP[]; actions: string
     focus: "水分＋食物繊維＋バランス",
     meals: [
       { title: "朝食", items: [{ name: "全粒粉パン", g: 90 }, { name: "卵", g: 60 }, { name: "牛乳", g: 200 }, { name: "りんご", g: 100 }] },
-      { title: "昼食", items: [{ name: "玄米ごはん", g: 140 }, { name: "豚ヒレ肉", g: 90 }, { name: "キャベツ", g: 100 }, { name: "しめじ", g: 50 }] },
+      { title: "昼食", items: [{ name: "玄米ごはん", g: 140 }, { name: "豚ヒレ肉", g: 90 }, { name: "キャベツ", g: 100 }, { name: "しめじ", g: 50 }, { name: "ごぼう", g: 40 }] },
       { title: "夕食", items: [{ name: "白ごはん", g: 120 }, { name: "タラ", g: 100 }, { name: "小松菜", g: 80 }, { name: "わかめ（生）", g: 30 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "キウイ", g: 80 }] },
     ],
@@ -110,7 +110,7 @@ const PHASE_MENU: Record<Phase, { focus: string; meals: MealP[]; actions: string
     focus: "塩分ひかえめ＋食物繊維＋カリウム",
     meals: [
       { title: "朝食", items: [{ name: "オートミール", g: 40 }, { name: "牛乳", g: 200 }, { name: "バナナ", g: 100 }, { name: "卵", g: 60 }] },
-      { title: "昼食", items: [{ name: "玄米ごはん", g: 140 }, { name: "鶏むね肉（皮なし）", g: 80 }, { name: "ブロッコリー", g: 80 }, { name: "ほうれん草", g: 60 }] },
+      { title: "昼食", items: [{ name: "玄米ごはん", g: 140 }, { name: "鶏むね肉（皮なし）", g: 80 }, { name: "ブロッコリー", g: 80 }, { name: "ほうれん草", g: 60 }, { name: "ピーマン", g: 40 }] },
       { title: "夕食", items: [{ name: "白ごはん", g: 110 }, { name: "サケ（焼き）", g: 70 }, { name: "納豆", g: 45 }, { name: "しめじ", g: 50 }, { name: "わかめ（生）", g: 30 }] },
       { title: "間食", items: [{ name: "無糖ヨーグルト", g: 150 }, { name: "りんご", g: 100 }] },
     ],
