@@ -72,6 +72,13 @@ export default function SymptomCheck() {
         <b>記録は、いりません。</b>いま気になることを、タップして選ぶだけ（いくつでもOK）。足したい栄養と、食べ物が分かります。
       </p>
 
+      <p className="agnote">
+        原因を知りたいときは、ホームの
+        <Link href="/" className="evlink">
+          「いまの食事のバランス」→ 原因を予測する ›
+        </Link>
+        で、いつもの食事から調べられます。
+      </p>
       <div className="symchips">
         {list.map((s) => (
           <button key={s.id} type="button" aria-pressed={sel.includes(s.id)} className={sel.includes(s.id) ? "on" : ""} onClick={() => toggle(s.id)}>

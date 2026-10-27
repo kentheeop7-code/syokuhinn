@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import EvidenceBox from "./EvidenceBox";
+import CausePanel, { analyze, COMPLAINTS, type CIn } from "./CausePanel";
 import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 
 // 記録はとらない。「いつもの1日」を、ざっくり選ぶだけで、いまの食事のバランスが分かる。
@@ -178,7 +179,16 @@ const GROUPS: Group[] = [
 ];
 
 const DEFAULT: Record<string, number> = { sex: 1, band: 3, pal: 1, rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 1, greenveg: 1, rootveg: 0, salad: 0, mush: 1, konjac: 0, oats: 0, wbread: 0, chicken: 0, liver: 0, seafood: 0, beans: 0, soymilk: 0, smallfish: 0, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
-const HABIT_KEYS = new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
+// いつもの食事に近いものを、1タップで入れる（あとで細かく直せる）
+const FOOD_KEYS = GROUPS.filter((g) => !["me", "habit"].includes(g.id)).flatMap((g) => g.items.map((i) => i.key));
+const PRESETS: { id: string; icon: string; label: string; vals: Record<string, number> }[] = [
+  { id: "wa", icon: "🍙", label: "和食ごはん派", vals: { rice: 2, fish: 1, soy: 1, egg: 1, greenveg: 1, veg: 1, mush: 1, soup: 1, pickle: 1 } },
+  { id: "pan", icon: "🥐", label: "パン・軽め", vals: { bread: 2, egg: 1, milk: 1, fruit: 1, salad: 1, snack: 1 } },
+  { id: "men", icon: "🍜", label: "麺・丼・外食が多い", vals: { noodle: 1, rice: 1, out: 2, fried: 1, meat: 1, sugar: 1, veg: 0 } },
+  { id: "meat", icon: "🍖", label: "肉・こってり中心", vals: { rice: 2, meat: 2, chicken: 1, fried: 1, stir: 1, veg: 1, processed: 1 } },
+  { id: "healthy", icon: "🥗", label: "ヘルシー・野菜多め", vals: { brown: 1, rice: 1, fish: 1, chicken: 1, soy: 1, greenveg: 2, veg: 1, salad: 1, mush: 1, fruit: 1, yogurt: 1 } },
+];
+const HABIT_KEYS =new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
 const r0 = (n: number) => Math.round(n);
 
 type Target = { kcal: number; p: number; f: number; c: number } | null;
@@ -200,6 +210,8 @@ export default function BalanceCheck() {
     setOpen(id);
     if (id) setVisited((v) => (v.includes(id) ? v : [...v, id]));
   };
+  const [cx, setCx] = useState<string[]>([]);
+  const [preset, setPreset] = useState("");
   const [nick, setNick] = useState("");
   const [copied, setCopied] = useState(false);
   const [showText, setShowText] = useState(false);
@@ -211,6 +223,8 @@ export default function BalanceCheck() {
         setA({ ...DEFAULT, ...s });
         if (Object.keys(s).some((k) => !["sex", "band", "pal"].includes(k))) setTouched(true);
       }
+      const c = JSON.parse(localStorage.getItem("lg-cause") || "null");
+      if (Array.isArray(c)) setCx(c.filter((x) => typeof x === "string"));
       const k = JSON.parse(localStorage.getItem("lg-kcal") || "null");
       if (k?.kcal && k.p && k.f && k.c) setTarget({ kcal: parseFloat(k.kcal), p: k.p, f: k.f, c: k.c });
     } catch {}
@@ -326,6 +340,41 @@ export default function BalanceCheck() {
   const set = (k: string, v: number) => {
     setA((x) => ({ ...x, [k]: v }));
     setTouched(true);
+    setPreset("");
+  };
+  const applyPreset = (id: string) => {
+    const p = PRESETS.find((x) => x.id === id);
+    if (!p) return;
+    setA((x) => {
+      const n = { ...x };
+      for (const k of FOOD_KEYS) n[k] = 0;
+      return { ...n, ...p.vals };
+    });
+    setTouched(true);
+    setPreset(id);
+  };
+  const toggleCx = (id: string) => {
+    setCx((x) => {
+      const n = x.includes(id) ? x.filter((y) => y !== id) : [...x, id];
+      try {
+        localStorage.setItem("lg-cause", JSON.stringify(n));
+      } catch {}
+      return n;
+    });
+  };
+  const causeIn: CIn = {
+    a,
+    kcalDiff,
+    fatPct: fe,
+    carbPct: ce,
+    p: t.p,
+    fi: t.fi,
+    salt: t.salt,
+    feMg: t.fe,
+    ca: t.ca,
+    vegG,
+    need: { protein: ref.protein[band], fiber: ref.fiber[band], salt: saltLimit, fe: ref.fe[band], ca: ref.ca[band] },
+    isYouth,
   };
 
   const summary = (g: Group) => {
@@ -356,11 +405,19 @@ export default function BalanceCheck() {
       lines.push("■ 気になる点");
       shown.slice(0, 3).forEach((x) => lines.push(`・${x.split("：")[0]}`));
     }
+    const cz = touched && cx.length > 0 ? analyze(causeIn, cx) : [];
+    if (cz.length > 0) {
+      lines.push("");
+      lines.push("■ 気になること：" + cx.map((id) => COMPLAINTS.find((c) => c.id === id)?.label ?? id).join("・"));
+      lines.push("■ 食事から考えられる原因");
+      cz.forEach((c, i) => lines.push(`${i + 1}. ${c.name}（${c.num}）`));
+      lines.push(`→ まず：${cz[0].act}`);
+    }
     lines.push("");
     lines.push("※ ざっくり計算した目安です。");
     return lines.join("\n");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [a, nick, target, band, sexKey, pal]);
+  }, [a, nick, target, band, sexKey, pal, cx]);
 
   const sendLine = () => {
     window.open(lineUrl(message), "_blank", "noopener");
@@ -392,7 +449,10 @@ export default function BalanceCheck() {
           <b>2</b>結果を見る
         </li>
         <li>
-          <b>3</b>LINEで送る
+          <b>3</b>原因を知る
+        </li>
+        <li>
+          <b>4</b>LINEで送る
         </li>
       </ol>
 
@@ -403,6 +463,18 @@ export default function BalanceCheck() {
         <p>
           入力の進み具合：<b>{visited.length}</b> / {GROUPS.length}
         </p>
+      </div>
+
+      <div className="balpresets">
+        <p className="balh sub">いちばん近いものを、1タップ（あとで細かく直せます）</p>
+        <div className="symchips">
+          {PRESETS.map((p) => (
+            <button key={p.id} type="button" aria-pressed={preset === p.id} className={preset === p.id ? "on" : ""} onClick={() => applyPreset(p.id)}>
+              <span aria-hidden>{p.icon}</span>
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="balgroups">
@@ -518,6 +590,7 @@ export default function BalanceCheck() {
         ) : (
           <p className="baltips ok">バランスは、よい状態です。この調子で、続けましょう。</p>
         )}
+        <CausePanel input={causeIn} picked={cx} onToggle={toggleCx} touched={touched} />
         <div className="balage">
           <p className="balh">🌱 {ageInfo.title}</p>
           <ul>

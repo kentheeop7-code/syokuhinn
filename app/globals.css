@@ -4032,3 +4032,27 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .balchk li .gauge u { display: block; height: 100%; border-radius: 999px; background: #2fa866; text-decoration: none; }
 .balchk li.low .gauge u { background: #e8a317; }
 .balchk li.high .gauge u { background: #d9455f; }
+
+/* 原因の予測・1タップ入力 */
+.balsteps { grid-template-columns: repeat(4, 1fr) !important; }
+.balsteps li { font-size: 0.85rem !important; padding: 8px 2px !important; }
+.balpresets { margin: 6px 0 14px; padding: 12px; border-radius: 16px; background: var(--s-soft); }
+.balpresets .balh { margin-top: 0; }
+.causep { margin: 18px 0; padding: 14px; border-radius: 18px; border: 2px solid #1a6a4f; background: #fff; }
+.causesteps { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; padding: 0 !important; }
+.causesteps li { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 14px; background: var(--s-soft); font-weight: 800; font-size: 0.85rem; text-align: center; }
+.causesteps li b { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 50%; background: #1a6a4f; color: #fff; }
+.causelist { list-style: none; margin: 8px 0; padding: 0 !important; display: grid; gap: 10px; }
+.causelist li { padding: 12px; border-radius: 14px; background: var(--s-soft); }
+.causet { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 1.05rem; }
+.causet i { font-style: normal; display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 50%; background: #1a6a4f; color: #fff; font-weight: 900; }
+.causet em { font-style: normal; font-size: 0.85rem; font-weight: 800; padding: 2px 10px; border-radius: 999px; background: #fff; border: 2px solid #1a6a4f; color: #1a6a4f; }
+.causet em.lv-高い { background: #c0392b; border-color: #c0392b; color: #fff; }
+.causet em.lv-あり { background: #fff3e0; border-color: #e08a00; color: #8a5200; }
+.causen { margin: 4px 0; font-size: 1rem; line-height: 1.65; }
+.causen small { display: block; font-size: 0.8rem; font-weight: 800; color: #1a6a4f; }
+.causerel { margin: 4px 0 0; font-size: 0.88rem; color: var(--s-sub); }
+.causego { margin-top: 10px; padding: 12px; border-radius: 14px; background: #e7f4ec; }
+.causeact { margin: 4px 0; font-size: 1.1rem; font-weight: 800; line-height: 1.6; }
+.causepred { margin: 6px 0 0; font-size: 0.95rem; line-height: 1.6; }
+.causeok { padding: 12px; border-radius: 14px; background: var(--s-soft); line-height: 1.7; }
