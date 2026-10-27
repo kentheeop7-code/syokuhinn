@@ -2,6 +2,7 @@
 
 import StatusBar from "./StatusBar";
 import MeCard from "./MeCard";
+import NationalGuide from "./NationalGuide";
 import LineShare from "./LineShare";
 import { readMe, useMe, REF as ME_REF } from "./me";
 import type { KcalType } from "./MyKcal";
@@ -2112,6 +2113,7 @@ function HomeInner() {
         <>
           <StatusBar />
           <BalanceCheck />
+          <NationalGuide />
           <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
             <WeightChart />
           </Fold>
