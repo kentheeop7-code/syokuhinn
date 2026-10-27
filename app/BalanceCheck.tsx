@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import EvidenceBox from "./EvidenceBox";
@@ -182,11 +182,11 @@ const DEFAULT: Record<string, number> = { sex: 1, band: 3, pal: 1, rice: 2, brow
 // いつもの食事に近いものを、1タップで入れる（あとで細かく直せる）
 const FOOD_KEYS = GROUPS.filter((g) => !["me", "habit"].includes(g.id)).flatMap((g) => g.items.map((i) => i.key));
 const PRESETS: { id: string; icon: string; label: string; vals: Record<string, number> }[] = [
-  { id: "wa", icon: "🍙", label: "和食ごはん派", vals: { rice: 2, fish: 1, soy: 1, egg: 1, greenveg: 1, veg: 1, mush: 1, soup: 1, pickle: 1 } },
-  { id: "pan", icon: "🥐", label: "パン・軽め", vals: { bread: 2, egg: 1, milk: 1, fruit: 1, salad: 1, snack: 1 } },
-  { id: "men", icon: "🍜", label: "麺・丼・外食が多い", vals: { noodle: 1, rice: 1, out: 2, fried: 1, meat: 1, sugar: 1, veg: 0 } },
-  { id: "meat", icon: "🍖", label: "肉・こってり中心", vals: { rice: 2, meat: 2, chicken: 1, fried: 1, stir: 1, veg: 1, processed: 1 } },
-  { id: "healthy", icon: "🥗", label: "ヘルシー・野菜多め", vals: { brown: 1, rice: 1, fish: 1, chicken: 1, soy: 1, greenveg: 2, veg: 1, salad: 1, mush: 1, fruit: 1, yogurt: 1 } },
+  { id: "wa", icon: "🍙", label: "和食ごはん派", vals: { rice: 3, fish: 2, soy: 2, egg: 1, greenveg: 2, veg: 2, mush: 1, soup: 2, pickle: 1, fruit: 1, milk: 1 } },
+  { id: "pan", icon: "🥐", label: "パン・軽め", vals: { bread: 3, rice: 1, egg: 2, milk: 1, yogurt: 1, fruit: 1, salad: 1, veg: 2, chicken: 1, meat: 1, snack: 1, out: 1, soup: 1 } },
+  { id: "men", icon: "🍜", label: "麺・丼・外食が多い", vals: { noodle: 2, rice: 1, out: 2, fried: 1, meat: 1, egg: 1, sugar: 1, veg: 1 } },
+  { id: "meat", icon: "🍖", label: "肉・こってり中心", vals: { rice: 3, meat: 2, chicken: 1, fried: 1, stir: 1, veg: 1, processed: 1, snack: 1 } },
+  { id: "healthy", icon: "🥗", label: "ヘルシー・野菜多め", vals: { brown: 2, rice: 1, fish: 2, chicken: 1, soy: 2, greenveg: 2, veg: 2, salad: 1, mush: 1, fruit: 2, yogurt: 1, milk: 1, soup: 1 } },
 ];
 const HABIT_KEYS =new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
 const r0 = (n: number) => Math.round(n);
