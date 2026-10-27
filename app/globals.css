@@ -4072,3 +4072,7 @@ main .agnote.small, main .note.small { font-size: 0.92rem !important; }
 .dnwhy { margin: 6px 0 2px; font-size: 0.95rem; line-height: 1.65; grid-column: 1 / -1; }
 .dnfoods { margin: 2px 0 0; font-size: 0.95rem; line-height: 1.65; grid-column: 1 / -1; }
 .dnfoods small { display: block; font-size: 0.8rem; font-weight: 800; color: #1a6a4f; }
+
+/* ダイエットの栄養素：読みやすいよう1列に */
+section[aria-label="ダイエットに必要な栄養素"] .balchk { grid-template-columns: 1fr !important; }
+section[aria-label="ダイエットに必要な栄養素"] .balchk li { grid-template-columns: 1fr auto !important; }
