@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ADDITIVES, type Additive } from "./additivesData";
 import { MORE } from "./additivesMore";
 
@@ -65,6 +65,8 @@ function Card({ a }: { a: Additive }) {
 function Dictionary() {
   const [q, setQ] = useState("");
   const [lv, setLv] = useState<"all" | Additive["lv"]>("all");
+  const [limit, setLimit] = useState(8);
+  useEffect(() => setLimit(8), [q, lv]);
   const list = useMemo(() => {
     const s = q.trim();
     return ADDITIVES.filter((a) => (lv === "all" || a.lv === lv) && (!s || a.name.includes(s) || a.keys.some((k) => k.includes(s) || s.includes(k)) || a.role.includes(s) || a.where.includes(s)));
@@ -89,9 +91,14 @@ function Dictionary() {
         ))}
       </div>
       <p className="adcount">{list.length}件</p>
-      {list.map((a) => (
+      {list.slice(0, limit).map((a) => (
         <Card key={a.id} a={a} />
       ))}
+      {list.length > limit && (
+        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 8)}>
+          もっと見る（あと{list.length - limit}件）
+        </button>
+      )}
       {list.length === 0 && <p className="adnote">見つかりませんでした。別の言葉で、さがしてみてください。</p>}
       <p className="adnote small">
         「気をつけたい度」は、このアプリの目安です（国の安全性評価や、摂取量調査、研究をもとに、日常でとる量を想定しました）。個人の診断ではありません。

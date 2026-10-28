@@ -2169,7 +2169,7 @@ function HomeInner() {
             </span>
             <i aria-hidden>›</i>
           </Link>
-          <Fold key="w-me" id="w-me" title="👤 あなたの1日の目安" sub="性別・年齢で、目安が変わります" cls="wfold" defaultOpen><MeCard /></Fold>
+          <Fold key="w-me" id="w-me" title="👤 あなたの1日の目安" sub="性別・年齢で、目安が変わります" cls="wfold"><MeCard /></Fold>
           <Fold key="w-sym" id="w-sym" title="🩺 気になることから、足したい栄養を探す" sub="選ぶだけ。記録は、いりません" cls="wfold" defaultOpen><SymptomCheck /></Fold>
           <MyKcal topic="women" />
           {meHook.sexKey === "f" && <Fold key="w-cycle" id="w-cycle" title="🌸 今日のからだと、月経周期" sub="今の時期の食事・過ごし方" cls="wfold"><CycleTracker /></Fold>}
