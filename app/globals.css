@@ -4114,3 +4114,12 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
   .tagline, .member { display: none; }
   .container > .title { margin-bottom: 6px; }
 }
+
+/* スマホ：入力しながら、いつでも「結果」へ飛べるボタン／入れた内容の確認 */
+.balfloat { display: none; }
+.balpicked { margin: 0 0 10px; padding: 10px 12px; border-radius: 12px; background: #e7f4ec; color: #14543f; font-weight: 800; line-height: 1.6; }
+@media (max-width: 520px) {
+  .balfloat { display: flex; align-items: center; justify-content: center; position: sticky; bottom: 104px; z-index: 5; width: 100%; min-height: 56px; margin-top: 12px; border: 0; border-radius: 999px; background: linear-gradient(135deg, #1a6a4f, #2f9e75); color: #fff; font-family: inherit; font-size: 1.1rem; font-weight: 900; box-shadow: 0 8px 20px rgba(20, 84, 63, 0.35); cursor: pointer; }
+  .container > .title { font-size: 1.9rem !important; }
+  .homejump a { min-height: 56px; }
+}

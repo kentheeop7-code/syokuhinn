@@ -488,6 +488,12 @@ export default function BalanceCheck() {
         </div>
       </div>
 
+      {preset && (
+        <p className="balpicked" role="status">
+          ✓ 「{PRESETS.find((p) => p.id === preset)?.label}」を入れました。違うところは、下で直せます。
+        </p>
+      )}
+
       <div className="balgroups">
         {GROUPS.map((g) => {
           const isOpen = open === g.id;
@@ -536,6 +542,9 @@ export default function BalanceCheck() {
             </div>
           );
         })}
+        <button type="button" className="balfloat" onClick={() => document.querySelector(".balres")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+          ✅ 結果を見る ↓
+        </button>
       </div>
 
       <div className="balres">
