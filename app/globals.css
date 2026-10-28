@@ -4133,3 +4133,10 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
   .balrows li em { grid-column: 3; grid-row: 1 / span 2; white-space: nowrap; align-self: center; }
   .balrows li i.dot { grid-row: 1 / span 2; }
 }
+
+/* スマホ：「そのほかのチェック」も1列に */
+@media (max-width: 520px) {
+  .balchk { grid-template-columns: 1fr !important; }
+  .balchk li { grid-template-columns: 1fr auto !important; }
+  .balchk li em { white-space: nowrap; }
+}
