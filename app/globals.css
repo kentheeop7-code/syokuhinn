@@ -4108,3 +4108,9 @@ section[aria-label="ダイエットに必要な栄養素"] .balchk li { grid-tem
 .homejump a span { font-size: 1.25rem; }
 #bal, #cause, .fold .foldh { scroll-margin-top: 76px; }
 details.balage > summary { cursor: pointer; min-height: 52px; display: flex; align-items: center; margin: 0; }
+
+/* スマホ：最初の画面で、すぐ操作できるよう、上の余白を詰める */
+@media (max-width: 520px) {
+  .tagline, .member { display: none; }
+  .container > .title { margin-bottom: 6px; }
+}
