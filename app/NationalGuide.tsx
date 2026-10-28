@@ -4,7 +4,7 @@ import EvidenceBox from "./EvidenceBox";
 import { BAND_SHORT, REF, useMe } from "./me";
 
 // 厚生労働省の指針にある数値だけを載せる（確認できたものに限る）
-export default function NationalGuide() {
+export default function NationalGuide({ bare = false }: { bare?: boolean }) {
   const me = useMe();
   if (!me.ready) return null;
   const b = me.band;
@@ -21,7 +21,11 @@ export default function NationalGuide() {
   if (!me.isYouth) rows.push({ icon: "💪", name: "筋トレ", val: "週2〜3日" });
   return (
     <section className="card" aria-label="国の指針でみる1日の目安">
-      <h2 className="h2" style={{ marginTop: 0 }}>🏛 国の指針でみる1日の目安</h2>
+      {!bare && (
+        <h2 className="h2" style={{ marginTop: 0 }}>
+          🏛 国の指針でみる1日の目安
+        </h2>
+      )}
       <p className="agnote">
         {me.sexKey === "f" ? "女性" : "男性"}・{BAND_SHORT[b]}の目安です。厚生労働省の資料にある数値だけを載せています。
       </p>

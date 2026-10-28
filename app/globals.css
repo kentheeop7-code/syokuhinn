@@ -4099,3 +4099,12 @@ section[aria-label="ダイエットに必要な栄養素"] .balchk li { grid-tem
 .adhead .adname { flex: 1 1 100% !important; min-width: 0; font-size: 1.1rem !important; line-height: 1.5; }
 .adhead .adlv { flex: 1 1 auto; min-width: 0; }
 .adhead i { margin-left: auto; }
+
+/* ホームのジャンプ（目次） */
+.homejump { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 10px; margin: 4px 0 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.homejump::-webkit-scrollbar { display: none; }
+.homejump a { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; min-height: 52px; padding: 8px 16px; border-radius: 999px; background: #fff; border: 2px solid #2f9e75; color: #14543f; font-weight: 900; font-size: 1rem; text-decoration: none; white-space: nowrap; }
+.homejump a:active { background: #e9f6ef; }
+.homejump a span { font-size: 1.25rem; }
+#bal, #cause, .fold .foldh { scroll-margin-top: 76px; }
+details.balage > summary { cursor: pointer; min-height: 52px; display: flex; align-items: center; margin: 0; }

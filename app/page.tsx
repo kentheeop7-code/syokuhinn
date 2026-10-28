@@ -4,6 +4,7 @@ import StatusBar from "./StatusBar";
 import MeCard from "./MeCard";
 import NationalGuide from "./NationalGuide";
 import DietNutrients from "./DietNutrients";
+import HomeJump from "./HomeJump";
 import LineShare from "./LineShare";
 import { readMe, useMe, REF as ME_REF } from "./me";
 import type { KcalType } from "./MyKcal";
@@ -2113,9 +2114,11 @@ function HomeInner() {
       {tab === "record" ? (
         <>
           <StatusBar />
+          <HomeJump />
           <BalanceCheck />
-          <DietNutrients />
-          <NationalGuide />
+          <Fold key="h-nutr" id="h-nutr" title="🧪 ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など、あなたの目安" cls="wfold">
+            <DietNutrients bare />
+          </Fold>
           <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
             <WeightChart />
           </Fold>
@@ -2128,6 +2131,9 @@ function HomeInner() {
             <ProfileGoal setGoal={setGoal} />
           </Fold>
 
+          <Fold key="h-guide" id="h-guide" title="🏛 国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）" cls="wfold">
+            <NationalGuide bare />
+          </Fold>
           <Fold key="h-tip" id="h-tip" title="💡 今日の豆知識" sub="1日1つ、ひとことで" cls="wfold">
         <TipsTicker />
       </Fold>

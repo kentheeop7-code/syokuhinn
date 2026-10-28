@@ -9,7 +9,7 @@ type St = "ok" | "low" | "high" | "none";
 type Row = { name: string; target: string; now?: number; goal?: number; unit: string; max?: boolean; why: string; foods: string };
 
 // ダイエット（減量）中に、特に不足させたくない栄養素。目標値は、日本人の食事摂取基準（2025年版）。
-export default function DietNutrients() {
+export default function DietNutrients({ bare = false }: { bare?: boolean }) {
   const me = useMe();
   const [cin, setCin] = useState<{ touched: boolean; input: CIn } | null>(null);
   useEffect(() => {
@@ -46,7 +46,11 @@ export default function DietNutrients() {
   };
   return (
     <section className="card" aria-label="ダイエットに必要な栄養素">
-      <h2 className="h2" style={{ marginTop: 0 }}>🥗 ダイエットに必要な栄養素</h2>
+      {!bare && (
+        <h2 className="h2" style={{ marginTop: 0 }}>
+          🥗 ダイエットに必要な栄養素
+        </h2>
+      )}
       <p className="agnote">
         {me.sexKey === "f" ? "女性" : "男性"}・{BAND_SHORT[b]}の目安です。{x ? "「いまの食事」は、ホームで選んだ内容からの概算です。" : "ホームの「いまの食事のバランス」を選ぶと、あなたの食事との比較が出ます。"}
       </p>

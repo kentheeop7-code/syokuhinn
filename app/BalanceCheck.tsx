@@ -444,7 +444,7 @@ export default function BalanceCheck() {
   };
 
   return (
-    <section className="card bal" aria-label="いまの食事のバランス">
+    <section className="card bal" id="bal" aria-label="いまの食事のバランス">
       <h2 className="h2" style={{ marginTop: 0 }}>
         🥗 いまの食事のバランス
       </h2>
@@ -602,8 +602,8 @@ export default function BalanceCheck() {
           <p className="baltips ok">バランスは、よい状態です。この調子で、続けましょう。</p>
         )}
         <CausePanel input={causeIn} picked={cx} onToggle={toggleCx} touched={touched} />
-        <div className="balage">
-          <p className="balh">🌱 {ageInfo.title}</p>
+        <details className="balage">
+          <summary className="balh">🌱 {ageInfo.title}（タップで開く）</summary>
           <ul>
             {ageInfo.points.map((x) => (
               <li key={x}>{x}</li>
@@ -613,7 +613,7 @@ export default function BalanceCheck() {
             <b>この年代の重点：</b>
             {ageInfo.focus}
           </p>
-        </div>
+        </details>
         <EvidenceBox ids={["dri2025", "food8"]} level="目安の基準は強い／食事の量は、ざっくり" note="必要なエネルギー・たんぱく質・カルシウム・鉄・食物繊維・食塩・PFCの割合は、国の基準（性別・年齢別）です。「いつもの1日」から出した食事の量は、食品1回ぶんの、おおまかな換算で、実際とは差があります。" />
       </div>
 

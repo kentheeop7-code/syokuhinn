@@ -559,7 +559,7 @@ export default function Nutrients() {
       </nav>
 
       <Fold defaultOpen id="me" title="あなたの1日の目安（性別・年齢）"><MeCard /></Fold>
-      <Fold defaultOpen id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients /></Fold>
+      <Fold defaultOpen id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold defaultOpen id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
       <Fold id="goals" title="目的別ガイド">
       <ul className="nlist">

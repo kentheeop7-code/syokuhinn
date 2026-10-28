@@ -203,7 +203,7 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
   const causes = analyze(input, picked);
   const top = causes[0];
   return (
-    <div className="causep">
+    <div className="causep" id="cause">
       <p className="balh">🔍 いまの悩みの「原因」を、予測する</p>
       <ol className="causesteps">
         <li><b>1</b>悩みを選ぶ</li>
