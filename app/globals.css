@@ -4140,3 +4140,7 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
   .balchk li { grid-template-columns: 1fr auto !important; }
   .balchk li em { white-space: nowrap; }
 }
+
+/* 一覧の「もっと見る」 */
+.morebtn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 60px; margin: 14px 0; border: 2px solid #1a6a4f; border-radius: 16px; background: #fff; color: #14543f; font-family: inherit; font-size: 1.1rem; font-weight: 900; cursor: pointer; }
+.morebtn:active { background: #e9f6ef; }

@@ -80,6 +80,8 @@ export default function ProductSearch() {
   const [group, setGroup] = useState("women");
   const [sort, setSort] = useState<Sort>("rec");
   const [realOnly, setRealOnly] = useState(false);
+  const [limit, setLimit] = useState(10);
+  useEffect(() => setLimit(10), [q, group, sort, realOnly]);
   const sp = useSearchParams();
   // ほかのページの「もっと見る」から来たとき、その言葉で探す
   useEffect(() => {
@@ -137,10 +139,15 @@ export default function ProductSearch() {
       </div>
       <p className="adcount">{list.length}件</p>
       <ul className="nlist">
-        {list.map((s) => (
+        {list.slice(0, limit).map((s) => (
           <Card key={s.id} s={s} />
         ))}
       </ul>
+      {list.length > limit && (
+        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 10)}>
+          もっと見る（あと{list.length - limit}件）
+        </button>
+      )}
       {list.length === 0 && <p className="note">見つかりませんでした。別の言葉や、種類で探してみてください。</p>}
       <EvidenceBox ids={["ods"]} level="サプリの効果は、成分・人によって違う" note="価格は、各社の公式ページ・販売店の表示（確認日つき）です。サプリは、食事の補助です。効果の有無や安全な量は、成分ごとに違い、NIHなどの資料で確認できます。持病・妊娠中・服薬中の方は、使う前に医師・薬剤師へ。" />
       <p className="note">

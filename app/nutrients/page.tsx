@@ -552,6 +552,7 @@ export default function Nutrients() {
       <MyKcal topic="nutrients" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#me">あなたの目安</a>
+        <a href="#diet-nutrients">ダイエットの栄養素</a>
         <a href="#sym">気になることから探す</a>
         <a href="#goals">目的別ガイド</a>
         <a href="#diets">ダイエット方法</a>
@@ -559,8 +560,8 @@ export default function Nutrients() {
       </nav>
 
       <Fold defaultOpen id="me" title="あなたの1日の目安（性別・年齢）"><MeCard /></Fold>
-      <Fold defaultOpen id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
-      <Fold defaultOpen id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
+      <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
+      <Fold id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
       <Fold id="goals" title="目的別ガイド">
       <ul className="nlist">
         {GOALS_SORTED.map((g) => (

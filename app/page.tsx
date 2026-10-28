@@ -452,6 +452,8 @@ function Search({
   const [cat, setCat] = useState<string>("すべて");
   const [sort, setSort] = useState<SortKey>("default");
   const [picked, setPicked] = useState<string[]>([]);
+  const [limit, setLimit] = useState(30);
+  useEffect(() => setLimit(30), [q, cat, sort]);
 
   const key: Record<SortKey, (x: Food) => number> = {
     default: () => 0,
@@ -526,7 +528,7 @@ function Search({
       </p>
       {shown.length === 0 && <p className="note">見つかりませんでした。</p>}
       <ul className="rows card flist">
-        {shown.map((x) => (
+        {shown.slice(0, limit).map((x) => (
           <FoodRow
             key={x.name}
             food={x}
@@ -537,6 +539,11 @@ function Search({
           />
         ))}
       </ul>
+      {shown.length > limit && (
+        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 30)}>
+          もっと見る（あと{shown.length - limit}件）
+        </button>
+      )}
     </section>
   );
 }
