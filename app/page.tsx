@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import StatusBar from "./StatusBar";
 import MeCard from "./MeCard";
@@ -2113,8 +2113,8 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
-          <StatusBar />
           <HomeJump />
+          <StatusBar />
           <BalanceCheck />
           <Fold key="h-nutr" id="h-nutr" title="🧪 ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など、あなたの目安" cls="wfold">
             <DietNutrients bare />
