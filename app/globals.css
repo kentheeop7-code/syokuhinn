@@ -4158,3 +4158,20 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
   .balres .balchk li small { grid-column: 2; grid-row: 2; text-align: right; }
   .balres .balchk li .gauge { grid-column: 1 / -1; grid-row: 3; }
 }
+
+/* ページ案内 */
+.sitemap .smgroup { margin-top: 14px; }
+.sitemap .smgroup .balh { margin: 0 0 8px; }
+.sitemap ul { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: 8px; }
+.sitemap li a { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 10px 14px; border-radius: 16px; background: #f3faf6; border: 2px solid #cfe7da; color: #12301f; text-decoration: none; }
+.sitemap li a:active { background: #e1f2e8; }
+.sitemap .smi { font-size: 1.8rem; flex: 0 0 auto; }
+.sitemap .smt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sitemap .smt b { font-size: 1.1rem; }
+.sitemap .smt small { font-size: 0.92rem; color: var(--s-sub); line-height: 1.5; }
+.sitemap li a i { font-style: normal; font-weight: 900; font-size: 1.6rem; color: #1a6a4f; }
+/* ガイドの切りかえ：4つなので、スマホは2×2 */
+@media (max-width: 520px) {
+  .guidetabs { display: grid !important; grid-template-columns: 1fr 1fr; }
+  .guidetabs a { font-size: 1rem !important; }
+}

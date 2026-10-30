@@ -1,5 +1,6 @@
 // ホームの、ページ内ジャンプ（長いページを、1タップで行き来できる）
 const JUMPS = [
+  { href: "#sitemap", icon: "📍", label: "ページ案内" },
   { href: "#bal", icon: "🥗", label: "今の食事" },
   { href: "#cause", icon: "🔍", label: "原因を知る" },
   { href: "#h-nutr", icon: "🧪", label: "必要な栄養素" },

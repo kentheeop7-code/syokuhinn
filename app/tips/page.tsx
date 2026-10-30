@@ -1,6 +1,7 @@
 ﻿import { TIP_SOURCES } from "../evidence";
 import MeCard from "../MeCard";
 import CauseMini from "../CauseMini";
+import GuideTabs from "../GuideTabs";
 import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import Disclosure from "../Disclosure";
@@ -22,6 +23,7 @@ export default function Tips() {
       <h1 className="title sm">豆知識</h1>
       <p className="member">勘違いを覆す話から、年齢による代謝・筋肉の変化、痩せない・筋肉がつかない原因、たんぱく質・ダイエットのコツまで</p>
 
+      <GuideTabs current="tips" />
       <MeCard variant="mini" topic="tips" />
       <CauseMini ids={["weight", "tired"]} title="🔍 あなたの食事から見た、体重・疲れの原因" />
       <Link href="/gut" className="gutlink">

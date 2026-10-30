@@ -5,6 +5,7 @@ import MeCard from "./MeCard";
 import NationalGuide from "./NationalGuide";
 import DietNutrients from "./DietNutrients";
 import HomeJump from "./HomeJump";
+import SiteMap from "./SiteMap";
 import LineShare from "./LineShare";
 import { readMe, useMe, REF as ME_REF } from "./me";
 import type { KcalType } from "./MyKcal";
@@ -2138,6 +2139,7 @@ function HomeInner() {
             <ProfileGoal setGoal={setGoal} />
           </Fold>
 
+          <SiteMap />
           <Fold key="h-guide" id="h-guide" title="🏛 国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）" cls="wfold">
             <NationalGuide bare />
           </Fold>
