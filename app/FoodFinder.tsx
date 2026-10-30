@@ -22,7 +22,7 @@ export default function FoodFinder({
   const hits = useMemo(() => {
     const s = q.trim();
     // 検索しないときは、ふつうに食べる量でとれる食品を上に（香辛料・粉末・乾物は、100gではとらないので除く）
-    const usual = (f: (typeof FOODS)[number]) => f.cat !== "調味料・油" && !/乾|粉|素干し|干し|加工品|パウダー/.test(f.name);
+    const usual = (f: (typeof FOODS)[number]) => f.cat !== "調味料・油" && !/乾|粉|素干し|干し|加工品|パウダー|（茶）|茶葉/.test(f.name);
     return FOODS.filter((f) => (s ? f.name.includes(s) : usual(f)) && f[nutrient] > 0).sort((a, b) => b[nutrient] - a[nutrient]);
   }, [q, nutrient]);
   const r1 = (n: number) => Math.round(n * 10) / 10;
