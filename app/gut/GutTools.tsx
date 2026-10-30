@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { FOODS } from "../../lib/foods";
+import FoodFinder from "../FoodFinder";
 
 const byName = new Map(FOODS.map((f) => [f.name, f]));
 const r1 = (n: number) => Math.round(n * 10) / 10;
@@ -82,7 +83,7 @@ function SelfCheck() {
 }
 
 // ---------------------------------------------------------------- 食物繊維メーカー
-type F = { name: string; g: number; label: string; tag: "water" | "insol" | "ferm" | "oligo" };
+type F = { name: string; g: number; label: string; tag: "water" | "insol" | "ferm" | "oligo" | "other" };
 const FIBER_FOODS: F[] = [
   { name: "もち麦ごはん", g: 150, label: "もち麦ごはん 茶碗1杯（150g）", tag: "water" },
   { name: "玄米ごはん", g: 150, label: "玄米ごはん 茶碗1杯（150g）", tag: "insol" },
@@ -205,6 +206,16 @@ function FiberMaker() {
           </li>
         ))}
       </ul>
+      <FoodFinder
+        nutrient="fi"
+        label="食物繊維"
+        unit="g"
+        grams={50}
+        onPick={(name, g) => {
+          setPicked((a) => [...a, { name, g, label: `${name} ${g}g`, tag: "other" }]);
+          setAdded(false);
+        }}
+      />
       {picked.length > 0 && (
         <div className="gtpicked">
           <b>選んだもの（{picked.length}品）</b>

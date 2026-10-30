@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { FOODS } from "../lib/foods";
+import FoodFinder from "./FoodFinder";
 
 type Pick = { name: string; g: number; label: string };
 type Group = { key: "ca" | "vd" | "fe"; title: string; unit: string; foods: Pick[] };
@@ -151,6 +152,8 @@ export default function BoneMenu({ onAdd }: { onAdd: (name: string, grams: numbe
           );
         })}
       </ul>
+
+      <FoodFinder key={tab} nutrient={tab} label={LABEL[tab]} unit={UNIT[tab]} grams={tab === "vd" ? 80 : 100} onPick={(name, g) => add({ name, g, label: `${name} ${g}g` })} />
 
       <div className="bmpicked">
         <b>今日とる予定（{picked.length}品）</b>

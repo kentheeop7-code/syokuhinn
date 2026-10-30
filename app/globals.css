@@ -4175,3 +4175,15 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
   .guidetabs { display: grid !important; grid-template-columns: 1fr 1fr; }
   .guidetabs a { font-size: 1rem !important; }
 }
+
+/* 食品を探して足す（全食品から） */
+.ffinder { margin: 14px 0; padding: 12px; border-radius: 16px; background: var(--s-soft); }
+.ffinder .balh { margin-top: 0; }
+.ffl { list-style: none; margin: 6px 0; padding: 0 !important; display: grid; gap: 8px; }
+.ffl button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 60px; padding: 8px 14px; border: 2px solid #cfe7da; border-radius: 14px; background: #fff; color: #12301f; font-family: inherit; text-align: left; cursor: pointer; }
+.ffl button:active { background: #e1f2e8; }
+.ffn { flex: 1; min-width: 0; font-weight: 800; font-size: 1rem; line-height: 1.45; }
+.ffv { flex: 0 0 auto; font-size: 0.95rem; text-align: right; }
+.ffv b { font-size: 1.15rem; }
+.ffv small { color: var(--s-sub); margin-left: 2px; }
+.ffp { flex: 0 0 auto; font-weight: 900; font-size: 1.5rem; color: #1a6a4f; }
