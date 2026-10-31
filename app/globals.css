@@ -4365,3 +4365,16 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .agnote, .note, .nrole, .adnote, .gtnote, .bmnote { color: var(--ui-sub); }
 /* 欄の見出しの下の1行説明：スマホでは、どのページも、出さない */
 @media (max-width: 520px) { .fold .foldh small, .wfold .foldh small, .foldh button small { display: none !important; } }
+
+/* 残っていた、黒っぽい太い線も、やわらかい緑に */
+.gtdl > div, .gtfoods li button, .bmfoods li button, .gtpicked, .wgtabs button, .gtbristol li, .gtbristol li i, .gtwarn, .gtresult, .gtmeter, .gtbar, .gtpbar, .gtprog span,
+.bmmeters, .bmpicked, .wcsee, .agehead .ca, .agehead .cb, .mdetail, .cyclabel input, .agmeal, .agmenu, .dp, .df, .dc, .wcbody img, .card > img {
+  border-color: var(--ui-line) !important;
+}
+.gtdl > div, .gtfoods li button, .bmfoods li button, .gtpicked, .gtbristol li, .gtwarn, .gtresult, .gtmeter, .bmmeters, .bmpicked, .mdetail, .agmeal {
+  border-width: 1.5px !important;
+  border-radius: 14px !important;
+}
+.wgtabs button { border-width: 2px !important; border-color: #bfdccd !important; background: #fff !important; color: #14543f !important; }
+.wgtabs button.on { background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; color: #fff !important; border-color: transparent !important; }
+.gtfoods li button, .bmfoods li button { border-color: #bfdccd !important; border-width: 2px !important; background: #fff !important; }
