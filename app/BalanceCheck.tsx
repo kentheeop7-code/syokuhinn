@@ -198,7 +198,20 @@ export default function BalanceCheck() {
   const [target, setTarget] = useState<Target>(null);
   const [loaded, setLoaded] = useState(false);
   const [touched, setTouched] = useState(false);
-  const [open, setOpen] = useState<string>("me");
+  const [open, setOpen] = useState<string>("");
+  const [rtab, setRtab] = useState<"num" | "cause" | "send">("num");
+  // 「原因」へのリンク（ホームの先頭・目次・ページ案内）を押したら、原因のタブを開く
+  useEffect(() => {
+    const on = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest?.('a[href="#cause"]');
+      if (!a) return;
+      e.preventDefault();
+      setRtab("cause");
+      setTimeout(() => document.getElementById("balresults")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    };
+    document.addEventListener("click", on);
+    return () => document.removeEventListener("click", on);
+  }, []);
   const [visited, setVisited] = useState<string[]>(["me"]);
   const openGroup = (id: string) => {
     setOpen(id);
@@ -530,15 +543,26 @@ export default function BalanceCheck() {
         </button>
       </div>
 
-      <div className="balres">
-        <p className="balh">{touched ? "いまの食事の目安（1日）" : "例：ふつうの1日の目安（選ぶと、あなたの結果になります）"}</p>
-        <div className="balk">
-          約 <b>{(Math.round(t.kcal / 50) * 50).toLocaleString()}</b> kcal
-          {target && <small>（あなたの設定：{r0(target.kcal)}kcal）</small>}
-        </div>
-        <p className="balneed">
-          あなたに必要なエネルギーの目安：約<b>{needKcal.toLocaleString()}</b>kcal（{sexText}・{BAND_SHORT[band]}・活動量{PAL_TEXT[pal]}）
-          <em className={kcalSt}>{kcalSt === "ok" ? "ほぼ合っています" : kcalSt === "low" ? "少なめです" : "多めです"}</em>
+      <div className="balrestabs" id="balresults" role="tablist" aria-label="結果の切りかえ">
+        {(
+          [
+            ["num", "📊 結果"],
+            ["cause", "🔍 原因"],
+            ["send", "📨 送る"],
+          ] as const
+        ).map(([k, l]) => (
+          <button key={k} type="button" role="tab" aria-selected={rtab === k} className={rtab === k ? "on" : ""} onClick={() => setRtab(k)}>
+            {l}
+          </button>
+        ))}
+      </div>
+
+      <div className="balres" hidden={rtab !== "num"}>
+        <p className="balh">
+          {touched ? "いまの食事の目安（1日）" : "例：ふつうの1日の目安（選ぶと、あなたの結果になります）"}
+          <small className="balkk">
+            約{(Math.round(t.kcal / 50) * 50).toLocaleString()}kcal／必要 約{needKcal.toLocaleString()}kcal{target ? `／あなたの設定 ${r0(target.kcal)}kcal` : ""}
+          </small>
         </p>
         <div className="ksbar" role="img" aria-label={`P${pc(pe)}% F${pc(fe)}% C${pc(ce)}%`}>
           <span className="p" style={{ width: `${pc(pe)}%` }}>
@@ -593,7 +617,6 @@ export default function BalanceCheck() {
         ) : (
           <p className="baltips ok">バランスは、よい状態です。この調子で、続けましょう。</p>
         )}
-        <CausePanel input={causeIn} picked={cx} onToggle={toggleCx} touched={touched} />
         <details className="balage">
           <summary className="balh">🌱 {ageInfo.title}（タップで開く）</summary>
           <ul>
@@ -609,7 +632,11 @@ export default function BalanceCheck() {
         <EvidenceBox ids={["dri2025", "food8"]} level="目安の基準は強い／食事の量は、ざっくり" note="必要なエネルギー・たんぱく質・カルシウム・鉄・食物繊維・食塩・PFCの割合は、国の基準（性別・年齢別）です。「いつもの1日」から出した食事の量は、食品1回ぶんの、おおまかな換算で、実際とは差があります。" />
       </div>
 
-      <div className="linebox">
+      <div hidden={rtab !== "cause"}>
+        <CausePanel input={causeIn} picked={cx} onToggle={toggleCx} touched={touched} />
+      </div>
+
+      <div className="linebox" hidden={rtab !== "send"}>
         <p className="balh">📨 結果を、公式LINEに送る</p>
         <ol className="linesteps">
           <li>下のボタンを押す</li>

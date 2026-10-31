@@ -4233,3 +4233,20 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
 .hero .herokcal b { font-size: 2.7rem; }
 .hero .heromini { margin-top: 12px; }
 .hero .heroacts { margin-top: 12px; }
+
+/* ホームの下：結果は3つの切りかえ（結果／原因／送る）、入力の見出しは1行、ページ案内は2列 */
+.balrestabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0 10px; position: sticky; top: 64px; z-index: 4; padding: 6px 0; background: linear-gradient(#fff 80%, rgba(255,255,255,0)); }
+.balrestabs button { min-height: 52px; border: 2px solid #2f9e75; border-radius: 14px; background: #fff; color: #14543f; font-family: inherit; font-size: 1rem; font-weight: 900; cursor: pointer; }
+.balrestabs button.on { background: linear-gradient(135deg, #1a6a4f, #2f9e75); color: #fff; border-color: transparent; }
+.balh .balkk { display: block; margin-top: 4px; font-size: 0.9rem; font-weight: 700; color: var(--s-sub); }
+.balres .balh .balkk { color: #bfe6d3; }
+.balgt small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.balgh { min-height: 64px !important; }
+@media (max-width: 520px) {
+  .sitemap ul { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sitemap li a { flex-direction: column; align-items: flex-start; gap: 4px; min-height: 96px; padding: 12px; }
+  .sitemap .smt small { display: none; }
+  .sitemap li a i { display: none; }
+  .sitemap .smi { font-size: 1.6rem; }
+  .sitemap .smt b { font-size: 1rem; line-height: 1.35; }
+}
