@@ -4222,3 +4222,14 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
 @media (min-width: 521px) { .hero .heropick { grid-template-columns: repeat(3, 1fr); } }
 /* 食事のバランスの、使わなくなった案内 */
 .balsteps, .balpresets { display: none !important; }
+
+/* ホーム先頭を、コンパクトに */
+.hero .heropick { display: flex !important; gap: 8px; overflow-x: auto; margin: 8px -4px 0; padding: 2px 4px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.hero .heropick::-webkit-scrollbar { display: none; }
+.hero .heropick button { flex: 0 0 auto; min-height: 52px !important; padding: 8px 16px !important; border-radius: 999px !important; white-space: nowrap; font-size: 1rem !important; }
+.hero .heromini small { color: #bfe6d3 !important; }
+.hero .heromini b, .hero .heromini u { color: #fff !important; }
+.hero .herolabel.sub { margin-top: 12px; }
+.hero .herokcal b { font-size: 2.7rem; }
+.hero .heromini { margin-top: 12px; }
+.hero .heroacts { margin-top: 12px; }

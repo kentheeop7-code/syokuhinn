@@ -86,7 +86,7 @@ export default function HomeHero() {
         {PRESETS.map((p) => (
           <button key={p.id} type="button" aria-pressed={preset === p.id} className={preset === p.id ? "on" : ""} onClick={() => pick(p.id)}>
             <span aria-hidden>{p.icon}</span>
-            {p.label}
+            {p.short}
           </button>
         ))}
       </div>
