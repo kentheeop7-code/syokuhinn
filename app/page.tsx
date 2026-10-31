@@ -2,9 +2,6 @@
 
 import HomeHero from "./HomeHero";
 import MeCard from "./MeCard";
-import NationalGuide from "./NationalGuide";
-import DietNutrients from "./DietNutrients";
-import HomeJump from "./HomeJump";
 import SiteMap from "./SiteMap";
 import LineShare from "./LineShare";
 import { readMe, useMe, REF as ME_REF } from "./me";
@@ -2044,18 +2041,18 @@ function KcalSetter({
 }
 
 function HomeInner() {
-  const [tab, setTab] = useState<"record" | "search" | "women" | "products">("record");
+  const [tab, setTab] = useState<"record" | "search" | "women" | "products" | "plan">("record");
   const sp = useSearchParams();
   // 画面右上のバーから ?tab=search で来たときも、タブを切り替える
   useEffect(() => {
     const q = sp.get("tab");
-    const t = q === "search" ? "search" : q === "women" ? "women" : q === "products" ? "products" : "record";
+    const t = q === "search" ? "search" : q === "women" ? "women" : q === "products" ? "products" : q === "plan" ? "plan" : "record";
     setTab(t);
     window.scrollTo(0, 0);
   }, [sp]);
-  const changeTab = (t: "record" | "search" | "women" | "products") => {
+  const changeTab = (t: "record" | "search" | "women" | "products" | "plan") => {
     setTab(t);
-    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : t === "women" ? "/?tab=women" : t === "products" ? "/?tab=products" : "/");
+    window.history.replaceState(null, "", t === "search" ? "/?tab=search" : t === "women" ? "/?tab=women" : t === "products" ? "/?tab=products" : t === "plan" ? "/?tab=plan" : "/");
   };
   const [log, setLog] = useState<Log>({});
   const [goal, setGoal] = useState<Goal>({ p: "", f: "", c: "" });
@@ -2107,7 +2104,7 @@ function HomeInner() {
 
   return (
     <main className="container">
-      <h1 className="title">{tab === "women" ? "からだのケア" : tab === "search" ? "食品をしらべる" : tab === "products" ? "商品をさがす" : "専属の栄養士"}</h1>
+      <h1 className="title">{tab === "women" ? "からだのケア" : tab === "search" ? "食品をしらべる" : tab === "products" ? "商品をさがす" : tab === "plan" ? "体重と目標" : "専属の栄養士"}</h1>
       <p className="tagline">女性のからだに寄りそう、食事とからだのパートナー。</p>
       <p className="member">LIFEGYM 女性会員様のための専用アプリ</p>
 
@@ -2118,11 +2115,25 @@ function HomeInner() {
       {tab === "record" ? (
         <>
           <HomeHero />
-          <HomeJump />
-          <BalanceCheck />
-          <Fold key="h-nutr" id="h-nutr" title="🧪 ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など、あなたの目安" cls="wfold">
-            <DietNutrients bare />
+          <SiteMap />
+          <Fold key="h-bal" id="h-bal" title="🥗 食事を細かく入力・結果を見る" sub="いつもの食事を選ぶ／原因／LINEで送る" cls="wfold">
+            <BalanceCheck />
           </Fold>
+          <Fold key="h-tip" id="h-tip" title="💡 今日の豆知識" sub="1日1つ、ひとことで" cls="wfold">
+            <TipsTicker />
+          </Fold>
+          <Fold key="r-diary" id="r-diary" title="📝 食べたものを記録したい人へ（任意）" sub="このアプリでは、記録は、すすめていません" cls="wfold">
+            <p className="agnote">記録は、負担になりやすいので、必須ではありません。細かく確かめたい日だけ、お使いください。</p>
+            <Calendar month={month} setMonth={setMonth} selected={selected} setSelected={pick} log={log} goal={goal} />
+            <DayView date={selected} entries={log[selected] ?? []} goal={goal} setGoal={setGoal} onAdd={add} onRemove={remove} log={log} />
+            <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
+          </Fold>
+        </>
+      ) : tab === "plan" ? (
+        <>
+          <Link href="/" className="backlink">
+            ‹ ホームへ戻る
+          </Link>
           <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
             <WeightChart />
           </Fold>
@@ -2134,22 +2145,7 @@ function HomeInner() {
           <Fold key="r-goal" id="r-goal" title="🎯 目標体重・年齢などを入れる" sub="体重の予測と、カロリーの計算に使います" cls="wfold">
             <ProfileGoal setGoal={setGoal} />
           </Fold>
-
-          <SiteMap />
-          <Fold key="h-guide" id="h-guide" title="🏛 国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）" cls="wfold">
-            <NationalGuide bare />
-          </Fold>
-          <Fold key="h-tip" id="h-tip" title="💡 今日の豆知識" sub="1日1つ、ひとことで" cls="wfold">
-        <TipsTicker />
-      </Fold>
-          <Fold key="r-diary" id="r-diary" title="📝 食べたものを記録したい人へ（任意）" sub="このアプリでは、記録は、すすめていません" cls="wfold">
-            <p className="agnote">記録は、負担になりやすいので、必須ではありません。細かく確かめたい日だけ、お使いください。</p>
-            <Calendar month={month} setMonth={setMonth} selected={selected} setSelected={pick} log={log} goal={goal} />
-            <DayView date={selected} entries={log[selected] ?? []} goal={goal} setGoal={setGoal} onAdd={add} onRemove={remove} log={log} />
-            <WomenDaily entries={log[selected] ?? []} goal={goal} onAdd={add} />
-          </Fold>
-        </>
-      ) : tab === "women" ? (
+        </>      ) : tab === "women" ? (
         <>
           <Link href="/gut" className="gutlink">
             <span aria-hidden>🌿</span>

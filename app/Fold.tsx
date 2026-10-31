@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -34,7 +34,16 @@ export default function Fold({
     };
     go();
     window.addEventListener("hashchange", go);
-    return () => window.removeEventListener("hashchange", go);
+    // すでに同じ場所（#id）にいて、もう一度リンクを押したときも、開く
+    const click = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest?.("a[href^='#']") as HTMLAnchorElement | null;
+      if (a) setTimeout(go, 30);
+    };
+    document.addEventListener("click", click);
+    return () => {
+      window.removeEventListener("hashchange", go);
+      document.removeEventListener("click", click);
+    };
   }, [id]);
 
   return (

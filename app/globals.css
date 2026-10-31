@@ -4297,3 +4297,16 @@ body { line-height: 1.55; }
   .container > section > .aglabel { margin: 8px 0 0; font-size: 0.85rem; }
   .container > section > .note { font-size: 0.85rem; line-height: 1.5; }
 }
+
+/* ホームのメニュー（やりたいこと／ほかのページ） */
+.sitemap.menu { margin: 14px 0; padding: 0; background: none; box-shadow: none; border: 0; }
+.sitemap.menu .balh { margin: 14px 0 8px; font-size: 0.9rem; color: var(--s-sub); font-weight: 800; }
+.sitemap.menu ul { list-style: none; margin: 0; padding: 0 !important; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sitemap.menu .smmain li a { flex-direction: column; align-items: flex-start; gap: 4px; min-height: 104px; padding: 14px; background: #fff; border: 2px solid #2f9e75; border-radius: 18px; }
+.sitemap.menu .smmain .smi { font-size: 1.9rem; }
+.sitemap.menu .smmain .smt b { font-size: 1.05rem; }
+.sitemap.menu .smmain .smt small { display: block; font-size: 0.82rem; color: var(--s-sub); }
+.sitemap.menu .smother li a { min-height: 56px; padding: 8px 12px; gap: 8px; background: #fff; border: 1.5px solid #cfe7da; border-radius: 14px; flex-direction: row; align-items: center; }
+.sitemap.menu .smother .smi { font-size: 1.3rem; }
+.sitemap.menu .smother .smt b { font-size: 0.9rem; line-height: 1.3; }
+.backlink { display: inline-flex; align-items: center; min-height: 48px; padding: 0 6px; margin-bottom: 6px; font-weight: 900; color: #14543f; text-decoration: none; }

@@ -207,7 +207,10 @@ export default function BalanceCheck() {
       if (!a) return;
       e.preventDefault();
       setRtab("cause");
-      setTimeout(() => document.getElementById("balresults")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+      // 入力欄が閉じていたら、先に開く
+      history.replaceState(null, "", "#bal");
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+      setTimeout(() => document.getElementById("balresults")?.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
     };
     document.addEventListener("click", on);
     return () => document.removeEventListener("click", on);
