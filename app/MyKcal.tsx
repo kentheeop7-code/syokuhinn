@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -29,7 +29,7 @@ export default function MyKcal({ topic }: Props) {
 
   if (!s)
     return (
-      <Link href="/" className="gutlink mykcal">
+      <Link href="/?tab=plan#r-kcal" className="gutlink mykcal">
         <span aria-hidden>🔥</span>
         <span>
           <b>1日のカロリーを決める</b>
@@ -70,7 +70,7 @@ export default function MyKcal({ topic }: Props) {
         </div>
       </div>
       <p className="agnote">{line[topic]}</p>
-      <Link href="/" className="evlink">
+      <Link href="/?tab=plan#r-kcal" className="evlink">
         カロリーを変える・食事例を見る ›
       </Link>
     </section>
