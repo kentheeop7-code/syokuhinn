@@ -4310,3 +4310,14 @@ body { line-height: 1.55; }
 .sitemap.menu .smother .smi { font-size: 1.3rem; }
 .sitemap.menu .smother .smt b { font-size: 0.9rem; line-height: 1.3; }
 .backlink { display: inline-flex; align-items: center; min-height: 48px; padding: 0 6px; margin-bottom: 6px; font-weight: 900; color: #14543f; text-decoration: none; }
+
+/* 他のページも、トップと同じく、すっきり：ページ内メニューは1行スワイプ、リンクカードは小さく */
+@media (max-width: 520px) {
+  .anav { display: flex !important; flex-wrap: nowrap !important; overflow-x: auto; gap: 8px !important; margin: 6px -4px 10px !important; padding: 2px 4px 6px !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .anav::-webkit-scrollbar { display: none; }
+  .anav a { flex: 0 0 auto; white-space: nowrap; min-height: 44px !important; padding: 6px 14px !important; font-size: 0.95rem !important; }
+  .gutlink { min-height: 60px !important; padding: 8px 12px !important; }
+  .gutlink small { display: none !important; }
+  .gutlink b { font-size: 1rem !important; }
+  .member { display: none; }
+}

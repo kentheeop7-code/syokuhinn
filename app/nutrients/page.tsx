@@ -550,7 +550,6 @@ export default function Nutrients() {
       <p className="member">目的別のとり方と、栄養素のはたらき（日本人の食事摂取基準 2025年版）</p>
 
       <GuideTabs current="nutrients" />
-      <MyKcal topic="nutrients" />
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#me">あなたの目安</a>
         <a href="#diet-nutrients">ダイエットの栄養素</a>
@@ -561,7 +560,7 @@ export default function Nutrients() {
         <a href="#nutrients">栄養素のはたらき</a>
       </nav>
 
-      <Fold defaultOpen id="me" title="あなたの1日の目安（性別・年齢）"><MeCard /></Fold>
+      <Fold id="me" title="あなたの1日の目安（性別・年齢）" sub="カロリー・PFCと、各栄養素の目安"><MyKcal topic="nutrients" /><MeCard /></Fold>
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold id="h-guide" title="国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）"><NationalGuide bare /></Fold>
       <Fold id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>

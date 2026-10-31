@@ -1,4 +1,4 @@
-﻿import EvidenceBox from "../EvidenceBox";
+import EvidenceBox from "../EvidenceBox";
 import MeCard from "../MeCard";
 import GuideTabs from "../GuideTabs";
 import RelatedProducts from "../RelatedProducts";
@@ -140,8 +140,10 @@ export default function Gut() {
       <p className="member">腸活の基本から、便のチェック、1日の食事、女性ならではの悩みまで</p>
 
       <GuideTabs current="gut" />
-      <MeCard variant="mini" topic="gut" />
-      <CauseMini ids={["const"]} />
+      <Fold id="mine" title="👤 あなたに合わせた目安と原因" sub="性別・年齢と、食事から見た便秘の原因">
+        <MeCard variant="mini" topic="gut" />
+        <CauseMini ids={["const"]} />
+      </Fold>
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">しくみ</a>
         <a href="#women">女性の腸</a>
@@ -160,10 +162,8 @@ export default function Gut() {
         <a href="#qa">Q&A</a>
       </nav>
 
+      <Fold id="sum" title="📌 この1ページのポイント" sub="6つだけ、先にここを">
       <section className="card gtsum">
-        <h2 className="h2" style={{ marginTop: 0 }}>
-          この1ページのポイント
-        </h2>
         <ul>
           <li>腸内細菌は、約1,000種類・100兆個ともいわれ、食物繊維などをエサに、短鎖脂肪酸をつくります。</li>
           <li>食物繊維は、女性で<b>1日18g以上</b>（理想25g）。女性の平均は約17gと、足りていません。</li>
@@ -173,8 +173,9 @@ export default function Gut() {
           <li>血便・黒い便・体重減少・強い腹痛は、<b>すぐ受診</b>。</li>
         </ul>
       </section>
+      </Fold>
 
-      <Fold defaultOpen id="basic" title="腸内環境の、しくみ">
+      <Fold id="basic" title="腸内環境の、しくみ">
       <section className="card gtsec">
         <h3>腸内フローラとは</h3>
         <p>

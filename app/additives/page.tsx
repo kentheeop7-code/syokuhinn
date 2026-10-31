@@ -1,4 +1,4 @@
-﻿import EvidenceBox from "../EvidenceBox";
+import EvidenceBox from "../EvidenceBox";
 import MeCard from "../MeCard";
 import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
@@ -84,8 +84,10 @@ export default function Additives() {
       <p className="member">増粘剤・乳化剤・甘味料…食品選びで知っておきたいこと</p>
 
       <GuideTabs current="additives" />
-      <MeCard variant="mini" topic="additives" />
-      <CauseMini ids={["swell"]} title="🔍 あなたの食事から見た、塩分・むくみの原因" />
+      <Fold id="mine" title="👤 あなたに合わせた目安と原因" sub="食塩の目安と、食事から見たむくみの原因">
+        <MeCard variant="mini" topic="additives" />
+        <CauseMini ids={["swell"]} title="🔍 あなたの食事から見た、塩分・むくみの原因" />
+      </Fold>
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#basic">基本</a>
         <a href="#read">表示の読み方</a>
@@ -96,10 +98,8 @@ export default function Additives() {
         <a href="#qa">Q&A</a>
       </nav>
 
+      <Fold id="sum" title="📌 この1ページのポイント" sub="5つだけ、先にここを">
       <section className="card adsum">
-        <h2 className="h2" style={{ marginTop: 0 }}>
-          この1ページのポイント
-        </h2>
         <ul>
           <li>日本の添加物は、<b>国が安全性を評価</b>し、使える量が決められています。実際の摂取量は、ADIを大きく下回る結果が多いです。</li>
           <li>「天然＝安全」「合成＝危険」ではありません。<b>数より、種類と食べ方の偏り</b>を見ましょう。</li>
@@ -108,8 +108,9 @@ export default function Additives() {
           <li>買い物は、<b>素材に近い食品を中心に → 原材料名 → 食塩相当量</b>の順に見ると、選びやすくなります。</li>
         </ul>
       </section>
+      </Fold>
 
-      <Fold defaultOpen id="basic" title="基本：添加物って、何？">
+      <Fold id="basic" title="基本：添加物って、何？">
       {BASICS.map((b) => (
         <section key={b.title} className="card adsec">
           <h3>{b.title}</h3>

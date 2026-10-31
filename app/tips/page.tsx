@@ -1,4 +1,4 @@
-﻿import { TIP_SOURCES } from "../evidence";
+import { TIP_SOURCES } from "../evidence";
 import MeCard from "../MeCard";
 import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
@@ -24,8 +24,10 @@ export default function Tips() {
       <p className="member">勘違いを覆す話から、年齢による代謝・筋肉の変化、痩せない・筋肉がつかない原因、たんぱく質・ダイエットのコツまで</p>
 
       <GuideTabs current="tips" />
-      <MeCard variant="mini" topic="tips" />
-      <CauseMini ids={["weight", "tired"]} title="🔍 あなたの食事から見た、体重・疲れの原因" />
+      <Fold id="mine" title="👤 あなたに合わせた目安と原因" sub="たんぱく質の目安と、食事から見た体重・疲れの原因">
+        <MeCard variant="mini" topic="tips" />
+        <CauseMini ids={["weight", "tired"]} title="🔍 あなたの食事から見た、体重・疲れの原因" />
+      </Fold>
       <Link href="/gut" className="gutlink">
         <span aria-hidden>🌿</span>
         <span>
