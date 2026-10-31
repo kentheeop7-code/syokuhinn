@@ -330,7 +330,7 @@ export default function BalanceCheck() {
   if ((a.water ?? 5) <= 2) tips.push("水分が少なめ：朝起きたとき・食事ごとに、コップ1杯の水かお茶を足しましょう。");
   if ((a.walk ?? 2) === 0) tips.push(band >= 5 ? "運動がほぼない：筋肉を守るため、毎日の散歩と、いすからの立ち座りを。" : "運動がほぼない：食後に10分歩くところから。階段を使うだけでも、違います。");
   if ((a.sleep ?? 6) <= 5) tips.push(isYouth ? "睡眠が短め：成長期は、8時間以上が目安です。夜更かしは、食欲や成長にも影響します。" : "睡眠が短め：6〜7時間を目標に。睡眠不足は、食欲を増やします。");
-  const shown = tips.slice(0, 5);
+  const shown = tips.slice(0, 3);
   const ageInfo = AGE_INFO[band];
 
   // ホームの「いまのステータス」に、結果を渡す

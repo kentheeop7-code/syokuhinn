@@ -4250,3 +4250,27 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
   .sitemap .smi { font-size: 1.6rem; }
   .sitemap .smt b { font-size: 1rem; line-height: 1.35; }
 }
+
+/* 文字をひとまわり小さく、情報をすっきり（スマホ） */
+html { font-size: 17px; }
+body { line-height: 1.55; }
+@media (max-width: 520px) {
+  .card { padding: 14px !important; }
+  .h2 { font-size: 1.15rem !important; line-height: 1.4; }
+  .agnote { font-size: 0.88rem !important; line-height: 1.55 !important; color: var(--s-sub) !important; }
+  .balqt small, .balgt small { font-size: 0.85rem !important; }
+  .balqt b { font-size: 1rem; }
+  .fold .foldh small { display: none; }
+  .fold .foldh button { min-height: 56px !important; padding-top: 6px; padding-bottom: 6px; }
+  .balgh { min-height: 56px !important; }
+  .baltips li { font-size: 0.95rem; line-height: 1.55; }
+  .causelist li, .causemini li { padding: 10px 12px; }
+  .causen { font-size: 0.95rem !important; }
+  .sitemap .smgroup { margin-top: 10px; }
+  .sitemap .smt b { font-size: 0.95rem !important; }
+  .homejump a { min-height: 48px !important; font-size: 0.95rem !important; padding: 6px 14px !important; }
+  .hero .herokcal b { font-size: 2.5rem; }
+  .hero .heroneed, .hero .heropick button { font-size: 0.95rem !important; }
+  .balopts button { font-size: 0.95rem !important; min-height: 48px !important; }
+  .morebtn { min-height: 52px; font-size: 1rem; }
+}
