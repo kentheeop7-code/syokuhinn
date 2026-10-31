@@ -4321,3 +4321,47 @@ body { line-height: 1.55; }
   .gutlink b { font-size: 1rem !important; }
   .member { display: none; }
 }
+
+/* ===== 見た目をそろえる（最終） =====
+   色：文字 #12301f／補助 #55705f／線（やわらかい）#d5e8dd／押せるもの #2f9e75／背景 #eef7f2
+   形：カード・ボタンは、角丸14〜20px。線は、やわらかい緑。太い黒っぽい線は使わない */
+:root { --ui-ink: #12301f; --ui-sub: #55705f; --ui-line: #d5e8dd; --ui-act: #2f9e75; --ui-bg: #eef7f2; }
+html { background: var(--ui-bg) !important; }
+body { color: var(--ui-ink); }
+
+/* 古い、黒っぽい太い線を、やわらかい緑に */
+.mmeal, .cycmeals > div, .gtmeals > div, .wgmeals > div, .wgpanel, .wgmenu, .wgplan, .wgcheck, .wgcycle, .agerow, .wdbar, .wcblock, .mrow, .mb-yes, .mb-no, .track, .bmbar, .wgpbar, .wgresult, .wdempty,
+.frow, .supp-ico, .mbar, .mletter, .todaybadge, .calopen, .fold .foldh button, .ncard, .tipcard, .adsec, .gtsec, .gtcard, .bmenu {
+  border-color: var(--ui-line) !important;
+}
+.mmeal, .cycmeals > div, .gtmeals > div, .wgmeals > div, .wgpanel, .wgmenu, .wgplan, .wgcheck, .wgcycle, .agerow, .wcblock, .mrow, .mb-yes, .mb-no, .track {
+  border-width: 1.5px !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
+/* 入力欄：同じ形・同じ色 */
+input[type="text"], input[type="search"], input:not([type]), input[inputmode], .adsearch, .adtext, .textinput, textarea, select {
+  border: 2px solid #bfdccd !important;
+  border-radius: 14px !important;
+  color: var(--ui-ink);
+  background: #fff;
+}
+input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(--ui-act) !important; outline: 3px solid rgba(47, 158, 117, 0.25); outline-offset: 1px; }
+/* 切りかえボタン・ページ内メニュー・チップ：同じ形・同じ色 */
+.chip, .guidetabs a, .anav a, .adtabs button, .gttags button, .bmtabs button, .supp-tabs button, .tabs button, .balrestabs button, .kgoal, .mechips button, .wc2paces button, .balopts button {
+  border: 2px solid #bfdccd !important;
+  background: #fff !important;
+  color: #14543f !important;
+  box-shadow: none !important;
+}
+.chip.on, .guidetabs a.on, .adtabs button.on, .gttags button.on, .bmtabs button.on, .supp-tabs button.on, .tabs button[aria-selected="true"], .balrestabs button.on, .kgoal.on, .mechips button.on, .wc2paces button.on, .balopts button.on {
+  background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+/* 見出し：サイズと色を、ページを問わず同じに */
+.h2, .foldh { color: #0f3d2e; }
+.fold .foldh button { color: var(--ui-ink); }
+.agnote, .note, .nrole, .adnote, .gtnote, .bmnote { color: var(--ui-sub); }
+/* 欄の見出しの下の1行説明：スマホでは、どのページも、出さない */
+@media (max-width: 520px) { .fold .foldh small, .wfold .foldh small, .foldh button small { display: none !important; } }
