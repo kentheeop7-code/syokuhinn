@@ -1,6 +1,6 @@
 "use client";
 
-import StatusBar from "./StatusBar";
+import HomeHero from "./HomeHero";
 import MeCard from "./MeCard";
 import NationalGuide from "./NationalGuide";
 import DietNutrients from "./DietNutrients";
@@ -2121,8 +2121,8 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
+          <HomeHero />
           <HomeJump />
-          <StatusBar />
           <BalanceCheck />
           <Fold key="h-nutr" id="h-nutr" title="🧪 ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など、あなたの目安" cls="wfold">
             <DietNutrients bare />

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import EvidenceBox from "./EvidenceBox";
+import { PRESETS } from "./presets";
 import CausePanel, { analyze, COMPLAINTS, type CIn } from "./CausePanel";
 import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 
@@ -181,13 +182,6 @@ const GROUPS: Group[] = [
 const DEFAULT: Record<string, number> = { sex: 1, band: 3, pal: 1, rice: 2, brown: 0, bread: 1, noodle: 0, imo: 0, meat: 1, fish: 1, egg: 1, soy: 1, veg: 1, greenveg: 1, rootveg: 0, salad: 0, mush: 1, konjac: 0, oats: 0, wbread: 0, chicken: 0, liver: 0, seafood: 0, beans: 0, soymilk: 0, smallfish: 0, milk: 1, yogurt: 0, fruit: 1, nuts: 0, soup: 1, pickle: 0, processed: 0, fried: 1, stir: 0, instant: 0, out: 1, cake: 0, snack: 1, sugar: 0, alcohol: 0, breakfast: 7, late: 0, water: 5, walk: 2, sleep: 6 };
 // いつもの食事に近いものを、1タップで入れる（あとで細かく直せる）
 const FOOD_KEYS = GROUPS.filter((g) => !["me", "habit"].includes(g.id)).flatMap((g) => g.items.map((i) => i.key));
-const PRESETS: { id: string; icon: string; label: string; vals: Record<string, number> }[] = [
-  { id: "wa", icon: "🍙", label: "和食ごはん派", vals: { rice: 3, fish: 2, soy: 2, egg: 1, greenveg: 2, veg: 2, mush: 1, soup: 2, pickle: 1, fruit: 1, milk: 1 } },
-  { id: "pan", icon: "🥐", label: "パン・軽め", vals: { bread: 3, rice: 1, egg: 2, milk: 1, yogurt: 1, fruit: 1, salad: 1, veg: 2, chicken: 1, meat: 1, snack: 1, out: 1, soup: 1 } },
-  { id: "men", icon: "🍜", label: "麺・丼・外食が多い", vals: { noodle: 2, rice: 1, out: 2, fried: 1, meat: 1, egg: 1, sugar: 1, veg: 1 } },
-  { id: "meat", icon: "🍖", label: "肉・こってり中心", vals: { rice: 3, meat: 2, chicken: 1, fried: 1, stir: 1, veg: 1, processed: 1, snack: 1 } },
-  { id: "healthy", icon: "🥗", label: "ヘルシー・野菜多め", vals: { brown: 2, rice: 1, fish: 2, chicken: 1, soy: 2, greenveg: 2, veg: 2, salad: 1, mush: 1, fruit: 2, yogurt: 1, milk: 1, soup: 1 } },
-];
 const HABIT_KEYS =new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.habit).map((i) => i.key)));
 const r0 = (n: number) => Math.round(n);
 
@@ -341,6 +335,10 @@ export default function BalanceCheck() {
     setA((x) => ({ ...x, [k]: v }));
     setTouched(true);
     setPreset("");
+    try {
+      localStorage.removeItem("lg-preset");
+    } catch {}
+    window.dispatchEvent(new Event("lg-preset-applied"));
   };
   const applyPreset = (id: string) => {
     const p = PRESETS.find((x) => x.id === id);
@@ -352,7 +350,19 @@ export default function BalanceCheck() {
     });
     setTouched(true);
     setPreset(id);
+    try {
+      localStorage.setItem("lg-preset", id);
+    } catch {}
+    window.dispatchEvent(new Event("lg-preset-applied"));
   };
+  // ホームの先頭の1タップ入力から、同じ入力を受け取る
+  useEffect(() => {
+    const on = (e: Event) => applyPresetRef.current((e as CustomEvent<string>).detail);
+    window.addEventListener("lg-preset", on);
+    return () => window.removeEventListener("lg-preset", on);
+  }, []);
+  const applyPresetRef = useRef(applyPreset);
+  applyPresetRef.current = applyPreset;
   const toggleCx = (id: string) => {
     setCx((x) => {
       const n = x.includes(id) ? x.filter((y) => y !== id) : [...x, id];
@@ -449,43 +459,16 @@ export default function BalanceCheck() {
         🥗 いまの食事のバランス
       </h2>
       <p className="agnote">
-        <b>記録は、いりません。</b>「いつもの1日」に近いものを選ぶだけで、いまの大体のバランスが分かります。最後に、結果を公式LINEに送れます。
+        いつもの1日に近いものを選ぶだけ。<b>記録は、いりません。</b>（上のカードの1タップでも入れられます）
       </p>
-
-      <ol className="balsteps">
-        <li>
-          <b>1</b>選ぶ
-        </li>
-        <li>
-          <b>2</b>結果を見る
-        </li>
-        <li>
-          <b>3</b>原因を知る
-        </li>
-        <li>
-          <b>4</b>LINEで送る
-        </li>
-      </ol>
 
       <div className="balprog" aria-label={`入力の進み具合 ${visited.length}/${GROUPS.length}`}>
         <div className="balprogbar">
           <span style={{ width: `${Math.round((visited.length / GROUPS.length) * 100)}%` }} />
         </div>
         <p>
-          入力の進み具合：<b>{visited.length}</b> / {GROUPS.length}
+          <b>{visited.length}</b> / {GROUPS.length}
         </p>
-      </div>
-
-      <div className="balpresets">
-        <p className="balh sub">いちばん近いものを、1タップ（あとで細かく直せます）</p>
-        <div className="symchips">
-          {PRESETS.map((p) => (
-            <button key={p.id} type="button" aria-pressed={preset === p.id} className={preset === p.id ? "on" : ""} onClick={() => applyPreset(p.id)}>
-              <span aria-hidden>{p.icon}</span>
-              {p.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       {preset && (

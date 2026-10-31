@@ -4187,3 +4187,38 @@ details.balage > summary { cursor: pointer; min-height: 52px; display: flex; ali
 .ffv b { font-size: 1.15rem; }
 .ffv small { color: var(--s-sub); margin-left: 2px; }
 .ffp { flex: 0 0 auto; font-weight: 900; font-size: 1.5rem; color: #1a6a4f; }
+
+/* ホーム先頭：推定カロリー */
+.hero { padding: 18px 16px 16px !important; background: linear-gradient(160deg, #123f31, #1a6a4f) !important; color: #fff; border: 0 !important; box-shadow: 0 10px 28px rgba(18, 63, 49, 0.35) !important; }
+.hero .herolabel { margin: 0; font-size: 0.95rem; font-weight: 800; color: #bfe6d3; letter-spacing: 0.02em; }
+.hero .herolabel.sub { margin-top: 14px; }
+.hero .herokcal { margin: 4px 0 8px; display: flex; align-items: baseline; gap: 8px; color: #fff; }
+.hero .herokcal b { font-size: 3rem; line-height: 1.05; font-weight: 900; color: #ffd36b; letter-spacing: 0.01em; }
+.hero .herokcal b.dash { color: #6aa790; }
+.hero .herokcal span { font-size: 1rem; font-weight: 800; color: #d8f1e5; }
+.hero .herobar { position: relative; height: 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); }
+.hero .herobar span { display: block; height: 100%; border-radius: 999px; background: #6fe0a6; }
+.hero.low .herobar span { background: #ffd36b; }
+.hero.high .herobar span { background: #ff8f7a; }
+.hero .herobar i { position: absolute; top: -4px; width: 3px; height: 20px; background: #fff; border-radius: 2px; transform: translateX(-1px); }
+.hero .heroneed { margin: 10px 0 0; font-size: 1rem; line-height: 1.6; color: #e8f7ef; }
+.hero .heroneed b { color: #fff; }
+.hero .heroneed em { display: block; margin-top: 4px; font-style: normal; font-weight: 900; color: #ffd36b; }
+.hero .heroneed em.ok { color: #8cf0b8; }
+.hero .heropick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.hero .heropick button { display: flex; align-items: center; gap: 8px; min-height: 58px; padding: 8px 10px; border: 2px solid rgba(255, 255, 255, 0.28); border-radius: 14px; background: rgba(255, 255, 255, 0.08); color: #fff; font-family: inherit; font-size: 0.95rem; font-weight: 800; line-height: 1.3; text-align: left; cursor: pointer; }
+.hero .heropick button span { font-size: 1.4rem; flex: 0 0 auto; }
+.hero .heropick button.on { background: #fff; color: #14543f; border-color: #fff; }
+.hero .heromini { display: flex; gap: 8px; margin-top: 14px; }
+.hero .heromini > div { flex: 1; padding: 8px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); min-width: 0; }
+.hero .heromini small { display: block; font-size: 0.8rem; color: #bfe6d3; font-weight: 700; }
+.hero .heromini b { font-size: 1.15rem; font-weight: 900; color: #fff; }
+.hero .heromini u { text-decoration: none; font-size: 0.85rem; font-weight: 700; color: #d8f1e5; }
+.hero .heromini em { display: block; font-style: normal; font-size: 0.85rem; font-weight: 800; color: #ffd36b; }
+.hero .heromini em.ok { color: #8cf0b8; }
+.hero .heroacts { display: flex; gap: 8px; margin-top: 14px; }
+.hero .heroa { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 999px; border: 2px solid rgba(255, 255, 255, 0.6); color: #fff; font-weight: 900; font-size: 1rem; text-decoration: none; }
+.hero .heroa.main { background: #fff; color: #14543f; border-color: #fff; }
+@media (min-width: 521px) { .hero .heropick { grid-template-columns: repeat(3, 1fr); } }
+/* 食事のバランスの、使わなくなった案内 */
+.balsteps, .balpresets { display: none !important; }

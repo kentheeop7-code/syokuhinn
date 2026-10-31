@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -48,7 +48,7 @@ export default function TopNav() {
         <TextSize />
       </div>
     </header>
-    <SuppBar />
+    {path === "/" && tab === "products" && <SuppBar />}
     </>
   );
 }
