@@ -4274,3 +4274,17 @@ body { line-height: 1.55; }
   .balopts button { font-size: 0.95rem !important; min-height: 48px !important; }
   .morebtn { min-height: 52px; font-size: 1rem; }
 }
+
+/* 食品の1件：普段は「名前・kcal・PFC」の3行だけ。タップで量やくわしい栄養素が開く */
+.flist .frow { padding: 0 !important; border-bottom: 1px solid #e3efe8; }
+.frtop { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; row-gap: 4px; width: 100%; padding: 12px 14px; background: none; border: 0; text-align: left; font-family: inherit; color: var(--s-ink); cursor: pointer; align-items: center; }
+.frtop:active { background: #f1f8f4; }
+.frtop .frname { grid-column: 1; font-weight: 800; font-size: 1rem; line-height: 1.4; }
+.frtop .frkcal { grid-column: 2; grid-row: 1; text-align: right; white-space: nowrap; display: block; }
+.frtop .frkcal b { font-size: 1.3rem; font-weight: 900; color: #14543f; }
+.frtop .frkcal small { display: block; font-size: 0.75rem; color: var(--s-sub); line-height: 1.2; }
+.frtop .frpfc { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: 0.9rem; font-weight: 700; color: var(--s-sub); margin: 0; }
+.frtop .frpfc .dot { margin-right: 4px; }
+.frtop .frmore { margin-left: auto; font-style: normal; font-weight: 800; font-size: 0.85rem; color: #1a6a4f; }
+.frdetail { padding: 4px 14px 14px; background: #f6fbf8; }
+.frow.open .frtop { background: #eaf6ef; }

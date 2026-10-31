@@ -225,85 +225,81 @@ function FoodRow({
   const [grams, setGrams] = useState("100");
   const [added, setAdded] = useState(false);
   const [open, setOpen] = useState(false);
+  const [micro, setMicro] = useState(false);
   const g = num(grams) / 100;
   const portions = portionsOf(food);
 
   return (
-    <li className="frow">
-      <div className="frhead">
-        <div className="frname">
+    <li className={open ? "frow open" : "frow"}>
+      <button type="button" className="frtop" onClick={() => setOpen(!open)} aria-expanded={open}>
+        <span className="frname">
           {food.name}
           {APPROX.has(food.name) && <span className="approx">概算値</span>}
-        </div>
-        <div className="frkcal">
+        </span>
+        <span className="frkcal">
           <b>{Math.round(kcalOf(food) * g)}</b>
-          <small>kcal</small>
-        </div>
-      </div>
+          <small>kcal／{num(grams) || 100}g</small>
+        </span>
+        <span className="frpfc">
+          <span className="p">
+            <i className="dot p" />P {r1(food.p * g)}
+          </span>
+          <span className="f">
+            <i className="dot f" />F {r1(food.f * g)}
+          </span>
+          <span className="c">
+            <i className="dot c" />C {r1(food.c * g)}
+          </span>
+          <em className="frmore">{open ? "閉じる ▴" : "量・くわしく ▾"}</em>
+        </span>
+      </button>
       {APPROX_NOTE[food.name] && <p className="amountnote">{APPROX_NOTE[food.name]}</p>}
 
-      <div className="frpfc">
-        <span className="p">
-          <i className="dot p" />P <b>{r1(food.p * g)}</b>g
-        </span>
-        <span className="f">
-          <i className="dot f" />F <b>{r1(food.f * g)}</b>g
-        </span>
-        <span className="c">
-          <i className="dot c" />C <b>{r1(food.c * g)}</b>g
-        </span>
-      </div>
-      <PfcBars p={food.p * g} f={food.f * g} c={food.c * g} />
-
-      <div className="amount">
-        <label className="gram">
-          <input
-            inputMode="decimal"
-            value={grams}
-            onChange={(e) => {
-              setGrams(e.target.value);
-              setAdded(false);
-            }}
-            aria-label={`${food.name}のグラム数`}
-          />
-          g
-        </label>
-        <div className="chips tight">
-          <button
-            className={num(grams) === 100 ? "chip on" : "chip"}
-            onClick={() => setGrams("100")}
-          >
-            100g
-          </button>
-          {portions.map((p) => (
-            <button
-              key={p.label}
-              className={num(grams) === p.g ? "chip on" : "chip"}
-              onClick={() => {
-                setGrams(String(p.g));
-                setAdded(false);
-              }}
-            >
-              {p.label} {p.g}g
+      {open && (
+        <div className="frdetail">
+          <PfcBars p={food.p * g} f={food.f * g} c={food.c * g} />
+          <div className="amount">
+            <label className="gram">
+              <input
+                inputMode="decimal"
+                value={grams}
+                onChange={(e) => {
+                  setGrams(e.target.value);
+                  setAdded(false);
+                }}
+                aria-label={`${food.name}のグラム数`}
+              />
+              g
+            </label>
+            <div className="chips tight">
+              <button className={num(grams) === 100 ? "chip on" : "chip"} onClick={() => setGrams("100")}>
+                100g
+              </button>
+              {portions.map((p) => (
+                <button
+                  key={p.label}
+                  className={num(grams) === p.g ? "chip on" : "chip"}
+                  onClick={() => {
+                    setGrams(String(p.g));
+                    setAdded(false);
+                  }}
+                >
+                  {p.label} {p.g}g
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="rowbtns">
+            <button className={picked ? "small cmp on" : "small cmp"} disabled={!picked && !canPick} onClick={onPick}>
+              {picked ? "✓ 比較中" : canPick ? "⇄ 比較に入れる" : "比較は4つまで"}
             </button>
-          ))}
+            <button className="linkbtn" onClick={() => setMicro(!micro)} aria-expanded={micro}>
+              くわしい栄養素 {micro ? "▴" : "▾"}
+            </button>
+          </div>
+          {micro && <Micros food={food} g={g} />}
         </div>
-      </div>
-
-      <div className="rowbtns">
-
-        <button
-          className={picked ? "small cmp on" : "small cmp"}
-          disabled={!picked && !canPick}
-          onClick={onPick}
-        >
-          {picked ? "✓ 比較中" : canPick ? "⇄ 比較に入れる" : "比較は4つまで"}
-        </button>
-        <button className="linkbtn" onClick={() => setOpen(!open)} aria-expanded={open}>
-          くわしい栄養素 {open ? "▴" : "▾"}
-        </button>
-      </div>
-      {open && <Micros food={food} g={g} />}
+      )}
     </li>
   );
 }
