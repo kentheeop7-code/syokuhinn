@@ -66,6 +66,10 @@ export default function Tips() {
                 <div className="nhead">
                   <h2>{t.title}</h2>
                 </div>
+                <p className="tiplead">{(t.lead.split("。")[0] || t.lead).slice(0, 70)}</p>
+                    </>
+                  }
+                >
                 {t.myth && (
                   <div className="mythbox">
                     <p className="mb-no">
@@ -78,10 +82,6 @@ export default function Tips() {
                     </p>
                   </div>
                 )}
-                {!t.myth && <p className="tiplead">{t.lead}</p>}
-                    </>
-                  }
-                >
                 <ul className="plist">
                   {t.points.map((p) => (
                     <li key={p}>{p}</li>

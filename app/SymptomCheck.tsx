@@ -62,7 +62,7 @@ export default function SymptomCheck() {
   const ranking = useMemo(() => {
     const m = new Map<string, number>();
     chosen.forEach((s) => s.nutrients.forEach((n) => m.set(n, (m.get(n) ?? 0) + 1)));
-    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
   }, [chosen]);
 
   const toggle = (id: string) => setSel((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
@@ -72,9 +72,7 @@ export default function SymptomCheck() {
       <h2 className="h2" style={{ marginTop: 0 }}>
         🩺 気になることから、足したい栄養を探す
       </h2>
-      <p className="agnote">
-        <b>記録は、いりません。</b>いま気になることを、タップして選ぶだけ（いくつでもOK）。足したい栄養と、食べ物が分かります。
-      </p>
+      <p className="agnote">気になることを、選ぶだけ（いくつでも）。</p>
 
       <p className="agnote">
         原因を知りたいときは、ホームの
@@ -123,19 +121,22 @@ export default function SymptomCheck() {
                   <small>足したい栄養</small>
                   {s.nutrients.join("・")}
                 </p>
-                <p>
-                  <small>おすすめの食べ物</small>
-                  {s.foods}
-                </p>
-                <p>
-                  <small>ひとこと</small>
-                  {s.tip}
-                </p>
-                {s.guide && (
-                  <Link href={`/nutrients#${s.guide}`} className="evlink">
-                    くわしいガイドを見る ›
-                  </Link>
-                )}
+                <details className="symmore">
+                  <summary>食べ物とひとこと</summary>
+                  <p>
+                    <small>おすすめの食べ物</small>
+                    {s.foods}
+                  </p>
+                  <p>
+                    <small>ひとこと</small>
+                    {s.tip}
+                  </p>
+                  {s.guide && (
+                    <Link href={`/nutrients#${s.guide}`} className="evlink">
+                      くわしいガイドを見る ›
+                    </Link>
+                  )}
+                </details>
               </li>
             ))}
           </ul>
