@@ -186,7 +186,7 @@ export const FACTOR_SRC: Record<string, string[]> = {
   protein: ["dri2025"],
   fat: ["dri2025"],
   carb: ["dri2025"],
-  salt: ["dri2025", "who2023nss"],
+  salt: ["dri2025"],
   fiber: ["dri2025"],
   iron: ["dri2025"],
   veg: ["japan21"],
