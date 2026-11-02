@@ -83,10 +83,20 @@ export default function Tips() {
                   </div>
                 )}
                 <ul className="plist">
-                  {t.points.map((p) => (
+                  {t.points.slice(0, 3).map((p) => (
                     <li key={p}>{p}</li>
                   ))}
                 </ul>
+                {t.points.length > 3 && (
+                  <details className="tipmore">
+                    <summary>ほかのポイント（{t.points.length - 3}件）</summary>
+                    <ul className="plist">
+                      {t.points.slice(3).map((p) => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
                 {(t.todo || TIP_TODO[t.id]) && (
                   <p className="tiptodo">
                     <b>✅ 今日からできる一歩</b>

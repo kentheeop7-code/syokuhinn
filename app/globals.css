@@ -4417,3 +4417,13 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
   .mereflist.compact li span { font-size: 0.85rem; color: var(--s-sub); }
   .mereflist.compact li b { font-size: 1rem; }
 }
+
+/* 豆知識：開いても、最初は3つのポイントだけ。出典・思い込みの対比は小さく */
+.tipmore > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 800; font-size: 0.92rem; color: #1a6a4f; list-style: none; }
+.tipmore > summary::-webkit-details-marker { display: none; }
+.tipmore > summary::before { content: "▸"; margin-right: 6px; }
+.tipmore[open] > summary::before { content: "▾"; }
+.tipcard .plist li { font-size: 0.95rem; line-height: 1.55; }
+.tipcard .mythbox p { font-size: 0.92rem; line-height: 1.5; }
+.tipcard .tiptodo { font-size: 0.92rem; }
+.tipcard .tipsrc { font-size: 0.8rem; }
