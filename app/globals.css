@@ -4378,3 +4378,13 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .wgtabs button { border-width: 2px !important; border-color: #bfdccd !important; background: #fff !important; color: #14543f !important; }
 .wgtabs button.on { background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; color: #fff !important; border-color: transparent !important; }
 .gtfoods li button, .bmfoods li button { border-color: #bfdccd !important; border-width: 2px !important; background: #fff !important; }
+
+/* 画面の情報を絞る：理由・根拠・おすすめは、タップで開く */
+.causemore, .dnmore { margin-top: 6px; }
+.causemore > summary, .dnmore > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 800; font-size: 0.92rem; color: #1a6a4f; list-style: none; }
+.causemore > summary::-webkit-details-marker, .dnmore > summary::-webkit-details-marker { display: none; }
+.causemore > summary::before, .dnmore > summary::before { content: "▸"; margin-right: 6px; }
+.causemore[open] > summary::before, .dnmore[open] > summary::before { content: "▾"; }
+.causesrc { margin: 6px 0 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem; line-height: 1.5; }
+.causesrc small { font-weight: 800; color: #1a6a4f; }
+.causesrc a { color: #14543f; text-decoration: underline; }

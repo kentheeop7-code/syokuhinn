@@ -1,5 +1,7 @@
 "use client";
 
+import { SRC } from "./evidence";
+
 // 「いまの悩み」と「いまの食事」から、食事のどこが原因かを、数字つきで予測する。診断ではなく、目安。
 export type CIn = {
   a: Record<string, number>;
@@ -108,7 +110,7 @@ function factors(i: CIn): Record<string, Fx> {
       sev: sweets >= 2 ? lin(sweets / 4 + 0.3) : sweets === 1 ? 0.2 : 0,
       name: "甘いもの・甘い飲み物が多め",
       num: `1日に約${sweets}回`,
-      why: "血糖が急に上がって下がり、また甘いものがほしくなる流れができます。エネルギー過多にもなります。",
+      why: "甘いものは、WHOが「遊離糖類は総エネルギーの10%未満」を推奨しています。体重増加とむし歯が主な根拠です。血糖の上下で、また食べたくなりやすくなります。",
       act: `お菓子か甘い飲み物を1回減らし、無糖ヨーグルト・果物・お茶に（約−${sweetKcal}kcal）。`,
       dk: sweetKcal,
     },
@@ -116,7 +118,7 @@ function factors(i: CIn): Record<string, Fx> {
       sev: n("alcohol") >= 2 ? 1 : n("alcohol") >= 1 ? 0.7 : 0,
       name: "お酒の習慣",
       num: n("alcohol") >= 2 ? "毎日2杯以上" : "毎日1杯",
-      why: "お酒はエネルギーが高く、眠りを浅くし、むくみや血圧にも関わります。",
+      why: "お酒は、量が多いほど、高血圧・脳卒中・がんなどのリスクが上がります（国のガイドライン）。エネルギーも高く、眠りを浅くします。",
       act: "飲む日を減らす・1杯にする（約−140kcal）。飲む日は、豆腐・枝豆などのおつまみに。",
       dk: 140,
     },
@@ -177,6 +179,25 @@ const MAP: Record<string, [string, number][]> = {
   cold: [["kcalLow", 3], ["iron", 2.5], ["protein", 2.5], ["breakfast", 1], ["walk", 1.5]],
 };
 
+// 各原因の、公的な根拠（なければ「一般的な知見」と正直に出す）
+export const FACTOR_SRC: Record<string, string[]> = {
+  kcalLow: ["dri2025"],
+  kcalHigh: ["dri2025"],
+  protein: ["dri2025"],
+  fat: ["dri2025"],
+  carb: ["dri2025"],
+  salt: ["dri2025", "who2023nss"],
+  fiber: ["dri2025"],
+  iron: ["dri2025"],
+  veg: ["japan21"],
+  sweets: ["who2015sugar"],
+  alcohol: ["drink2024"],
+  rich: ["dri2025"],
+  walk: ["activity2023"],
+  sleep: ["sleep2023"],
+  // 個別の公的基準を確認できていないもの：breakfast（朝食）・late（夜遅い食事）・water（水分）
+};
+
 export type Cause = Fx & { id: string; score: number; level: "高い" | "あり" | "少し"; rel: string[] };
 
 export function analyze(i: CIn, picked: string[]): Cause[] {
@@ -195,7 +216,7 @@ export function analyze(i: CIn, picked: string[]): Cause[] {
   return [...sc.entries()]
     .map(([id, v]) => ({ ...fx[id], id, score: v.score, rel: v.rel, level: (fx[id].sev >= 0.7 ? "高い" : fx[id].sev >= 0.4 ? "あり" : "少し") as Cause["level"] }))
     .sort((x, y) => y.score - x.score)
-    .slice(0, 3);
+    .slice(0, 2);
 }
 
 export default function CausePanel({ input, picked, onToggle, touched }: { input: CIn; picked: string[]; onToggle: (id: string) => void; touched: boolean }) {
@@ -244,11 +265,29 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
                   <small>いまの食事</small>
                   {c.num}
                 </p>
-                <p className="causen">
-                  <small>なぜ関係する？</small>
-                  {c.why}
-                </p>
-                {c.rel.length > 1 && <p className="causerel">{c.rel.length}つの悩みに関係：{c.rel.join("・")}</p>}
+                <details className="causemore">
+                  <summary>なぜ？ 根拠は？</summary>
+                  <p className="causen">{c.why}</p>
+                  {c.rel.length > 1 && <p className="causerel">{c.rel.length}つの悩みに関係：{c.rel.join("・")}</p>}
+                  <p className="causesrc">
+                    <small>根拠</small>
+                    {(FACTOR_SRC[c.id] ?? []).length > 0 ? (
+                      (FACTOR_SRC[c.id] ?? []).map((sid) => {
+                        const s = SRC[sid];
+                        if (!s) return null;
+                        return s.url ? (
+                          <a key={sid} href={s.url} target="_blank" rel="noopener noreferrer">
+                            {s.label}
+                          </a>
+                        ) : (
+                          <span key={sid}>{s.label}</span>
+                        );
+                      })
+                    ) : (
+                      <span>一般的な知見です（この項目には、確認できた公的な基準がありません）</span>
+                    )}
+                  </p>
+                </details>
               </li>
             ))}
           </ol>
@@ -263,7 +302,7 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
               )}
             </div>
           )}
-          <p className="agnote small">※ 食事の量は「いつもの1日」からの概算です。原因を断定するものではなく、症状が強い・続くときは医師に相談してください。</p>
+          <p className="agnote small">※ 数字は「いつもの1日」からの概算です。悩みと原因の結びつけ方は、このアプリの簡単なルールで、診断ではありません。症状が強い・続くときは、医師に相談を。</p>
         </>
       )}
     </div>

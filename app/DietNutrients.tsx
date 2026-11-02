@@ -84,11 +84,14 @@ export default function DietNutrients({ bare = false }: { bare?: boolean }) {
                   <u style={{ width: `${Math.min(100, Math.round((rw.now / rw.goal) * 100))}%` }} />
                 </i>
               )}
-              <p className="dnwhy">{rw.why}</p>
-              <p className="dnfoods">
-                <small>おすすめ</small>
-                {rw.foods}
-              </p>
+              <details className="dnmore">
+                <summary>なぜ大切？ おすすめ食品</summary>
+                <p className="dnwhy">{rw.why}</p>
+                <p className="dnfoods">
+                  <small>おすすめ</small>
+                  {rw.foods}
+                </p>
+              </details>
             </li>
           );
         })}

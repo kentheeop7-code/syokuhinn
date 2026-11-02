@@ -1,4 +1,4 @@
-﻿// 根拠（エビデンス）の一覧。確認できたものだけを載せ、「どんな種類の根拠か」も、はっきり書く。
+// 根拠（エビデンス）の一覧。確認できたものだけを載せ、「どんな種類の根拠か」も、はっきり書く。
 export type Kind = "国の基準" | "診療ガイドライン" | "国際機関" | "研究・総説" | "公的な資料" | "このアプリの計算";
 export type Src = { label: string; url?: string; kind: Kind; note?: string };
 
@@ -114,7 +114,18 @@ export const SRC: Record<string, Src> = {
     kind: "公的な資料",
     note: "添加物の表示の読み方。",
   },
-  activity2023: {
+  drink2024: {
+    label: "厚生労働省「健康に配慮した飲酒に関するガイドライン」（2024）",
+    url: "https://www.mhlw.go.jp/content/12200000/001223643.pdf",
+    kind: "国の基準",
+    note: "飲酒量が多いほど、高血圧・脳卒中・がんなどのリスクが上がる。病気ごとに、リスクが上がる飲酒量の表がある。",
+  },
+  who2015sugar: {
+    label: "WHO「Guideline: Sugars intake for adults and children」（2015）",
+    url: "https://iris.who.int/items/00ba199c-9435-4e0c-804c-04c95b7b261d",
+    kind: "国際機関",
+    note: "遊離糖類は、総エネルギーの10%未満（強い推奨）。体重増加とむし歯が主な根拠。",
+  },  activity2023: {
     label: "厚生労働省「健康づくりのための身体活動・運動ガイド2023」",
     url: "https://www.mhlw.go.jp/content/001195866.pdf",
     kind: "国の基準",
