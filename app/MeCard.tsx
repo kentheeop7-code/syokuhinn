@@ -68,7 +68,7 @@ export default function MeCard({ variant = "full", topic }: { variant?: "full" |
         ))}
       </div>
 
-      <ul className="mereflist">
+      <ul className="mereflist compact">
         <li>
           <span>エネルギー</span>
           <b>約{ref.kcal[b][me.pal].toLocaleString()}kcal</b>

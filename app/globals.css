@@ -4410,3 +4410,10 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .symmore > summary::before, .meage > summary::before { content: "▸"; margin-right: 6px; }
 .symmore[open] > summary::before, .meage[open] > summary::before { content: "▾"; }
 .tipcard .tiplead { font-size: 0.95rem; color: var(--s-sub); margin: 2px 0 0; }
+
+@media (max-width: 520px) {
+  .mereflist.compact { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+  .mereflist.compact li { padding: 8px 10px !important; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .mereflist.compact li span { font-size: 0.85rem; color: var(--s-sub); }
+  .mereflist.compact li b { font-size: 1rem; }
+}
