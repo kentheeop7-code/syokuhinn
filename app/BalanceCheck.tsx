@@ -604,17 +604,28 @@ export default function BalanceCheck() {
             </li>
           ))}
         </ul>
-        <p className="agnote">
-          {target ? `PFCは、あなたが決めた目標（P${target.p}g・F${target.f}g・C${target.c}g）との比較です。` : `PFCは、食事摂取基準の割合（P${P_LO[band]}〜20%・F20〜30%・C50〜65%）との比較です。目標を決めると、目標との比較になります。`}
-        </p>
 
         {shown.length > 0 ? (
           <div className="baltips">
             <p className="balh">今日から、できること</p>
             <ul>
-              {shown.map((x) => (
-                <li key={x}>{x}</li>
-              ))}
+              {shown.map((x) => {
+                const i = x.indexOf("：");
+                const head = i > 0 ? x.slice(0, i) : x;
+                const rest = i > 0 ? x.slice(i + 1) : "";
+                return (
+                  <li key={x}>
+                    {rest ? (
+                      <details>
+                        <summary>{head}</summary>
+                        <p>{rest}</p>
+                      </details>
+                    ) : (
+                      head
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ) : (
@@ -641,11 +652,6 @@ export default function BalanceCheck() {
 
       <div className="linebox" hidden={rtab !== "send"}>
         <p className="balh">📨 結果を、公式LINEに送る</p>
-        <ol className="linesteps">
-          <li>下のボタンを押す</li>
-          <li>LINEが開く → {LINE_OA_ID ? "公式アカウントのトークに、文章が入ります" : "送り先に、LINEの公式アカウントを選ぶ"}</li>
-          <li>「送信」を押して、完了</li>
-        </ol>
         <label className="linenick">
           <span>お名前（あれば）</span>
           <input type="text" value={nick} onChange={(e) => setNick(e.target.value)} placeholder="例：さくら" maxLength={20} aria-label="お名前（任意）" />

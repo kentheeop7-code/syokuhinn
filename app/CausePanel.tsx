@@ -225,13 +225,8 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
   const top = causes[0];
   return (
     <div className="causep" id="cause">
-      <p className="balh">🔍 いまの悩みの「原因」を、予測する</p>
-      <ol className="causesteps">
-        <li><b>1</b>悩みを選ぶ</li>
-        <li><b>2</b>原因を見る</li>
-        <li><b>3</b>1つだけ変える</li>
-      </ol>
-      <p className="balh sub">① いま、気になることは？（いくつでも）</p>
+      <p className="balh">🔍 悩みの原因</p>
+      <p className="balh sub">気になること（いくつでも）</p>
       <div className="symchips">
         {list.map((c) => (
           <button key={c.id} type="button" aria-pressed={picked.includes(c.id)} className={picked.includes(c.id) ? "on" : ""} onClick={() => onToggle(c.id)}>
@@ -242,9 +237,9 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
       </div>
 
       {picked.length === 0 ? (
-        <p className="symempty">悩みを選ぶと、いまの食事から、考えられる原因が出ます。</p>
+        <p className="symempty">悩みを選ぶと、原因が出ます。</p>
       ) : !touched ? (
-        <p className="symempty">先に、上の「いつもの1日」を選ぶと、あなたの食事から原因を予測します。</p>
+        <p className="symempty">先に、いつもの食事を選んでください。</p>
       ) : causes.length === 0 ? (
         <div className="causeok">
           <p><b>食事には、大きな原因が見つかりませんでした。</b></p>
@@ -252,7 +247,7 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
         </div>
       ) : (
         <>
-          <p className="balh sub">② 考えられる原因（可能性が高い順）</p>
+          <p className="balh sub">考えられる原因</p>
           <ol className="causelist">
             {causes.map((c, idx) => (
               <li key={c.id}>
@@ -293,7 +288,7 @@ export default function CausePanel({ input, picked, onToggle, touched }: { input
           </ol>
           {top && (
             <div className="causego">
-              <p className="balh sub">③ まず、これだけ変えてみる</p>
+              <p className="balh sub">まず、これだけ</p>
               <p className="causeact">{top.act}</p>
               {top.dk && picked.includes("weight") && (
                 <p className="causepred">
