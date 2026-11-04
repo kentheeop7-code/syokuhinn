@@ -160,6 +160,23 @@ export const SRC: Record<string, Src> = {
     url: "https://www.ito-hospital.jp/06_iodine/01_about_iodine.html",
     kind: "医療機関の解説",
     note: "昆布など、ヨウ素の多い食品を摂り続けると、甲状腺機能が低下することがある。制限が必要かは、医師へ。※日本甲状腺学会の資料は、確認できていません。",
+  },  msdHypo: {
+    label: "MSDマニュアル家庭版「甲状腺機能低下症」",
+    url: "https://www.msdmanuals.com/ja-jp/ホーム/ホルモンと代謝の病気/甲状腺の病気/甲状腺機能低下症",
+    kind: "医療機関の解説",
+    note: "症状の一つに体重増加。治療は合成T4（レボチロキシン）を少量から始め、TSHが正常になるまで調整する。",
+  },
+  msdHyper: {
+    label: "MSDマニュアル家庭版「甲状腺機能亢進症」",
+    url: "https://www.msdmanuals.com/ja-jp/ホーム/ホルモンと代謝の病気/甲状腺の病気/甲状腺機能亢進症",
+    kind: "医療機関の解説",
+    note: "食欲が増えても、体重が減る。抗甲状腺薬で、通常2〜3か月以内に機能を整える。治療後に機能低下になり、ホルモン補充が必要になることもある。",
+  },
+  okamotoLT4: {
+    label: "岡本甲状腺クリニック「橋本病・甲状腺機能低下症」",
+    url: "https://www.thyroid.jp/basic/hashimoto/",
+    kind: "医療機関の解説",
+    note: "ホルモン薬（チラーヂンS）は、コーヒー・食物繊維の多い食品・鉄剤・一部の胃薬で、吸収が妨げられることがある。昆布の過剰摂取は控える。",
   },  activity2023: {
     label: "厚生労働省「健康づくりのための身体活動・運動ガイド2023」",
     url: "https://www.mhlw.go.jp/content/001195866.pdf",

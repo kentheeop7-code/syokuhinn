@@ -4481,3 +4481,7 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .tipfold > summary::-webkit-details-marker { display: none; }
 .tipfold > summary::before { content: "▸"; margin-right: 6px; }
 .tipfold[open] > summary::before { content: "▾"; }
+
+.thyr { margin: 0 0 8px; }
+.thyr .plkc { margin: 8px 0; padding: 10px 12px; border-radius: 12px; background: #e7f4ec; font-weight: 800; line-height: 1.6; font-size: 0.95rem; }
+.thyr .plkc small { display: block; font-size: 0.8rem; color: #1a6a4f; }

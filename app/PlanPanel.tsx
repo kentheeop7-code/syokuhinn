@@ -40,26 +40,26 @@ function dmKcal(c: Ctx): string {
 type Card = { kcal: (c: Ctx) => string; points: (c: Ctx) => string[]; ask: string; ids: string[]; note?: string };
 const CARDS: Record<string, Card> = {
   "thy-low": {
-    kcal: () => "通常の目標カロリーでOK。治療中は、急に食事を減らさない。",
+    kcal: () => "",
     points: () => [
-      "体重の変化は、ホルモンの状態でも変わります。まず、治療で数値が安定しているかを、主治医に確認しましょう。",
-      "昆布・昆布だしの毎日の大量摂取や、ヨウ素入りのサプリは避けます（海藻を、すべてやめる必要はありません）。",
-      "サプリや極端な食事法は、始める前に、主治医・薬剤師に相談を。",
+      "体重増加は、甲状腺ホルモンが足りないときの症状の一つです。薬（合成T4）で数値が整うと、体重が変わることがあります。",
+      "昆布・昆布だしを毎日たくさん食べる、ヨウ素入りのサプリを使う、は避けます（ふつうの量の海藻は、問題ありません）。",
+      "薬は、コーヒー・食物繊維の多い食品・鉄剤・一部の胃薬で、吸収が妨げられることがあります。食物繊維を急に増やす・鉄のサプリを始めるときは、薬を飲む時間を、主治医・薬剤師に相談してください。",
     ],
-    ask: "薬を飲んでいる方は、食事・サプリの変更を、主治医に伝えてください。",
-    ids: ["itoIodine"],
-    note: "日本甲状腺学会の資料は、確認できていません。医療機関の解説にもとづく、一般的な内容です。",
+    ask: "薬の量を、自分で増やしたり、体重を減らす目的で使ったりしないでください（動悸・手の震えなどが出ます）。",
+    ids: ["msdHypo", "okamotoLT4", "itoIodine"],
+    note: "日本甲状腺学会の資料は、確認できていません。医療機関・医学書の解説にもとづく、一般的な内容です。",
   },
   "thy-high": {
-    kcal: () => "減らさない。代謝が高く、体重が落ちやすいため、必要なカロリーは多めになることがあります（主治医・管理栄養士と決める）。",
+    kcal: () => "",
     points: () => [
-      "体重が減りやすい時期は、減量のための食事制限は、しません。",
-      "ヨウ素の扱いは、治療で違います。放射性ヨウ素の検査・治療の前は、1〜2週間ほど、制限が必要なことがあります（医療機関の指示に従う）。",
-      "制限が不要なときも、毎日多くの昆布を食べると過剰になるので、注意します。",
+      "食欲が増えても体重が減るのは、ホルモンが多いための症状です。この時期は、減量の食事制限は、しません。",
+      "薬で機能が整うと、代謝が落ち着き、以前と同じ量では、太りやすくなることがあります（多くの解説で一致）。治療前の食事量に、そのまま戻さないようにします。",
+      "放射性ヨウ素の検査・治療の前は、1〜2週間ほど、ヨウ素の制限が必要なことがあります。医療機関の指示に従ってください。",
     ],
-    ask: "食事の制限が必要かどうかは、医師に確認してください。",
-    ids: ["itoIodine"],
-    note: "日本甲状腺学会の資料は、確認できていません。医療機関の解説にもとづく、一般的な内容です。",
+    ask: "治療の後に、甲状腺の機能が低くなり、ホルモン補充が必要になることもあります。体重が急に変わったら、主治医に伝えてください。",
+    ids: ["msdHyper", "itoIodine"],
+    note: "日本甲状腺学会の資料は、確認できていません。医療機関・医学書の解説にもとづく、一般的な内容です。",
   },
   pcos: {
     kcal: () => "BMI25以上なら、上の目標カロリーで、ゆっくり減量。BMI25未満は、減らさない。",
@@ -123,8 +123,74 @@ const CARDS: Record<string, Card> = {
   },
 };
 
+// 甲状腺：数値が安定しているかで、ダイエットできる範囲が変わる
+function ThyroidRange({ id, state, setState, target, maint, perMonth, youth, diff }: { id: string; state: string; setState: (v: string) => void; target: number | null; maint: number; perMonth: number; youth: boolean; diff: number }) {
+  const low = id === "thy-low";
+  const safe = target ? Math.min(target, maint) : maint;
+  // 安定していても、ペースはゆっくり（月1kg）にそろえる
+  const slowTarget = Math.max(maint - 240, 1200);
+  return (
+    <div className="thyr">
+      <p className="plmini">いまの状態は？</p>
+      <div className="plpace" role="radiogroup" aria-label="甲状腺の状態">
+        {(
+          [
+            ["stable", "治療中で、数値が安定"],
+            ["unstable", "治療前・不安定・分からない"],
+          ] as const
+        ).map(([k, l]) => (
+          <button key={k} type="button" role="radio" aria-checked={state === k} className={state === k ? "on" : ""} onClick={() => setState(k)}>
+            {l}
+          </button>
+        ))}
+      </div>
+      {state === "" && <p className="plsub">どちらかを選ぶと、ダイエットできる範囲が出ます。</p>}
+      {state === "unstable" && (
+        <p className="plkc">
+          <small>ダイエットできる範囲</small>
+          {low
+            ? "ダイエットの前に、血液検査（TSHなど）と治療。体重増加は、ホルモン不足の症状のことがあり、数値が整うと変わることがあります。食事は、維持の目安（約" + maint.toLocaleString() + "kcal）より減らしません。"
+            : "ダイエットはしません。食べても体重が減るのは、ホルモンが多いためです。まず治療を。食事は、維持の目安（約" + maint.toLocaleString() + "kcal）以上をしっかり。"}
+        </p>
+      )}
+      {state === "stable" && (
+        <p className="plkc">
+          <small>ダイエットできる範囲</small>
+          {youth
+            ? "中学生・高校生は、減量のカロリーは出しません。主治医に相談を。"
+            : diff <= 0.4
+              ? `体重を保つ食事で、約${maint.toLocaleString()}kcal。`
+              : `「ゆっくり（月1kg）」まで。目標 約${slowTarget.toLocaleString()}kcal / 日（維持 ${maint.toLocaleString()}kcal − 約240kcal）。急な制限・極端な食事法は、しません。始める前に、主治医に一言伝えてください。`}
+          {!low && " 治療後に太りやすくなることがあるので、食事量は、様子を見ながら調整します。"}
+        </p>
+      )}
+      {state === "stable" && !youth && diff > 0.4 && (
+        <p className="plsub">
+          このペースで、月 約1kg（あと{diff}kg → 約{Math.ceil(diff)}か月）。上の「ふつう（月2kg）」は、使いません。
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function PlanPanel() {
   const me = useMe();
+  const [thy, setThy] = useState<Record<string, string>>({});
+  const setThyOne = (id: string, v: string) => {
+    setThy((x) => {
+      const n = { ...x, [id]: v };
+      try {
+        localStorage.setItem("lg-thy", JSON.stringify(n));
+      } catch {}
+      return n;
+    });
+  };
+  useEffect(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem("lg-thy") || "null");
+      if (s && typeof s === "object") setThy(s);
+    } catch {}
+  }, []);
   const [now, setNow] = useState("");
   const [goal, setGoal] = useState("");
   const [height, setHeight] = useState("");
@@ -372,10 +438,14 @@ export default function PlanPanel() {
                   <h3>
                     <span aria-hidden>{c.icon}</span> {c.label}
                   </h3>
-                  <p className="plkc">
-                    <small>カロリー</small>
-                    {d.kcal(ctx)}
-                  </p>
+                  {c.id === "thy-low" || c.id === "thy-high" ? (
+                    <ThyroidRange id={c.id} state={thy[c.id] ?? ""} setState={(v) => setThyOne(c.id, v)} target={plan?.kind === "loss" ? plan.target : null} maint={maint} perMonth={plan?.perMonth ?? 0} youth={me.isYouth} diff={diff} />
+                  ) : (
+                    <p className="plkc">
+                      <small>カロリー</small>
+                      {d.kcal(ctx)}
+                    </p>
+                  )}
                   <ul>
                     {d.points(ctx).map((x) => (
                       <li key={x}>{x}</li>
