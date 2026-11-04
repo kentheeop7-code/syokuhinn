@@ -7,7 +7,7 @@ type Tile = { href: string; icon: string; name: string; desc?: string; here?: bo
 const MAIN: Tile[] = [
   { href: "#bal", icon: "🥗", name: "食事を細かく入力", desc: "結果・栄養チェック", here: true },
   { href: "#cause", icon: "🔍", name: "悩みの原因を知る", desc: "疲れ・便秘・体重など", here: true },
-  { href: "/?tab=plan", icon: "⚖️", name: "体重と目標", desc: "到達時期・カロリー" },
+  { href: "/?tab=plan", icon: "⚖️", name: "体重と目標", desc: "カロリー・持病別の食事" },
   { href: "/nutrients#diet-nutrients", icon: "🧪", name: "必要な栄養素", desc: "食物繊維・たんぱく質…" },
 ];
 

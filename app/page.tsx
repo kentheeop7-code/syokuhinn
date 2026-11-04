@@ -1,6 +1,7 @@
 "use client";
 
 import HomeHero from "./HomeHero";
+import PlanPanel from "./PlanPanel";
 import MeCard from "./MeCard";
 import SiteMap from "./SiteMap";
 import LineShare from "./LineShare";
@@ -2134,15 +2135,16 @@ function HomeInner() {
           <Link href="/" className="backlink">
             ‹ ホームへ戻る
           </Link>
-          <Fold key="r-weight" id="r-weight" title="⚖️ 目標体重に着く時期の予測" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold" defaultOpen>
+          <PlanPanel />
+          <Fold key="r-weight" id="r-weight" title="📈 到達までのグラフ" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold">
             <WeightChart />
           </Fold>
           {loaded && (
-            <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 1日のカロリー・PFCを決める" sub={hasKcal ? "設定ずみ。タップで見なおす・変える" : "目的・体重・カロリーから、PFCと食事例を計算"} cls="wfold">
+            <Fold key={hasKcal ? "k1" : "k0"} id="r-kcal" title="🔥 くわしい設定：カロリー・PFCと食事例" sub={hasKcal ? "設定ずみ" : "目的・運動から、PFCと食事例を計算"} cls="wfold">
               <KcalSetter setGoal={setGoal} />
             </Fold>
           )}
-          <Fold key="r-goal" id="r-goal" title="🎯 目標体重・年齢などを入れる" sub="体重の予測と、カロリーの計算に使います" cls="wfold">
+          <Fold key="r-goal" id="r-goal" title="🎯 くわしい設定：年齢・目的など" sub="体重の予測と、カロリーの計算に使います" cls="wfold">
             <ProfileGoal setGoal={setGoal} />
           </Fold>
         </>      ) : tab === "women" ? (

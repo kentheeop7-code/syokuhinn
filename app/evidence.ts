@@ -1,5 +1,5 @@
 // 根拠（エビデンス）の一覧。確認できたものだけを載せ、「どんな種類の根拠か」も、はっきり書く。
-export type Kind = "国の基準" | "診療ガイドライン" | "国際機関" | "研究・総説" | "公的な資料" | "このアプリの計算";
+export type Kind = "医療機関の解説" | "国の基準" | "診療ガイドライン" | "国際機関" | "研究・総説" | "公的な資料" | "このアプリの計算";
 export type Src = { label: string; url?: string; kind: Kind; note?: string };
 
 const DRI_URL = "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/eiyou/syokuji_kijyun.html";
@@ -125,6 +125,41 @@ export const SRC: Record<string, Src> = {
     url: "https://iris.who.int/items/00ba199c-9435-4e0c-804c-04c95b7b261d",
     kind: "国際機関",
     note: "遊離糖類は、総エネルギーの10%未満（強い推奨）。体重増加とむし歯が主な根拠。",
+  },  jsogPcos2025: {
+    label: "日本産科婦人科学会「本邦における多嚢胞性卵巣症候群の治療指針の検証」（2025）",
+    url: "https://www.jsog.or.jp/news/pdf/PCOSshishin_20250717.pdf",
+    kind: "診療ガイドライン",
+    note: "BMI25以上のPCOSでは、減量が第一選択。短期目標は、3〜6か月で体重の5〜10%減。",
+  },
+  dmicDiet: {
+    label: "糖尿病情報センター「糖尿病の食事のはなし（基本編）」",
+    url: "https://dmic.jihs.go.jp/general/about-dm/040/020/02-1.html",
+    kind: "公的な資料",
+    note: "1日のエネルギー量＝目標体重×エネルギー係数。目標体重は、65歳未満で身長(m)²×22。",
+  },
+  jhfLipid: {
+    label: "日本心臓財団「動脈硬化性疾患予防ガイドライン・エッセンス」",
+    url: "https://www.jhf.or.jp/pro/a&s_info/guideline/post_2.html",
+    kind: "診療ガイドライン",
+    note: "エネルギーは標準体重×25〜35。脂質は20〜25%E、飽和脂肪酸は4.5%以上7%未満、コレステロールは200mg/日未満。",
+  },
+  jshHtn2019: {
+    label: "日本高血圧学会「高血圧治療ガイドライン2019」一般向け解説",
+    url: "https://www.jpnsh.jp/data/jsh2019_gen.pdf",
+    kind: "診療ガイドライン",
+    note: "高血圧の減塩目標は、1日6g未満（強い推奨）。野菜・果物も積極的に。",
+  },
+  kennetBone: {
+    label: "厚生労働省 e-ヘルスネット「骨粗鬆症の予防のための食生活」",
+    url: "https://kennet.mhlw.go.jp/information/information/food/e-02-007.html",
+    kind: "公的な資料",
+    note: "危険因子：カルシウム不足、ビタミンD・K不足、食塩の取りすぎ、極端な食事制限、運動不足、過度の飲酒など。",
+  },
+  itoIodine: {
+    label: "伊藤病院「ヨウ素と甲状腺の関係」",
+    url: "https://www.ito-hospital.jp/06_iodine/01_about_iodine.html",
+    kind: "医療機関の解説",
+    note: "昆布など、ヨウ素の多い食品を摂り続けると、甲状腺機能が低下することがある。制限が必要かは、医師へ。※日本甲状腺学会の資料は、確認できていません。",
   },  activity2023: {
     label: "厚生労働省「健康づくりのための身体活動・運動ガイド2023」",
     url: "https://www.mhlw.go.jp/content/001195866.pdf",

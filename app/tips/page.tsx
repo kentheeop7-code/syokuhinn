@@ -71,6 +71,8 @@ export default function Tips() {
                   }
                 >
                 {t.myth && (
+                  <details className="tipfold">
+                    <summary>思い込みと、実際は？</summary>
                   <div className="mythbox">
                     <p className="mb-no">
                       <span>✕ よくある思い込み</span>
@@ -81,6 +83,7 @@ export default function Tips() {
                       {t.lead}
                     </p>
                   </div>
+                  </details>
                 )}
                 <ul className="plist">
                   {t.points.slice(0, 3).map((p) => (
@@ -98,10 +101,10 @@ export default function Tips() {
                   </details>
                 )}
                 {(t.todo || TIP_TODO[t.id]) && (
-                  <p className="tiptodo">
-                    <b>✅ 今日からできる一歩</b>
-                    {t.todo ?? TIP_TODO[t.id]}
-                  </p>
+                  <details className="tipfold">
+                    <summary>✅ 今日からできる一歩</summary>
+                    <p className="tiptodo">{t.todo ?? TIP_TODO[t.id]}</p>
+                  </details>
                 )}
                 {t.source ? (
                       <p className="tipsrc">

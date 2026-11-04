@@ -4427,3 +4427,57 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .tipcard .mythbox p { font-size: 0.92rem; line-height: 1.5; }
 .tipcard .tiptodo { font-size: 0.92rem; }
 .tipcard .tipsrc { font-size: 0.8rem; }
+
+/* 体重と目標 */
+.planp { margin: 4px 0 16px; }
+.planh { margin: 18px 0 8px; font-size: 1.05rem; font-weight: 900; color: #0f3d2e; }
+.planin { display: grid; gap: 10px; }
+.plf { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 8px; padding: 10px 12px; border-radius: 16px; background: #fff; border: 2px solid #d5e8dd; }
+.plf > span { grid-column: 1 / -1; font-weight: 800; font-size: 0.92rem; color: var(--ui-sub, #55705f); }
+.plf > small { font-weight: 800; color: #14543f; }
+.plstep { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.plstep button { flex: 0 0 52px; height: 52px; border-radius: 14px; border: 2px solid #2f9e75 !important; background: #fff !important; color: #14543f !important; font-size: 1.6rem; font-weight: 900; font-family: inherit; cursor: pointer; }
+.plstep input { flex: 1; min-width: 0; height: 52px; text-align: center; font-size: 1.5rem !important; font-weight: 900; border-radius: 14px; }
+.plstep.one input { text-align: left; font-size: 1.2rem !important; padding: 0 12px; }
+.planme { margin: 8px 2px 0; font-size: 0.88rem; color: var(--ui-sub, #55705f); }
+.planempty { margin: 10px 0; padding: 12px; border-radius: 14px; background: #e7f4ec; color: #14543f; font-weight: 700; }
+.plpace { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.plpace button { min-height: 48px; border-radius: 14px; border: 2px solid #bfdccd !important; background: #fff !important; color: #14543f !important; font-weight: 900; font-family: inherit; font-size: 0.95rem; }
+.plpace button.on { background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; color: #fff !important; border-color: transparent !important; }
+.plres { padding: 14px; border-radius: 18px; background: linear-gradient(160deg, #123f31, #1a6a4f); color: #fff; }
+.plres .plkind { margin: 0; font-weight: 800; color: #bfe6d3; }
+.plres .plbig { margin: 2px 0 6px; font-size: 1rem; font-weight: 800; }
+.plres .plbig b { font-size: 2.4rem; color: #ffd36b; font-weight: 900; }
+.plres .plsub { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.55; color: #e8f7ef; }
+.plpfc, .plcmp { margin-top: 10px; padding: 12px; border-radius: 16px; background: #fff; border: 2px solid #d5e8dd; }
+.plmini { margin: 0 0 6px; font-weight: 900; font-size: 0.95rem; color: #14543f; }
+.plsub { margin: 6px 0; font-size: 0.92rem; line-height: 1.55; }
+.plcmp em { display: block; margin-top: 4px; font-style: normal; font-weight: 900; }
+.plcmp em.ok { color: #1c7a47; } .plcmp em.low { color: #8a5a00; } .plcmp em.high { color: #a3223a; }
+.plnote summary, .plask { font-size: 0.9rem; }
+.plnote > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 800; color: #1a6a4f; }
+.plconds { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.plconds button { display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px 10px; border-radius: 14px; border: 2px solid #bfdccd !important; background: #fff !important; color: #14543f !important; font-family: inherit; font-weight: 800; font-size: 0.92rem; line-height: 1.3; text-align: left; cursor: pointer; }
+.plconds button span { font-size: 1.3rem; flex: 0 0 auto; }
+.plconds button.on { background: linear-gradient(135deg, #1a6a4f, #2f9e75) !important; color: #fff !important; border-color: transparent !important; }
+.plcards { display: grid; gap: 12px; margin-top: 12px; }
+.plcard { padding: 14px; border-radius: 18px; background: #fff; border: 2px solid #2f9e75; }
+.plcard h3 { margin: 0 0 8px; font-size: 1.05rem; color: #0f3d2e; }
+.plcard .plkc { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; background: #e7f4ec; font-weight: 800; line-height: 1.55; }
+.plcard .plkc small { display: block; font-size: 0.8rem; color: #1a6a4f; }
+.plcard ul { margin: 0 0 8px; padding-left: 1.2em; }
+.plcard li { font-size: 0.95rem; line-height: 1.6; margin-bottom: 4px; }
+.plcard .plask { margin: 6px 0; font-weight: 800; color: #8a5a00; }
+.plcard .plwarn { margin: 6px 0; font-size: 0.85rem; color: var(--ui-sub, #55705f); }
+.hero .heroplan { margin: 8px 0 0; font-size: 0.95rem; color: #e8f7ef; }
+.hero .heroplan b { color: #ffd36b; }
+.hero .heroplan em { display: block; font-style: normal; font-weight: 900; color: #8cf0b8; }
+.hero .heroplan em.low { color: #ffd36b; }
+.hero .heroacts { flex-wrap: wrap; }
+.hero .heroacts .heroa { min-width: 30%; }
+/* 豆知識：思い込みの対比・今日からできる一歩は、タップで開く */
+.tipfold { margin: 4px 0; }
+.tipfold > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 800; font-size: 0.92rem; color: #1a6a4f; list-style: none; }
+.tipfold > summary::-webkit-details-marker { display: none; }
+.tipfold > summary::before { content: "▸"; margin-right: 6px; }
+.tipfold[open] > summary::before { content: "▾"; }

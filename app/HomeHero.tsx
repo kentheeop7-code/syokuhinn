@@ -15,12 +15,15 @@ export default function HomeHero() {
   const [band, setBand] = useState(3);
   const [sexText, setSexText] = useState("女性");
   const [ready, setReady] = useState(false);
+  const [plan, setPlan] = useState<{ kcal: number; now: number; goal: number } | null>(null);
 
   useEffect(() => {
     const read = () => {
       try {
         setS(JSON.parse(localStorage.getItem("lg-status") || "null"));
         setPreset(localStorage.getItem("lg-preset") || "");
+        const pl = JSON.parse(localStorage.getItem("lg-plan2") || "null");
+        setPlan(pl && pl.kcal ? pl : null);
         setNow(parseFloat(localStorage.getItem("lg-now") || "") || 0);
         const p = JSON.parse(localStorage.getItem("lg-profile") || "null");
         setGoal(parseFloat(p?.weight) || 0);
@@ -81,6 +84,17 @@ export default function HomeHero() {
         )}
       </p>
 
+      {plan && (
+        <p className="heroplan">
+          🎯 目標 <b>{plan.kcal.toLocaleString()}kcal</b>（体重 {plan.now}→{plan.goal}kg）
+          {has && (
+            <em className={Math.abs(s!.kcal - plan.kcal) <= 150 ? "ok" : "low"}>
+              {Math.abs(s!.kcal - plan.kcal) <= 150 ? "いまの食事で、ほぼ合っています" : s!.kcal > plan.kcal ? `いまの食事は、約${Math.round((s!.kcal - plan.kcal) / 10) * 10}kcal 多め` : `いまの食事は、約${Math.round((plan.kcal - s!.kcal) / 10) * 10}kcal 少なめ`}
+            </em>
+          )}
+        </p>
+      )}
+
       <p className="herolabel sub">いつもの食事は？（1タップ）</p>
       <div className="heropick">
         {PRESETS.map((p) => (
@@ -124,6 +138,9 @@ export default function HomeHero() {
         </a>
         <a href="#cause" className="heroa">
           原因を知る
+        </a>
+        <a href="/?tab=plan" className="heroa">
+          体重と目標
         </a>
       </div>
     </section>

@@ -49,6 +49,8 @@ export default function WeightChart() {
         setGoal(p?.weight ? String(p.weight) : "");
         setAge(parseFloat(p?.age) || 0);
         setHeight(parseFloat(p?.height) || 0);
+        const n = localStorage.getItem("lg-now"); // 「体重と目標」で入れた、いまの体重
+        if (n !== null) setNow(n);
       } catch {}
     };
     try {
