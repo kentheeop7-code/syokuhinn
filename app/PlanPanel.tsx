@@ -27,6 +27,7 @@ type Ctx = { sexKey: "f" | "m"; band: number; pal: number; h: number; target: nu
 
 // 目標体重×エネルギー係数（糖尿病・脂質異常症）。身長が必要。
 function dmKcal(c: Ctx): string {
+  if (c.band <= 1) return "成長期は、この計算を使いません。主治医・管理栄養士が決めたカロリーに従ってください。";
   if (!c.h) return "身長を入れると、カロリーの目安が出ます。";
   const m = c.h / 100;
   const lo = m * m * 22;
@@ -280,7 +281,7 @@ export default function PlanPanel() {
   const ctx: Ctx = { sexKey: me.sexKey, band: me.band, pal: me.pal, h, target: plan?.target ?? maint, maint };
   const toggle = (id: string) => setConds((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
   const step = (set: (v: string) => void, cur: string, d: number) => set(String(r1(Math.max(20, (num(cur) || 50) + d))));
-  const list = CONDS.filter((c) => !(c.female && me.sexKey !== "f"));
+  const list = CONDS.filter((c) => !(c.female && me.sexKey !== "f") && !(c.id === "meno" && me.band < 3));
 
   return (
     <section className="planp" aria-label="体重と目標">
