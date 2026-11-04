@@ -3,6 +3,7 @@ import { GOAL_EVIDENCE } from "../evidence";
 import MeCard from "../MeCard";
 import DietNutrients from "../DietNutrients";
 import NationalGuide from "../NationalGuide";
+import Micronutrients from "../Micronutrients";
 import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
@@ -553,6 +554,7 @@ export default function Nutrients() {
       <nav className="anav" aria-label="ページ内メニュー">
         <a href="#me">あなたの目安</a>
         <a href="#diet-nutrients">ダイエットの栄養素</a>
+        <a href="#micro">ビタミン・ミネラル</a>
         <a href="#h-guide">国の指針</a>
         <a href="#sym">気になることから探す</a>
         <a href="#goals">目的別ガイド</a>
@@ -562,6 +564,7 @@ export default function Nutrients() {
 
       <Fold id="me" title="あなたの1日の目安（性別・年齢）" sub="カロリー・PFCと、各栄養素の目安"><MyKcal topic="nutrients" /><MeCard /></Fold>
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
+      <Fold id="micro" title="ビタミン・ミネラルの1日の目安" sub="18項目：量と、とりやすい食品"><Micronutrients /></Fold>
       <Fold id="h-guide" title="国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）"><NationalGuide bare /></Fold>
       <Fold id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
       <Fold id="goals" title="目的別ガイド">

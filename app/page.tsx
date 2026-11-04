@@ -2,6 +2,7 @@
 
 import HomeHero from "./HomeHero";
 import PlanPanel from "./PlanPanel";
+import Micronutrients from "./Micronutrients";
 import MeCard from "./MeCard";
 import SiteMap from "./SiteMap";
 import LineShare from "./LineShare";
@@ -2136,6 +2137,9 @@ function HomeInner() {
             ‹ ホームへ戻る
           </Link>
           <PlanPanel />
+          <Fold key="p-micro" id="p-micro" title="🧪 ビタミン・ミネラルの1日の目安" sub="あなたの性別・年齢の量" cls="wfold">
+            <Micronutrients />
+          </Fold>
           <Fold key="r-weight" id="r-weight" title="📈 到達までのグラフ" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold">
             <WeightChart />
           </Fold>

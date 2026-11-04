@@ -8,7 +8,7 @@ const MAIN: Tile[] = [
   { href: "#bal", icon: "🥗", name: "食事を細かく入力", desc: "結果・栄養チェック", here: true },
   { href: "#cause", icon: "🔍", name: "悩みの原因を知る", desc: "疲れ・便秘・体重など", here: true },
   { href: "/?tab=plan", icon: "⚖️", name: "体重と目標", desc: "カロリー・持病別の食事" },
-  { href: "/nutrients#diet-nutrients", icon: "🧪", name: "必要な栄養素", desc: "食物繊維・たんぱく質…" },
+  { href: "/nutrients#diet-nutrients", icon: "🧪", name: "必要な栄養素", desc: "食物繊維・たんぱく質・ビタミン" },
 ];
 
 const OTHER: Tile[] = [
@@ -19,6 +19,7 @@ const OTHER: Tile[] = [
   { href: "/additives", icon: "🏷️", name: "食品表示・添加物" },
   { href: "/tips", icon: "💡", name: "豆知識" },
   { href: "/?tab=women", icon: "🌸", name: "からだのケア（女性）" },
+  { href: "/nutrients#micro", icon: "💊", name: "ビタミン・ミネラル" },
   { href: "/nutrients#h-guide", icon: "🏛", name: "国の指針の目安" },
 ];
 
