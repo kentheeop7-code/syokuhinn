@@ -28,7 +28,7 @@ const ROLE: Record<string, string> = {
   se: "抗酸化のはたらきをする酵素の材料です。",
 };
 const NOTE: Record<string, string> = {
-  vA: "レバーやサプリのとりすぎに注意（上限があります）。妊娠中は、特に注意してください。",
+  vA: "レバーやサプリのとりすぎに注意（上限があります）。妊娠中は、特に注意してください。下の食品には、レバーは入れていません。",
   vD: "日光も大切です。サプリで、上限をこえないように。",
   vK: "ワルファリンを飲んでいる方は、納豆・緑黄色野菜の量を、医師に相談してください。",
   fol: "上限は、サプリなど（食品以外）からの量です。妊娠を計画している女性は、神経管閉鎖障害を減らすため、食事に加えて、1日400μgの葉酸（サプリ）がすすめられています。",
@@ -43,7 +43,11 @@ const VITAMINS = ["vA", "vD", "vE", "vK", "vC", "b1", "b2", "nia", "b6", "b12", 
 const MINERALS = ["ca", "mg", "fe", "zn", "cu", "io", "se"];
 
 const usual = (f: Food) => (f.cat === "肉類" || f.cat === "魚介類" || f.cat === "野菜・果物" || f.cat === "卵・乳・大豆" || f.cat === "穀物・主食") && !/乾|粉|素干し|干し|パウダー|加工品|（茶）|茶葉|缶詰|漬|ふりかけ|煮干し|焼き干し/.test(f.name);
-const base = (n: string) => n.split("（")[0];
+// 「鶏肉」「豚肉」「大豆」のように、部位や加工が分からない名前のときは、全部の名前を出す
+const GENERIC = new Set(["鶏肉", "豚肉", "牛肉", "大豆", "小麦", "米", "羊肉"]);
+const base = (n: string) => (GENERIC.has(n.split("（")[0]) ? n : n.split("（")[0]);
+const OBSCURE = /副生物|たにし|いなご|はちのこ|ざざむし|いり大豆|ぎんなん|まつ/;
+const LIVER = /レバー|肝臓|きも/;
 
 const fmt = (n: number) => (n >= 100 ? Math.round(n).toLocaleString() : String(Math.round(n * 10) / 10));
 
@@ -58,7 +62,7 @@ export default function Micronutrients() {
     for (const [k, field] of Object.entries(FIELD)) {
       const seen = new Set<string>();
       const list: Food[] = [];
-      for (const f of [...FOODS].filter(usual).sort((x, y) => (y[field] as number) - (x[field] as number))) {
+      for (const f of [...FOODS].filter((x) => usual(x) && !OBSCURE.test(x.name) && !(k === "vA" && LIVER.test(x.name))).sort((x, y) => (y[field] as number) - (x[field] as number))) {
         const nm = base(f.name);
         if (seen.has(nm) || (f[field] as number) <= 0) continue;
         seen.add(nm);
