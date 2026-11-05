@@ -3,6 +3,7 @@ import MeCard from "../MeCard";
 import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
+import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -110,6 +111,7 @@ export default function Additives() {
       </section>
       </Fold>
 
+      <MoreFolds limit={5}>
       <Fold id="basic" title="基本：添加物って、何？">
       {BASICS.map((b) => (
         <section key={b.title} className="card adsec">
@@ -201,6 +203,7 @@ export default function Additives() {
         ))}
       </ul>
       </Fold>
+      </MoreFolds>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。アレルギー・喘息・腎臓病・妊娠中・服薬中の人は、医師・薬剤師・管理栄養士に相談してください。数値は、公表されている資料をもとにした目安で、商品によって異なります。
         <br />

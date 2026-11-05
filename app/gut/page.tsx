@@ -3,6 +3,7 @@ import MeCard from "../MeCard";
 import GuideTabs from "../GuideTabs";
 import RelatedProducts from "../RelatedProducts";
 import Fold from "../Fold";
+import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -175,6 +176,7 @@ export default function Gut() {
       </section>
       </Fold>
 
+      <MoreFolds limit={6}>
       <Fold id="basic" title="腸内環境の、しくみ">
       <section className="card gtsec">
         <h3>腸内フローラとは</h3>
@@ -395,6 +397,7 @@ export default function Gut() {
         ))}
       </ul>
       </Fold>
+      </MoreFolds>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。持病や服薬のある人、妊娠中・授乳中の人、強い症状のある人は、医師に相談してください。
         <br />
