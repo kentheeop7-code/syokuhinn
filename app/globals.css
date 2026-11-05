@@ -4505,3 +4505,27 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .micro .mfoods li { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 10px; background: #f3faf6; font-size: 0.9rem; }
 .micro .mfoods li em { font-style: normal; color: var(--s-sub); font-size: 0.82rem; }
 .micro .mfoods li b { color: #14543f; }
+
+/* ===== 間隔をせまく：全ページ（スマホ） =====
+   カードどうしの間は8px、本文の行の高さは1.55、余白は小さく */
+@media (max-width: 520px) {
+  .container { padding-top: 12px !important; }
+  .card, .gtsec, .adsec, .gtcard, .ncard, .tipcard { margin-top: 0 !important; margin-bottom: 8px !important; padding: 12px !important; border-radius: 16px !important; }
+  .fold { margin-bottom: 8px !important; }
+  .fold .foldh button { min-height: 52px !important; padding-top: 4px !important; padding-bottom: 4px !important; }
+  .foldbody { padding-top: 6px !important; }
+  .nlist { gap: 8px !important; }
+  body, .container p, .container li, .container dd, .container dt { line-height: 1.55 !important; }
+  .container p { margin-top: 3px !important; margin-bottom: 3px !important; }
+  .container li { margin-bottom: 2px !important; }
+  .container h3 { margin-top: 0 !important; margin-bottom: 3px !important; }
+  .h2 { margin-bottom: 4px !important; }
+  .balh { margin: 10px 0 6px !important; }
+  .chips, .symchips, .gttags { gap: 6px !important; }
+  .anav { margin: 4px -4px 6px !important; }
+  .guidetabs { margin-bottom: 8px !important; gap: 6px !important; }
+  .gutlink { margin-bottom: 6px !important; }
+  .evbox { margin-top: 8px !important; }
+  .note, .agnote { margin: 4px 0 !important; }
+  .title { margin-bottom: 4px !important; }
+}
