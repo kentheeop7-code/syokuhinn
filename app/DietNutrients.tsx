@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import EvidenceBox from "./EvidenceBox";
+import { amountOf } from "../lib/microLookup";
 import { BAND_SHORT, REF, VITD, useMe } from "./me";
 import type { CIn } from "./CausePanel";
 
@@ -37,7 +39,7 @@ export default function DietNutrients({ bare = false }: { bare?: boolean }) {
     { name: "食塩（とりすぎない）", target: `${r.salt[b]}g未満`, now: x?.salt, goal: r.salt[b], unit: "g", max: true, why: "減量中の体重の「増減」には、水分（むくみ）も関わります。塩分が多いと、むくみ・血圧にも影響します。", foods: "麺の汁を残す・漬物や加工品を減らす" },
     { name: "カリウム", target: `${r.k[b].toLocaleString()}mg以上`, unit: "mg", why: "塩分（ナトリウム）の排出を助けます。野菜・いも・果物・豆で、とれます。", foods: "野菜・いも・バナナ・アボカド・納豆・海藻" },
     { name: "ビタミンD", target: `${VITD}μg（目安量）`, unit: "μg", why: "カルシウムの吸収を助け、骨や筋肉を守ります。", foods: "サケ・サンマ・しらす・きのこ・卵（日光も大切）" },
-    { name: "ビタミンB群", target: "（食事から、まんべんなく）", unit: "", why: "食べた糖質・脂質を、エネルギーに変える働きを助けます。", foods: "豚肉・レバー・卵・納豆・魚・玄米" },
+    { name: "ビタミンB群", target: `B1 ${amountOf("ビタミンB1", me.sexKey, b)}・B2 ${amountOf("ビタミンB2", me.sexKey, b)}・B6 ${amountOf("ビタミンB6", me.sexKey, b)}・B12 ${amountOf("ビタミンB12", me.sexKey, b)}`, unit: "", why: "食べた糖質・脂質を、エネルギーに変える働きを助けます。", foods: "豚肉・レバー・卵・納豆・魚・玄米" },
   ];
   const st = (rw: Row): St => {
     if (rw.now == null || rw.goal == null) return "none";
@@ -96,6 +98,11 @@ export default function DietNutrients({ bare = false }: { bare?: boolean }) {
           );
         })}
       </ul>
+      <p className="agnote">
+        <Link href="/nutrients#micro" className="evlink">
+          ビタミン・ミネラル20項目の目安を見る ›
+        </Link>
+      </p>
       <EvidenceBox ids={["dri2025", "issn2017", "helms2014", "hall2011", "obesity2022"]} level="目安の量は強い／減量中の考え方は、中くらい" note="性別・年齢別の目安量は、食事摂取基準（2025年版）の値です。「減量中も、たんぱく質・食物繊維を確保し、極端に減らさない」は、肥満症診療ガイドラインや、減量中の栄養に関する総説にもとづく一般的な考え方です。減量中の特別な目安量は、基準にないため、通常の目安を使っています。" />
     </section>
   );

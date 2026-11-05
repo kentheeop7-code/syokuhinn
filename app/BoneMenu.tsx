@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { FOODS } from "../lib/foods";
 import FoodFinder from "./FoodFinder";
+import { REF, VITD, useMe } from "./me";
 
 type Pick = { name: string; g: number; label: string };
 type Group = { key: "ca" | "vd" | "fe"; title: string; unit: string; foods: Pick[] };
@@ -61,7 +62,7 @@ const GROUPS: Group[] = [
 ];
 
 // 目安：カルシウムは骨粗鬆症ガイドライン（700〜800mg）、ビタミンDは食事摂取基準の目安量、鉄は月経のある30〜49歳の推奨量
-const TARGETS = { ca: 750, vd: 9, fe: 10.5 };
+// 目安は、その人の性別・年齢の値（日本人の食事摂取基準 2025年版）。コンポーネントの中で決める。
 const LABEL = { ca: "カルシウム", vd: "ビタミンD", fe: "鉄" };
 const UNIT = { ca: "mg", vd: "μg", fe: "mg" };
 
@@ -72,6 +73,8 @@ const val = (p: Pick, k: "ca" | "vd" | "fe") => {
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
 export default function BoneMenu({ onAdd }: { onAdd: (name: string, grams: number) => void }) {
+  const me = useMe();
+  const TARGETS = { ca: REF[me.sexKey].ca[me.band], vd: VITD, fe: REF[me.sexKey].fe[me.band] };
   const [tab, setTab] = useState<"ca" | "vd" | "fe">("ca");
   const [picked, setPicked] = useState<Pick[]>([]);
   const [added, setAdded] = useState(false);
@@ -121,7 +124,7 @@ export default function BoneMenu({ onAdd }: { onAdd: (name: string, grams: numbe
           );
         })}
         <p className="bmfoot">
-          目安：カルシウム 700〜800mg（骨粗鬆症ガイドライン）／ビタミンD 9.0μg（食事摂取基準の目安量）／鉄 10.5mg（月経のある30〜49歳の推奨量。閉経後は必要量が下がります）
+          目安は、あなたの性別・年齢の値です（日本人の食事摂取基準 2025年版）：カルシウムと鉄は推奨量、ビタミンDは目安量。鉄は、女性は月経のある人の値（65歳以上は、月経なし）。骨粗鬆症のガイドラインでは、カルシウムは700〜800mgが目安です。
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import EvidenceBox from "./EvidenceBox";
 import Link from "next/link";
@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useMe } from "./me";
 import LineShare from "./LineShare";
 import CauseMini from "./CauseMini";
+import { amountOf, splitNames } from "../lib/microLookup";
 
 // 気になること → 原因予測の悩み
 const TO_COMPLAINT: Record<string, string> = { tired: "tired", anemia: "tired", swell: "swell", const: "const", skin: "skin", hair: "skin", cold: "cold", sleep: "sleep", sweet: "sweet" };
@@ -118,8 +119,14 @@ export default function SymptomCheck() {
                   <span aria-hidden>{s.icon}</span> <b>{s.label}</b>
                 </p>
                 <p>
-                  <small>足したい栄養</small>
-                  {s.nutrients.join("・")}
+                  <small>足したい栄養（あなたの1日の目安）</small>
+                  {s.nutrients
+                    .flatMap(splitNames)
+                    .map((n) => {
+                      const a = amountOf(n, me.sexKey, me.band);
+                      return a ? `${n} ${a}` : n;
+                    })
+                    .join("・")}
                 </p>
                 <details className="symmore">
                   <summary>食べ物とひとこと</summary>
