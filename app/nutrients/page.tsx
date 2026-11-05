@@ -5,6 +5,7 @@ import DietNutrients from "../DietNutrients";
 import NationalGuide from "../NationalGuide";
 import Micronutrients from "../Micronutrients";
 import GuideTabs from "../GuideTabs";
+import MoreFolds from "../MoreFolds";
 import Fold from "../Fold";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -562,6 +563,7 @@ export default function Nutrients() {
         <a href="#nutrients">栄養素のはたらき</a>
       </nav>
 
+      <MoreFolds limit={5}>
       <Fold id="me" title="あなたの1日の目安（性別・年齢）" sub="カロリー・PFCと、各栄養素の目安"><MyKcal topic="nutrients" /><MeCard /></Fold>
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold id="micro" title="ビタミン・ミネラルの1日の目安" sub="18項目：量と、とりやすい食品"><Micronutrients /></Fold>
@@ -746,6 +748,7 @@ export default function Nutrients() {
       </ul>
       <EvidenceBox ids={["dri2025", "ods", "food8"]} level="強い（国の基準）" note="1日の目安量・上限・不足したときの症状は、食事摂取基準（2025年版）と、NIHの資料にもとづきます。「多い食品」は、食品成分表にもとづく一般的な内容です。サプリでの量は、上限に注意してください。" />
       </Fold>
+      </MoreFolds>
       <p className="note">
         ※ 一般的な成人向けの目安で、「日本人の食事摂取基準（2025年版）」（厚生労働省）を参考にしています。年齢・体格・持病・服薬・妊娠中などで必要量は変わります。気になる症状や、サプリを使う場合は、医師や管理栄養士に相談してください。
       </p>

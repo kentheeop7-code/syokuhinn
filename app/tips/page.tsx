@@ -2,6 +2,7 @@ import { TIP_SOURCES } from "../evidence";
 import MeCard from "../MeCard";
 import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
+import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import Disclosure from "../Disclosure";
@@ -46,11 +47,13 @@ export default function Tips() {
       </Link>
 
       <nav className="anav" aria-label="ページ内メニュー">
-        {TIP_GROUPS.map((g) => (
+        <MoreFolds limit={5}>
+      {TIP_GROUPS.map((g) => (
           <a key={g.key} href={`#g-${g.key}`}>
             {g.label}
           </a>
         ))}
+      </MoreFolds>
       </nav>
 
       {TIP_GROUPS.map((g) => (

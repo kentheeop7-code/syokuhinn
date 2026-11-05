@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import EvidenceBox from "./EvidenceBox";
 import { useEffect, useMemo, useState } from "react";
@@ -80,8 +80,8 @@ export default function ProductSearch() {
   const [group, setGroup] = useState("women");
   const [sort, setSort] = useState<Sort>("rec");
   const [realOnly, setRealOnly] = useState(false);
-  const [limit, setLimit] = useState(10);
-  useEffect(() => setLimit(10), [q, group, sort, realOnly]);
+  const [limit, setLimit] = useState(6);
+  useEffect(() => setLimit(6), [q, group, sort, realOnly]);
   const sp = useSearchParams();
   // ほかのページの「もっと見る」から来たとき、その言葉で探す
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function ProductSearch() {
         ))}
       </ul>
       {list.length > limit && (
-        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 10)}>
+        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 6)}>
           もっと見る（あと{list.length - limit}件）
         </button>
       )}

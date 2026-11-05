@@ -2,6 +2,7 @@
 
 import HomeHero from "./HomeHero";
 import PlanPanel from "./PlanPanel";
+import MoreFolds from "./MoreFolds";
 import Micronutrients from "./Micronutrients";
 import MeCard from "./MeCard";
 import SiteMap from "./SiteMap";
@@ -448,8 +449,8 @@ function Search({
   const [cat, setCat] = useState<string>("すべて");
   const [sort, setSort] = useState<SortKey>("default");
   const [picked, setPicked] = useState<string[]>([]);
-  const [limit, setLimit] = useState(30);
-  useEffect(() => setLimit(30), [q, cat, sort]);
+  const [limit, setLimit] = useState(15);
+  useEffect(() => setLimit(15), [q, cat, sort]);
 
   const key: Record<SortKey, (x: Food) => number> = {
     default: () => 0,
@@ -536,7 +537,7 @@ function Search({
         ))}
       </ul>
       {shown.length > limit && (
-        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 30)}>
+        <button type="button" className="morebtn" onClick={() => setLimit((n) => n + 15)}>
           もっと見る（あと{shown.length - limit}件）
         </button>
       )}
@@ -2169,6 +2170,7 @@ function HomeInner() {
             </span>
             <i aria-hidden>›</i>
           </Link>
+          <MoreFolds limit={4}>
           <Fold key="w-me" id="w-me" title="👤 あなたの1日の目安" sub="性別・年齢で、目安が変わります" cls="wfold"><MeCard /></Fold>
           <Fold key="w-sym" id="w-sym" title="🩺 気になることから、足したい栄養を探す" sub="選ぶだけ。記録は、いりません" cls="wfold"><SymptomCheck /></Fold>
           <MyKcal topic="women" />
@@ -2180,6 +2182,7 @@ function HomeInner() {
           {meHook.sexKey === "f" && meHook.band >= 3 && <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>}
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
+          </MoreFolds>
           <ShareQR />
         </>      ) : tab === "products" ? (
         <ProductSearch />
