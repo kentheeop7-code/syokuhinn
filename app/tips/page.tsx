@@ -47,15 +47,14 @@ export default function Tips() {
       </Link>
 
       <nav className="anav" aria-label="ページ内メニュー">
-        <MoreFolds limit={5}>
-      {TIP_GROUPS.map((g) => (
+        {TIP_GROUPS.map((g) => (
           <a key={g.key} href={`#g-${g.key}`}>
             {g.label}
           </a>
         ))}
-      </MoreFolds>
       </nav>
 
+      <MoreFolds limit={5}>
       {TIP_GROUPS.map((g) => (
         <Fold key={g.key} id={`g-${g.key}`} title={g.label} sub={`${TIPS.filter((t) => t.group === g.key).length}件`}>
           {g.key === "protein" && <RelatedProducts q="プロテイン" title="プロテインの商品" />}
@@ -136,6 +135,7 @@ export default function Tips() {
           </ul>
         </Fold>
       ))}
+      </MoreFolds>
 
       <p className="note">
         ※ 一般的な情報で、個人の診断や治療に代わるものではありません。商品の成分は、必ずパッケージの表示をご確認ください。持病のある方・妊娠中の方・服薬中の方は、医師や管理栄養士にご相談ください。
