@@ -1232,6 +1232,9 @@ export const FOODS: Food[] = [...RAW.map((x) => {
 ];
 
 
+// ふだん食べる、代表的な食品（最初に手で選んだもの）。公式の成分表から足した食品は、含まない。
+export const COMMON_FOODS: Food[] = FOODS.slice(0, RAW.length);
+
 // 公式の成分表（八訂 増補2023）に同じ食品がなく、概算値で入れているもの
 export const APPROX = new Set<string>([
   "麦ごはん（米7:麦3）",

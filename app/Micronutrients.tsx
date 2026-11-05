@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import EvidenceBox from "./EvidenceBox";
-import { FOODS, type Food } from "../lib/foods";
+import { COMMON_FOODS, type Food } from "../lib/foods";
 import { DRI_TABLE } from "../lib/driTable";
 import { BAND_SHORT, REF, useMe } from "./me";
 
@@ -62,7 +62,7 @@ export default function Micronutrients() {
     for (const [k, field] of Object.entries(FIELD)) {
       const seen = new Set<string>();
       const list: Food[] = [];
-      for (const f of [...FOODS].filter((x) => usual(x) && !OBSCURE.test(x.name) && !(k === "vA" && LIVER.test(x.name))).sort((x, y) => (y[field] as number) - (x[field] as number))) {
+      for (const f of [...COMMON_FOODS].filter((x) => usual(x) && !OBSCURE.test(x.name) && !/のり|ごま|パセリ/.test(x.name) && !(k === "vA" && LIVER.test(x.name))).sort((x, y) => (y[field] as number) - (x[field] as number))) {
         const nm = base(f.name);
         if (seen.has(nm) || (f[field] as number) <= 0) continue;
         seen.add(nm);
