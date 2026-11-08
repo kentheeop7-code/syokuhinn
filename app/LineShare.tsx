@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { BANDS, PAL_TEXT, readMe } from "./me";
@@ -13,7 +13,7 @@ export function lineUrl(text: string): string {
 }
 
 // 結果を、公式LINEに送る（共通のボタン）。buildは、送る文章（本文）をつくる関数。
-export default function LineShare({ title, build }: { title: string; build: () => string }) {
+export default function LineShare({ title, build, noProfile = false }: { title: string; build: () => string; noProfile?: boolean }) {
   const [nick, setNick] = useState("");
   const [copied, setCopied] = useState(false);
   const [show, setShow] = useState(false);
@@ -21,8 +21,8 @@ export default function LineShare({ title, build }: { title: string; build: () =
   const message = () => {
     const me = readMe();
     const d = new Date();
-    const head = [`【LIFEGYM ${title}】`, `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日${nick.trim() ? `　${nick.trim()}さん` : ""}`, `■ ${me.sex === 2 ? "男性" : "女性"}・${BANDS[me.band]}・活動量${PAL_TEXT[me.pal]}`, ""];
-    return head.join("\n") + build() + "\n\n※ ざっくり計算した目安です。";
+    const head = [`【LIFEGYM ${title}】`, `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日${nick.trim() ? `　${nick.trim()}さん` : ""}`, ...(noProfile ? [] : [`■ ${me.sex === 2 ? "男性" : "女性"}・${BANDS[me.band]}・活動量${PAL_TEXT[me.pal]}`]), ""];
+    return head.join("\n") + build() + (noProfile ? "\n\n※ 一般的な目安です。持病・服薬のある方は、主治医にご確認ください。" : "\n\n※ ざっくり計算した目安です。");
   };
   const isYouth = readMe().band <= 1;
 
