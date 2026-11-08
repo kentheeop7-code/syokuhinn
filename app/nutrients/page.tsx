@@ -8,6 +8,7 @@ import GuideTabs from "../GuideTabs";
 import MoreFolds from "../MoreFolds";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
+import CondGuide from "../CondGuide";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -750,6 +751,9 @@ export default function Nutrients() {
       <EvidenceBox ids={["dri2025", "ods", "food8"]} level="強い（国の基準）" note="1日の目安量・上限・不足したときの症状は、食事摂取基準（2025年版）と、NIHの資料にもとづきます。「多い食品」は、食品成分表にもとづく一般的な内容です。サプリでの量は、上限に注意してください。" />
       </Fold>
       </MoreFolds>
+      <Fold id="cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）">
+        <CondGuide />
+      </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
         <LatestPapers storeKey="nut" topics={[{ key: "pro", label: "たんぱく質", term: "protein intake health" }, { key: "fib", label: "食物繊維", term: "dietary fiber intake" }, { key: "vd", label: "ビタミンD", term: "vitamin D supplementation" }, { key: "na", label: "塩分・血圧", term: "sodium intake blood pressure" }]} />
       </Fold>

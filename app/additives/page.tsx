@@ -4,6 +4,7 @@ import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
+import CondGuide from "../CondGuide";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -205,6 +206,9 @@ export default function Additives() {
       </ul>
       </Fold>
       </MoreFolds>
+      <Fold id="cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）">
+        <CondGuide />
+      </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
         <LatestPapers storeKey="add" topics={[{ key: "em", label: "乳化剤・増粘剤", term: "food emulsifiers gut" }, { key: "sw", label: "人工甘味料", term: "non-nutritive sweeteners health" }, { key: "up", label: "超加工食品", term: "ultra-processed food health" }]} />
       </Fold>
