@@ -406,8 +406,8 @@ export default function Gut() {
           日本人の食事摂取基準（2025年版）
         </a>
         ／
-        <a href="https://www.e-healthnet.mhlw.go.jp/information/keywords/lactobacillus-bifidus" target="_blank" rel="noopener noreferrer">
-          e-ヘルスネット「ビフィズス菌」
+        <a href="https://kennet.mhlw.go.jp/" target="_blank" rel="noopener noreferrer">
+          e-ヘルスネット（サイト内で「ビフィズス菌」を検索）
         </a>
         ／
         <a href="https://minds.jcqhc.or.jp/summary/c00812/" target="_blank" rel="noopener noreferrer">
