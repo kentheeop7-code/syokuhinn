@@ -1,4 +1,4 @@
-﻿export type Tip = {
+export type Tip = {
   id: string;
   group: "protein" | "diet" | "habit" | "myth" | "aging" | "cause" | "women" | "gut";
   title: string;
@@ -1298,7 +1298,7 @@ export const TIPS: Tip[] = [
       "「これを飲めば腸が若返る」といった話には、注意を。腸内環境は、人によって違い、日々の食事と生活習慣の積み重ねで整えるものです。",
     ],
     todo: "今日：自分の便を、1週間観察する（回数・形・色）。このアプリの「腸内環境ガイド」の、便のタイプ表と見比べてみる。",
-    source: { label: "厚生労働省 e-ヘルスネット「ビフィズス菌」", url: "https://www.e-healthnet.mhlw.go.jp/information/keywords/lactobacillus-bifidus" },
+    source: { label: "厚生労働省 e-ヘルスネット（サイト内で「ビフィズス菌」を検索）", url: "https://kennet.mhlw.go.jp/" },
   },
   {
     id: "gut-fiber",

@@ -104,7 +104,7 @@ export default function MeCard({ variant = "full", topic }: { variant?: "full" |
       </ul>
       <p className="agnote small">日本人の食事摂取基準（2025年版）の目安です。身体活動レベルは、{PAL_TEXT[me.pal]}の場合。</p>
 
-      <EvidenceBox ids={["dri2025", "osteo2015"]} level="強い（国の基準）" note="性別・年齢別の目安は、食事摂取基準（2025年版）の表です。年齢ごとの注意（骨・筋肉・低栄養など）は、基準の考え方と、骨粗鬆症ガイドラインにもとづく、一般的な内容です。" />
+      <EvidenceBox ids={["dri2025", "osteo2025", "osteo2015"]} level="強い（国の基準）" note="性別・年齢別の目安は、食事摂取基準（2025年版）の表です。年齢ごとの注意（骨・筋肉・低栄養など）は、基準の考え方と、骨粗鬆症ガイドラインにもとづく、一般的な内容です。" />
       <details className="meage">
         <summary className="balh">🌱 {info.title}（タップで開く）</summary>
         <ul>
