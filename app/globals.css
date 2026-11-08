@@ -4564,3 +4564,9 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .trpapers a { display: block; font-size: 0.9rem; line-height: 1.45; color: #14543f; }
 .trpapers small { display: block; margin-top: 2px; color: var(--ui-sub, #55705f); font-size: 0.78rem; }
 .trpre { margin: 6px 0 10px; padding: 10px 12px; border-radius: 12px; background: #f3faf6; font-family: inherit; font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+
+/* trainer condition chips */
+.trchips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.trchip{border:1px solid #d6d9de;background:#fff;border-radius:999px;padding:10px 14px;font-size:15px;min-height:44px;text-align:left}
+.trchip.on{background:#e8f5ee;border-color:#2e9e6a;font-weight:700}
+

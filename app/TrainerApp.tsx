@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import LineShare from "./LineShare";
-import { PLAYS, TOPICS, TRAINER_CHECKED, type Play } from "../lib/trainerData";
+import { CONDS, PLAYS, TOPICS, TRAINER_CHECKED, type Cond, type Play } from "../lib/trainerData";
 
 // トレーナー用：お客様の指導メモ。結論・具体策・根拠・実績を見ながら、最後に、公式LINEへ、まとめて共有できる。
 type Paper = { id: string; title: string; journal: string; date: string };
@@ -19,6 +19,7 @@ export default function TrainerApp() {
   const [days, setDays] = useState(3);
   const [note, setNote] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
+  const [conds, setConds] = useState<string[]>([]);
   const [pins, setPins] = useState<Paper[]>([]);
   const [papers, setPapers] = useState<Record<string, { at: string; list: Paper[] }>>({});
   const [busy, setBusy] = useState("");
@@ -35,6 +36,7 @@ export default function TrainerApp() {
         setDays(s.days ?? 3);
         setNote(s.note ?? "");
         setPicked(Array.isArray(s.picked) ? s.picked : []);
+        setConds(Array.isArray(s.conds) ? s.conds : []);
         setPins(Array.isArray(s.pins) ? s.pins : []);
       }
       const p = JSON.parse(localStorage.getItem("lg-trainer-papers") || "null");
@@ -45,14 +47,17 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds]);
 
   const w = num(now);
   const wt = num(target);
   const plays = useMemo(() => PLAYS.filter((p) => goal === "both" || p.group === "both" || p.group === goal), [goal]);
   const chosen = PLAYS.filter((p) => picked.includes(p.id));
+  const myConds = CONDS.filter((c) => conds.includes(c.id));
+  const chosenConds = myConds.filter((c) => picked.includes("c-" + c.id));
+  const toggleCond = (id: string) => setConds((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
   const toggle = (id: string) => setPicked((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
 
   // 最新の論文：PubMed（米国国立医学図書館）から、そのつど取得する。メタ分析・系統的レビューの、新しい順。
@@ -82,6 +87,11 @@ export default function TrainerApp() {
     const L: string[] = [];
     L.push(`■ 目標：${goal === "diet" ? "体重を減らす" : goal === "muscle" ? "筋力・筋肉アップ" : "体重を減らして、筋力もアップ"}`);
     if (w) L.push(`■ 体重：${w}kg${wt ? ` → ${wt}kg` : ""}　筋トレ：週${days}回`);
+    if (chosenConds.length) {
+      L.push("", "■ 持病・体質に合わせた注意");
+      chosenConds.forEach((c) => L.push(c.share));
+      L.push("※ 持病・服薬のある方は、運動や食事を変える前に、主治医に確認してください。");
+    }
     if (chosen.length) {
       L.push("", "■ 今日のポイント");
       chosen.forEach((p, i) => L.push(`${i + 1}. ${p.share(w)}`));
@@ -91,9 +101,10 @@ export default function TrainerApp() {
       L.push("", "■ 参考にした最新の研究（PubMed）");
       pins.slice(0, 3).forEach((p) => L.push(`・${p.title.replace(/\.$/, "")}（${p.journal}）https://pubmed.ncbi.nlm.nih.gov/${p.id}/`));
     }
-    if (chosen.some((p) => p.src.length)) {
+    if (chosen.some((p) => p.src.length) || chosenConds.length) {
       L.push("", "■ 根拠");
       chosen.slice(0, 4).forEach((p) => L.push(`・${p.src[0].label}`));
+      chosenConds.slice(0, 4).forEach((c) => L.push(`・${c.src[0].label}`));
     }
     return L.join("\n");
   };
@@ -146,6 +157,61 @@ export default function TrainerApp() {
     </li>
   );
 
+  const condCard = (c: Cond) => {
+    const id = "c-" + c.id;
+    return (
+      <li key={c.id}>
+        <details className="trcard">
+          <summary>
+            <span className="trt">
+              {c.icon} {c.label}
+            </span>
+            <span className={`trlv lv-${c.level}`}>根拠 {c.level}</span>
+          </summary>
+          <p className="tra">
+            <b>先に確認</b>
+            {c.ask}
+          </p>
+          <div className="trs">
+            <small>食事（ダイエット）</small>
+            <ol>
+              {c.diet.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ol>
+          </div>
+          <div className="trs">
+            <small>トレーニング（筋力アップ）</small>
+            <ol>
+              {c.train.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ol>
+          </div>
+          <p className="tre">
+            <small>根拠（何が分かっているか）</small>
+            {c.evidence}
+          </p>
+          <p className="trl">
+            <small>限界・注意</small>
+            {c.limits}
+          </p>
+          <p className="trsrc">
+            <small>出典</small>
+            {c.src.map((s) => (
+              <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer">
+                {s.label}
+              </a>
+            ))}
+          </p>
+          <button type="button" className={picked.includes(id) ? "trpick on" : "trpick"} onClick={() => toggle(id)}>
+            {picked.includes(id) ? "✓ お客様への共有に入れた" : "＋ お客様への共有に入れる"}
+          </button>
+        </details>
+      </li>
+    );
+  };
+
   return (
     <div className="trainer">
       <Link href="/" className="backlink">
@@ -191,6 +257,19 @@ export default function TrainerApp() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="card">
+        <p className="balh">持病・体質のあるお客様</p>
+        <p className="agnote">当てはまるものを選ぶと、食事とトレーニングの考え方・根拠・限界が出ます。診断や治療ではなく、主治医の指示が優先です。</p>
+        <div className="trchips" role="group" aria-label="持病・体質">
+          {CONDS.map((c) => (
+            <button key={c.id} type="button" aria-pressed={conds.includes(c.id)} className={conds.includes(c.id) ? "trchip on" : "trchip"} onClick={() => toggleCond(c.id)}>
+              {c.icon} {c.label}
+            </button>
+          ))}
+        </div>
+        {myConds.length > 0 && <ul className="trlist">{myConds.map(condCard)}</ul>}
       </section>
 
       <section className="card">
