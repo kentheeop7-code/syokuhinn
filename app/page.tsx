@@ -2,6 +2,7 @@
 
 import HomeHero from "./HomeHero";
 import PlanPanel from "./PlanPanel";
+import LatestPapers from "./LatestPapers";
 import MoreFolds from "./MoreFolds";
 import Micronutrients from "./Micronutrients";
 import MeCard from "./MeCard";
@@ -2141,6 +2142,9 @@ function HomeInner() {
           <Fold key="p-micro" id="p-micro" title="🧪 ビタミン・ミネラルの1日の目安" sub="あなたの性別・年齢の量" cls="wfold">
             <Micronutrients />
           </Fold>
+          <Fold key="p-latest" id="p-latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に" cls="wfold">
+            <LatestPapers storeKey="plan" topics={[{ key: "ob", label: "減量・肥満", term: "obesity weight loss intervention" }, { key: "dm", label: "糖尿病と食事", term: "type 2 diabetes diet remission" }, { key: "th", label: "甲状腺と体重", term: "thyroid disease weight management" }]} />
+          </Fold>
           <Fold key="r-weight" id="r-weight" title="📈 到達までのグラフ" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold">
             <WeightChart />
           </Fold>
@@ -2183,6 +2187,9 @@ function HomeInner() {
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
           </MoreFolds>
+          <Fold key="w-latest" id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に" cls="wfold">
+            <LatestPapers storeKey="women" topics={[{ key: "me", label: "更年期と食事・体重", term: "menopause diet weight" }, { key: "pc", label: "PCOSと生活習慣", term: "polycystic ovary syndrome lifestyle diet" }, { key: "th", label: "甲状腺と体重", term: "hypothyroidism body weight" }, { key: "fe", label: "鉄不足", term: "iron deficiency women" }]} />
+          </Fold>
           <ShareQR />
         </>      ) : tab === "products" ? (
         <ProductSearch />

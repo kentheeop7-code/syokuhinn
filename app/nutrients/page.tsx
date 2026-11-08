@@ -7,6 +7,7 @@ import Micronutrients from "../Micronutrients";
 import GuideTabs from "../GuideTabs";
 import MoreFolds from "../MoreFolds";
 import Fold from "../Fold";
+import LatestPapers from "../LatestPapers";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -749,6 +750,9 @@ export default function Nutrients() {
       <EvidenceBox ids={["dri2025", "ods", "food8"]} level="強い（国の基準）" note="1日の目安量・上限・不足したときの症状は、食事摂取基準（2025年版）と、NIHの資料にもとづきます。「多い食品」は、食品成分表にもとづく一般的な内容です。サプリでの量は、上限に注意してください。" />
       </Fold>
       </MoreFolds>
+      <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
+        <LatestPapers storeKey="nut" topics={[{ key: "pro", label: "たんぱく質", term: "protein intake health" }, { key: "fib", label: "食物繊維", term: "dietary fiber intake" }, { key: "vd", label: "ビタミンD", term: "vitamin D supplementation" }, { key: "na", label: "塩分・血圧", term: "sodium intake blood pressure" }]} />
+      </Fold>
       <p className="note">
         ※ 一般的な成人向けの目安で、「日本人の食事摂取基準（2025年版）」（厚生労働省）を参考にしています。年齢・体格・持病・服薬・妊娠中などで必要量は変わります。気になる症状や、サプリを使う場合は、医師や管理栄養士に相談してください。
       </p>

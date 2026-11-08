@@ -3,6 +3,7 @@ import MeCard from "../MeCard";
 import GuideTabs from "../GuideTabs";
 import RelatedProducts from "../RelatedProducts";
 import Fold from "../Fold";
+import LatestPapers from "../LatestPapers";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -398,6 +399,9 @@ export default function Gut() {
       </ul>
       </Fold>
       </MoreFolds>
+      <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
+        <LatestPapers storeKey="gut" topics={[{ key: "mb", label: "腸内細菌と食事", term: "gut microbiota diet" }, { key: "co", label: "便秘と食事", term: "constipation dietary fiber" }, { key: "pb", label: "プロバイオティクス", term: "probiotics gut health" }]} />
+      </Fold>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。持病や服薬のある人、妊娠中・授乳中の人、強い症状のある人は、医師に相談してください。
         <br />

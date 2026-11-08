@@ -5,6 +5,7 @@ import GuideTabs from "../GuideTabs";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import Fold from "../Fold";
+import LatestPapers from "../LatestPapers";
 import Disclosure from "../Disclosure";
 import RelatedProducts from "../RelatedProducts";
 import type { Metadata } from "next";
@@ -136,6 +137,9 @@ export default function Tips() {
         </Fold>
       ))}
       </MoreFolds>
+      <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
+        <LatestPapers storeKey="tips" topics={[{ key: "wl", label: "減量", term: "weight loss intervention adults" }, { key: "rt", label: "筋トレ", term: "resistance training hypertrophy" }, { key: "pr", label: "たんぱく質", term: "dietary protein muscle" }]} />
+      </Fold>
 
       <p className="note">
         ※ 一般的な情報で、個人の診断や治療に代わるものではありません。商品の成分は、必ずパッケージの表示をご確認ください。持病のある方・妊娠中の方・服薬中の方は、医師や管理栄養士にご相談ください。
