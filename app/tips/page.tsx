@@ -6,6 +6,7 @@ import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
+import CondGuide from "../CondGuide";
 import Disclosure from "../Disclosure";
 import RelatedProducts from "../RelatedProducts";
 import type { Metadata } from "next";
@@ -137,6 +138,9 @@ export default function Tips() {
         </Fold>
       ))}
       </MoreFolds>
+      <Fold id="cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）">
+        <CondGuide />
+      </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
         <LatestPapers storeKey="tips" topics={[{ key: "wl", label: "減量", term: "weight loss intervention adults" }, { key: "rt", label: "筋トレ", term: "resistance training hypertrophy" }, { key: "pr", label: "たんぱく質", term: "dietary protein muscle" }]} />
       </Fold>
