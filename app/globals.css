@@ -4580,3 +4580,30 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .nctable td b{display:block}
 .ncme{display:block;color:#1f7a4d;font-size:13px}
 @media (max-width:480px){.nctable thead{display:none}.nctable,.nctable tbody,.nctable tr,.nctable th,.nctable td{display:block;width:auto}.nctable tr{border-top:1px solid #e3e6ea;padding:8px 0}.nctable th,.nctable td{border:0;padding:2px 0;white-space:normal}.nctable tbody th{font-size:15px}}
+
+/* quick meals (かんたん入力) */
+.qm .qmtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.qm .qmtabs button{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid #d6d9de;background:#fff;border-radius:12px;padding:8px 2px;font-size:13px;min-height:56px}
+.qm .qmtabs button.on{background:#e8f5ee;border-color:#2e9e6a;font-weight:700}
+.qm .qmtabs i{font-style:normal;font-size:11px;color:#1f7a4d}
+.qm .qmtiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qm .qmt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1px solid #d6d9de;background:#fff;border-radius:12px;padding:10px;font-size:14px;min-height:64px;line-height:1.35}
+.qm .qmt small{color:#667;font-size:12px}
+.qm .qmt.on{background:#e8f5ee;border-color:#2e9e6a;font-weight:700}
+.qm .qmsize{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-top:8px;font-size:13px}
+.qm .qmsize div{display:flex;gap:6px}
+.qm .qmsize button,.qm .qmextras button{border:1px solid #d6d9de;background:#fff;border-radius:999px;padding:8px 12px;font-size:13px;min-height:40px}
+.qm .qmsize button.on,.qm .qmextras button.on{background:#e8f5ee;border-color:#2e9e6a;font-weight:700}
+.qm .qmx{margin:12px 0 4px;font-size:13px;color:#445}
+.qm .qmextras{display:flex;flex-wrap:wrap;gap:6px}
+.qm .qmextras i{font-style:normal;margin-left:4px;color:#1f7a4d}
+.qm .qmsum{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.qm .qmsum b{font-size:20px}
+.qm .qmprev{width:100%;margin-top:6px}
+.qm .qmtot{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:0;margin:8px 0}
+.qm .qmtot li{display:flex;flex-direction:column;align-items:center;border:1px solid #e3e6ea;border-radius:10px;padding:6px 2px;text-align:center}
+.qm .qmtot small{font-size:11px;color:#667}
+.qm .qmtot b{font-size:15px}
+.qm .qmtot em{font-style:normal;font-size:10px;color:#667}
+.qm .qmtot li.over{border-color:#d9822b;background:#fff4e6}
+@media (max-width:360px){.qm .qmtot{grid-template-columns:repeat(3,1fr)}}

@@ -4,6 +4,7 @@ import HomeHero from "./HomeHero";
 import PlanPanel from "./PlanPanel";
 import LatestPapers from "./LatestPapers";
 import CondHub from "./CondHub";
+import QuickMeals from "./QuickMeals";
 import DietForAnyone from "./DietForAnyone";
 import MoreFolds from "./MoreFolds";
 import Micronutrients from "./Micronutrients";
@@ -2121,6 +2122,7 @@ function HomeInner() {
       {tab === "record" ? (
         <>
           <HomeHero />
+          <QuickMeals />
           <SiteMap />
           <Fold key="h-bal" id="h-bal" title="🥗 食事を細かく入力・結果を見る" sub="いつもの食事を選ぶ／原因／LINEで送る" cls="wfold">
             <BalanceCheck />
@@ -2188,6 +2190,7 @@ function HomeInner() {
             <RelatedProducts q="カルシウム" title="カルシウムの商品" />
             <RelatedProducts q="鉄" title="鉄の商品" /></Fold>
           {meHook.sexKey === "f" && meHook.band >= 3 && <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>}
+          <Fold key="w-any" id="w-any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように" cls="wfold"><DietForAnyone /></Fold>
           <Fold key="w-cond" id="w-cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）" cls="wfold"><CondHub /></Fold>
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>

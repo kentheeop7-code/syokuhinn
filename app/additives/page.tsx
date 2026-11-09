@@ -5,6 +5,7 @@ import GuideTabs from "../GuideTabs";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondHub from "../CondHub";
+import DietForAnyone from "../DietForAnyone";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -206,6 +207,7 @@ export default function Additives() {
       </ul>
       </Fold>
       </MoreFolds>
+      <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">
         <CondHub />
       </Fold>

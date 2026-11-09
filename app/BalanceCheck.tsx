@@ -9,12 +9,12 @@ import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 
 // 記録はとらない。「いつもの1日」を、ざっくり選ぶだけで、いまの食事のバランスが分かる。
 // 最後に、結果を「公式LINE」に、ワンタップで送れる。
-type Unit = { p: number; f: number; c: number; fi: number; kcal: number; salt: number; ca: number };
+export type Unit = { p: number; f: number; c: number; fi: number; kcal: number; salt: number; ca: number };
 const u = (p: number, f: number, c: number, fi: number, kcal: number, salt: number, ca: number): Unit => ({ p, f, c, fi, kcal, salt, ca });
 
 
 // 1回（1杯・1つ・1切れ）あたりの目安（日本食品標準成分表をもとにした、おおよその値）
-const U: Record<string, Unit> = {
+export const U: Record<string, Unit> = {
   rice: u(3.8, 0.5, 55.7, 0.5, 252, 0, 5), // 白ごはん茶碗1杯（150g）
   brown: u(4.2, 1.5, 53, 2.1, 248, 0, 11), // 玄米・もち麦ごはん茶碗1杯
   bread: u(5.3, 2.5, 28, 1.3, 158, 0.8, 14), // 食パン6枚切り1枚
@@ -373,6 +373,28 @@ export default function BalanceCheck() {
   }, []);
   const applyPresetRef = useRef(applyPreset);
   applyPresetRef.current = applyPreset;
+  // かんたん入力（朝・昼・夜をタップ）から、食事の合計を受け取る
+  const applyVals = (vals: Record<string, number>) => {
+    setA((x) => {
+      const n = { ...x };
+      for (const k of FOOD_KEYS) n[k] = 0;
+      for (const [k, v] of Object.entries(vals)) if (FOOD_KEYS.includes(k)) n[k] = Math.round(v * 10) / 10;
+      return n;
+    });
+    setTouched(true);
+    setPreset("");
+    try {
+      localStorage.removeItem("lg-preset");
+    } catch {}
+    window.dispatchEvent(new Event("lg-preset-applied"));
+  };
+  const applyValsRef = useRef(applyVals);
+  applyValsRef.current = applyVals;
+  useEffect(() => {
+    const on = (e: Event) => applyValsRef.current((e as CustomEvent<Record<string, number>>).detail || {});
+    window.addEventListener("lg-meals", on);
+    return () => window.removeEventListener("lg-meals", on);
+  }, []);
   const toggleCx = (id: string) => {
     setCx((x) => {
       const n = x.includes(id) ? x.filter((y) => y !== id) : [...x, id];
