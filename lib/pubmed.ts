@@ -6,10 +6,21 @@ const TYPE = "(meta-analysis[pt] OR systematic review[pt])";
 const BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 
 // PubMedは、1秒に3回までの制限がある。制限にあたったときは、少し待って、やり直す。
+// 同時に何件ボタンを押しても、PubMedには、順番に、間をあけて送る（1秒に3回までの制限のため）。
+let chain: Promise<unknown> = Promise.resolve();
+function queued<T>(fn: () => Promise<T>): Promise<T> {
+  const run = chain.then(fn, fn);
+  chain = run.then(
+    () => new Promise((res) => setTimeout(res, 450)),
+    () => new Promise((res) => setTimeout(res, 450))
+  );
+  return run;
+}
+
 async function getJson(url: string, tries = 3): Promise<any> {
   for (let i = 0; i < tries; i++) {
     try {
-      const r = await fetch(url);
+      const r = await queued(() => fetch(url));
       if (r.ok) {
         const j = await r.json();
         if (!j.error) return j;
