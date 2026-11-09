@@ -83,7 +83,7 @@ export default function TrainerApp() {
         localStorage.setItem("lg-trainer-papers", JSON.stringify(next));
       } catch {}
     } catch (e) {
-      setErr("取得できませんでした。通信を確認して、もう一度お試しください。");
+      setErr(e instanceof Error && e.message === "none" ? "該当する論文が見つかりませんでした。" : "取得できませんでした。通信を確認して、もう一度お試しください。");
     }
     setBusy("");
   };

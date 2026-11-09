@@ -29,8 +29,8 @@ export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; st
       try {
         localStorage.setItem(`lg-papers-${storeKey}`, JSON.stringify(next));
       } catch {}
-    } catch {
-      setErr("取得できませんでした。通信を確認して、もう一度お試しください。");
+    } catch (e) {
+      setErr(e instanceof Error && e.message === "none" ? "該当する論文が見つかりませんでした。" : "取得できませんでした。通信を確認して、もう一度お試しください。");
     }
     setBusy("");
   };
