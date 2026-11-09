@@ -5,11 +5,11 @@ import { BANDS, PAL_TEXT, readMe } from "./me";
 
 // 公式LINEのID（例："@123abcde"）。入れると、公式アカウントのトークに、直接つながる。
 // 空のままなら、LINEの「送り先を選ぶ画面」が開く。
-export const LINE_OA_ID: string = process.env.NEXT_PUBLIC_LINE_OA_ID ?? "";
+export const LINE_OA_ID: string = process.env.NEXT_PUBLIC_LINE_OA_ID || "@446cenpm";
 
 export function lineUrl(text: string): string {
   const q = encodeURIComponent(text);
-  return LINE_OA_ID ? `https://line.me/R/oaMessage/${encodeURIComponent(LINE_OA_ID)}/?${q}` : `https://line.me/R/msg/text/?${q}`;
+  return LINE_OA_ID ? `https://line.me/R/oaMessage/${LINE_OA_ID}/?${q}` : `https://line.me/R/msg/text/?${q}`;
 }
 
 // 結果を、公式LINEに送る（共通のボタン）。buildは、送る文章（本文）をつくる関数。
