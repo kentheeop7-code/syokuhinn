@@ -4,11 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import LineShare from "./LineShare";
 import { searchPapers, type Paper } from "../lib/pubmed";
+import MealPicker from "./MealPicker";
+import { U } from "./BalanceCheck";
+import { BANDS } from "./me";
+import { buildVals, describe, goalOf, r10, today, totals, type St } from "../lib/meals";
 import { CONDS, ISSUES, PLAYS, TOPICS, TRAINER_CHECKED, type Cond, type Issue, type Play } from "../lib/trainerData";
 
 // トレーナー用：お客様の指導メモ。結論・具体策・根拠・実績を見ながら、最後に、公式LINEへ、まとめて共有できる。
 type Goal = "diet" | "muscle" | "both";
 const num = (s: string) => parseFloat(s) || 0;
+const SLOTS_AM = ["am-wa", "am-natto", "am-pan", "am-light", "am-yo", "am-oats"];
 
 export default function TrainerApp() {
   const [loaded, setLoaded] = useState(false);
@@ -21,6 +26,11 @@ export default function TrainerApp() {
   const [picked, setPicked] = useState<string[]>([]);
   const [conds, setConds] = useState<string[]>([]);
   const [issues, setIssues] = useState<string[]>([]);
+  const [sex, setSex] = useState<"f" | "m">("f");
+  const [band, setBand] = useState(3);
+  const [curMeal, setCurMeal] = useState<St>({ date: today(), size: {}, ext: {} });
+  const [planMeal, setPlanMeal] = useState<St>({ date: today(), size: {}, ext: {} });
+  const [targetKcal, setTargetKcal] = useState("");
   const [problem, setProblem] = useState("");
   const [weekAct, setWeekAct] = useState("");
   const [nextDate, setNextDate] = useState("");
@@ -42,6 +52,11 @@ export default function TrainerApp() {
         setPicked(Array.isArray(s.picked) ? s.picked : []);
         setConds(Array.isArray(s.conds) ? s.conds : []);
         setIssues(Array.isArray(s.issues) ? s.issues : []);
+        setSex(s.sex === "m" ? "m" : "f");
+        setBand(typeof s.band === "number" ? s.band : 3);
+        if (s.curMeal && s.curMeal.size) setCurMeal({ date: today(), size: s.curMeal.size, ext: s.curMeal.ext || {} });
+        if (s.planMeal && s.planMeal.size) setPlanMeal({ date: today(), size: s.planMeal.size, ext: s.planMeal.ext || {} });
+        setTargetKcal(s.targetKcal ?? "");
         setProblem(s.problem ?? "");
         setWeekAct(s.weekAct ?? "");
         setNextDate(s.nextDate ?? "");
@@ -55,9 +70,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal]);
 
   const w = num(now);
   const wt = num(target);
@@ -65,6 +80,28 @@ export default function TrainerApp() {
   const chosen = PLAYS.filter((p) => picked.includes(p.id));
   const myConds = CONDS.filter((c) => conds.includes(c.id));
   const chosenConds = myConds.filter((c) => picked.includes("c-" + c.id));
+  const ct = totals(curMeal);
+  const pt = totals(planMeal);
+  const gl = goalOf(sex, band);
+  const wantKcal = num(targetKcal.replace(/,/g, ""));
+  const cv = buildVals(curMeal);
+  const sumOf = (ks: string[]) => ks.reduce((s, k) => s + (cv[k] ?? 0), 0);
+  const kcalOf = (ks: string[]) => ks.reduce((s, k) => s + (cv[k] ?? 0) * (U[k]?.kcal ?? 0), 0);
+  const insights: { t: string; k?: number }[] = [];
+  if (ct.any) {
+    if (ct.salt > gl.salt) insights.push({ t: `食塩が約${Math.round(ct.salt * 10) / 10}g（国の目標は${gl.salt}g未満）。汁物・漬物・麺の汁・加工品・外食を、見直す。` });
+    if (ct.p < parseFloat(gl.p || "0")) insights.push({ t: `たんぱく質が約${Math.round(ct.p)}g（目安は${gl.p}）。毎食に、肉・魚・卵・大豆・乳製品を、1つずつ。` });
+    if (ct.fi < parseFloat(gl.fi || "0")) insights.push({ t: `食物繊維が約${Math.round(ct.fi * 10) / 10}g（目安は${gl.fi}）。野菜・きのこ・海藻・豆・玄米・麦を、足す。` });
+    const veg = sumOf(["salad", "veg", "greenveg", "rootveg", "mush", "konjac"]);
+    if (veg < 3) insights.push({ t: `野菜・きのこ・海藻の小鉢が、約${Math.round(veg * 10) / 10}つ。毎食に、小鉢を1つ足す。` });
+    const sweets = kcalOf(["sugar", "cake", "snack", "alcohol"]);
+    if (sweets >= 150) insights.push({ t: "甘い飲み物・お菓子・お酒が、多め。回数や量を、決める。", k: sweets });
+    const rich = sumOf(["fried", "out", "instant"]);
+    if (rich >= 3) insights.push({ t: `揚げ物・外食・インスタントが、1日に約${Math.round(rich)}回ぶん。頻度を、減らす。` });
+    const amNone = curMeal.size["am-none"] !== undefined || !SLOTS_AM.some((id) => curMeal.size[id] !== undefined);
+    if (amNone) insights.push({ t: "朝食が、ない（または未入力）。たんぱく質＋果物かヨーグルトから、始める。" });
+    if (wantKcal > 0 && Math.abs(ct.kcal - wantKcal) > 150) insights.push({ t: `現状は、目標より、約${r10(Math.abs(ct.kcal - wantKcal)).toLocaleString()}kcal ${ct.kcal > wantKcal ? "多め" : "少なめ"}。`, k: Math.abs(ct.kcal - wantKcal) });
+  }
   const myIssues = ISSUES.filter((c) => issues.includes(c.id));
   const chosenIssues = myIssues.filter((c) => picked.includes("i-" + c.id));
   const toggleIssue = (id: string) => setIssues((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
@@ -96,6 +133,16 @@ export default function TrainerApp() {
     const L: string[] = [];
     L.push(`■ 目標：${goal === "diet" ? "体重を減らす" : goal === "muscle" ? "筋力・筋肉アップ" : "体重を減らして、筋力もアップ"}`);
     if (w) L.push(`■ 体重：${w}kg${wt ? ` → ${wt}kg` : ""}　筋トレ：週${days}回`);
+    if (ct.any) {
+      L.push("", `■ 現状の食事（約${r10(ct.kcal).toLocaleString()}kcal・食塩${Math.round(ct.salt * 10) / 10}g）`);
+      describe(curMeal).forEach((s) => L.push(s));
+      insights.slice(0, 3).forEach((s) => L.push(`・${s.t}`));
+    }
+    if (pt.any) {
+      L.push("", `■ 提案する食事（約${r10(pt.kcal).toLocaleString()}kcal・食塩${Math.round(pt.salt * 10) / 10}g）`);
+      describe(planMeal).forEach((s) => L.push(s));
+      if (ct.any) L.push(`現状から：${r10(pt.kcal - ct.kcal) > 0 ? "+" : ""}${r10(pt.kcal - ct.kcal).toLocaleString()}kcal、たんぱく質 ${Math.round(pt.p - ct.p) > 0 ? "+" : ""}${Math.round(pt.p - ct.p)}g、食塩 ${Math.round((pt.salt - ct.salt) * 10) / 10 > 0 ? "+" : ""}${Math.round((pt.salt - ct.salt) * 10) / 10}g`);
+    }
     if (chosenIssues.length || problem.trim()) {
       L.push("", "■ いまの課題");
       chosenIssues.forEach((c, i) => L.push(`${i + 1}. ${c.share}`));
@@ -297,6 +344,29 @@ export default function TrainerApp() {
           <span>お名前（任意）</span>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="例：さくら" aria-label="お客様のお名前" />
         </label>
+        <p className="balh sub">お客様の性別・年代（目安の計算に使います）</p>
+        <div className="plpace" role="radiogroup" aria-label="性別">
+          {(
+            [
+              ["f", "女性"],
+              ["m", "男性"],
+            ] as const
+          ).map(([k, l]) => (
+            <button key={k} type="button" role="radio" aria-checked={sex === k} className={sex === k ? "on" : ""} onClick={() => setSex(k)}>
+              {l}
+            </button>
+          ))}
+        </div>
+        <label className="trf">
+          <span>年代</span>
+          <select value={band} onChange={(e) => setBand(parseInt(e.target.value, 10))} aria-label="年代">
+            {BANDS.map((b, i) => (
+              <option key={b} value={i}>
+                {b}
+              </option>
+            ))}
+          </select>
+        </label>
         <p className="balh sub">目標</p>
         <div className="plpace" role="radiogroup" aria-label="目標">
           {(
@@ -332,7 +402,111 @@ export default function TrainerApp() {
       </section>
 
       <section className="card">
-        <p className="balh">② 課題と、今週の行動</p>
+        <p className="balh">② 現状の食事（お客様に聞きながら）</p>
+        <p className="agnote">朝・昼・夜・おやつを、お客様の話に合わせて、タップで選びます。量や足したものも、直せます。</p>
+        <MealPicker value={curMeal} onChange={setCurMeal} />
+        {ct.any ? (
+          <>
+            <ul className="qmtot" aria-label="現状の1日の合計">
+              <li>
+                <small>エネルギー</small>
+                <b>{r10(ct.kcal).toLocaleString()}</b>
+                <em>kcal</em>
+              </li>
+              <li>
+                <small>たんぱく質</small>
+                <b>{Math.round(ct.p)}g</b>
+                <em>目安 {gl.p}</em>
+              </li>
+              <li>
+                <small>脂質</small>
+                <b>{Math.round(ct.f)}g</b>
+              </li>
+              <li>
+                <small>炭水化物</small>
+                <b>{Math.round(ct.c)}g</b>
+              </li>
+              <li className={ct.salt > gl.salt ? "over" : ""}>
+                <small>食塩</small>
+                <b>{Math.round(ct.salt * 10) / 10}g</b>
+                <em>目標 {gl.salt}g未満</em>
+              </li>
+            </ul>
+            <p className="balh sub">気づき（自動）</p>
+            <ul className="trinsight">
+              {insights.map((s) => (
+                <li key={s.t}>
+                  {s.t}
+                  {s.k ? <b> （約{r10(s.k)}kcal）</b> : null}
+                </li>
+              ))}
+              {insights.length === 0 && <li>大きな偏りは、見当たりません。量と、続けやすさを、確認しましょう。</li>}
+            </ul>
+            <p className="agnote small">気づきは、選んだ食事の目安量からの自動計算です。目安量は「ふつうの1食ぶん」で、実際とは、ずれます。お客様に、確かめながら使ってください。</p>
+          </>
+        ) : (
+          <p className="agnote">食事を選ぶと、合計と、気づきが出ます。</p>
+        )}
+      </section>
+
+      <section className="card">
+        <p className="balh">③ 提案する食事内容</p>
+        <p className="agnote">現状を、コピーして、直すと、早いです。比べながら、お客様に、示せます。</p>
+        <div className="trgrid">
+          <button type="button" className="btn ghost" onClick={() => setPlanMeal({ date: curMeal.date, size: { ...curMeal.size }, ext: { ...curMeal.ext } })}>
+            現状をコピーして、直す
+          </button>
+          <label className="trf">
+            <span>1日の目標カロリー（任意）</span>
+            <input inputMode="numeric" value={targetKcal} onChange={(e) => setTargetKcal(e.target.value)} placeholder="例 1,600" aria-label="1日の目標カロリー" />
+          </label>
+        </div>
+        <MealPicker value={planMeal} onChange={setPlanMeal} />
+        {pt.any && (
+          <table className="nctable trcmp" aria-label="現状と提案の比較">
+            <thead>
+              <tr>
+                <th></th>
+                <th>現状</th>
+                <th>提案</th>
+                <th>差</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(
+                [
+                  ["エネルギー(kcal)", r10(ct.kcal), r10(pt.kcal)],
+                  ["たんぱく質(g)", Math.round(ct.p), Math.round(pt.p)],
+                  ["脂質(g)", Math.round(ct.f), Math.round(pt.f)],
+                  ["炭水化物(g)", Math.round(ct.c), Math.round(pt.c)],
+                  ["食物繊維(g)", Math.round(ct.fi * 10) / 10, Math.round(pt.fi * 10) / 10],
+                  ["食塩(g)", Math.round(ct.salt * 10) / 10, Math.round(pt.salt * 10) / 10],
+                ] as [string, number, number][]
+              ).map(([n, a, b]) => (
+                <tr key={n}>
+                  <th scope="row">{n}</th>
+                  <td>{a.toLocaleString()}</td>
+                  <td>{b.toLocaleString()}</td>
+                  <td>
+                    <b>{b - a > 0 ? "+" : ""}{(Math.round((b - a) * 10) / 10).toLocaleString()}</b>
+                  </td>
+                </tr>
+              ))}
+              {wantKcal > 0 && (
+                <tr>
+                  <th scope="row">目標との差(kcal)</th>
+                  <td>{r10(ct.kcal - wantKcal) > 0 ? "+" : ""}{r10(ct.kcal - wantKcal).toLocaleString()}</td>
+                  <td>{r10(pt.kcal - wantKcal) > 0 ? "+" : ""}{r10(pt.kcal - wantKcal).toLocaleString()}</td>
+                  <td></td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+        {pt.any && wantKcal > 0 && Math.abs(pt.kcal - wantKcal) > 200 && <p className="plwarn">提案の食事が、目標カロリーから、約{r10(Math.abs(pt.kcal - wantKcal)).toLocaleString()}kcal はなれています。量や足したものを、調整しましょう。</p>}
+      </section>
+      <section className="card">
+        <p className="balh">④ 課題と、今週の行動</p>
         <p className="agnote">お客様の課題を選ぶと、確認すること・食事での対応・根拠が出ます。下の欄に、トレーナーが、課題と行動を書き込めます。</p>
         <div className="trchips" role="group" aria-label="課題">
           {ISSUES.map((c) => (
@@ -357,7 +531,7 @@ export default function TrainerApp() {
       </section>
 
       <section className="card">
-        <p className="balh">③ 持病・体質のあるお客様</p>
+        <p className="balh">⑤ 持病・体質のあるお客様</p>
         <p className="agnote">当てはまるものを選ぶと、食事とトレーニングの考え方・根拠・限界が出ます。診断や治療ではなく、主治医の指示が優先です。</p>
         <div className="trchips" role="group" aria-label="持病・体質">
           {CONDS.map((c) => (
@@ -370,13 +544,13 @@ export default function TrainerApp() {
       </section>
 
       <section className="card">
-        <p className="balh">④ 指導メニュー（結論・具体策・根拠・実績）</p>
+        <p className="balh">⑥ 指導メニュー（結論・具体策・根拠・実績）</p>
         <p className="agnote">タップで開きます。共有に入れたものが、最後のLINEにまとまります。</p>
         <ul className="trlist">{plays.map(card)}</ul>
       </section>
 
       <section className="card">
-        <p className="balh">⑤ 最新の論文（自動で取得）</p>
+        <p className="balh">⑦ 最新の論文（自動で取得）</p>
         <p className="agnote">PubMed（米国国立医学図書館）から、メタ分析・系統的レビューの新しい順に取得します。タイトルの一覧で、内容の評価は、していません。指導に使う前に、トレーナーが確認してください。</p>
         <div className="trtopics">
           {TOPICS.map((t) => (
@@ -414,7 +588,7 @@ export default function TrainerApp() {
       </section>
 
       <section className="card">
-        <p className="balh">⑥ お客様への共有</p>
+        <p className="balh">⑧ お客様への共有</p>
         <label className="trf">
           <span>トレーナーからの一言（任意）</span>
           <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="例：今週は、歩数を8,000歩に。スクワットは、フォーム優先で。" aria-label="トレーナーからの一言" />

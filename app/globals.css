@@ -4607,3 +4607,11 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .qm .qmtot em{font-style:normal;font-size:10px;color:#667}
 .qm .qmtot li.over{border-color:#d9822b;background:#fff4e6}
 @media (max-width:360px){.qm .qmtot{grid-template-columns:repeat(3,1fr)}}
+
+/* trainer meal hearing */
+.trinsight{margin:6px 0;padding-left:18px;font-size:14px;line-height:1.6}
+.trinsight li{margin:4px 0}
+.trcmp{margin-top:10px}
+.trcmp td,.trcmp th{text-align:right}
+.trcmp thead th:first-child,.trcmp tbody th{text-align:left}
+.trf select{width:100%;min-height:44px;font-size:16px;border:1px solid #d6d9de;border-radius:10px;padding:0 10px;background:#fff}
