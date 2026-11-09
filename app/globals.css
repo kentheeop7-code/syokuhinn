@@ -4570,3 +4570,13 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .trchip{border:1px solid #d6d9de;background:#fff;border-radius:999px;padding:10px 14px;font-size:15px;min-height:44px;text-align:left}
 .trchip.on{background:#e8f5ee;border-color:#2e9e6a;font-weight:700}
 
+
+/* nutrient-by-condition table */
+.ncbox{margin-top:6px}
+.nctable{width:100%;border-collapse:collapse;font-size:14px;line-height:1.55}
+.nctable th,.nctable td{border-top:1px solid #e3e6ea;padding:8px 6px;vertical-align:top;text-align:left}
+.nctable thead th{font-size:12px;color:#667;border-top:0}
+.nctable tbody th{font-weight:700;white-space:nowrap;width:1%}
+.nctable td b{display:block}
+.ncme{display:block;color:#1f7a4d;font-size:13px}
+@media (max-width:480px){.nctable thead{display:none}.nctable,.nctable tbody,.nctable tr,.nctable th,.nctable td{display:block;width:auto}.nctable tr{border-top:1px solid #e3e6ea;padding:8px 0}.nctable th,.nctable td{border:0;padding:2px 0;white-space:normal}.nctable tbody th{font-size:15px}}

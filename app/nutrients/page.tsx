@@ -9,6 +9,7 @@ import MoreFolds from "../MoreFolds";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondGuide from "../CondGuide";
+import NutrientCond from "../NutrientCond";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -569,6 +570,7 @@ export default function Nutrients() {
       <Fold id="me" title="あなたの1日の目安（性別・年齢）" sub="カロリー・PFCと、各栄養素の目安"><MyKcal topic="nutrients" /><MeCard /></Fold>
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold id="micro" title="ビタミン・ミネラルの1日の目安" sub="18項目：量と、とりやすい食品"><Micronutrients /></Fold>
+      <Fold id="n-cond" title="🩺 持病がある方の栄養素の目安" sub="甲状腺・糖尿病・高血圧・脂質・貧血・骨など（表）"><NutrientCond /></Fold>
       <Fold id="h-guide" title="国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）"><NationalGuide bare /></Fold>
       <Fold id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
       <Fold id="goals" title="目的別ガイド">
