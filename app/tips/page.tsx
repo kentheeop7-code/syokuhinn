@@ -7,6 +7,8 @@ import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondGuide from "../CondGuide";
+import NutrientCond from "../NutrientCond";
+import DietForAnyone from "../DietForAnyone";
 import Disclosure from "../Disclosure";
 import RelatedProducts from "../RelatedProducts";
 import type { Metadata } from "next";
@@ -141,6 +143,8 @@ export default function Tips() {
       <Fold id="cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）">
         <CondGuide />
       </Fold>
+      <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
+      <Fold id="n-cond" title="🩺 持病がある方の栄養素の目安" sub="栄養素の量を、表で"><NutrientCond /></Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
         <LatestPapers storeKey="tips" topics={[{ key: "wl", label: "減量", term: "\"weight loss\"[ti] AND (diet[ti] OR dietary[ti])" }, { key: "rt", label: "筋トレ", term: "\"resistance training\"[ti] AND (hypertrophy[ti] OR muscle[ti])" }, { key: "pr", label: "たんぱく質", term: "protein[ti] AND (muscle[ti] OR \"resistance training\"[ti])" }]} />
       </Fold>

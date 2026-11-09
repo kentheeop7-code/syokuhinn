@@ -4,6 +4,8 @@ import HomeHero from "./HomeHero";
 import PlanPanel from "./PlanPanel";
 import LatestPapers from "./LatestPapers";
 import CondGuide from "./CondGuide";
+import NutrientCond from "./NutrientCond";
+import DietForAnyone from "./DietForAnyone";
 import MoreFolds from "./MoreFolds";
 import Micronutrients from "./Micronutrients";
 import MeCard from "./MeCard";
@@ -2144,6 +2146,8 @@ function HomeInner() {
             <Micronutrients />
           </Fold>
           <Fold key="p-cond" id="p-cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）" cls="wfold"><CondGuide /></Fold>
+          <Fold key="p-any" id="p-any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように" cls="wfold"><DietForAnyone /></Fold>
+          <Fold key="p-ncond" id="p-ncond" title="🩺 持病がある方の栄養素の目安" sub="栄養素の量を、表で" cls="wfold"><NutrientCond /></Fold>
           <Fold key="p-latest" id="p-latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に" cls="wfold">
             <LatestPapers storeKey="plan" topics={[{ key: "ob", label: "減量・肥満", term: "obesity[ti] AND (\"weight loss\"[ti] OR \"lifestyle intervention\"[ti])" }, { key: "dm", label: "糖尿病と食事", term: "\"type 2 diabetes\"[ti] AND (diet[ti] OR \"low-calorie\"[ti] OR remission[ti])" }, { key: "th", label: "甲状腺と体重", term: "(hypothyroidism[ti] OR thyroid[ti]) AND (\"body weight\"[ti] OR obesity[ti] OR weight[ti])" }]} />
           </Fold>
@@ -2187,6 +2191,7 @@ function HomeInner() {
             <RelatedProducts q="鉄" title="鉄の商品" /></Fold>
           {meHook.sexKey === "f" && meHook.band >= 3 && <Fold key="w-care" id="w-care" title="🩺 更年期・「困った」ガイド" sub="症状ごとの工夫と受診の目安" cls="wfold"><WomenCare /></Fold>}
           <Fold key="w-cond" id="w-cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・PCOS・骨など（根拠つき）" cls="wfold"><CondGuide /></Fold>
+          <Fold key="w-ncond" id="w-ncond" title="🩺 持病がある方の栄養素の目安" sub="栄養素の量を、表で" cls="wfold"><NutrientCond /></Fold>
           <Fold key="w-age" id="w-age" title="🧓 30歳と60歳のダイエットの違い" sub="年齢でちがう、減らし方" cls="wfold"><AgeCompare /></Fold>
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
           </MoreFolds>
