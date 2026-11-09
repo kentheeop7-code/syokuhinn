@@ -77,15 +77,18 @@ export default function TrainerApp() {
     setErr("");
     try {
       const list = await searchPapers(term, 6);
-      const next = { ...papers, [key]: { at: new Date().toLocaleString("ja-JP"), list } };
-      setPapers(next);
-      try {
-        localStorage.setItem("lg-trainer-papers", JSON.stringify(next));
-      } catch {}
+      const at = new Date().toLocaleString("ja-JP");
+      setPapers((prev) => {
+        const next = { ...prev, [key]: { at, list } };
+        try {
+          localStorage.setItem("lg-trainer-papers", JSON.stringify(next));
+        } catch {}
+        return next;
+      });
     } catch (e) {
       setErr(e instanceof Error && e.message === "none" ? "該当する論文が見つかりませんでした。" : "取得できませんでした。通信を確認して、もう一度お試しください。");
     }
-    setBusy("");
+    setBusy((b) => (b === key ? "" : b));
   };
   const pin = (p: Paper) => setPins((x) => (x.some((y) => y.id === p.id) ? x.filter((y) => y.id !== p.id) : [...x, p]));
 

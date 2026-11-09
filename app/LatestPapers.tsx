@@ -24,15 +24,18 @@ export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; st
     setErr("");
     try {
       const list = await searchPapers(t.term, 5);
-      const next = { ...data, [t.key]: { at: new Date().toLocaleString("ja-JP"), list } };
-      setData(next);
-      try {
-        localStorage.setItem(`lg-papers-${storeKey}`, JSON.stringify(next));
-      } catch {}
+      const at = new Date().toLocaleString("ja-JP");
+      setData((prev) => {
+        const next = { ...prev, [t.key]: { at, list } };
+        try {
+          localStorage.setItem(`lg-papers-${storeKey}`, JSON.stringify(next));
+        } catch {}
+        return next;
+      });
     } catch (e) {
       setErr(e instanceof Error && e.message === "none" ? "該当する論文が見つかりませんでした。" : "取得できませんでした。通信を確認して、もう一度お試しください。");
     }
-    setBusy("");
+    setBusy((b) => (b === t.key ? "" : b));
   };
 
   return (
