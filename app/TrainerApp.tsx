@@ -125,9 +125,8 @@ export default function TrainerApp() {
     }
     if (chosen.some((p) => p.src.length) || chosenConds.length || chosenIssues.length) {
       L.push("", "■ 根拠");
-      chosenIssues.slice(0, 4).forEach((c) => L.push(`・${c.src[0].label}`));
-      chosen.slice(0, 4).forEach((p) => L.push(`・${p.src[0].label}`));
-      chosenConds.slice(0, 4).forEach((c) => L.push(`・${c.src[0].label}`));
+      const labels = [...chosenIssues.slice(0, 4).map((c) => c.src[0].label), ...chosen.slice(0, 4).map((p) => p.src[0].label), ...chosenConds.slice(0, 4).map((c) => c.src[0].label)];
+      Array.from(new Set(labels)).forEach((l) => L.push(`・${l}`));
     }
     return L.join("\n");
   };
