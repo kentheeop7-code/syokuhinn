@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import EvidenceBox from "./EvidenceBox";
 import { PRESETS } from "./presets";
 import CausePanel, { analyze, COMPLAINTS, type CIn } from "./CausePanel";
+import { lineUrl } from "./LineShare";
 import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 
 // 記録はとらない。「いつもの1日」を、ざっくり選ぶだけで、いまの食事のバランスが分かる。
@@ -11,9 +12,6 @@ import { AGE_INFO, BANDS, BAND_SHORT, P_LO, PAL_TEXT, REF, readMe } from "./me";
 type Unit = { p: number; f: number; c: number; fi: number; kcal: number; salt: number; ca: number };
 const u = (p: number, f: number, c: number, fi: number, kcal: number, salt: number, ca: number): Unit => ({ p, f, c, fi, kcal, salt, ca });
 
-// 公式LINEのID（例："@123abcde"）。入れると、LINEの公式アカウントのトークに、直接つながる。
-// 空のままなら、LINEの「送り先を選ぶ画面」が開く（そこで公式アカウントを選ぶ）。
-const LINE_OA_ID: string = process.env.NEXT_PUBLIC_LINE_OA_ID ?? "";
 
 // 1回（1杯・1つ・1切れ）あたりの目安（日本食品標準成分表をもとにした、おおよその値）
 const U: Record<string, Unit> = {
@@ -188,10 +186,6 @@ const r0 = (n: number) => Math.round(n);
 type Target = { kcal: number; p: number; f: number; c: number } | null;
 type St = "low" | "ok" | "high";
 
-function lineUrl(text: string): string {
-  const q = encodeURIComponent(text);
-  return LINE_OA_ID ? `https://line.me/R/oaMessage/${encodeURIComponent(LINE_OA_ID)}/?${q}` : `https://line.me/R/msg/text/?${q}`;
-}
 
 export default function BalanceCheck() {
   const [a, setA] = useState<Record<string, number>>(DEFAULT);
