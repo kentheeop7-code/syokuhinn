@@ -4,8 +4,7 @@ import GuideTabs from "../GuideTabs";
 import RelatedProducts from "../RelatedProducts";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
-import CondGuide from "../CondGuide";
-import NutrientCond from "../NutrientCond";
+import CondHub from "../CondHub";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -401,10 +400,9 @@ export default function Gut() {
       </ul>
       </Fold>
       </MoreFolds>
-      <Fold id="cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）">
-        <CondGuide />
+      <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">
+        <CondHub />
       </Fold>
-      <Fold id="n-cond" title="🩺 持病がある方の栄養素の目安" sub="栄養素の量を、表で"><NutrientCond /></Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
         <LatestPapers storeKey="gut" topics={[{ key: "mb", label: "腸内細菌と食事", term: "\"gut microbiota\"[ti] AND diet[ti]" }, { key: "co", label: "便秘と食事", term: "constipation[ti] AND (fiber[ti] OR dietary[ti])" }, { key: "pb", label: "プロバイオティクス", term: "probiotics[ti] AND (gut[ti] OR intestinal[ti] OR constipation[ti] OR \"irritable bowel\"[ti])" }]} />
       </Fold>

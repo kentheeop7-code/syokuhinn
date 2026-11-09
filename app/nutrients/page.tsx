@@ -8,9 +8,8 @@ import GuideTabs from "../GuideTabs";
 import MoreFolds from "../MoreFolds";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
-import CondGuide from "../CondGuide";
+import CondHub from "../CondHub";
 import DietForAnyone from "../DietForAnyone";
-import NutrientCond from "../NutrientCond";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -572,7 +571,7 @@ export default function Nutrients() {
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold id="micro" title="ビタミン・ミネラルの1日の目安" sub="18項目：量と、とりやすい食品"><Micronutrients /></Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
-      <Fold id="n-cond" title="🩺 持病がある方の栄養素の目安" sub="甲状腺・糖尿病・高血圧・脂質・貧血・骨など（表）"><NutrientCond /></Fold>
+      <Fold id="n-cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）"><CondHub /></Fold>
       <Fold id="h-guide" title="国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）"><NationalGuide bare /></Fold>
       <Fold id="sym" title="気になることから、足したい栄養を探す"><SymptomCheck /></Fold>
       <Fold id="goals" title="目的別ガイド">
@@ -755,9 +754,6 @@ export default function Nutrients() {
       <EvidenceBox ids={["dri2025", "ods", "food8"]} level="強い（国の基準）" note="1日の目安量・上限・不足したときの症状は、食事摂取基準（2025年版）と、NIHの資料にもとづきます。「多い食品」は、食品成分表にもとづく一般的な内容です。サプリでの量は、上限に注意してください。" />
       </Fold>
       </MoreFolds>
-      <Fold id="cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）">
-        <CondGuide />
-      </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
         <LatestPapers storeKey="nut" topics={[{ key: "pro", label: "たんぱく質", term: "\"protein intake\"[ti]" }, { key: "fib", label: "食物繊維", term: "\"dietary fiber\"[ti]" }, { key: "vd", label: "ビタミンD", term: "\"vitamin D\"[ti] AND supplementation[ti]" }, { key: "na", label: "塩分・血圧", term: "(\"sodium intake\"[ti] OR \"salt intake\"[ti] OR \"salt reduction\"[ti] OR \"sodium reduction\"[ti]) AND \"blood pressure\"[ti]" }]} />
       </Fold>
