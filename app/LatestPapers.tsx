@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { searchPapers, type Paper } from "../lib/pubmed";
 
 // ページのテーマに合わせて、最新の論文（メタ分析・系統的レビュー）を、PubMedから、そのつど取得する。
 // タイトルの一覧で、内容の評価はしていない。使う前に、トレーナー・専門家が、確認すること。
-type Paper = { id: string; title: string; journal: string; date: string };
 export type Topic = { key: string; label: string; term: string };
 
 export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; storeKey: string }) {
@@ -23,12 +23,7 @@ export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; st
     setBusy(t.key);
     setErr("");
     try {
-      const q = `(${t.term}) AND (meta-analysis[pt] OR systematic review[pt])`;
-      const s = await (await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=5&sort=pub+date&term=${encodeURIComponent(q)}`)).json();
-      const ids: string[] = s.esearchresult?.idlist ?? [];
-      if (ids.length === 0) throw new Error("none");
-      const d = await (await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=${ids.join(",")}`)).json();
-      const list: Paper[] = ids.map((id) => ({ id, title: d.result?.[id]?.title ?? "", journal: d.result?.[id]?.source ?? "", date: d.result?.[id]?.pubdate ?? "" }));
+      const list = await searchPapers(t.term, 5);
       const next = { ...data, [t.key]: { at: new Date().toLocaleString("ja-JP"), list } };
       setData(next);
       try {

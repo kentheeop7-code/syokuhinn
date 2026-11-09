@@ -149,11 +149,11 @@ export const PLAYS: Play[] = [
 
 // 最新の論文（自動取得）の、トピック
 export const TOPICS: { key: string; label: string; term: string }[] = [
-  { key: "rt", label: "筋トレ・筋肥大", term: "resistance training hypertrophy" },
-  { key: "prot", label: "たんぱく質", term: "protein intake muscle" },
-  { key: "loss", label: "減量・ダイエット", term: "weight loss intervention adults" },
-  { key: "diet", label: "食事法", term: "dietary pattern weight loss" },
-  { key: "sleep", label: "睡眠・活動", term: "sleep physical activity body weight" },
+  { key: "rt", label: "筋トレ・筋肥大", term: "\"resistance training\"[ti] AND (hypertrophy[ti] OR muscle[ti])" },
+  { key: "prot", label: "たんぱく質", term: "protein[ti] AND (muscle[ti] OR \"resistance training\"[ti])" },
+  { key: "loss", label: "減量・ダイエット", term: "\"weight loss\"[ti] AND (diet[ti] OR dietary[ti])" },
+  { key: "diet", label: "食事法", term: "\"weight loss\"[ti] AND (diet[ti] OR \"low-carbohydrate\"[ti] OR \"low-fat\"[ti] OR \"intermittent fasting\"[ti])" },
+  { key: "sleep", label: "睡眠・活動", term: "sleep[ti] AND (obesity[ti] OR \"weight loss\"[ti] OR \"body weight\"[ti])" },
 ];
 
 

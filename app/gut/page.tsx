@@ -404,7 +404,7 @@ export default function Gut() {
         <CondGuide />
       </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
-        <LatestPapers storeKey="gut" topics={[{ key: "mb", label: "腸内細菌と食事", term: "gut microbiota diet" }, { key: "co", label: "便秘と食事", term: "constipation dietary fiber" }, { key: "pb", label: "プロバイオティクス", term: "probiotics gut health" }]} />
+        <LatestPapers storeKey="gut" topics={[{ key: "mb", label: "腸内細菌と食事", term: "\"gut microbiota\"[ti] AND diet[ti]" }, { key: "co", label: "便秘と食事", term: "constipation[ti] AND (fiber[ti] OR dietary[ti])" }, { key: "pb", label: "プロバイオティクス", term: "probiotics[ti] AND (gut[ti] OR intestinal[ti] OR constipation[ti] OR \"irritable bowel\"[ti])" }]} />
       </Fold>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。持病や服薬のある人、妊娠中・授乳中の人、強い症状のある人は、医師に相談してください。

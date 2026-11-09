@@ -755,7 +755,7 @@ export default function Nutrients() {
         <CondGuide />
       </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
-        <LatestPapers storeKey="nut" topics={[{ key: "pro", label: "たんぱく質", term: "protein intake health" }, { key: "fib", label: "食物繊維", term: "dietary fiber intake" }, { key: "vd", label: "ビタミンD", term: "vitamin D supplementation" }, { key: "na", label: "塩分・血圧", term: "sodium intake blood pressure" }]} />
+        <LatestPapers storeKey="nut" topics={[{ key: "pro", label: "たんぱく質", term: "\"protein intake\"[ti]" }, { key: "fib", label: "食物繊維", term: "\"dietary fiber\"[ti]" }, { key: "vd", label: "ビタミンD", term: "\"vitamin D\"[ti] AND supplementation[ti]" }, { key: "na", label: "塩分・血圧", term: "(\"sodium intake\"[ti] OR \"salt intake\"[ti] OR \"salt reduction\"[ti] OR \"sodium reduction\"[ti]) AND \"blood pressure\"[ti]" }]} />
       </Fold>
       <p className="note">
         ※ 一般的な成人向けの目安で、「日本人の食事摂取基準（2025年版）」（厚生労働省）を参考にしています。年齢・体格・持病・服薬・妊娠中などで必要量は変わります。気になる症状や、サプリを使う場合は、医師や管理栄養士に相談してください。

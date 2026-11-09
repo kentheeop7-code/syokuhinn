@@ -2145,7 +2145,7 @@ function HomeInner() {
           </Fold>
           <Fold key="p-cond" id="p-cond" title="🩺 持病・体質がある方の食事と運動" sub="甲状腺・糖尿病・高血圧など（根拠つき）" cls="wfold"><CondGuide /></Fold>
           <Fold key="p-latest" id="p-latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に" cls="wfold">
-            <LatestPapers storeKey="plan" topics={[{ key: "ob", label: "減量・肥満", term: "obesity weight loss intervention" }, { key: "dm", label: "糖尿病と食事", term: "type 2 diabetes diet remission" }, { key: "th", label: "甲状腺と体重", term: "thyroid disease weight management" }]} />
+            <LatestPapers storeKey="plan" topics={[{ key: "ob", label: "減量・肥満", term: "obesity[ti] AND (\"weight loss\"[ti] OR \"lifestyle intervention\"[ti])" }, { key: "dm", label: "糖尿病と食事", term: "\"type 2 diabetes\"[ti] AND (diet[ti] OR \"low-calorie\"[ti] OR remission[ti])" }, { key: "th", label: "甲状腺と体重", term: "(hypothyroidism[ti] OR thyroid[ti]) AND (\"body weight\"[ti] OR obesity[ti] OR weight[ti])" }]} />
           </Fold>
           <Fold key="r-weight" id="r-weight" title="📈 到達までのグラフ" sub="ペースを選ぶと、到達する時期が分かる" cls="wfold">
             <WeightChart />
@@ -2191,7 +2191,7 @@ function HomeInner() {
           <Fold key="w-meal" id="w-meal" title="🍽 1日の食事例をくらべる" sub="4つのタイプを、ひと目で" cls="wfold"><MealCompare goal={goal} onAdd={add} /></Fold>
           </MoreFolds>
           <Fold key="w-latest" id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に" cls="wfold">
-            <LatestPapers storeKey="women" topics={[{ key: "me", label: "更年期と食事・体重", term: "menopause diet weight" }, { key: "pc", label: "PCOSと生活習慣", term: "polycystic ovary syndrome lifestyle diet" }, { key: "th", label: "甲状腺と体重", term: "hypothyroidism body weight" }, { key: "fe", label: "鉄不足", term: "iron deficiency women" }]} />
+            <LatestPapers storeKey="women" topics={[{ key: "me", label: "更年期と食事・体重", term: "menopause[ti] AND (diet[ti] OR \"body weight\"[ti] OR exercise[ti])" }, { key: "pc", label: "PCOSと生活習慣", term: "\"polycystic ovary syndrome\"[ti] AND (lifestyle[ti] OR diet[ti] OR exercise[ti])" }, { key: "th", label: "甲状腺と体重", term: "(hypothyroidism[ti] OR thyroid[ti]) AND (\"body weight\"[ti] OR obesity[ti] OR weight[ti])" }, { key: "fe", label: "鉄不足", term: "\"iron deficiency\"[ti] AND (women[ti] OR menstruating[ti] OR female[ti])" }]} />
           </Fold>
           <ShareQR />
         </>      ) : tab === "products" ? (

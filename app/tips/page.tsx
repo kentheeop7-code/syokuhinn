@@ -142,7 +142,7 @@ export default function Tips() {
         <CondGuide />
       </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
-        <LatestPapers storeKey="tips" topics={[{ key: "wl", label: "減量", term: "weight loss intervention adults" }, { key: "rt", label: "筋トレ", term: "resistance training hypertrophy" }, { key: "pr", label: "たんぱく質", term: "dietary protein muscle" }]} />
+        <LatestPapers storeKey="tips" topics={[{ key: "wl", label: "減量", term: "\"weight loss\"[ti] AND (diet[ti] OR dietary[ti])" }, { key: "rt", label: "筋トレ", term: "\"resistance training\"[ti] AND (hypertrophy[ti] OR muscle[ti])" }, { key: "pr", label: "たんぱく質", term: "protein[ti] AND (muscle[ti] OR \"resistance training\"[ti])" }]} />
       </Fold>
 
       <p className="note">

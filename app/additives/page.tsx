@@ -210,7 +210,7 @@ export default function Additives() {
         <CondGuide />
       </Fold>
       <Fold id="latest" title="🆕 最新の論文（自動取得）" sub="PubMedから、新しい順に">
-        <LatestPapers storeKey="add" topics={[{ key: "em", label: "乳化剤・増粘剤", term: "food emulsifiers gut" }, { key: "sw", label: "人工甘味料", term: "non-nutritive sweeteners health" }, { key: "up", label: "超加工食品", term: "ultra-processed food health" }]} />
+        <LatestPapers storeKey="add" topics={[{ key: "em", label: "乳化剤・増粘剤", term: "(emulsifier*[ti] OR \"food additives\"[ti] OR thickener*[ti])" }, { key: "sw", label: "人工甘味料", term: "\"non-nutritive sweeteners\"[ti]" }, { key: "up", label: "超加工食品", term: "\"ultra-processed\"[ti] AND (health[ti] OR mortality[ti] OR obesity[ti])" }]} />
       </Fold>
       <p className="note">
         ※ 一般的な情報で、診断や治療ではありません。アレルギー・喘息・腎臓病・妊娠中・服薬中の人は、医師・薬剤師・管理栄養士に相談してください。数値は、公表されている資料をもとにした目安で、商品によって異なります。

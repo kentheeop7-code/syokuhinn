@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import LineShare from "./LineShare";
+import { searchPapers, type Paper } from "../lib/pubmed";
 import { CONDS, ISSUES, PLAYS, TOPICS, TRAINER_CHECKED, type Cond, type Issue, type Play } from "../lib/trainerData";
 
 // トレーナー用：お客様の指導メモ。結論・具体策・根拠・実績を見ながら、最後に、公式LINEへ、まとめて共有できる。
-type Paper = { id: string; title: string; journal: string; date: string };
 type Goal = "diet" | "muscle" | "both";
 const num = (s: string) => parseFloat(s) || 0;
 
@@ -76,12 +76,7 @@ export default function TrainerApp() {
     setBusy(key);
     setErr("");
     try {
-      const q = `(${term}) AND (meta-analysis[pt] OR systematic review[pt])`;
-      const s = await (await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=6&sort=pub+date&term=${encodeURIComponent(q)}`)).json();
-      const ids: string[] = s.esearchresult?.idlist ?? [];
-      if (ids.length === 0) throw new Error("見つかりませんでした");
-      const d = await (await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=${ids.join(",")}`)).json();
-      const list: Paper[] = ids.map((id) => ({ id, title: d.result?.[id]?.title ?? "", journal: d.result?.[id]?.source ?? "", date: d.result?.[id]?.pubdate ?? "" }));
+      const list = await searchPapers(term, 6);
       const next = { ...papers, [key]: { at: new Date().toLocaleString("ja-JP"), list } };
       setPapers(next);
       try {
