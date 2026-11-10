@@ -2,61 +2,79 @@
 
 import { useEffect, useState } from "react";
 import { CONDS, ISSUES, PLAYS } from "../lib/trainerData";
-import { describe, goalOf, r10, totals, type St, type Tot } from "../lib/meals";
+import { describe, goalOf, r10, totals, type St } from "../lib/meals";
 import { makeInsights } from "../lib/advice";
 import { computeGoal, PACES, type Pace } from "../lib/goal";
-import { EXAMPLES, swapsFor } from "../lib/swaps";
+import { EXAMPLES, GENERIC_SWAPS, INCREASE, swapsFor } from "../lib/swaps";
+import { microStatus } from "../lib/micro";
+import { OTHER_TYPES, describeEx, guideMin, labelOf, weeklyMin, type OtherEx } from "../lib/exercise";
+import { REPORT_EVIDENCE } from "../lib/evidenceNotes";
+import { decodePayload, shareUrl } from "../lib/shareLink";
 import { Bars, LineChart, Pie } from "./Charts";
+import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 import { lineUrl } from "./LineShare";
 import { BANDS } from "./me";
 
-// お客様用のまとめ（A4・印刷→「PDFとして保存」）。トレーナー用ページの内容から、自動でつくる。
+// お客様向けのまとめ（A4・印刷→「PDFとして保存」）。
+// mode="trainer"：トレーナー用ページの内容（この端末）から作る。 mode="client"：お客様に送った、リンク（#以降）の内容から作る。
 type S = Record<string, any>;
 const num = (s: unknown) => parseFloat(String(s ?? "").replace(/,/g, "")) || 0;
 const empty = (): St => ({ date: "", size: {}, ext: {} });
 const R1 = (n: number) => Math.round(n * 10) / 10;
 const COL = { p: "#2e9e6a", f: "#e0a030", c: "#4a7fd0" };
-const pfc = (t: Tot) => [
-  { label: "たんぱく質", value: t.p * 4, color: COL.p },
-  { label: "脂質", value: t.f * 9, color: COL.f },
-  { label: "炭水化物", value: t.c * 4, color: COL.c },
-];
-// 例がまだ選べないときの、よくある置きかえ
-const GENERIC: [string, string][] = [
-  ["菓子パン・ケーキ", "ヨーグルト＋果物"],
-  ["甘い飲み物", "豆乳・無糖のお茶・水"],
-  ["スナック菓子", "ナッツ ひとつかみ・チーズ"],
-  ["丼・麺だけ", "野菜の小鉢・卵・豆腐を、足す"],
-  ["揚げ物の定食", "焼き魚の定食"],
-  ["朝食なし", "ヨーグルト＋果物、卵＋パン"],
-];
+const stOf = (x: any): St => (x?.size ? { date: "", size: x.size, ext: x.ext || {} } : empty());
+const pct = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
 
-export default function ReportView() {
+export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "client" }) {
   const [s, setS] = useState<S | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState("");
+  const [link, setLink] = useState("");
+  const [bad, setBad] = useState(false);
   useEffect(() => {
     document.body.classList.add("rpt");
-    try {
-      setS(JSON.parse(localStorage.getItem("lg-trainer") || "null") || {});
-    } catch {
-      setS({});
-    }
+    (async () => {
+      if (mode === "client") {
+        const h = decodeURIComponent(location.hash.replace(/^#/, ""));
+        const p = h ? await decodePayload(h) : null;
+        if (p) setS(p as S);
+        else setBad(true);
+      } else {
+        let v: S = {};
+        try {
+          v = JSON.parse(localStorage.getItem("lg-trainer") || "null") || {};
+        } catch {}
+        setS(v);
+        try {
+          setLink(await shareUrl(v));
+        } catch {}
+      }
+    })();
     return () => document.body.classList.remove("rpt");
-  }, []);
+  }, [mode]);
+  if (bad)
+    return (
+      <div className="rptwrap">
+        <p className="plwarn">このリンクの内容を、読みこめませんでした。トレーナーに、もう一度、リンクを送ってもらってください。</p>
+      </div>
+    );
   if (!s) return null;
 
-  const cur: St = s.curMeal?.size ? { date: "", size: s.curMeal.size, ext: s.curMeal.ext || {} } : empty();
-  const plan: St = s.planMeal?.size ? { date: "", size: s.planMeal.size, ext: s.planMeal.ext || {} } : empty();
+  const cur = stOf(s.curMeal);
+  const plan = stOf(s.planMeal);
   const sex: "f" | "m" = s.sex === "m" ? "m" : "f";
   const band: number = typeof s.band === "number" ? s.band : 3;
   const ct = totals(cur);
   const pt = totals(plan);
+  const base = pt.any ? pt : ct;
+  const hasCur = ct.any && pt.any;
   const g = goalOf(sex, band);
   const want = num(s.targetKcal);
   const goalText = s.goal === "diet" ? "体重を減らす" : s.goal === "muscle" ? "筋力・筋肉をつける" : "体重を減らして、筋力もつける";
   const w = num(s.now);
   const wt = num(s.target);
-  const days = typeof s.days === "number" ? s.days : 3;
+  const days = typeof s.days === "number" ? s.days : 1;
+  const others: OtherEx[] = Array.isArray(s.others) ? s.others : [];
+  const water = typeof s.water === "number" ? s.water : 0;
   const hasConds = (s.conds || []).length > 0;
   const pace: Pace = hasConds ? "slow" : s.pace === "slow" || s.pace === "fast" ? s.pace : "mid";
   const gp = computeGoal(w, wt, days, pace);
@@ -65,10 +83,10 @@ export default function ReportView() {
   const plays = PLAYS.filter((p) => (s.picked || []).includes(p.id));
   const ins = makeInsights(cur, sex, band, want).slice(0, 3);
   const swaps = swapsFor(cur).filter((x) => !(s.swapOff || []).includes(x.id));
+  const pins: { id: string; title: string; journal: string; date: string }[] = Array.isArray(s.pins) ? s.pins : [];
   const d = new Date();
   const dateText = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
   const name = String(s.name || "").trim();
-  const srcs = Array.from(new Set([...issues.map((i) => i.src[0]?.label), ...plays.map((p) => p.src[0]?.label), ...conds.map((c) => c.src[0]?.label)].filter(Boolean)));
   const kcalMain = pt.any ? pt.kcal : want || 0;
   const aim = want || kcalMain;
   const near = aim ? EXAMPLES.map((e) => ({ id: e.id, d: Math.abs(totals(e.st).kcal - aim) })).sort((a, b) => a.d - b.d)[0]?.id : "";
@@ -77,52 +95,87 @@ export default function ReportView() {
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
 
+  // 栄養素のチェック
+  const rows: NRow[] = [];
+  const micros = (base.any ? microStatus(pt.any ? plan : cur, sex, band) : null);
+  const microCur = hasCur ? microStatus(cur, sex, band) : null;
+  if (base.any) {
+    rows.push({ label: "たんぱく質", unit: "g", cur: hasCur ? Math.round(ct.p) : undefined, plan: Math.round(base.p), goal: parseFloat(g.p || "0"), kind: "min" });
+    rows.push({ label: "脂質（エネルギー比）", unit: "%", cur: hasCur ? pct(ct.f * 9, ct.kcal) : undefined, plan: pct(base.f * 9, base.kcal), lo: 20, hi: 30, kind: "range" });
+    rows.push({ label: "炭水化物（エネルギー比）", unit: "%", cur: hasCur ? pct(ct.c * 4, ct.kcal) : undefined, plan: pct(base.c * 4, base.kcal), lo: 50, hi: 65, kind: "range" });
+    rows.push({ label: "食物繊維", unit: "g", cur: hasCur ? R1(ct.fi) : undefined, plan: R1(base.fi), goal: parseFloat(g.fi || "0"), kind: "min" });
+    rows.push({ label: "食塩", unit: "g", cur: hasCur ? R1(ct.salt) : undefined, plan: R1(base.salt), goal: g.salt, kind: "max" });
+  }
+  if (water > 0) rows.push({ label: "水分（水・お茶）", unit: "杯", plan: water, goal: 4, kind: "min", note: "1杯＝200ml。公的な基準は、確認できていません（このアプリの目安）" });
+  const microRows: NRow[] = (micros?.rows ?? []).filter((r) => r.goal > 0).map((r, i) => ({ label: r.label, unit: r.unit, cur: microCur ? Math.round(microCur.rows[i].value * 10) / 10 : undefined, plan: Math.round(r.value * 10) / 10, goal: r.goal, kind: "min" as const }));
+  const all = [...rows, ...microRows];
+  const okN = all.filter((r) => stateOf(r, r.plan) === "ok").length;
+  const low = (micros?.rows ?? []).filter((r) => r.goal > 0 && r.pct < 0.7).sort((a, b) => a.pct - b.pct).slice(0, 3);
+
   const text = () => {
     let body = "";
     try {
       body = localStorage.getItem("lg-trainer-text") || "";
     } catch {}
-    return `【LIFEGYM トレーニングのまとめ】\n${dateText}${name ? `　${name}さん` : ""}\n\n${body}\n\n※ 一般的な目安です。持病・服薬のある方は、主治医にご確認ください。`;
+    return `【LIFEGYM トレーニングのまとめ】\n${dateText}${name ? `　${name}さん` : ""}\n\n${body}${link && link.length <= 1800 && !body.includes(link) ? `\n\n■ あなた専用のまとめ（スマホで見られます）\n${link}` : ""}\n\n※ 一般的な目安です。持病・服薬のある方は、主治医にご確認ください。`;
   };
-  const copy = async () => {
+  const copy = async (what: "text" | "link") => {
+    const v = what === "text" ? text() : link;
     try {
-      await navigator.clipboard.writeText(text());
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      await navigator.clipboard.writeText(v);
+      setCopied(what);
+      setTimeout(() => setCopied(""), 3000);
     } catch {
-      window.prompt("コピーして、使ってください", text());
+      window.prompt("コピーして、使ってください", v);
     }
   };
 
   return (
     <div className="rptwrap">
       <div className="noprint rptbar">
-        <p className="agnote">お客様に渡す「まとめ」です。内容を確かめて、「PDFとして保存」を押します（印刷の画面で、送信先を「PDFに保存」にします）。</p>
-        <div className="rptbtns">
-          <button type="button" className="linebtn" onClick={() => window.print()}>
-            📄 PDFとして保存（印刷）
-          </button>
-          <button type="button" className="btn ghost" onClick={copy}>
-            {copied ? "✓ 文章をコピーしました" : "LINE用の文章をコピー"}
-          </button>
-          <button type="button" className="btn ghost" onClick={() => window.open(lineUrl(text()), "_blank", "noopener")}>
-            公式LINEを開く（文章つき）
-          </button>
-          <a className="btn ghost" href="/trainer">
-            ‹ 戻って直す
-          </a>
-        </div>
-        <ol className="rptsteps">
-          <li>「PDFとして保存」で、PDFを作る。</li>
-          <li>「LINE用の文章をコピー」か「公式LINEを開く」で、文章を送る。</li>
-          <li>LINEのトークで、保存したPDFを、ファイルとして、添付して送る（PDFは、LINEの仕様上、自動では添付できません）。</li>
-        </ol>
+        {mode === "trainer" ? (
+          <>
+            <p className="agnote">お客様に渡す「まとめ」の、プレビューです。内容を確かめて、PDFにするか、お客様専用のリンクを送ります。</p>
+            <div className="rptbtns">
+              <button type="button" className="linebtn" onClick={() => window.print()}>
+                📄 PDFとして保存（印刷）
+              </button>
+              <button type="button" className="btn ghost" onClick={() => copy("link")} disabled={!link}>
+                {copied === "link" ? "✓ リンクをコピーしました" : "お客様専用ページの、リンクをコピー"}
+              </button>
+              <button type="button" className="btn ghost" onClick={() => copy("text")}>
+                {copied === "text" ? "✓ 文章をコピーしました" : "LINE用の文章をコピー"}
+              </button>
+              <button type="button" className="btn ghost" onClick={() => window.open(lineUrl(text()), "_blank", "noopener")}>
+                公式LINEを開く（文章・リンクつき）
+              </button>
+              <a className="btn ghost" href="/trainer">
+                ‹ 戻って直す
+              </a>
+            </div>
+            <ol className="rptsteps">
+              <li>「PDFとして保存」で、PDFを作る（印刷の画面で、送信先を「PDFに保存」）。</li>
+              <li>「公式LINEを開く」で、文章と、お客様専用ページのリンクを送る。</li>
+              <li>LINEのトークで、保存したPDFを、ファイルとして添付する（PDFは、LINEの仕様上、自動では添付できません）。</li>
+            </ol>
+            <p className="agnote small">お客様専用ページのリンクは、お客様の内容が、リンクの中に入っています（サーバーには、保存されません）。お客様ごとに、送ってください。</p>
+          </>
+        ) : (
+          <>
+            <p className="agnote">{name ? `${name}さんの、` : ""}食事・運動のまとめです。スマホで、いつでも見られます。</p>
+            <div className="rptbtns">
+              <button type="button" className="linebtn" onClick={() => window.print()}>
+                📄 PDFとして保存する
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
-      <article className="report" aria-label="お客様用のまとめ">
+      <article className="report" aria-label="お客様向けのまとめ">
         <header className="rhead">
           <p className="rbrand">LIFEGYM</p>
-          <h1>あなたの目指す姿と、食事のまとめ</h1>
+          <h1>あなたの目指す姿と、食事・運動のまとめ</h1>
           <p className="rmeta">
             {dateText}
             {name ? `　${name} さん` : ""}
@@ -170,18 +223,32 @@ export default function ReportView() {
                   ))}
                 </tbody>
               </table>
-              {blocks.length > 0 && (
-                <div className="rbars">
-                  <p className="rnote">4週ごとの、筋トレの回数（週{days}回の場合）</p>
-                  <Bars items={blocks} />
-                </div>
-              )}
               <p className="rnote">
                 ペース：{paceT?.t}（{paceT?.d}）。週に約{gp.rate}kgの変化が前提で、食事の置きかえと活動で、1日に約{gp.perDay}kcalの差をつくります。体重の変化の目安で、個人差があります。
                 {hasConds ? "持病・体質がある方は、ゆっくり（月1kgまで）で、主治医の指示を優先します。" : ""}
               </p>
             </>
           )}
+        </section>
+
+        <section>
+          <h2>{H("運動のプラン")}</h2>
+          <ul>
+            {describeEx(days, others).map((l) => (
+              <li key={l}>{l}</li>
+            ))}
+          </ul>
+          {others.length > 0 && (
+            <>
+              <Bars unit="分" items={[...others.map((x) => ({ label: labelOf(x.id).slice(0, 6), value: x.min * x.days })), { label: "国の目安", value: guideMin(band) }]} />
+              <p className="rnote">
+                週の合計 {weeklyMin(others)}分（国の目安：歩行など 週{guideMin(band)}分）。筋トレは、国の目安で週2〜3日。まず、できることから、少しずつ。
+              </p>
+            </>
+          )}
+          <p className="rnote">
+            筋トレは、週1回でも、続ければ、筋力が伸びます（1週間の総量が同じなら、回数による筋力の差は、見られませんでした：Grgic 2018）。歩数は、1日7,000歩でも、健康の効果が大きいと報告されています（Ding 2025）。
+          </p>
         </section>
 
         {(kcalMain > 0 || ct.any) && (
@@ -194,59 +261,59 @@ export default function ReportView() {
                 </>
               ) : null}
             </p>
-            {(pt.any || ct.any) && (
+            {base.any && (
               <div className="rpies">
-                {ct.any && <Pie data={pfc(ct)} title="いまの食事" />}
-                {pt.any && <Pie data={pfc(pt)} title="これからの食事" />}
+                {hasCur && <Pie data={[{ label: "たんぱく質", value: ct.p * 4, color: COL.p }, { label: "脂質", value: ct.f * 9, color: COL.f }, { label: "炭水化物", value: ct.c * 4, color: COL.c }]} title="いまの食事" />}
+                <Pie data={[{ label: "たんぱく質", value: base.p * 4, color: COL.p }, { label: "脂質", value: base.f * 9, color: COL.f }, { label: "炭水化物", value: base.c * 4, color: COL.c }]} title={hasCur ? "これからの食事" : "いまの食事"} />
               </div>
             )}
-            <p className="rnote">円グラフは、エネルギーの割合（たんぱく質・脂質・炭水化物）。国の目標量は、たんぱく質13〜20%・脂質20〜30%・炭水化物50〜65%（食事摂取基準 2025年版。年齢で少し変わります）。</p>
-            {pt.any && (
-              <table className="rtable">
-                <thead>
-                  <tr>
-                    <th></th>
-                    {ct.any && <th>いま</th>}
-                    <th>これから</th>
-                    <th>目安</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th>エネルギー</th>
-                    {ct.any && <td>{r10(ct.kcal).toLocaleString()}kcal</td>}
-                    <td>{r10(pt.kcal).toLocaleString()}kcal</td>
-                    <td>{want ? `${r10(want).toLocaleString()}kcal（目標）` : "—"}</td>
-                  </tr>
-                  <tr>
-                    <th>たんぱく質</th>
-                    {ct.any && <td>{Math.round(ct.p)}g</td>}
-                    <td>{Math.round(pt.p)}g</td>
-                    <td>{g.p}</td>
-                  </tr>
-                  <tr>
-                    <th>食物繊維</th>
-                    {ct.any && <td>{R1(ct.fi)}g</td>}
-                    <td>{R1(pt.fi)}g</td>
-                    <td>{g.fi}</td>
-                  </tr>
-                  <tr>
-                    <th>食塩</th>
-                    {ct.any && <td>{R1(ct.salt)}g</td>}
-                    <td>{R1(pt.salt)}g</td>
-                    <td>{g.salt}g未満</td>
-                  </tr>
-                </tbody>
-              </table>
-            )}
             <p className="rnote">
-              {BANDS[band]}・{sex === "m" ? "男性" : "女性"}の目安。量は「ふつうの1食ぶん」からの目安で、実際とは、ずれます。
+              円グラフは、エネルギーの割合。国の目標量は、たんぱく質13〜20%・脂質20〜30%・炭水化物50〜65%（食事摂取基準 2025年版。年齢で少し変わります）。{BANDS[band]}・{sex === "m" ? "男性" : "女性"}の目安。量は「ふつうの1食ぶん」からの目安で、実際とは、ずれます。
             </p>
           </section>
         )}
 
+        {all.length > 0 && (
+          <section>
+            <h2>{H("栄養素のチェック（食物繊維・脂質・水分・塩分・ビタミン・ミネラル）")}</h2>
+            <div className="rscore">
+              <Pie size={96} data={[{ label: "目安の範囲", value: okN, color: "#2e9e6a" }, { label: "あと少し", value: Math.max(0, all.length - okN), color: "#e3e6ea" }]} />
+              <p>
+                目安を満たした栄養素　<b>{okN}</b> / {all.length}
+                <br />
+                <span className="rnote">{hasCur ? "細い線＝いま、太い線＝これから。縦線＝目安。" : "太い線＝いまの食事。縦線＝目安。"}</span>
+              </p>
+            </div>
+            {rows.length > 0 && (
+              <>
+                <p className="nbgroup">エネルギーの栄養素・塩分・水分</p>
+                <NutrientBars rows={rows} hasCur={hasCur} />
+              </>
+            )}
+            {microRows.length > 0 && (
+              <>
+                <p className="nbgroup">ビタミン・ミネラル</p>
+                <NutrientBars rows={microRows} hasCur={hasCur} />
+                <p className="rnote">ビタミン・ミネラルは、重さの決められる食品（ごはん・肉・魚・卵・野菜・乳製品など）だけで計算しています。外食・お菓子・汁物などの分は含まないため、実際より、少なめに出ます。目安は、食事摂取基準（2025年版）の推奨量・目安量です。</p>
+              </>
+            )}
+            {low.length > 0 && (
+              <div className="rshort">
+                <b>足りにくい栄養と、おすすめの食品</b>
+                <ul>
+                  {low.map((r) => (
+                    <li key={r.key}>
+                      <b>{r.label}</b>（目安の{Math.round(r.pct * 100)}%）→ {r.foods}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
+
         <section>
-          <h2>{H("こちらを食べてください（増やす食事）")}</h2>
+          <h2>{H("こちらを食べてください（増やす食事・置きかえ）")}</h2>
           <p className="rnote">食べるのを、がまんするのではなく、「代わりに、こちらを食べる」置きかえです。栄養が、増えます。</p>
           <table className="rtable rswap">
             <thead>
@@ -276,7 +343,7 @@ export default function ReportView() {
                       </td>
                     </tr>
                   ))
-                : GENERIC.map(([a, b]) => (
+                : GENERIC_SWAPS.map(([a, b]) => (
                     <tr key={a}>
                       <td>{a}</td>
                       <td>
@@ -287,10 +354,64 @@ export default function ReportView() {
                   ))}
             </tbody>
           </table>
+          {swaps.length > 0 && (
+            <>
+              <p className="rnote">そのほかの置きかえ</p>
+              <table className="rtable rswap">
+                <tbody>
+                  {GENERIC_SWAPS.map(([a, b]) => (
+                    <tr key={a}>
+                      <td>{a}</td>
+                      <td>
+                        <b>{b}</b>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </section>
 
         <section>
-          <h2>{H("1日の食事の例")}</h2>
+          <h2>{H("増やしたい食品リスト（目的別）")}</h2>
+          <p className="rnote">1回ぶんの目安です。栄養は、日本食品標準成分表をもとにした目安値からの計算です。</p>
+          {INCREASE.map((grp) => (
+            <div key={grp.title} className="rinc">
+              <p className="rext">
+                {grp.title}
+                <span> {grp.why}</span>
+              </p>
+              <table className="rtable rinct">
+                <thead>
+                  <tr>
+                    <th>食品（1回ぶん）</th>
+                    <th>kcal</th>
+                    <th>たんぱく質</th>
+                    <th>食物繊維</th>
+                    <th>カルシウム</th>
+                    <th>鉄</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grp.items.map((it) => (
+                    <tr key={it.label}>
+                      <th>{it.label}</th>
+                      <td>{it.kcal}</td>
+                      <td>{it.p}g</td>
+                      <td>{it.fi}g</td>
+                      <td>{it.ca}mg</td>
+                      <td>{it.fe}mg</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </section>
+
+        <section>
+          <h2>{H("1日の食事の例（8パターン）")}</h2>
           <p className="rnote">そのまま、まねできる例です。{near ? "目安のカロリーに近い例に、★をつけています。" : ""}</p>
           <div className="rex">
             {EXAMPLES.map((e) => {
@@ -381,16 +502,48 @@ export default function ReportView() {
           </section>
         )}
 
-        {srcs.length > 0 && (
-          <section className="rsrc">
-            <h2>根拠</h2>
-            <ul>
-              {srcs.map((x) => (
-                <li key={x as string}>{x}</li>
+        <section className="rsrc">
+          <h2>{H("根拠（研究から分かっていること）")}</h2>
+          <table className="rtable rev">
+            <thead>
+              <tr>
+                <th>テーマ</th>
+                <th>分かっていること</th>
+                <th>研究（PubMed番号）</th>
+              </tr>
+            </thead>
+            <tbody>
+              {REPORT_EVIDENCE.map((e) => (
+                <tr key={e.pmid}>
+                  <th>{e.topic}</th>
+                  <td>
+                    {e.found}
+                    <br />
+                    <span className="rlim">限界：{e.limit}</span>
+                  </td>
+                  <td>
+                    {e.ref}
+                    <br />
+                    <span className="rlim">PMID {e.pmid}</span>
+                  </td>
+                </tr>
               ))}
-            </ul>
-          </section>
-        )}
+            </tbody>
+          </table>
+          {pins.length > 0 && (
+            <>
+              <p className="rnote">トレーナーが、参考にした、最新の研究</p>
+              <ul>
+                {pins.slice(0, 5).map((p) => (
+                  <li key={p.id}>
+                    {p.title.replace(/\.$/, "")}（{p.journal}・{p.date}） PMID {p.id}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <p className="rnote">PubMed（米国国立医学図書館）の論文の要旨で、数字と結論を確認しています。論文のタイトルと番号で、検索できます。</p>
+        </section>
 
         <footer className="rfoot">※ 一般的な目安で、診断や治療ではありません。持病・服薬・妊娠中の方は、主治医にご相談ください。　LIFEGYM</footer>
       </article>

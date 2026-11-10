@@ -20,7 +20,6 @@ const OTHER: Tile[] = [
   { href: "/tips", icon: "💡", name: "豆知識" },
   { href: "/?tab=women", icon: "🌸", name: "からだのケア（女性）" },
   { href: "/nutrients#micro", icon: "💊", name: "ビタミン・ミネラル" },
-  { href: "/trainer", icon: "🏋️", name: "トレーナー用（指導メモ）" },
   { href: "/nutrients#h-guide", icon: "🏛", name: "国の指針の目安" },
 ];
 

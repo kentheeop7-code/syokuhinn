@@ -12,7 +12,7 @@ const num = (s: string | null) => parseFloat(s || "") || 0;
 export default function PlanChart() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [pace, setPace] = useState<"slow" | "mid">("slow");
-  const [days, setDays] = useState(3);
+  const [days, setDays] = useState(1);
   useEffect(() => {
     const read = () => {
       try {
@@ -55,7 +55,7 @@ export default function PlanChart() {
       <LineChart pts={gp.pts} target={plan.goal} marks={gp.marks} />
       <p className="balh sub">筋トレは、週に何回？</p>
       <div className="plpace" role="radiogroup" aria-label="筋トレの回数">
-        {[2, 3, 4].map((d) => (
+        {[1, 2, 3].map((d) => (
           <button key={d} type="button" role="radio" aria-checked={days === d} className={days === d ? "on" : ""} onClick={() => pick(d)}>
             週{d}回
           </button>

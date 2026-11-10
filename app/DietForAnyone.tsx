@@ -12,6 +12,8 @@ type S = { id: string; label: string; eat: string[]; move: string[]; care: strin
 const SACKS: Src = { label: "Sacks 2009 N Engl J Med（811人・2年の試験）", url: "https://pubmed.ncbi.nlm.nih.gov/19246357/" };
 const BURKE: Src = { label: "Burke 2011 J Am Diet Assoc（記録と減量・系統的レビュー）", url: "https://pubmed.ncbi.nlm.nih.gov/21185970/" };
 const LOOK: Src = { label: "Look AHEAD 2013 N Engl J Med（維持の難しさ）", url: "https://pubmed.ncbi.nlm.nih.gov/23796131/" };
+const STEPS: Src = { label: "Ding 2025 Lancet Public Health（1日7,000歩・メタ分析）", url: "https://pubmed.ncbi.nlm.nih.gov/40713949/" };
+const FREQ: Src = { label: "Grgic 2018 Sports Med（筋トレの回数・メタ分析）", url: "https://pubmed.ncbi.nlm.nih.gov/29470825/" };
 const GUIDE: Src = { label: "厚生労働省 身体活動・運動ガイド2023", url: "https://www.mhlw.go.jp/content/001195866.pdf" };
 
 const LIST: S[] = [
@@ -28,10 +30,10 @@ const LIST: S[] = [
     id: "busy",
     label: "運動が苦手・時間がない",
     eat: ["運動より、まず食事（量と内容）を整える。"],
-    move: ["いまより、1日+10分、歩く。国の目安は、成人で1日60分（約8,000歩）。", "筋トレは、スクワット・壁腕立てなどの自重で、週2回から。国の目安は、週2〜3日。"],
+    move: ["いまより、1日+10分、歩く。国の目安は、成人で1日60分（約8,000歩）。1日7,000歩でも、健康の効果が大きい（2025年のメタ分析）。", "筋トレは、スクワット・壁腕立てなどの自重で、週1回から、よい。1週間の総量が同じなら、回数による筋力の差は、見られなかった（国の目安は、週2〜3日）。"],
     care: "全部やろうとせず、1つだけ、続ける。",
-    kind: "国の指針",
-    src: [GUIDE],
+    kind: "国の指針・メタ分析",
+    src: [GUIDE, STEPS, FREQ],
   },
   {
     id: "senior",

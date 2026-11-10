@@ -6,6 +6,10 @@ import LineShare from "./LineShare";
 import { searchPapers, type Paper } from "../lib/pubmed";
 import MealPicker from "./MealPicker";
 import { computeGoal, PACES, type Pace } from "../lib/goal";
+import { OTHER_TYPES, MINUTES, labelOf, weeklyMin, guideMin, describeEx, type OtherEx } from "../lib/exercise";
+import { microStatus } from "../lib/micro";
+import { shareUrl } from "../lib/shareLink";
+import { Bars } from "./Charts";
 import { swapsFor } from "../lib/swaps";
 import { LineChart } from "./Charts";
 import { makeInsights, goodPoints, draftAdvice, ASK, ASK_CARE } from "../lib/advice";
@@ -23,7 +27,11 @@ export default function TrainerApp() {
   const [goal, setGoal] = useState<Goal>("both");
   const [now, setNow] = useState("");
   const [target, setTarget] = useState("");
-  const [days, setDays] = useState(3);
+  const [days, setDays] = useState(1);
+  const [others, setOthers] = useState<OtherEx[]>([]);
+  const [water, setWater] = useState(0);
+  const [link, setLink] = useState("");
+  const [copiedLink, setCopiedLink] = useState(false);
   const [note, setNote] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
   const [conds, setConds] = useState<string[]>([]);
@@ -51,7 +59,9 @@ export default function TrainerApp() {
         setGoal(s.goal ?? "both");
         setNow(s.now ?? "");
         setTarget(s.target ?? "");
-        setDays(s.days ?? 3);
+        setDays(typeof s.days === "number" ? s.days : 1);
+        setOthers(Array.isArray(s.others) ? s.others : []);
+        setWater(typeof s.water === "number" ? s.water : 0);
         setNote(s.note ?? "");
         setPicked(Array.isArray(s.picked) ? s.picked : []);
         setConds(Array.isArray(s.conds) ? s.conds : []);
@@ -76,9 +86,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water]);
 
   const w = num(now);
   const wt = num(target);
@@ -94,6 +104,16 @@ export default function TrainerApp() {
   const plan = computeGoal(w, wt, days, effPace);
   const swaps = swapsFor(curMeal);
   const swapOn = swaps.filter((s) => !swapOff.includes(s.id));
+  // お客様専用ページ（リンク）：内容を、リンクの中に入れる。サーバーには、保存されない。
+  useEffect(() => {
+    if (!loaded) return;
+    const h = setTimeout(async () => {
+      try {
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins }));
+      } catch {}
+    }, 600);
+    return () => clearTimeout(h);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -128,6 +148,16 @@ export default function TrainerApp() {
     const L: string[] = [];
     L.push(`■ 目標：${goal === "diet" ? "体重を減らす" : goal === "muscle" ? "筋力・筋肉アップ" : "体重を減らして、筋力もアップ"}`);
     if (w) L.push(`■ 体重：${w}kg${wt ? ` → ${wt}kg` : ""}　筋トレ：週${days}回`);
+    {
+      const ex = describeEx(days, others);
+      if (ex.length) L.push("", "■ 運動", ...ex);
+    }
+    if (water) L.push(`■ 水分：1日 ${water === 2 ? "〜3杯" : water === 5 ? "4〜6杯" : "7杯〜"}（コップ200ml）`);
+    if (pt.any) {
+      const ms = microStatus(planMeal, sex, band);
+      const low = ms.rows.filter((r) => r.pct < 0.7).sort((a, b) => a.pct - b.pct).slice(0, 3);
+      if (low.length) L.push("", `■ 足りにくい栄養：${low.map((r) => r.label).join("・")}（おすすめ：${low.map((r) => r.foods.split("・").slice(0, 2).join("・")).join("／")}）`);
+    }
     if (plan) L.push("", `■ ゴールの目安：${w}kg → ${wt}kg　約${plan.weeks}週間（筋トレ 週${days}回・合計${plan.sessions}回）`);
     if (swapOn.length) {
       L.push("", "■ 置きかえ（こちらを食べてください）");
@@ -164,6 +194,7 @@ export default function TrainerApp() {
       chosen.forEach((p, i) => L.push(`${i + 1}. ${p.share(w)}`));
     }
     if (note.trim()) L.push("", "■ トレーナーから", note.trim());
+    if (link && link.length <= 1800) L.push("", "■ あなた専用のまとめ（スマホで見られます）", link);
     if (pins.length) {
       L.push("", "■ 参考にした最新の研究（PubMed）");
       pins.slice(0, 3).forEach((p) => L.push(`・${p.title.replace(/\.$/, "")}（${p.journal}）https://pubmed.ncbi.nlm.nih.gov/${p.id}/`));
@@ -345,7 +376,28 @@ export default function TrainerApp() {
       </Link>
       <p className="trnote">トレーナー用。指導の根拠と具体策を見ながら、最後に、お客様へ公式LINEで共有できます。内容の確認日：{TRAINER_CHECKED}</p>
 
-      <section className="card">
+      <nav className="trsteps" aria-label="進め方">
+        {(
+          [
+            ["s1", "お客様", !!(name.trim() || w)],
+            ["s2", "現状の食事", ct.any],
+            ["s3", "提案", pt.any],
+            ["s3b", "ゴール・置きかえ", !!plan],
+            ["s4", "課題・今週", issues.length > 0 || !!problem.trim() || !!weekAct.trim()],
+            ["s8", "PDF・LINE", false],
+          ] as const
+        ).map(([id, t, done], i) => (
+          <a key={id} href={`#${id}`} className={done ? "done" : ""}>
+            <i>{done ? "✔" : i + 1}</i>
+            {t}
+          </a>
+        ))}
+      </nav>
+      <a className="trfab" href="/trainer/report" target="_blank" rel="noopener noreferrer">
+        📄 PDFを作る
+      </a>
+
+      <section className="card" id="s1">
         <p className="balh">① お客様のメモ</p>
         <label className="trf">
           <span>お名前（任意）</span>
@@ -400,15 +452,54 @@ export default function TrainerApp() {
         </div>
         <p className="balh sub">筋トレの回数（週）</p>
         <div className="plpace" role="radiogroup" aria-label="筋トレの回数">
-          {[2, 3, 4].map((d) => (
+          {[1, 2, 3, 4].map((d) => (
             <button key={d} type="button" role="radio" aria-checked={days === d} className={days === d ? "on" : ""} onClick={() => setDays(d)}>
               週{d}回
             </button>
           ))}
         </div>
+        <p className="balh sub">その他の運動（歩く・走る・泳ぐ など）</p>
+        <p className="agnote small">やっている運動を、タップで足します。「1回の時間」と「週の回数」を、選びます。</p>
+        <div className="trchips" role="group" aria-label="その他の運動">
+          {OTHER_TYPES.map((t) => {
+            const on = others.some((x) => x.id === t.id);
+            return (
+              <button key={t.id} type="button" aria-pressed={on} className={on ? "trchip on" : "trchip"} onClick={() => setOthers((l) => (on ? l.filter((x) => x.id !== t.id) : [...l, { id: t.id, min: 30, days: 3 }]))}>
+                {t.icon} {t.t}
+              </button>
+            );
+          })}
+        </div>
+        {others.map((x) => (
+          <div key={x.id} className="trex">
+            <span>{labelOf(x.id)}</span>
+            <select value={x.min} aria-label={`${labelOf(x.id)}の1回の時間`} onChange={(e) => setOthers((l) => l.map((y) => (y.id === x.id ? { ...y, min: parseInt(e.target.value, 10) } : y)))}>
+              {MINUTES.map((m) => (
+                <option key={m} value={m}>
+                  1回 {m}分
+                </option>
+              ))}
+            </select>
+            <select value={x.days} aria-label={`${labelOf(x.id)}の週の回数`} onChange={(e) => setOthers((l) => l.map((y) => (y.id === x.id ? { ...y, days: parseInt(e.target.value, 10) } : y)))}>
+              {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                <option key={d} value={d}>
+                  週{d}回
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+        {others.length > 0 && (
+          <>
+            <Bars unit="分" items={others.map((x) => ({ label: labelOf(x.id).slice(0, 6), value: x.min * x.days }))} />
+            <p className="agnote small">
+              週の合計 <b>{weeklyMin(others)}分</b>（国の目安：歩行など 週{guideMin(band)}分）。筋トレは、国の目安で週2〜3日。まず、できる回数から。
+            </p>
+          </>
+        )}
       </section>
 
-      <section className="card">
+      <section className="card" id="s2">
         <p className="balh">② 現状の食事（お客様に聞きながら）</p>
         <details className="trask">
           <summary>聞くことのリスト（タップで開く）</summary>
@@ -427,6 +518,21 @@ export default function TrainerApp() {
         </details>
         <p className="agnote">朝・昼・夜・おやつを、お客様の話に合わせて、タップで選びます。量や足したものも、直せます。</p>
         <MealPicker value={curMeal} onChange={setCurMeal} />
+        <p className="balh sub">水分（水・お茶。甘くないもの）</p>
+        <div className="plpace" role="radiogroup" aria-label="水分">
+          {(
+            [
+              [2, "〜3杯"],
+              [5, "4〜6杯"],
+              [8, "7杯〜"],
+            ] as const
+          ).map(([v, t]) => (
+            <button key={v} type="button" role="radio" aria-checked={water === v} className={water === v ? "on" : ""} onClick={() => setWater(water === v ? 0 : v)}>
+              {t}
+              <small>1日・200ml/杯</small>
+            </button>
+          ))}
+        </div>
         {ct.any ? (
           <>
             <ul className="qmtot" aria-label="現状の1日の合計">
@@ -479,7 +585,7 @@ export default function TrainerApp() {
         )}
       </section>
 
-      <section className="card">
+      <section className="card" id="s3">
         <p className="balh">③ 提案する食事内容</p>
         <p className="agnote">現状を、コピーして、直すと、早いです。比べながら、お客様に、示せます。</p>
         <div className="trgrid">
@@ -535,7 +641,7 @@ export default function TrainerApp() {
         )}
         {pt.any && wantKcal > 0 && Math.abs(pt.kcal - wantKcal) > 200 && <p className="plwarn">提案の食事が、目標カロリーから、約{r10(Math.abs(pt.kcal - wantKcal)).toLocaleString()}kcal はなれています。量や足したものを、調整しましょう。</p>}
       </section>
-      <section className="card">
+      <section className="card" id="s3b">
         <p className="balh">ゴールの目安と、置きかえ（増やす食事）</p>
         <p className="balh sub">ペース</p>
         <div className="plpace" role="radiogroup" aria-label="ペース">
@@ -605,7 +711,7 @@ export default function TrainerApp() {
         )}
       </section>
 
-      <section className="card">
+      <section className="card" id="s4">
         <p className="balh">④ 課題と、今週の行動</p>
         <p className="agnote">お客様の課題を選ぶと、確認すること・食事での対応・根拠が出ます。下の欄に、トレーナーが、課題と行動を書き込めます。</p>
         <div className="trchips" role="group" aria-label="課題">
@@ -687,7 +793,7 @@ export default function TrainerApp() {
         {err && <p className="plwarn">{err}</p>}
       </section>
 
-      <section className="card">
+      <section className="card" id="s8">
         <p className="balh">⑧ お客様に送る（PDF・LINE）</p>
         <label className="trf">
           <span>トレーナーからの一言（任意）</span>
@@ -707,6 +813,32 @@ export default function TrainerApp() {
           <a className="linebtn" href="/trainer/report" target="_blank" rel="noopener noreferrer">
             📄 お客様用のまとめ（PDF）を作る
           </a>
+          <div className="trlink">
+            <p className="balh sub">お客様専用ページ（リンク）</p>
+            <p className="agnote small">お客様が、スマホで見られるページです。PDFの代わりに、リンクを送ることもできます。お客様ごとに、送ってください。</p>
+            <div className="rptbtns">
+              <button
+                type="button"
+                className="btn ghost"
+                disabled={!link}
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(link);
+                    setCopiedLink(true);
+                    setTimeout(() => setCopiedLink(false), 3000);
+                  } catch {
+                    window.prompt("コピーして、使ってください", link);
+                  }
+                }}
+              >
+                {copiedLink ? "✓ リンクをコピーしました" : "リンクをコピー"}
+              </button>
+              <a className="btn ghost" href={link || "#"} target="_blank" rel="noopener noreferrer" aria-disabled={!link}>
+                お客様の画面を、見てみる
+              </a>
+            </div>
+            {link.length > 1800 && <p className="agnote small">リンクが長いため、LINEの文章には、入れていません。「リンクをコピー」で、別に、送ってください。</p>}
+          </div>
           <ol className="rptsteps">
             <li>上のボタンで、まとめの画面を開き、「PDFとして保存」を押す。</li>
             <li>下の「LINEで送る」（または、まとめの画面のボタン）で、文章を送る。</li>
