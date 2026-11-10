@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CONDS, ISSUES, PLAYS } from "../lib/trainerData";
-import { describe, goalOf, r10, totals, type St } from "../lib/meals";
+import { SLOTS, describe, goalOf, r10, slotKcal, totals, type St } from "../lib/meals";
 import { makeInsights } from "../lib/advice";
 import { computeGoal, PACES, type Pace } from "../lib/goal";
 import { EXAMPLES, GENERIC_SWAPS, INCREASE, swapsFor } from "../lib/swaps";
@@ -10,7 +10,7 @@ import { microStatus } from "../lib/micro";
 import { OTHER_TYPES, describeEx, guideMin, labelOf, weeklyMin, type OtherEx } from "../lib/exercise";
 import { REPORT_EVIDENCE } from "../lib/evidenceNotes";
 import { decodePayload, shareUrl } from "../lib/shareLink";
-import { Bars, LineChart, Pie } from "./Charts";
+import { Bars, HBars, LineChart, Pie, Radar } from "./Charts";
 import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 import { lineUrl } from "./LineShare";
 import { BANDS } from "./me";
@@ -112,6 +112,19 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const okN = all.filter((r) => stateOf(r, r.plan) === "ok").length;
   const low = (micros?.rows ?? []).filter((r) => r.goal > 0 && r.pct < 0.7).sort((a, b) => a.pct - b.pct).slice(0, 3);
 
+  const slotData = SLOTS.map((sl) => ({ label: sl.label, cur: slotKcal(cur, sl), plan: slotKcal(plan, sl) }));
+  const slotColors = ["#f2b84b", "#4a7fd0", "#7b5ea7", "#e0709a"];
+  const radarAxes = (micros?.rows ?? [])
+    .filter((r) => r.goal > 0 && ["ca", "fe", "va", "vc", "b1", "b2", "mg", "zn"].includes(r.key))
+    .map((r) => ({ label: r.label.replace("ビタミン", "V"), plan: r.pct, cur: microCur ? microCur.rows.find((x) => x.key === r.key)?.pct : undefined }));
+  if (rows.length) {
+    const p = rows.find((r) => r.label === "たんぱく質");
+    const fi = rows.find((r) => r.label === "食物繊維");
+    if (p?.goal) radarAxes.unshift({ label: "たんぱく質", plan: p.plan / p.goal, cur: p.cur !== undefined ? p.cur / p.goal : undefined });
+    if (fi?.goal) radarAxes.splice(1, 0, { label: "食物繊維", plan: fi.plan / fi.goal, cur: fi.cur !== undefined ? fi.cur / fi.goal : undefined });
+  }
+  const exK = EXAMPLES.map((e) => ({ label: e.name, value: Math.round(totals(e.st).kcal / 10) * 10, color: near === e.id ? "#2e9e6a" : "#9fc4b0" }));
+
   const text = () => {
     let body = "";
     try {
@@ -181,6 +194,34 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             {name ? `　${name} さん` : ""}
           </p>
         </header>
+
+        <div className="rkpi" aria-label="サマリー">
+          <div>
+            <small>目標</small>
+            <b>{gp ? `${w}→${wt}kg` : w ? `${w}kg` : "—"}</b>
+            <em>{gp ? `約${gp.weeks}週間` : goalText}</em>
+          </div>
+          <div>
+            <small>1日の食事</small>
+            <b>{kcalMain > 0 ? `約${r10(kcalMain).toLocaleString()}` : "—"}</b>
+            <em>kcal</em>
+          </div>
+          <div>
+            <small>筋トレ</small>
+            <b>週{days}回</b>
+            <em>{gp ? `合計${gp.sessions}回` : ""}</em>
+          </div>
+          <div>
+            <small>その他の運動</small>
+            <b>{others.length ? `週${weeklyMin(others)}分` : "—"}</b>
+            <em>{others.length ? `国の目安 ${guideMin(band)}分` : ""}</em>
+          </div>
+          <div>
+            <small>栄養チェック</small>
+            <b>{all.length ? `${okN}/${all.length}` : "—"}</b>
+            <em>目安を満たした数</em>
+          </div>
+        </div>
 
         <section>
           <h2>{H("ゴール（どこを目指すか）")}</h2>
@@ -267,6 +308,21 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 <Pie data={[{ label: "たんぱく質", value: base.p * 4, color: COL.p }, { label: "脂質", value: base.f * 9, color: COL.f }, { label: "炭水化物", value: base.c * 4, color: COL.c }]} title={hasCur ? "これからの食事" : "いまの食事"} />
               </div>
             )}
+            {base.any && (
+              <>
+                <p className="nbgroup">朝・昼・夜・おやつの、カロリー配分</p>
+                <div className="rchartrow">
+                  <Pie
+                    size={120}
+                    title={hasCur ? "これから" : "いま"}
+                    data={slotData.map((s2, i) => ({ label: s2.label, value: Math.max(1, hasCur ? s2.plan : pt.any ? s2.plan : s2.cur), color: slotColors[i] }))}
+                  />
+                  <div style={{ flex: "1 1 220px" }}>
+                    <HBars unit="kcal" items={slotData.map((s2, i) => ({ label: s2.label, value: Math.round((hasCur ? s2.plan : pt.any ? s2.plan : s2.cur) / 10) * 10, color: slotColors[i] }))} />
+                  </div>
+                </div>
+              </>
+            )}
             <p className="rnote">
               円グラフは、エネルギーの割合。国の目標量は、たんぱく質13〜20%・脂質20〜30%・炭水化物50〜65%（食事摂取基準 2025年版。年齢で少し変わります）。{BANDS[band]}・{sex === "m" ? "男性" : "女性"}の目安。量は「ふつうの1食ぶん」からの目安で、実際とは、ずれます。
             </p>
@@ -284,6 +340,14 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 <span className="rnote">{hasCur ? "細い線＝いま、太い線＝これから。縦線＝目安。" : "太い線＝いまの食事。縦線＝目安。"}</span>
               </p>
             </div>
+            {radarAxes.length >= 3 && (
+              <div className="rchartrow">
+                <Radar axes={radarAxes} />
+                <p className="rnote" style={{ maxWidth: 260 }}>
+                  レーダーチャート：緑の点線の輪が、1日の目安（100%）。緑の面が、{hasCur ? "これから" : "いま"}の食事{hasCur ? "、灰色の点線が、いまの食事" : ""}。外側ほど、足りています。
+                </p>
+              </div>
+            )}
             {rows.length > 0 && (
               <>
                 <p className="nbgroup">エネルギーの栄養素・塩分・水分</p>
@@ -356,6 +420,11 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </table>
           {swaps.length > 0 && (
             <>
+              <p className="nbgroup">置きかえで、増えるたんぱく質（g）</p>
+              <HBars unit="g" items={swaps.map((x) => ({ label: x.from.slice(0, 8), value: Math.max(0, x.dp) }))} />
+              <p className="nbgroup">置きかえで、変わるカロリー（kcal）</p>
+              <HBars unit="kcal" items={swaps.map((x) => ({ label: x.from.slice(0, 8), value: Math.abs(x.dk), color: x.dk <= 0 ? "#4a7fd0" : "#e0a030" }))} />
+              <p className="rnote">青＝カロリーが減る置きかえ、オレンジ＝カロリーが増える置きかえ（栄養が増えるため）。</p>
               <p className="rnote">そのほかの置きかえ</p>
               <table className="rtable rswap">
                 <tbody>
@@ -376,6 +445,10 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         <section>
           <h2>{H("増やしたい食品リスト（目的別）")}</h2>
           <p className="rnote">1回ぶんの目安です。栄養は、日本食品標準成分表をもとにした目安値からの計算です。</p>
+          <p className="nbgroup">たんぱく質が多い食品（1回ぶん・g）</p>
+          <HBars unit="g" items={[...INCREASE[0].items].sort((a, b) => b.p - a.p).slice(0, 8).map((it) => ({ label: it.label.replace(/ .*$/, ""), value: it.p }))} />
+          <p className="nbgroup">食物繊維が多い食品（1回ぶん・g）</p>
+          <HBars unit="g" color="#4a7fd0" items={[...INCREASE[1].items].sort((a, b) => b.fi - a.fi).slice(0, 8).map((it) => ({ label: it.label.replace(/ .*$/, ""), value: it.fi }))} />
           {INCREASE.map((grp) => (
             <div key={grp.title} className="rinc">
               <p className="rext">
@@ -413,6 +486,8 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         <section>
           <h2>{H("1日の食事の例（8パターン）")}</h2>
           <p className="rnote">そのまま、まねできる例です。{near ? "目安のカロリーに近い例に、★をつけています。" : ""}</p>
+          <p className="nbgroup">8パターンの、カロリー{aim ? `（縦線＝目安 ${r10(aim).toLocaleString()}kcal）` : ""}</p>
+          <HBars unit="kcal" items={exK} target={aim || undefined} />
           <div className="rex">
             {EXAMPLES.map((e) => {
               const t = totals(e.st);

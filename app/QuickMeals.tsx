@@ -5,6 +5,9 @@ import MealPicker from "./MealPicker";
 import { goalOf, r10, today, totals, buildVals, type St } from "../lib/meals";
 import { readMe } from "./me";
 import { swapsFor } from "../lib/swaps";
+import { microStatus } from "../lib/micro";
+import { Pie, Radar } from "./Charts";
+import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 
 // かんたん入力（ホーム）：朝・昼・夜・おやつを、タップで選ぶだけ。合計が、1日の食事（推定カロリー）になる。
 const KEY = "lg-qm2";
@@ -51,6 +54,18 @@ export default function QuickMeals() {
   const sk = me.sex === 2 ? "m" : "f";
   const g = goalOf(sk, me.band);
   const swaps = swapsFor(st).slice(0, 4);
+  const ms = tot.any ? microStatus(st, sk, me.band) : null;
+  const nrows: NRow[] = tot.any
+    ? [
+        { label: "たんぱく質", unit: "g", plan: Math.round(tot.p), goal: parseFloat(g.p || "0"), kind: "min" },
+        { label: "食物繊維", unit: "g", plan: Math.round(tot.fi * 10) / 10, goal: parseFloat(g.fi || "0"), kind: "min" },
+        { label: "食塩", unit: "g", plan: Math.round(tot.salt * 10) / 10, goal: g.salt, kind: "max" },
+        ...(ms?.rows ?? []).filter((r) => r.goal > 0).map((r) => ({ label: r.label, unit: r.unit, plan: Math.round(r.value * 10) / 10, goal: r.goal, kind: "min" as const })),
+      ]
+    : [];
+  const okN = nrows.filter((r) => stateOf(r, r.plan) === "ok").length;
+  const radar = (ms?.rows ?? []).filter((r) => r.goal > 0 && ["ca", "fe", "va", "vc", "b1", "b2", "mg", "zn"].includes(r.key)).map((r) => ({ label: r.label.replace("ビタミン", "V"), plan: r.pct }));
+  if (tot.any && parseFloat(g.p || "0") > 0) radar.unshift({ label: "たんぱく質", plan: tot.p / parseFloat(g.p || "1") });
   const has = Object.keys(st.size).length > 0 || Object.keys(st.ext).length > 0;
   return (
     <section className="card qm" aria-label="かんたん入力">
@@ -102,6 +117,29 @@ export default function QuickMeals() {
             <em>目標 {g.salt}g未満</em>
           </li>
         </ul>
+      )}
+      {tot.any && (
+        <>
+          <div className="rchartrow">
+            <Pie
+              size={110}
+              title="エネルギーの割合"
+              data={[
+                { label: "たんぱく質", value: tot.p * 4, color: "#2e9e6a" },
+                { label: "脂質", value: tot.f * 9, color: "#e0a030" },
+                { label: "炭水化物", value: tot.c * 4, color: "#4a7fd0" },
+              ]}
+            />
+            {radar.length >= 3 && <Radar axes={radar} size={220} />}
+          </div>
+          <details className="qmdet">
+            <summary>
+              くわしい栄養のチェック（ビタミン・ミネラル）　目安を満たした数 {okN}/{nrows.length}
+            </summary>
+            <NutrientBars rows={nrows} hasCur={false} />
+            <p className="agnote small">重さの決められる食品（ごはん・肉・魚・卵・野菜・乳製品など）だけで計算しています。外食・お菓子・汁物の分は含まないため、実際より少なめに出ます。目安は食事摂取基準（2025年版）。</p>
+          </details>
+        </>
       )}
       {swaps.length > 0 && (
         <div className="qmswap">

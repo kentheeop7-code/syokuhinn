@@ -122,3 +122,70 @@ export function Bars({ items, unit = "回" }: { items: { label: string; value: n
     </ul>
   );
 }
+// レーダーチャート：目安（1日）に対する、割合。100%の輪が、目安。
+export function Radar({ axes, size = 260 }: { axes: { label: string; plan: number; cur?: number }[]; size?: number }) {
+  const n = axes.length;
+  if (n < 3) return null;
+  const c = size / 2;
+  const R = size / 2 - 38;
+  const max = 1.3;
+  const pt = (i: number, v: number) => {
+    const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    const r = (Math.min(max, Math.max(0, v)) / max) * R;
+    return [c + r * Math.cos(a), c + r * Math.sin(a)] as const;
+  };
+  const poly = (f: (a: (typeof axes)[number]) => number) => axes.map((a, i) => pt(i, f(a)).map((x) => x.toFixed(1)).join(",")).join(" ");
+  const hasCur = axes.some((a) => a.cur !== undefined);
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} className="radar" role="img" aria-label={`栄養のレーダーチャート：${axes.map((a) => `${a.label}${Math.round(a.plan * 100)}%`).join("、")}`}>
+      {[0.5, 1].map((r) => (
+        <polygon key={r} points={axes.map((_, i) => pt(i, r).map((x) => x.toFixed(1)).join(",")).join(" ")} fill="none" stroke={r === 1 ? "#2e9e6a" : "#d6dbe0"} strokeDasharray={r === 1 ? "4 3" : undefined} strokeWidth={r === 1 ? 1.5 : 1} />
+      ))}
+      {axes.map((a, i) => {
+        const [x, y] = pt(i, max);
+        const [lx, ly] = pt(i, max + 0.2);
+        return (
+          <g key={a.label}>
+            <line x1={c} y1={c} x2={x} y2={y} stroke="#e3e6ea" />
+            <text x={lx} y={ly + 4} textAnchor={lx < c - 6 ? "end" : lx > c + 6 ? "start" : "middle"} fontSize="10" fill="#334">
+              {a.label}
+            </text>
+          </g>
+        );
+      })}
+      {hasCur && <polygon points={poly((a) => a.cur ?? 0)} fill="rgba(120,135,150,.12)" stroke="#8a97a3" strokeWidth="1.5" strokeDasharray="3 2" />}
+      <polygon points={poly((a) => a.plan)} fill="rgba(46,158,106,.28)" stroke="#2e9e6a" strokeWidth="2.2" />
+    </svg>
+  );
+}
+
+// 横棒グラフ：項目ごとの、大きさをくらべる。target があれば、縦線で示す。
+export function HBars({ items, unit = "", target, targetLabel, color = "#2e9e6a" }: { items: { label: string; value: number; color?: string }[]; unit?: string; target?: number; targetLabel?: string; color?: string }) {
+  const max = Math.max(...items.map((i) => i.value), target ?? 0, 1) * 1.08;
+  return (
+    <ul className="hbars" aria-label="比較グラフ">
+      {items.map((i) => (
+        <li key={i.label}>
+          <span>{i.label}</span>
+          <div>
+            <i style={{ width: `${Math.max(2, (i.value / max) * 100)}%`, background: i.color ?? color }} />
+            {target ? <u style={{ left: `${(target / max) * 100}%` }} /> : null}
+          </div>
+          <b>
+            {Math.round(i.value * 10) / 10}
+            {unit}
+          </b>
+        </li>
+      ))}
+      {target && targetLabel ? (
+        <li className="hbt">
+          <span />
+          <div>
+            <em style={{ left: `${(target / max) * 100}%` }}>{targetLabel}</em>
+          </div>
+          <b />
+        </li>
+      ) : null}
+    </ul>
+  );
+}
