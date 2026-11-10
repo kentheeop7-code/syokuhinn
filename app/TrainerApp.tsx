@@ -5,15 +5,14 @@ import Link from "next/link";
 import LineShare from "./LineShare";
 import { searchPapers, type Paper } from "../lib/pubmed";
 import MealPicker from "./MealPicker";
-import { U } from "./BalanceCheck";
+import { makeInsights, goodPoints, draftAdvice, ASK, ASK_CARE } from "../lib/advice";
 import { BANDS } from "./me";
-import { buildVals, describe, goalOf, r10, today, totals, type St } from "../lib/meals";
+import { describe, goalOf, r10, today, totals, type St } from "../lib/meals";
 import { CONDS, ISSUES, PLAYS, TOPICS, TRAINER_CHECKED, type Cond, type Issue, type Play } from "../lib/trainerData";
 
 // トレーナー用：お客様の指導メモ。結論・具体策・根拠・実績を見ながら、最後に、公式LINEへ、まとめて共有できる。
 type Goal = "diet" | "muscle" | "both";
 const num = (s: string) => parseFloat(s) || 0;
-const SLOTS_AM = ["am-wa", "am-natto", "am-pan", "am-light", "am-yo", "am-oats"];
 
 export default function TrainerApp() {
   const [loaded, setLoaded] = useState(false);
@@ -84,24 +83,9 @@ export default function TrainerApp() {
   const pt = totals(planMeal);
   const gl = goalOf(sex, band);
   const wantKcal = num(targetKcal.replace(/,/g, ""));
-  const cv = buildVals(curMeal);
-  const sumOf = (ks: string[]) => ks.reduce((s, k) => s + (cv[k] ?? 0), 0);
-  const kcalOf = (ks: string[]) => ks.reduce((s, k) => s + (cv[k] ?? 0) * (U[k]?.kcal ?? 0), 0);
-  const insights: { t: string; k?: number }[] = [];
-  if (ct.any) {
-    if (ct.salt > gl.salt) insights.push({ t: `食塩が約${Math.round(ct.salt * 10) / 10}g（国の目標は${gl.salt}g未満）。汁物・漬物・麺の汁・加工品・外食を、見直す。` });
-    if (ct.p < parseFloat(gl.p || "0")) insights.push({ t: `たんぱく質が約${Math.round(ct.p)}g（目安は${gl.p}）。毎食に、肉・魚・卵・大豆・乳製品を、1つずつ。` });
-    if (ct.fi < parseFloat(gl.fi || "0")) insights.push({ t: `食物繊維が約${Math.round(ct.fi * 10) / 10}g（目安は${gl.fi}）。野菜・きのこ・海藻・豆・玄米・麦を、足す。` });
-    const veg = sumOf(["salad", "veg", "greenveg", "rootveg", "mush", "konjac"]);
-    if (veg < 3) insights.push({ t: `野菜・きのこ・海藻の小鉢が、約${Math.round(veg * 10) / 10}つ。毎食に、小鉢を1つ足す。` });
-    const sweets = kcalOf(["sugar", "cake", "snack", "alcohol"]);
-    if (sweets >= 150) insights.push({ t: "甘い飲み物・お菓子・お酒が、多め。回数や量を、決める。", k: sweets });
-    const rich = sumOf(["fried", "out", "instant"]);
-    if (rich >= 3) insights.push({ t: `揚げ物・外食・インスタントが、1日に約${Math.round(rich)}回ぶん。頻度を、減らす。` });
-    const amNone = curMeal.size["am-none"] !== undefined || !SLOTS_AM.some((id) => curMeal.size[id] !== undefined);
-    if (amNone) insights.push({ t: "朝食が、ない（または未入力）。たんぱく質＋果物かヨーグルトから、始める。" });
-    if (wantKcal > 0 && Math.abs(ct.kcal - wantKcal) > 150) insights.push({ t: `現状は、目標より、約${r10(Math.abs(ct.kcal - wantKcal)).toLocaleString()}kcal ${ct.kcal > wantKcal ? "多め" : "少なめ"}。`, k: Math.abs(ct.kcal - wantKcal) });
-  }
+  const insights = makeInsights(curMeal, sex, band, wantKcal);
+  const good = goodPoints(curMeal, sex, band);
+  const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
   const myIssues = ISSUES.filter((c) => issues.includes(c.id));
   const chosenIssues = myIssues.filter((c) => picked.includes("i-" + c.id));
   const toggleIssue = (id: string) => setIssues((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
@@ -224,6 +208,13 @@ export default function TrainerApp() {
     </li>
   );
 
+  // お客様用のまとめ（PDFの画面）が、LINE用の文章を、読めるように、保存しておく
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem("lg-trainer-text", build());
+    } catch {}
+  });
   const issueCard = (c: Issue) => {
     const id = "i-" + c.id;
     return (
@@ -403,6 +394,21 @@ export default function TrainerApp() {
 
       <section className="card">
         <p className="balh">② 現状の食事（お客様に聞きながら）</p>
+        <details className="trask">
+          <summary>聞くことのリスト（タップで開く）</summary>
+          {ASK.map((g) => (
+            <div key={g.t} className="trs">
+              <small>{g.t}</small>
+              <ol>
+                {g.q.map((q) => (
+                  <li key={q}>{q}</li>
+                ))}
+              </ol>
+            </div>
+          ))}
+          <p className="plwarn">{ASK_CARE}</p>
+          <p className="agnote small">聞き取りの項目は、現場で使う一般的なものです。</p>
+        </details>
         <p className="agnote">朝・昼・夜・おやつを、お客様の話に合わせて、タップで選びます。量や足したものも、直せます。</p>
         <MealPicker value={curMeal} onChange={setCurMeal} />
         {ct.any ? (
@@ -433,11 +439,19 @@ export default function TrainerApp() {
               </li>
             </ul>
             <p className="balh sub">気づき（自動）</p>
+            {good.length > 0 && (
+              <p className="trgood">
+                <b>✔ できていること</b>
+                {good.join("／")}
+              </p>
+            )}
             <ul className="trinsight">
               {insights.map((s) => (
-                <li key={s.t}>
+                <li key={s.id}>
                   {s.t}
                   {s.k ? <b> （約{r10(s.k)}kcal）</b> : null}
+                  <br />
+                  <span className="ract">▶ {s.a}</span>
                 </li>
               ))}
               {insights.length === 0 && <li>大きな偏りは、見当たりません。量と、続けやすさを、確認しましょう。</li>}
@@ -505,6 +519,22 @@ export default function TrainerApp() {
         )}
         {pt.any && wantKcal > 0 && Math.abs(pt.kcal - wantKcal) > 200 && <p className="plwarn">提案の食事が、目標カロリーから、約{r10(Math.abs(pt.kcal - wantKcal)).toLocaleString()}kcal はなれています。量や足したものを、調整しましょう。</p>}
       </section>
+      <section className="card">
+        <p className="balh">アドバイスのたたき台（自動）</p>
+        <p className="agnote">現状の食事と提案から、お客様への伝え方の案を作ります。「できていること」を先に伝え、取り組むことは、1つだけに絞ります。</p>
+        {ct.any ? (
+          <>
+            <pre className="trpre">{draft}</pre>
+            <button type="button" className="trpick" onClick={() => setNote((n) => (n.trim() ? `${n.trim()}\n\n${draft}` : draft))}>
+              ＋ 「トレーナーからの一言」に入れる
+            </button>
+            <p className="agnote small">案は、自動で作った下書きです。お客様の様子に合わせて、言葉を直してから使ってください。</p>
+          </>
+        ) : (
+          <p className="agnote">②で、現状の食事を選ぶと、案が出ます。</p>
+        )}
+      </section>
+
       <section className="card">
         <p className="balh">④ 課題と、今週の行動</p>
         <p className="agnote">お客様の課題を選ぶと、確認すること・食事での対応・根拠が出ます。下の欄に、トレーナーが、課題と行動を書き込めます。</p>
@@ -588,13 +618,31 @@ export default function TrainerApp() {
       </section>
 
       <section className="card">
-        <p className="balh">⑧ お客様への共有</p>
+        <p className="balh">⑧ お客様に送る（PDF・LINE）</p>
         <label className="trf">
           <span>トレーナーからの一言（任意）</span>
           <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="例：今週は、歩数を8,000歩に。スクワットは、フォーム優先で。" aria-label="トレーナーからの一言" />
         </label>
         <p className="plmini">送る内容（プレビュー）</p>
         <pre className="trpre">{build() || "（共有に入れたものが、ここに出ます）"}</pre>
+        <div className="trsend">
+          <p className="balh sub">送る前の確認</p>
+          <ul className="trchk">
+            <li>数字（カロリー・食塩・体重）は、合っていますか？</li>
+            <li>持病・服薬のある方は、主治医への確認の一文が、入っていますか？</li>
+            <li>取り組むことは、多すぎませんか？（1〜2つ）</li>
+          </ul>
+          <p className="balh sub">お客様用のPDF</p>
+          <p className="agnote">カロリー・食事内容・課題・今週やること・アドバイスを、A4の1〜2枚にまとめます。</p>
+          <a className="linebtn" href="/trainer/report" target="_blank" rel="noopener noreferrer">
+            📄 お客様用のまとめ（PDF）を作る
+          </a>
+          <ol className="rptsteps">
+            <li>上のボタンで、まとめの画面を開き、「PDFとして保存」を押す。</li>
+            <li>下の「LINEで送る」（または、まとめの画面のボタン）で、文章を送る。</li>
+            <li>LINEのトークで、保存したPDFを、ファイルとして添付する（PDFは、LINEの仕様上、自動では添付できません）。</li>
+          </ol>
+        </div>
         <LineShare title="トレーニングのまとめ" build={build} noProfile />
       </section>
     </div>
