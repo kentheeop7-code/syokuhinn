@@ -15,11 +15,13 @@ const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((
 
 export function buildActions(a: { cur: St; plan: St; swaps: SwapRow[]; insights: Insight[]; days: number; others: OtherEx[]; water: number; hasCur: boolean }): Action[] {
   const out: Action[] = [];
+  const changed = new Set<string>();
   // ① 食事：現状と、提案が、ちがう時間帯
   for (const s of SLOTS) {
     const cl = labelsOf(a.cur, s.id);
     const pl = labelsOf(a.plan, s.id);
     if (pl.length === 0 || sameSet(cl, pl)) continue;
+    changed.add(s.id);
     const dk = r10(slotKcal(a.plan, s) - slotKcal(a.cur, s));
     out.push({
       id: `meal-${s.id}`,
@@ -31,6 +33,8 @@ export function buildActions(a: { cur: St; plan: St; swaps: SwapRow[]; insights:
   }
   // ② 置きかえ（食事の差で、まだ出ていないもの）
   for (const sw of a.swaps.slice(0, 3)) {
+    const sl = SLOTS.find((x) => x.tiles.some((t) => t.id === sw.id));
+    if (sl && changed.has(sl.id)) continue;
     if (out.some((x) => x.tag === "食事" && x.text.includes(sw.to.slice(0, 6)))) continue;
     out.push({ id: `swap-${sw.id}`, tag: "置きかえ", text: `「${sw.from}」の代わりに、「${sw.to}」を食べる`, detail: `${sw.why}。${sw.dk > 0 ? "+" : ""}${sw.dk}kcal／たんぱく質 ${sw.dp > 0 ? "+" : ""}${sw.dp}g／食物繊維 ${sw.dfi > 0 ? "+" : ""}${sw.dfi}g` });
   }

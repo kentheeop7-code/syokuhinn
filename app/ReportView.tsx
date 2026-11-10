@@ -582,8 +582,8 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         </section>
 
         <section>
-          <h2>{H("1日の食事の例（8パターン）")}</h2>
-          <p className="rnote">そのまま、まねできる例です。{near ? "目安のカロリーに近い例に、★をつけています。" : ""}</p>
+          <h2>{H(`1日の食事の例（${EXAMPLES.length}パターン）`)}</h2>
+          <p className="rnote">そのまま、まねできる例です。{near ? "目安のカロリーに近い例に、★をつけています。" : ""}カロリーが目安より少ない例は、ごはんや主菜を、少し増やして、調整してください。</p>
           <p className="nbgroup">8パターンの、カロリー{aim ? `（縦線＝目安 ${r10(aim).toLocaleString()}kcal）` : ""}</p>
           <HBars unit="kcal" items={exK} target={aim || undefined} />
           <div className="rex">
