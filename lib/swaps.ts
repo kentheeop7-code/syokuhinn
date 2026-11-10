@@ -22,7 +22,36 @@ const TABLE = Object.fromEntries([
   S("sn-choco", "ナッツ ひとつかみ（または、チーズ）", "たんぱく質と、よい脂質が、増える", { nuts: 1 }),
   S("sn-sugar", "豆乳1杯（または、無糖のお茶・水）", "たんぱく質が、増える", { soymilk: 1 }),
   S("sn-alc", "冷奴・枝豆を、足す（量は、決める）", "たんぱく質が、増える", { soy: 1 }),
-]) as Record<string, { to: string; why: string; vals: Record<string, number> }>;
+  S("no-x-pasta-cream", "トマト系パスタ＋サラダ＋ゆで卵", "野菜とたんぱく質が、増える", { noodle: 1, salad: 1, egg: 1, out: 0.5 }),
+  S("pm-x-pasta-cream", "トマト系パスタ＋サラダ＋ゆで卵", "野菜とたんぱく質が、増える", { noodle: 1, salad: 1, egg: 1, out: 0.5 }),
+  S("no-x-pizza", "ピザ2切れ＋サラダ＋スープ", "野菜が、増える", { bread: 1.3, yogurt: 1, veg: 1, soup: 1, out: 1 }),
+  S("pm-x-pizza", "ピザ2切れ＋サラダ＋スープ", "野菜が、増える", { bread: 1.3, yogurt: 1, veg: 1, soup: 1, out: 1 }),
+  S("no-x-ramen", "ラーメン（野菜多め）＋ゆで卵＋サラダ", "野菜とたんぱく質が、増える", { noodle: 1, veg: 2, egg: 1, out: 1 }),
+  S("pm-x-ramen", "ラーメン（野菜多め）＋ゆで卵＋サラダ", "野菜とたんぱく質が、増える", { noodle: 1, veg: 2, egg: 1, out: 1 }),
+  S("no-x-tsukemen", "野菜たっぷりのタンメン＋ゆで卵", "野菜とたんぱく質が、増える", { noodle: 1, veg: 2, egg: 1, out: 0.5 }),
+  S("no-x-gyudon", "牛丼（並）＋サラダ＋みそ汁", "野菜と汁物が、増える", { rice: 1.5, meat: 1, salad: 1, soup: 1, out: 0.5 }),
+  S("pm-x-gyudon", "牛丼（並）＋サラダ＋みそ汁", "野菜と汁物が、増える", { rice: 1.5, meat: 1, salad: 1, soup: 1, out: 0.5 }),
+  S("no-x-curry", "カレー（野菜・豆多め）＋サラダ", "野菜と食物繊維が、増える", { rice: 1.5, beans: 1, veg: 2, salad: 1, out: 0.5 }),
+  S("pm-x-curry", "カレー（野菜・豆多め）＋サラダ", "野菜と食物繊維が、増える", { rice: 1.5, beans: 1, veg: 2, salad: 1, out: 0.5 }),
+  S("no-x-burger", "ハンバーガー＋サラダ＋牛乳", "野菜とカルシウムが、増える", { bread: 2, meat: 1, salad: 1, milk: 1, out: 1 }),
+  S("pm-x-burger", "ハンバーガー＋サラダ＋牛乳", "野菜とカルシウムが、増える", { bread: 2, meat: 1, salad: 1, milk: 1, out: 1 }),
+  S("no-x-fried-chicken", "グリルチキン（焼き）＋サラダ＋ごはん", "たんぱく質と野菜が、増える", { chicken: 1.5, salad: 1, rice: 1 }),
+  S("no-x-chahan", "チャーハン＋野菜スープ＋ゆで卵", "野菜とたんぱく質が、増える", { rice: 1.5, egg: 1, veg: 1, soup: 1, out: 0.5 }),
+  S("pm-x-chahan", "チャーハン＋野菜スープ＋ゆで卵", "野菜とたんぱく質が、増える", { rice: 1.5, egg: 1, veg: 1, soup: 1, out: 0.5 }),
+  S("no-x-teishoku-tonkatsu", "焼き魚の定食（魚・野菜・みそ汁）", "魚の脂（n-3）と野菜が、増える", { rice: 1, fish: 1, greenveg: 1, soup: 1 }),
+  S("pm-x-teishoku-tonkatsu", "焼き魚の定食（魚・野菜・みそ汁）", "魚の脂（n-3）と野菜が、増える", { rice: 1, fish: 1, greenveg: 1, soup: 1 }),
+  S("no-x-teishoku-karaage", "焼き魚の定食（魚・野菜・みそ汁）", "魚の脂（n-3）と野菜が、増える", { rice: 1, fish: 1, greenveg: 1, soup: 1 }),
+  S("pm-x-teishoku-karaage", "焼き魚の定食（魚・野菜・みそ汁）", "魚の脂（n-3）と野菜が、増える", { rice: 1, fish: 1, greenveg: 1, soup: 1 }),
+  S("no-x-tendon", "天ぷら定食（野菜の天ぷら中心）＋サラダ", "野菜が、増える", { rice: 1, fried: 0.7, veg: 1.5, salad: 1, soup: 1 }),
+  S("pm-x-yakiniku", "焼肉は赤身中心＋野菜・サラダ", "野菜が、増える", { rice: 1, meat: 1.5, veg: 2, salad: 1 }),
+  S("no-x-yakisoba", "焼きそば＋ゆで卵＋サラダ", "たんぱく質と野菜が、増える", { noodle: 1, stir: 0.5, veg: 1.5, egg: 1 }),
+  S("no-x-cafe-sand", "サンドイッチ＋ヨーグルト＋サラダ", "たんぱく質と野菜が、増える", { bread: 2, egg: 1, yogurt: 1, salad: 1, out: 0.5 }),
+  S("no-x-omurice", "オムライス＋サラダ＋スープ", "野菜が、増える", { rice: 1.5, egg: 2, salad: 1, soup: 1, out: 0.5 }),
+  S("am-x-pastry", "全粒粉パン＋卵＋牛乳", "たんぱく質と食物繊維が、増える", { wbread: 2, egg: 1, milk: 1 }),
+  S("sn-x-ice", "ヨーグルト＋果物（冷凍でも）", "たんぱく質・カルシウムが、増える", { yogurt: 1, fruit: 1 }),
+  S("sn-x-frappe", "カフェラテ（砂糖なし）または 豆乳", "たんぱく質・カルシウムが、増える", { milk: 1 }),
+  S("sn-x-wagashi", "焼きいも・果物", "食物繊維が、増える", { imo: 1 }),
+  S("sn-x-cracker", "ナッツ・小魚・のり", "たんぱく質・ミネラルが、増える", { nuts: 0.7, smallfish: 0.5 }),]) as Record<string, { to: string; why: string; vals: Record<string, number> }>;
 
 const sum = (vals: Record<string, number>, m = 1) => {
   const t = { kcal: 0, p: 0, fi: 0 };
@@ -64,8 +93,14 @@ export const EXAMPLES: { id: string; name: string; note: string; st: St }[] = [
   { id: "quick", name: "時短・自炊少なめの日", note: "オートミール・鍋で、手早く", st: mk(["am-oats", "no-set", "pm-nabe", "sn-yo"], { "am:egg": 1, "am:fruit": 1, "pm:rice": 1 }) },
   { id: "out", name: "外食でも整える日", note: "外食は、定食を選ぶ。足りない野菜を足す", st: mk(["am-pan", "no-set", "pm-fish", "sn-fruit"], { "am:fruit": 1, "pm:soy": 1, "pm:salad": 1 }) },
   { id: "late", name: "夜が遅い日", note: "夜は、鍋・煮物で軽く。たんぱく質は、ほしい", st: mk(["am-wa", "no-set", "pm-nabe", "sn-yo"], { "noon:veg": 1 }) },
-];
-export const exampleTotals = (st: St) => totals(st);
+  { id: "italian", name: "イタリアンの日", note: "パスタは、トマト系。前菜サラダと、魚・卵を足す", st: mk(["am-x-toast", "no-x-pasta-tomato", "pm-x-italian-set", "sn-yo"], { "noon:salad": 1, "noon:egg": 1, "am:fruit": 1 }) },
+  { id: "chinese", name: "中華の日", note: "野菜の多い麺・豆腐料理で、たんぱく質と野菜を", st: mk(["am-x-onigiri", "no-x-tanmen", "pm-x-mabo", "sn-fruit"], { "am:egg": 1, "noon:egg": 1, "pm:salad": 1 }) },
+  { id: "korean", name: "韓国料理の日", note: "ビビンバ・豆腐チゲ。野菜と豆腐が、そろう", st: mk(["am-yo", "no-x-bibimbap", "pm-x-sundubu", "sn-x-nutsfruit"], { "am:egg": 1 }) },
+  { id: "yakiniku", name: "焼肉を楽しむ日", note: "赤身中心＋野菜・サラダ。前後の食事で、整える", st: mk(["am-wa", "no-set", "pm-x-yakiniku-lean", "sn-yo"], { "pm:salad": 1 }) },
+  { id: "sushi", name: "寿司・和食の外食の日", note: "寿司に、みそ汁・野菜を足す", st: mk(["am-x-tkg", "no-x-sushi", "pm-fish", "sn-fruit"], { "noon:soup": 1, "pm:veg": 1 }) },
+  { id: "cafe", name: "カフェ・ファストフードの日", note: "サラダボウル・サンドイッチに、乳製品と野菜を足す", st: mk(["am-x-cafe", "no-x-bowl", "pm-nabe", "sn-x-latte"], { "am:fruit": 1, "pm:rice": 1 }) },
+  { id: "ramen", name: "ラーメンが好きな日", note: "野菜・卵・サラダを足す。ほかの食事は、魚・野菜で", st: mk(["am-yo", "no-x-ramen", "pm-fish", "sn-fruit"], { "am:egg": 1, "noon:salad": 1, "noon:egg": 1, "pm:veg": 1 }) },
+];export const exampleTotals = (st: St) => totals(st);
 
 // 増やしたい食品（目的別）。量は「1回ぶんの目安」。栄養は、日本食品標準成分表をもとにした100gあたりの目安値（lib/foods.ts）から、計算。
 const byName = new Map(FOODS.map((f) => [f.name, f]));

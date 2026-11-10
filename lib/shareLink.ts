@@ -4,7 +4,7 @@
 // 圧縮は、どの端末でも動く方式（lz-string）。古いスマホ・LINEの中のブラウザでも、開けるように。
 import LZString from "lz-string";
 export type Payload = Record<string, unknown>;
-const KEYS = ["name", "goal", "now", "target", "days", "others", "water", "sex", "band", "curMeal", "planMeal", "targetKcal", "pace", "swapOff", "picked", "conds", "issues", "problem", "weekAct", "nextDate", "note", "pins"];
+const KEYS = ["name", "goal", "now", "target", "days", "others", "water", "sex", "band", "curMeal", "planMeal", "targetKcal", "pace", "swapOff", "picked", "conds", "issues", "problem", "weekAct", "nextDate", "note", "pins", "age", "height", "bmr", "muscle", "bodyFat", "pal", "actOff"];
 
 export function payloadOf(s: Record<string, any>): Payload {
   const p: Payload = {};

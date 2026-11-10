@@ -9,6 +9,9 @@ import { computeGoal, PACES, type Pace } from "../lib/goal";
 import { OTHER_TYPES, MINUTES, labelOf, weeklyMin, guideMin, describeEx, type OtherEx } from "../lib/exercise";
 import { microStatus } from "../lib/micro";
 import { shareUrl } from "../lib/shareLink";
+import { calcEnergy, PAL_VAL } from "../lib/energy";
+import { buildActions } from "../lib/actions";
+import { PAL_TEXT } from "./me";
 import { Bars } from "./Charts";
 import { swapsFor } from "../lib/swaps";
 import { LineChart } from "./Charts";
@@ -30,6 +33,13 @@ export default function TrainerApp() {
   const [days, setDays] = useState(1);
   const [others, setOthers] = useState<OtherEx[]>([]);
   const [water, setWater] = useState(0);
+  const [age, setAge] = useState("");
+  const [height, setHeight] = useState("");
+  const [bmr, setBmr] = useState("");
+  const [muscle, setMuscle] = useState("");
+  const [bodyFat, setBodyFat] = useState("");
+  const [pal, setPal] = useState(1);
+  const [actOff, setActOff] = useState<string[]>([]);
   const [link, setLink] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [note, setNote] = useState("");
@@ -62,6 +72,13 @@ export default function TrainerApp() {
         setDays(typeof s.days === "number" ? s.days : 1);
         setOthers(Array.isArray(s.others) ? s.others : []);
         setWater(typeof s.water === "number" ? s.water : 0);
+        setAge(s.age ?? "");
+        setHeight(s.height ?? "");
+        setBmr(s.bmr ?? "");
+        setMuscle(s.muscle ?? "");
+        setBodyFat(s.bodyFat ?? "");
+        setPal(typeof s.pal === "number" ? s.pal : 1);
+        setActOff(Array.isArray(s.actOff) ? s.actOff : []);
         setNote(s.note ?? "");
         setPicked(Array.isArray(s.picked) ? s.picked : []);
         setConds(Array.isArray(s.conds) ? s.conds : []);
@@ -86,9 +103,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff]);
 
   const w = num(now);
   const wt = num(target);
@@ -99,9 +116,12 @@ export default function TrainerApp() {
   const ct = totals(curMeal);
   const pt = totals(planMeal);
   const gl = goalOf(sex, band);
-  const wantKcal = num(targetKcal.replace(/,/g, ""));
+  const manualKcal = num(targetKcal.replace(/,/g, ""));
   const effPace: Pace = conds.length > 0 ? "slow" : pace;
   const plan = computeGoal(w, wt, days, effPace);
+  // 目標カロリー：トレーナーが、直接入れた値を、優先。なければ、体のデータから、自動で計算。
+  const energy = calcEnergy({ sex, band, age: num(age), height: num(height), weight: w, bmr: num(bmr), bodyFat: num(bodyFat), muscle: num(muscle), pal, targetWeight: wt, pace: effPace });
+  const wantKcal = manualKcal || energy?.target || 0;
   const swaps = swapsFor(curMeal);
   const swapOn = swaps.filter((s) => !swapOff.includes(s.id));
   // お客様専用ページ（リンク）：内容を、リンクの中に入れる。サーバーには、保存されない。
@@ -109,14 +129,16 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
+  const actions = buildActions({ cur: curMeal, plan: planMeal, swaps: swapOn, insights, days, others, water, hasCur: ct.any });
+  const actionsOn = actions.filter((x) => !actOff.includes(x.id));
   const myIssues = ISSUES.filter((c) => issues.includes(c.id));
   const chosenIssues = myIssues.filter((c) => picked.includes("i-" + c.id));
   const toggleIssue = (id: string) => setIssues((x) => (x.includes(id) ? x.filter((y) => y !== id) : [...x, id]));
@@ -158,6 +180,11 @@ export default function TrainerApp() {
       const low = ms.rows.filter((r) => r.pct < 0.7).sort((a, b) => a.pct - b.pct).slice(0, 3);
       if (low.length) L.push("", `■ 足りにくい栄養：${low.map((r) => r.label).join("・")}（おすすめ：${low.map((r) => r.foods.split("・").slice(0, 2).join("・")).join("／")}）`);
     }
+    if (actionsOn.length) {
+      L.push("", "■ 今日からの、アクション（まず、これだけ）");
+      actionsOn.forEach((x, i) => L.push(`${i + 1}. ${x.text}`));
+    }
+    if (energy && wantKcal) L.push("", `■ 1日の目安：約${wantKcal.toLocaleString()}kcal（${energy.method === "dri" ? "年代・性別の目安" : `基礎代謝 約${energy.bmr}kcal × 活動量${energy.pal}`}）`);
     if (plan) L.push("", `■ ゴールの目安：${w}kg → ${wt}kg　約${plan.weeks}週間（筋トレ 週${days}回・合計${plan.sessions}回）`);
     if (swapOn.length) {
       L.push("", "■ 置きかえ（こちらを食べてください）");
@@ -426,7 +453,76 @@ export default function TrainerApp() {
             ))}
           </select>
         </label>
-        <p className="balh sub">目標</p>
+        <details className="trbody">
+          <summary>任意：からだのデータ（基礎代謝・筋肉量・体脂肪率）を入れると、カロリーを自動で計算</summary>
+          <div className="trgrid">
+            <label className="trf">
+              <span>年齢（歳）</span>
+              <input inputMode="numeric" value={age} onChange={(e) => setAge(e.target.value)} placeholder="例 38" aria-label="年齢" />
+            </label>
+            <label className="trf">
+              <span>身長（cm）</span>
+              <input inputMode="decimal" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="例 160" aria-label="身長" />
+            </label>
+            <label className="trf">
+              <span>基礎代謝（kcal）</span>
+              <input inputMode="numeric" value={bmr} onChange={(e) => setBmr(e.target.value)} placeholder="体組成計の値" aria-label="基礎代謝" />
+            </label>
+            <label className="trf">
+              <span>体脂肪率（%）</span>
+              <input inputMode="decimal" value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} placeholder="例 28" aria-label="体脂肪率" />
+            </label>
+            <label className="trf">
+              <span>筋肉量（kg）</span>
+              <input inputMode="decimal" value={muscle} onChange={(e) => setMuscle(e.target.value)} placeholder="体組成計の値" aria-label="筋肉量" />
+            </label>
+          </div>
+          <p className="balh sub">ふだんの活動量</p>
+          <div className="plpace" role="radiogroup" aria-label="活動量">
+            {PAL_TEXT.map((t, i) => (
+              <button key={t} type="button" role="radio" aria-checked={pal === i} className={pal === i ? "on" : ""} onClick={() => setPal(i)}>
+                {t}
+                <small>係数 {PAL_VAL[i]}</small>
+              </button>
+            ))}
+          </div>
+          {energy && (
+            <div className="trenergy" aria-label="カロリーの自動計算">
+              <p className="trgoal">
+                1日の目標　約<b>{energy.target.toLocaleString()}</b> kcal　<small>（維持 約{energy.tdee.toLocaleString()}kcal{energy.diff !== 0 ? `、${energy.diff > 0 ? "+" : ""}${energy.diff}` : ""}）</small>
+              </p>
+              <p className="agnote small">
+                方法：{energy.label}
+                {energy.bmr > 0 ? `／基礎代謝 約${energy.bmr}kcal` : ""}
+                {energy.ffm > 0 ? `／除脂肪量 約${energy.ffm}kg` : ""}
+              </p>
+              <p className="agnote small">
+                たんぱく質 約{energy.protein}g／脂質 約{energy.fat}g／炭水化物 約{energy.carb}g
+              </p>
+              <ul className="trinsight">
+                {energy.notes.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+              {energy.refs.length > 0 && (
+                <p className="trsrc">
+                  <small>根拠</small>
+                  {energy.refs.map((r) =>
+                    r.pmid ? (
+                      <a key={r.pmid + r.label} href={`https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/`} target="_blank" rel="noopener noreferrer">
+                        {r.label}
+                      </a>
+                    ) : (
+                      <span key={r.label}>{r.label}</span>
+                    )
+                  )}
+                </p>
+              )}
+              <p className="agnote small">体組成計の値は、機器による誤差があります。目安として、使ってください。妊娠中・授乳中・持病のある方は、主治医の指示が優先です。</p>
+              {manualKcal > 0 && <p className="plwarn">「③の目標カロリー」に、手で入力した値（{manualKcal.toLocaleString()}kcal）があるため、そちらを使っています。</p>}
+            </div>
+          )}
+        </details>        <p className="balh sub">目標</p>
         <div className="plpace" role="radiogroup" aria-label="目標">
           {(
             [
@@ -594,7 +690,7 @@ export default function TrainerApp() {
           </button>
           <label className="trf">
             <span>1日の目標カロリー（任意）</span>
-            <input inputMode="numeric" value={targetKcal} onChange={(e) => setTargetKcal(e.target.value)} placeholder="例 1,600" aria-label="1日の目標カロリー" />
+            <input inputMode="numeric" value={targetKcal} onChange={(e) => setTargetKcal(e.target.value)} placeholder="空欄なら、自動（体のデータから）" aria-label="1日の目標カロリー" />
           </label>
         </div>
         <MealPicker value={planMeal} onChange={setPlanMeal} />
@@ -694,6 +790,28 @@ export default function TrainerApp() {
           <p className="agnote">②で、現状の食事を選ぶと、「こちらを食べてください」という置きかえが出ます。</p>
         )}
         <p className="agnote small">「減らす」ではなく「増やす」置きかえです。チェックしたものが、お客様用のまとめに入ります。kcalとg は、食品の目安値からの計算です。</p>
+      </section>
+      <section className="card" id="s4a">
+        <p className="balh">お客様に示す、アクション（自動）</p>
+        <p className="agnote">「何を、どう変えるか」を、番号つきで、お客様に示します。チェックを外すと、まとめから、はずれます。</p>
+        {actions.length > 0 ? (
+          <ol className="tract">
+            {actions.map((x) => (
+              <li key={x.id} className={actOff.includes(x.id) ? "off" : ""}>
+                <label>
+                  <input type="checkbox" checked={!actOff.includes(x.id)} onChange={() => setActOff((o) => (o.includes(x.id) ? o.filter((y) => y !== x.id) : [...o, x.id]))} aria-label={`アクション「${x.text.slice(0, 12)}」を、お客様に示す`} />
+                  <span>
+                    <em>{x.tag}</em>
+                    <b>{x.text}</b>
+                    {x.detail && <small>{x.detail}</small>}
+                  </span>
+                </label>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="agnote">食事・運動を入力すると、アクションが出ます。</p>
+        )}
       </section>
       <section className="card">
         <p className="balh">アドバイスのたたき台（自動）</p>

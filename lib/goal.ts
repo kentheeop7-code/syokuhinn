@@ -18,6 +18,8 @@ export type GoalPlan = {
   perDay: number; // 1日あたりのkcalの差（目安）
 };
 const R1 = (n: number) => Math.round(n * 10) / 10;
+// 1週間の、体重の変化（kg）の目安。減量は、ゆっくり＝月1kg／ふつう＝体重の0.5%／しっかり＝0.75%。増量は、体重の0.25%。
+export const paceRate = (w: number, kind: "lose" | "gain", pace: Pace) => (kind === "gain" ? w * 0.0025 : pace === "slow" ? 12 / 52 : pace === "mid" ? w * 0.005 : w * 0.0075);
 export function computeGoal(w: number, wt: number, days: number, pace: Pace, rateKg?: number): GoalPlan | null {
   if (!w || !wt || w === wt) return null;
   const kind = wt < w ? "lose" : "gain";

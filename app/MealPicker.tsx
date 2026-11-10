@@ -6,8 +6,13 @@ import { EXTRAS, ICON, SIZES, SLOTS, kc, r10, slotKcal, type St, type Tile } fro
 // 食事を、タップで選ぶ部品（朝・昼・夜・おやつ → 量 → 足したもの）。値は、親が持つ。
 export default function MealPicker({ value, onChange, idp = "mp" }: { value: St; onChange: (n: St) => void; idp?: string }) {
   const [slot, setSlot] = useState("am");
+  const [cats, setCats] = useState<Record<string, string>>({});
   const cur = SLOTS.find((s) => s.id === slot)!;
   const none = cur.tiles[cur.tiles.length - 1].id;
+  const catList = Array.from(new Set(cur.tiles.map((t) => t.cat ?? "定番")));
+  const cat = cats[slot] && catList.includes(cats[slot]) ? cats[slot] : catList[0];
+  const shown = catList.length > 1 ? cur.tiles.filter((t) => (t.cat ?? "定番") === cat) : cur.tiles;
+  const catCount = (c: string) => cur.tiles.filter((t) => (t.cat ?? "定番") === c && value.size[t.id] !== undefined && t.id !== none).length;
   const toggle = (t: Tile) => {
     const size = { ...value.size };
     if (size[t.id] !== undefined) delete size[t.id];
@@ -42,8 +47,18 @@ export default function MealPicker({ value, onChange, idp = "mp" }: { value: St;
           </button>
         ))}
       </div>
+      {catList.length > 1 && (
+        <div className="qmcats" role="tablist" aria-label="料理の種類">
+          {catList.map((c) => (
+            <button key={c} type="button" role="tab" aria-selected={cat === c} className={cat === c ? "on" : ""} onClick={() => setCats((x) => ({ ...x, [slot]: c }))}>
+              {c}
+              {catCount(c) > 0 && <i>{catCount(c)}</i>}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="qmtiles" role="group" aria-label={`${cur.label}の食事`}>
-        {cur.tiles.map((t) => {
+        {shown.map((t) => {
           const on = value.size[t.id] !== undefined;
           const k = kc(t.vals);
           return (

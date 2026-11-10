@@ -5,6 +5,8 @@ import { CONDS, ISSUES, PLAYS } from "../lib/trainerData";
 import { SLOTS, describe, goalOf, r10, slotKcal, totals, type St } from "../lib/meals";
 import { makeInsights } from "../lib/advice";
 import { computeGoal, PACES, type Pace } from "../lib/goal";
+import { calcEnergy } from "../lib/energy";
+import { buildActions, WEEK_DAYS } from "../lib/actions";
 import { EXAMPLES, GENERIC_SWAPS, INCREASE, swapsFor } from "../lib/swaps";
 import { microStatus } from "../lib/micro";
 import { OTHER_TYPES, describeEx, guideMin, labelOf, weeklyMin, type OtherEx } from "../lib/exercise";
@@ -69,7 +71,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const base = pt.any ? pt : ct;
   const hasCur = ct.any && pt.any;
   const g = goalOf(sex, band);
-  const want = num(s.targetKcal);
+  const manualKcal = num(s.targetKcal);
   const goalText = s.goal === "diet" ? "体重を減らす" : s.goal === "muscle" ? "筋力・筋肉をつける" : "体重を減らして、筋力もつける";
   const w = num(s.now);
   const wt = num(s.target);
@@ -79,11 +81,18 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const hasConds = (s.conds || []).length > 0;
   const pace: Pace = hasConds ? "slow" : s.pace === "slow" || s.pace === "fast" ? s.pace : "mid";
   const gp = computeGoal(w, wt, days, pace);
+  const energy = calcEnergy({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace });
+  const want = manualKcal || energy?.target || 0;
+  const muscleKg = num(s.muscle);
+  const fatPct = num(s.bodyFat);
+  const bmrIn = num(s.bmr);
   const issues = ISSUES.filter((i) => (s.issues || []).includes(i.id) && (s.picked || []).includes("i-" + i.id));
   const conds = CONDS.filter((c) => (s.conds || []).includes(c.id) && (s.picked || []).includes("c-" + c.id));
   const plays = PLAYS.filter((p) => (s.picked || []).includes(p.id));
-  const ins = makeInsights(cur, sex, band, want).slice(0, 3);
+  const insAll = makeInsights(cur, sex, band, want);
+  const ins = insAll.slice(0, 3);
   const swaps = swapsFor(cur).filter((x) => !(s.swapOff || []).includes(x.id));
+  const actionsOn = buildActions({ cur, plan, swaps, insights: insAll, days, others, water, hasCur: ct.any }).filter((x) => !(s.actOff || []).includes(x.id));
   const pins: { id: string; title: string; journal: string; date: string }[] = Array.isArray(s.pins) ? s.pins : [];
   const d = new Date();
   const dateText = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
@@ -217,6 +226,13 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             <b>{others.length ? `週${weeklyMin(others)}分` : "—"}</b>
             <em>{others.length ? `国の目安 ${guideMin(band)}分` : ""}</em>
           </div>
+          {(fatPct > 0 || muscleKg > 0 || bmrIn > 0) && (
+            <div>
+              <small>からだのデータ</small>
+              <b>{fatPct > 0 ? `体脂肪 ${fatPct}%` : muscleKg > 0 ? `筋肉 ${muscleKg}kg` : `基礎代謝 ${bmrIn}`}</b>
+              <em>{[fatPct > 0 && muscleKg > 0 ? `筋肉 ${muscleKg}kg` : "", bmrIn > 0 && fatPct > 0 ? `基礎代謝 ${bmrIn}kcal` : ""].filter(Boolean).join("／")}</em>
+            </div>
+          )}
           <div>
             <small>栄養チェック</small>
             <b>{all.length ? `${okN}/${all.length}` : "—"}</b>
@@ -224,6 +240,45 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </div>
         </div>
 
+        {actionsOn.length > 0 && (
+          <section className="ractions">
+            <h2>{H("今日から、やること（まず、これだけ）")}</h2>
+            <p className="rnote">「何を、どう変えるか」です。できることから、1つずつ、始めましょう。</p>
+            <ol className="ract-list">
+              {actionsOn.map((x) => (
+                <li key={x.id}>
+                  <em>{x.tag}</em>
+                  <b>{x.text}</b>
+                  {x.detail && <span>{x.detail}</span>}
+                </li>
+              ))}
+            </ol>
+            <p className="nbgroup">1週間のチェック表（できた日に、○）</p>
+            <table className="rtable rweek">
+              <thead>
+                <tr>
+                  <th>やること</th>
+                  {WEEK_DAYS.map((d) => (
+                    <th key={d}>{d}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {actionsOn.slice(0, 6).map((x, i) => (
+                  <tr key={x.id}>
+                    <th>
+                      {i + 1}. {x.text.slice(0, 22)}
+                      {x.text.length > 22 ? "…" : ""}
+                    </th>
+                    {WEEK_DAYS.map((d) => (
+                      <td key={d}>&nbsp;</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
         <section>
           <h2>{H("ゴール（どこを目指すか）")}</h2>
           <p className="rgoal">
@@ -330,6 +385,48 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </section>
         )}
 
+        {energy && (
+          <section>
+            <h2>{H("カロリーの、出しかた")}</h2>
+            <table className="rtable rcal">
+              <tbody>
+                <tr>
+                  <th>方法</th>
+                  <td>{energy.label}</td>
+                </tr>
+                {energy.bmr > 0 && (
+                  <tr>
+                    <th>基礎代謝</th>
+                    <td>約 {energy.bmr.toLocaleString()} kcal{energy.ffm > 0 ? `（除脂肪量 約${energy.ffm}kg）` : ""}</td>
+                  </tr>
+                )}
+                <tr>
+                  <th>維持のカロリー</th>
+                  <td>約 {energy.tdee.toLocaleString()} kcal{energy.bmr > 0 ? `（基礎代謝 × 活動量 ${energy.pal}）` : ""}</td>
+                </tr>
+                <tr>
+                  <th>1日の目標</th>
+                  <td>
+                    <b>約 {(want || energy.target).toLocaleString()} kcal</b>
+                    {energy.diff !== 0 && !manualKcal ? `（維持から ${energy.diff > 0 ? "+" : ""}${energy.diff}kcal）` : ""}
+                  </td>
+                </tr>
+                <tr>
+                  <th>たんぱく質・脂質・炭水化物</th>
+                  <td>
+                    約{energy.protein}g・約{energy.fat}g・約{energy.carb}g
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ul className="rnote">
+              {energy.notes.map((n) => (
+                <li key={n}>{n}</li>
+              ))}
+              <li>体重は、食事を変えると、ゆっくり変わり、減るにつれて、減りかたは緩やかになります（Hall 2011）。</li>
+            </ul>
+          </section>
+        )}
         {all.length > 0 && (
           <section>
             <h2>{H("栄養素のチェック（食物繊維・脂質・水分・塩分・ビタミン・ミネラル）")}</h2>
