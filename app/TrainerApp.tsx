@@ -5,6 +5,9 @@ import Link from "next/link";
 import LineShare from "./LineShare";
 import { searchPapers, type Paper } from "../lib/pubmed";
 import MealPicker from "./MealPicker";
+import { computeGoal, PACES, type Pace } from "../lib/goal";
+import { swapsFor } from "../lib/swaps";
+import { LineChart } from "./Charts";
 import { makeInsights, goodPoints, draftAdvice, ASK, ASK_CARE } from "../lib/advice";
 import { BANDS } from "./me";
 import { describe, goalOf, r10, today, totals, type St } from "../lib/meals";
@@ -30,6 +33,8 @@ export default function TrainerApp() {
   const [curMeal, setCurMeal] = useState<St>({ date: today(), size: {}, ext: {} });
   const [planMeal, setPlanMeal] = useState<St>({ date: today(), size: {}, ext: {} });
   const [targetKcal, setTargetKcal] = useState("");
+  const [pace, setPace] = useState<Pace>("mid");
+  const [swapOff, setSwapOff] = useState<string[]>([]);
   const [problem, setProblem] = useState("");
   const [weekAct, setWeekAct] = useState("");
   const [nextDate, setNextDate] = useState("");
@@ -56,6 +61,8 @@ export default function TrainerApp() {
         if (s.curMeal && s.curMeal.size) setCurMeal({ date: today(), size: s.curMeal.size, ext: s.curMeal.ext || {} });
         if (s.planMeal && s.planMeal.size) setPlanMeal({ date: today(), size: s.planMeal.size, ext: s.planMeal.ext || {} });
         setTargetKcal(s.targetKcal ?? "");
+        setPace(s.pace === "slow" || s.pace === "fast" ? s.pace : "mid");
+        setSwapOff(Array.isArray(s.swapOff) ? s.swapOff : []);
         setProblem(s.problem ?? "");
         setWeekAct(s.weekAct ?? "");
         setNextDate(s.nextDate ?? "");
@@ -69,9 +76,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff]);
 
   const w = num(now);
   const wt = num(target);
@@ -83,6 +90,10 @@ export default function TrainerApp() {
   const pt = totals(planMeal);
   const gl = goalOf(sex, band);
   const wantKcal = num(targetKcal.replace(/,/g, ""));
+  const effPace: Pace = conds.length > 0 ? "slow" : pace;
+  const plan = computeGoal(w, wt, days, effPace);
+  const swaps = swapsFor(curMeal);
+  const swapOn = swaps.filter((s) => !swapOff.includes(s.id));
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -117,6 +128,11 @@ export default function TrainerApp() {
     const L: string[] = [];
     L.push(`■ 目標：${goal === "diet" ? "体重を減らす" : goal === "muscle" ? "筋力・筋肉アップ" : "体重を減らして、筋力もアップ"}`);
     if (w) L.push(`■ 体重：${w}kg${wt ? ` → ${wt}kg` : ""}　筋トレ：週${days}回`);
+    if (plan) L.push("", `■ ゴールの目安：${w}kg → ${wt}kg　約${plan.weeks}週間（筋トレ 週${days}回・合計${plan.sessions}回）`);
+    if (swapOn.length) {
+      L.push("", "■ 置きかえ（こちらを食べてください）");
+      swapOn.forEach((s) => L.push(`・${s.from} → ${s.to}`));
+    }
     if (ct.any) {
       L.push("", `■ 現状の食事（約${r10(ct.kcal).toLocaleString()}kcal・食塩${Math.round(ct.salt * 10) / 10}g）`);
       describe(curMeal).forEach((s) => L.push(s));
@@ -518,6 +534,60 @@ export default function TrainerApp() {
           </table>
         )}
         {pt.any && wantKcal > 0 && Math.abs(pt.kcal - wantKcal) > 200 && <p className="plwarn">提案の食事が、目標カロリーから、約{r10(Math.abs(pt.kcal - wantKcal)).toLocaleString()}kcal はなれています。量や足したものを、調整しましょう。</p>}
+      </section>
+      <section className="card">
+        <p className="balh">ゴールの目安と、置きかえ（増やす食事）</p>
+        <p className="balh sub">ペース</p>
+        <div className="plpace" role="radiogroup" aria-label="ペース">
+          {PACES.map((p) => (
+            <button key={p.id} type="button" role="radio" aria-checked={effPace === p.id} className={effPace === p.id ? "on" : ""} disabled={conds.length > 0 && p.id !== "slow"} onClick={() => setPace(p.id)}>
+              {p.t}
+              <small>{p.d}</small>
+            </button>
+          ))}
+        </div>
+        {conds.length > 0 && <p className="agnote small">持病・体質を選んでいるため、ゆっくり（月1kgまで）にしています。</p>}
+        {plan ? (
+          <>
+            <p className="trgoal">
+              <b>
+                {w}kg → {wt}kg
+              </b>
+              　約<b>{plan.weeks}</b>週間{plan.capped ? "（1年以上）" : ""}　筋トレ 週{days}回 → 合計<b>{plan.sessions}</b>回
+            </p>
+            <LineChart pts={plan.pts} target={wt} marks={plan.marks} />
+            <p className="agnote small">
+              週に約{plan.rate}kgの変化（{plan.kind === "lose" ? "減量" : "増量"}）が前提です。1日あたり約{plan.perDay}kcalの差が必要です（食事の置きかえと、活動で）。体重の変化の目安で、個人差があります。
+            </p>
+          </>
+        ) : (
+          <p className="agnote">いまの体重と目標の体重を入れると、ゴールまでの道すじが出ます。</p>
+        )}
+        <p className="balh sub">置きかえの提案（こちらを食べてください）</p>
+        {swaps.length > 0 ? (
+          <ul className="trswap">
+            {swaps.map((s) => (
+              <li key={s.id} className={swapOff.includes(s.id) ? "off" : ""}>
+                <label>
+                  <input type="checkbox" checked={!swapOff.includes(s.id)} onChange={() => setSwapOff((x) => (x.includes(s.id) ? x.filter((y) => y !== s.id) : [...x, s.id]))} aria-label={`${s.from}の置きかえを、お客様に示す`} />
+                  <span>
+                    <em>いま：{s.from}</em>
+                    <b>→ {s.to}</b>
+                    <small>
+                      {s.why}（{s.dk > 0 ? "+" : ""}
+                      {s.dk}kcal／たんぱく質 {s.dp > 0 ? "+" : ""}
+                      {s.dp}g／食物繊維 {s.dfi > 0 ? "+" : ""}
+                      {s.dfi}g）
+                    </small>
+                  </span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="agnote">②で、現状の食事を選ぶと、「こちらを食べてください」という置きかえが出ます。</p>
+        )}
+        <p className="agnote small">「減らす」ではなく「増やす」置きかえです。チェックしたものが、お客様用のまとめに入ります。kcalとg は、食品の目安値からの計算です。</p>
       </section>
       <section className="card">
         <p className="balh">アドバイスのたたき台（自動）</p>

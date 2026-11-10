@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { CONDS, ISSUES, PLAYS } from "../lib/trainerData";
-import { describe, goalOf, r10, totals, type St } from "../lib/meals";
+import { describe, goalOf, r10, totals, type St, type Tot } from "../lib/meals";
 import { makeInsights } from "../lib/advice";
+import { computeGoal, PACES, type Pace } from "../lib/goal";
+import { EXAMPLES, swapsFor } from "../lib/swaps";
+import { Bars, LineChart, Pie } from "./Charts";
 import { lineUrl } from "./LineShare";
 import { BANDS } from "./me";
 
@@ -12,6 +15,21 @@ type S = Record<string, any>;
 const num = (s: unknown) => parseFloat(String(s ?? "").replace(/,/g, "")) || 0;
 const empty = (): St => ({ date: "", size: {}, ext: {} });
 const R1 = (n: number) => Math.round(n * 10) / 10;
+const COL = { p: "#2e9e6a", f: "#e0a030", c: "#4a7fd0" };
+const pfc = (t: Tot) => [
+  { label: "たんぱく質", value: t.p * 4, color: COL.p },
+  { label: "脂質", value: t.f * 9, color: COL.f },
+  { label: "炭水化物", value: t.c * 4, color: COL.c },
+];
+// 例がまだ選べないときの、よくある置きかえ
+const GENERIC: [string, string][] = [
+  ["菓子パン・ケーキ", "ヨーグルト＋果物"],
+  ["甘い飲み物", "豆乳・無糖のお茶・水"],
+  ["スナック菓子", "ナッツ ひとつかみ・チーズ"],
+  ["丼・麺だけ", "野菜の小鉢・卵・豆腐を、足す"],
+  ["揚げ物の定食", "焼き魚の定食"],
+  ["朝食なし", "ヨーグルト＋果物、卵＋パン"],
+];
 
 export default function ReportView() {
   const [s, setS] = useState<S | null>(null);
@@ -38,17 +56,26 @@ export default function ReportView() {
   const goalText = s.goal === "diet" ? "体重を減らす" : s.goal === "muscle" ? "筋力・筋肉をつける" : "体重を減らして、筋力もつける";
   const w = num(s.now);
   const wt = num(s.target);
+  const days = typeof s.days === "number" ? s.days : 3;
+  const hasConds = (s.conds || []).length > 0;
+  const pace: Pace = hasConds ? "slow" : s.pace === "slow" || s.pace === "fast" ? s.pace : "mid";
+  const gp = computeGoal(w, wt, days, pace);
   const issues = ISSUES.filter((i) => (s.issues || []).includes(i.id) && (s.picked || []).includes("i-" + i.id));
   const conds = CONDS.filter((c) => (s.conds || []).includes(c.id) && (s.picked || []).includes("c-" + c.id));
   const plays = PLAYS.filter((p) => (s.picked || []).includes(p.id));
   const ins = makeInsights(cur, sex, band, want).slice(0, 3);
+  const swaps = swapsFor(cur).filter((x) => !(s.swapOff || []).includes(x.id));
   const d = new Date();
   const dateText = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
   const name = String(s.name || "").trim();
   const srcs = Array.from(new Set([...issues.map((i) => i.src[0]?.label), ...plays.map((p) => p.src[0]?.label), ...conds.map((c) => c.src[0]?.label)].filter(Boolean)));
+  const kcalMain = pt.any ? pt.kcal : want || 0;
+  const aim = kcalMain || want;
+  const near = aim ? EXAMPLES.map((e) => ({ id: e.id, d: Math.abs(totals(e.st).kcal - aim) })).sort((a, b) => a.d - b.d)[0]?.id : "";
   let secNo = 0;
   const H = (t: string) => `${++secNo}. ${t}`;
-  const kcalMain = pt.any ? pt.kcal : want || 0;
+  const paceT = PACES.find((p) => p.id === pace);
+  const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
 
   const text = () => {
     let body = "";
@@ -95,7 +122,7 @@ export default function ReportView() {
       <article className="report" aria-label="お客様用のまとめ">
         <header className="rhead">
           <p className="rbrand">LIFEGYM</p>
-          <h1>あなたの食事・トレーニングのまとめ</h1>
+          <h1>あなたの目指す姿と、食事のまとめ</h1>
           <p className="rmeta">
             {dateText}
             {name ? `　${name} さん` : ""}
@@ -103,17 +130,63 @@ export default function ReportView() {
         </header>
 
         <section>
-          <h2>{H("今回の目的")}</h2>
-          <p>
-            <b>{goalText}</b>
-            {w ? `　体重：${w}kg${wt ? ` → ${wt}kg` : ""}` : ""}
-            {s.days ? `　筋トレ：週${s.days}回` : ""}
+          <h2>{H("ゴール（どこを目指すか）")}</h2>
+          <p className="rgoal">
+            <span>{goalText}</span>
+            {gp ? (
+              <>
+                <b>
+                  {w}kg → {wt}kg
+                </b>
+                <em>
+                  約{gp.weeks}週間{gp.capped ? "（1年以上）" : ""}　／　筋トレ 週{days}回　→　合計 {gp.sessions}回
+                </em>
+              </>
+            ) : (
+              <em>
+                {w ? `体重：${w}kg` : ""}
+                {days ? `　筋トレ 週${days}回` : ""}
+              </em>
+            )}
           </p>
+          {gp && (
+            <>
+              <LineChart pts={gp.pts} target={wt} marks={gp.marks} />
+              <table className="rtable rmarks">
+                <thead>
+                  <tr>
+                    <th>めやす</th>
+                    <th>体重</th>
+                    <th>筋トレ 累計</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gp.marks.map((m) => (
+                    <tr key={m.week}>
+                      <th>{m.week}週後</th>
+                      <td>{m.kg}kg</td>
+                      <td>{m.sessions}回</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {blocks.length > 0 && (
+                <div className="rbars">
+                  <p className="rnote">4週ごとの、筋トレの回数（週{days}回の場合）</p>
+                  <Bars items={blocks} />
+                </div>
+              )}
+              <p className="rnote">
+                ペース：{paceT?.t}（{paceT?.d}）。週に約{gp.rate}kgの変化が前提で、食事の置きかえと活動で、1日に約{gp.perDay}kcalの差をつくります。体重の変化の目安で、個人差があります。
+                {hasConds ? "持病・体質がある方は、ゆっくり（月1kgまで）で、主治医の指示を優先します。" : ""}
+              </p>
+            </>
+          )}
         </section>
 
         {(kcalMain > 0 || ct.any) && (
           <section>
-            <h2>{H("あなたの1日の食事の目安")}</h2>
+            <h2>{H("1日の食事の目安と、栄養のバランス")}</h2>
             <p className="rbig">
               {kcalMain > 0 ? (
                 <>
@@ -121,13 +194,20 @@ export default function ReportView() {
                 </>
               ) : null}
             </p>
+            {(pt.any || ct.any) && (
+              <div className="rpies">
+                {ct.any && <Pie data={pfc(ct)} title="いまの食事" />}
+                {pt.any && <Pie data={pfc(pt)} title="これからの食事" />}
+              </div>
+            )}
+            <p className="rnote">円グラフは、エネルギーの割合（たんぱく質・脂質・炭水化物）。国の目標量は、たんぱく質13〜20%・脂質20〜30%・炭水化物50〜65%（食事摂取基準 2025年版。年齢で少し変わります）。</p>
             {pt.any && (
               <table className="rtable">
                 <thead>
                   <tr>
                     <th></th>
                     {ct.any && <th>いま</th>}
-                    <th>提案</th>
+                    <th>これから</th>
                     <th>目安</th>
                   </tr>
                 </thead>
@@ -145,18 +225,6 @@ export default function ReportView() {
                     <td>{g.p}</td>
                   </tr>
                   <tr>
-                    <th>脂質</th>
-                    {ct.any && <td>{Math.round(ct.f)}g</td>}
-                    <td>{Math.round(pt.f)}g</td>
-                    <td>—</td>
-                  </tr>
-                  <tr>
-                    <th>炭水化物</th>
-                    {ct.any && <td>{Math.round(ct.c)}g</td>}
-                    <td>{Math.round(pt.c)}g</td>
-                    <td>—</td>
-                  </tr>
-                  <tr>
                     <th>食物繊維</th>
                     {ct.any && <td>{R1(ct.fi)}g</td>}
                     <td>{R1(pt.fi)}g</td>
@@ -172,21 +240,80 @@ export default function ReportView() {
               </table>
             )}
             <p className="rnote">
-              {BANDS[band]}・{sex === "m" ? "男性" : "女性"}の目安（日本人の食事摂取基準 2025年版）。量は「ふつうの1食ぶん」からの目安で、実際とは、ずれます。
+              {BANDS[band]}・{sex === "m" ? "男性" : "女性"}の目安。量は「ふつうの1食ぶん」からの目安で、実際とは、ずれます。
             </p>
           </section>
         )}
 
-        {pt.any && (
-          <section>
-            <h2>{H("おすすめの食事内容")}</h2>
-            <ul>
-              {describe(plan).map((l) => (
-                <li key={l}>{l}</li>
-              ))}
-            </ul>
-          </section>
-        )}
+        <section>
+          <h2>{H("こちらを食べてください（増やす食事）")}</h2>
+          <p className="rnote">食べるのを、がまんするのではなく、「代わりに、こちらを食べる」置きかえです。栄養が、増えます。</p>
+          <table className="rtable rswap">
+            <thead>
+              <tr>
+                <th>いまの食事</th>
+                <th>こちらを、食べてください</th>
+                <th>増えるもの</th>
+              </tr>
+            </thead>
+            <tbody>
+              {swaps.length > 0
+                ? swaps.map((x) => (
+                    <tr key={x.id}>
+                      <td>{x.from}</td>
+                      <td>
+                        <b>{x.to}</b>
+                      </td>
+                      <td>
+                        {x.why}
+                        <br />
+                        <span className="ract">
+                          {x.dk > 0 ? "+" : ""}
+                          {x.dk}kcal／たんぱく質 {x.dp > 0 ? "+" : ""}
+                          {x.dp}g／食物繊維 {x.dfi > 0 ? "+" : ""}
+                          {x.dfi}g
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                : GENERIC.map(([a, b]) => (
+                    <tr key={a}>
+                      <td>{a}</td>
+                      <td>
+                        <b>{b}</b>
+                      </td>
+                      <td>栄養が、増える</td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>{H("1日の食事の例")}</h2>
+          <p className="rnote">そのまま、まねできる例です。{near ? "目安のカロリーに近い例に、★をつけています。" : ""}</p>
+          <div className="rex">
+            {EXAMPLES.map((e) => {
+              const t = totals(e.st);
+              return (
+                <div key={e.id} className={`rexc${near === e.id ? " near" : ""}`}>
+                  <p className="rext">
+                    {near === e.id ? "★ " : ""}
+                    {e.name}　<b>約{r10(t.kcal).toLocaleString()}kcal</b>
+                  </p>
+                  <p className="rexn">
+                    たんぱく質 {Math.round(t.p)}g／食物繊維 {R1(t.fi)}g／食塩 {R1(t.salt)}g　{e.note}
+                  </p>
+                  <ul>
+                    {describe(e.st).map((l) => (
+                      <li key={l}>{l.replace(/（約\d[\d,]*kcal）$/, "")}</li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
         {(issues.length > 0 || String(s.problem || "").trim() || ins.length > 0) && (
           <section>
@@ -224,7 +351,11 @@ export default function ReportView() {
                 ))}
               </ul>
             )}
-            {String(s.nextDate || "").trim() && <p>次回の確認：<b>{String(s.nextDate).trim()}</b></p>}
+            {String(s.nextDate || "").trim() && (
+              <p>
+                次回の確認：<b>{String(s.nextDate).trim()}</b>
+              </p>
+            )}
           </section>
         )}
 
