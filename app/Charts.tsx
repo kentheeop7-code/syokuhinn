@@ -127,7 +127,7 @@ export function Radar({ axes, size = 260 }: { axes: { label: string; plan: numbe
   const n = axes.length;
   if (n < 3) return null;
   const c = size / 2;
-  const R = size / 2 - 38;
+  const R = size / 2 - 56;
   const max = 1.3;
   const pt = (i: number, v: number) => {
     const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
