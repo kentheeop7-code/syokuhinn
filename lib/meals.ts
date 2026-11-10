@@ -55,6 +55,8 @@ const MAIN: [string, string, string, Record<string, number>, string][] = [
   ["soup-salad", "🥣", "スープ＋サラダ", { soup: 1, salad: 1, veg: 1 }, "軽め"],
   ["tofu-light", "🫘", "豆腐・納豆＋野菜（軽め）", { soy: 2, veg: 2, rice: 0.5 }, "軽め"],
   ["shake", "🥤", "プロテイン・牛乳＋バナナ", { milk: 1, fruit: 1, nuts: 0.5 }, "軽め"],
+  ["juice-only", "🧃", "ジュース・ゼリーだけ", { sugar: 1.5 }, "軽め"],
+  ["veg-juice", "🥬", "野菜ジュース・スープだけ", { veg: 1, sugar: 0.3, soup: 0.5 }, "軽め"],
 ];
 const main = (p: string): Tile[] => MAIN.map(([k, icon, label, vals, cat]) => T(`${p}-x-${k}`, icon, label, vals, cat));
 
@@ -79,6 +81,7 @@ export const SLOTS: Slot[] = [
       T("am-x-pastry", "🥐", "菓子パン＋コーヒー", { cake: 1 }, "パン・カフェ"),
       T("am-x-cereal", "🥣", "シリアル・牛乳・バナナ", { oats: 1, milk: 1, fruit: 1 }, "軽め"),
       T("am-x-smoothie", "🥤", "スムージー＋ゆで卵", { fruit: 1.5, milk: 0.5, egg: 1 }, "軽め"),
+      T("am-x-juice", "🧃", "ジュースだけ", { sugar: 1.5 }, "軽め"),
       NONE("am-none", "食べない"),
     ],
   },
@@ -122,12 +125,14 @@ export const SLOTS: Slot[] = [
       T("sn-fruit", "🍎", "果物", { fruit: 1 }, "定番"),
       T("sn-yo", "🥛", "ヨーグルト", { yogurt: 1 }, "定番"),
       T("sn-sugar", "🥤", "甘い飲み物", { sugar: 1 }, "定番"),
+      T("sn-juice", "🧃", "ジュースのみ", { sugar: 1.5 }, "定番"),
       T("sn-alc", "🍺", "お酒", { alcohol: 1 }, "定番"),
       T("sn-x-wagashi", "🍡", "和菓子（大福・どら焼き）", { cake: 0.8 }, "甘いもの"),
       T("sn-x-ice", "🍨", "アイスクリーム", { snack: 1 }, "甘いもの"),
       T("sn-x-frappe", "🧋", "甘いカフェドリンク", { sugar: 1.5, milk: 0.5 }, "甘いもの"),
       T("sn-x-cracker", "🍘", "せんべい・おかき", { snack: 0.7 }, "甘いもの"),
       T("sn-x-latte", "☕", "カフェラテ（砂糖なし）", { milk: 1 }, "軽め"),
+      T("sn-x-vegjuice", "🥬", "野菜ジュース", { veg: 1, sugar: 0.3 }, "軽め"),
       T("sn-x-nutsfruit", "🥜", "ナッツ＋ドライフルーツ", { nuts: 1, fruit: 0.5 }, "軽め"),
       T("sn-x-granola", "🥣", "ヨーグルト＋グラノーラ", { yogurt: 1, oats: 0.5, fruit: 0.5 }, "軽め"),
       T("sn-x-protein", "🥛", "プロテイン・牛乳", { milk: 1 }, "軽め"),

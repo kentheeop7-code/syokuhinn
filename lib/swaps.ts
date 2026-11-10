@@ -51,6 +51,10 @@ const TABLE = Object.fromEntries([
   S("sn-x-ice", "ヨーグルト＋果物（冷凍でも）", "たんぱく質・カルシウムが、増える", { yogurt: 1, fruit: 1 }),
   S("sn-x-frappe", "カフェラテ（砂糖なし）または 豆乳", "たんぱく質・カルシウムが、増える", { milk: 1 }),
   S("sn-x-wagashi", "焼きいも・果物", "食物繊維が、増える", { imo: 1 }),
+  S("sn-juice", "果物そのもの（みかん・りんご）＋水・お茶", "食物繊維・ビタミンが、増える", { fruit: 1.5 }),
+  S("am-x-juice", "ヨーグルト＋果物（飲み物だけで、すませない）", "たんぱく質と食物繊維が、増える", { yogurt: 1, fruit: 1 }),
+  S("no-x-juice-only", "おにぎり＋ヨーグルト＋果物", "たんぱく質と食物繊維が、増える", { rice: 1, yogurt: 1, fruit: 1 }),
+  S("pm-x-juice-only", "おにぎり＋ヨーグルト＋果物", "たんぱく質と食物繊維が、増える", { rice: 1, yogurt: 1, fruit: 1 }),
   S("sn-x-cracker", "ナッツ・小魚・のり", "たんぱく質・ミネラルが、増える", { nuts: 0.7, smallfish: 0.5 }),]) as Record<string, { to: string; why: string; vals: Record<string, number> }>;
 
 const sum = (vals: Record<string, number>, m = 1) => {
