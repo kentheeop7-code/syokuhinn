@@ -46,6 +46,8 @@ export default function ReportView() {
   const dateText = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
   const name = String(s.name || "").trim();
   const srcs = Array.from(new Set([...issues.map((i) => i.src[0]?.label), ...plays.map((p) => p.src[0]?.label), ...conds.map((c) => c.src[0]?.label)].filter(Boolean)));
+  let secNo = 0;
+  const H = (t: string) => `${++secNo}. ${t}`;
   const kcalMain = pt.any ? pt.kcal : want || 0;
 
   const text = () => {
@@ -101,7 +103,7 @@ export default function ReportView() {
         </header>
 
         <section>
-          <h2>1. 今回の目的</h2>
+          <h2>{H("今回の目的")}</h2>
           <p>
             <b>{goalText}</b>
             {w ? `　体重：${w}kg${wt ? ` → ${wt}kg` : ""}` : ""}
@@ -111,7 +113,7 @@ export default function ReportView() {
 
         {(kcalMain > 0 || ct.any) && (
           <section>
-            <h2>2. あなたの1日の食事の目安</h2>
+            <h2>{H("あなたの1日の食事の目安")}</h2>
             <p className="rbig">
               {kcalMain > 0 ? (
                 <>
@@ -177,7 +179,7 @@ export default function ReportView() {
 
         {pt.any && (
           <section>
-            <h2>3. おすすめの食事内容</h2>
+            <h2>{H("おすすめの食事内容")}</h2>
             <ul>
               {describe(plan).map((l) => (
                 <li key={l}>{l}</li>
@@ -188,7 +190,7 @@ export default function ReportView() {
 
         {(issues.length > 0 || String(s.problem || "").trim() || ins.length > 0) && (
           <section>
-            <h2>4. いまの課題と、対策</h2>
+            <h2>{H("いまの課題と、対策")}</h2>
             <ul>
               {issues.map((i) => (
                 <li key={i.id}>
@@ -212,7 +214,7 @@ export default function ReportView() {
 
         {(String(s.weekAct || "").trim() || issues.length > 0) && (
           <section>
-            <h2>5. 今週やること</h2>
+            <h2>{H("今週やること")}</h2>
             {String(s.weekAct || "").trim() ? (
               <p className="rbox">{String(s.weekAct).trim()}</p>
             ) : (
@@ -228,7 +230,7 @@ export default function ReportView() {
 
         {(plays.length > 0 || conds.length > 0) && (
           <section>
-            <h2>6. アドバイス</h2>
+            <h2>{H("アドバイス")}</h2>
             <ul>
               {plays.map((p) => (
                 <li key={p.id}>{p.share(w)}</li>
@@ -243,7 +245,7 @@ export default function ReportView() {
 
         {String(s.note || "").trim() && (
           <section>
-            <h2>7. トレーナーから</h2>
+            <h2>{H("トレーナーから")}</h2>
             <p className="rbox pre">{String(s.note).trim()}</p>
           </section>
         )}
