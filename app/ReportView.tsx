@@ -54,7 +54,8 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   if (bad)
     return (
       <div className="rptwrap">
-        <p className="plwarn">このリンクの内容を、読みこめませんでした。トレーナーに、もう一度、リンクを送ってもらってください。</p>
+        <p className="plwarn">このリンクの内容を、読みこめませんでした。リンクが、途中で切れていないか、確かめてください（LINEでは、リンクの全体を、タップします）。それでも開けないときは、トレーナーに、もう一度、リンクか、PDFを、送ってもらってください。</p>
+        <p className="agnote small">LINEの中で開きにくいときは、リンクを長押しして、「Safari」「Chrome」などのブラウザで、開いてみてください。</p>
       </div>
     );
   if (!s) return null;

@@ -1,6 +1,8 @@
 // お客様に、リンクで見せるための、データのつつみかた。
 // データは、URLの「#」より後ろ（フラグメント）に入れる。「#」より後ろは、サーバーに、送られない。
 // ただし、LINEなどに、貼ったリンクを、持っている人は、中身が見られる。お客様ごとに、送ること。
+// 圧縮は、どの端末でも動く方式（lz-string）。古いスマホ・LINEの中のブラウザでも、開けるように。
+import LZString from "lz-string";
 export type Payload = Record<string, unknown>;
 const KEYS = ["name", "goal", "now", "target", "days", "others", "water", "sex", "band", "curMeal", "planMeal", "targetKcal", "pace", "swapOff", "picked", "conds", "issues", "problem", "weekAct", "nextDate", "note", "pins"];
 
@@ -24,25 +26,17 @@ const unb64u = (t: string) => {
 };
 
 export async function encodePayload(p: Payload): Promise<string> {
-  const raw = new TextEncoder().encode(JSON.stringify(p));
-  try {
-    const CS = (globalThis as any).CompressionStream;
-    if (CS) {
-      const cs = new CS("gzip");
-      const w = cs.writable.getWriter();
-      w.write(raw);
-      w.close();
-      const buf = new Uint8Array(await new Response(cs.readable).arrayBuffer());
-      return "g." + b64u(buf);
-    }
-  } catch {}
-  return "p." + b64u(raw);
+  // "z."＝lz-string（どの端末でも開ける）。URLに使える文字だけ（A-Z a-z 0-9 - _）にする。
+  return "z." + b64u(LZString.compressToUint8Array(JSON.stringify(p)));
 }
-
 export async function decodePayload(t: string): Promise<Payload | null> {
   try {
     const kind = t.slice(0, 2);
     const u8 = unb64u(t.slice(2));
+    if (kind === "z.") {
+      const s = LZString.decompressFromUint8Array(u8);
+      return s ? JSON.parse(s) : null;
+    }
     if (kind === "g.") {
       const DS = (globalThis as any).DecompressionStream;
       if (!DS) return null;
