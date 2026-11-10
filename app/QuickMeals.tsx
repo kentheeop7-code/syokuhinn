@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import MealPicker from "./MealPicker";
 import { goalOf, r10, today, totals, buildVals, type St } from "../lib/meals";
 import { readMe } from "./me";
+import { swapsFor } from "../lib/swaps";
 
 // かんたん入力（ホーム）：朝・昼・夜・おやつを、タップで選ぶだけ。合計が、1日の食事（推定カロリー）になる。
 const KEY = "lg-qm2";
@@ -49,6 +50,7 @@ export default function QuickMeals() {
   const me = readMe();
   const sk = me.sex === 2 ? "m" : "f";
   const g = goalOf(sk, me.band);
+  const swaps = swapsFor(st).slice(0, 4);
   const has = Object.keys(st.size).length > 0 || Object.keys(st.ext).length > 0;
   return (
     <section className="card qm" aria-label="かんたん入力">
@@ -100,6 +102,22 @@ export default function QuickMeals() {
             <em>目標 {g.salt}g未満</em>
           </li>
         </ul>
+      )}
+      {swaps.length > 0 && (
+        <div className="qmswap">
+          <p className="balh sub">こちらを食べてみませんか？（増やす食事）</p>
+          <ul className="trswap">
+            {swaps.map((x) => (
+              <li key={x.id}>
+                <span>
+                  <em>いま：{x.from}</em>
+                  <b>→ {x.to}</b>
+                  <small>{x.why}</small>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
       <p className="agnote small">量は目安です。ごはんの杯数や野菜の量を、細かく直したいときは、下の「くわしく直す」へ。</p>
     </section>

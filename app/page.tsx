@@ -5,6 +5,7 @@ import PlanPanel from "./PlanPanel";
 import LatestPapers from "./LatestPapers";
 import CondHub from "./CondHub";
 import QuickMeals from "./QuickMeals";
+import PlanChart from "./PlanChart";
 import DietForAnyone from "./DietForAnyone";
 import MoreFolds from "./MoreFolds";
 import Micronutrients from "./Micronutrients";
@@ -2143,6 +2144,7 @@ function HomeInner() {
             ‹ ホームへ戻る
           </Link>
           <PlanPanel />
+          <PlanChart />
           <Fold key="p-micro" id="p-micro" title="🧪 ビタミン・ミネラルの1日の目安" sub="あなたの性別・年齢の量" cls="wfold">
             <Micronutrients />
           </Fold>
