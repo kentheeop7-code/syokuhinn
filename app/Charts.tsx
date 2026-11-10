@@ -106,7 +106,7 @@ export function LineChart({ pts, unit = "kg", target, marks, width = 520, height
 export function Bars({ items, unit = "回" }: { items: { label: string; value: number }[]; unit?: string }) {
   const max = Math.max(...items.map((i) => i.value), 1);
   return (
-    <ul className="bars" aria-label="筋トレの回数">
+    <ul className="tbars" aria-label="筋トレの回数">
       {items.map((i) => (
         <li key={i.label}>
           <span>{i.label}</span>

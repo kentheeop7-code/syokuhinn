@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --brand: #1a9150;
   --brand-deep: #0f6b3a;
   --bg: #f4fbf7;
@@ -4675,11 +4675,11 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .pie ul{list-style:none;margin:0;padding:0;font-size:12px}
 .pie li{display:flex;align-items:center;gap:5px}
 .pie li i{display:inline-block;width:10px;height:10px;border-radius:2px}
-.bars{list-style:none;margin:6px 0;padding:0;display:grid;gap:6px}
-.bars li{display:grid;grid-template-columns:64px 1fr 54px;align-items:center;gap:8px;font-size:12px}
-.bars div{background:#eef1f4;border-radius:6px;height:14px;overflow:hidden}
-.bars i{display:block;height:100%;background:#2e9e6a}
-.bars b{text-align:right}
+.tbars{list-style:none;margin:6px 0;padding:0;display:grid;gap:6px}
+.tbars li{display:grid;grid-template-columns:64px 1fr 54px;align-items:center;gap:8px;font-size:12px}
+.tbars div{background:#eef1f4;border-radius:6px;height:14px;overflow:hidden}
+.tbars i{display:block;height:100%;background:#2e9e6a}
+.tbars b{text-align:right}
 
 /* report visuals */
 .rgoal{display:flex;flex-direction:column;gap:2px;background:#f3faf6;border:1px solid #cfe6d8;border-radius:12px;padding:10px 12px;margin:4px 0 8px}
