@@ -70,7 +70,7 @@ export default function ReportView() {
   const name = String(s.name || "").trim();
   const srcs = Array.from(new Set([...issues.map((i) => i.src[0]?.label), ...plays.map((p) => p.src[0]?.label), ...conds.map((c) => c.src[0]?.label)].filter(Boolean)));
   const kcalMain = pt.any ? pt.kcal : want || 0;
-  const aim = kcalMain || want;
+  const aim = want || kcalMain;
   const near = aim ? EXAMPLES.map((e) => ({ id: e.id, d: Math.abs(totals(e.st).kcal - aim) })).sort((a, b) => a.d - b.d)[0]?.id : "";
   let secNo = 0;
   const H = (t: string) => `${++secNo}. ${t}`;
