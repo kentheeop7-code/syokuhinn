@@ -5,6 +5,7 @@ import PlanPanel from "./PlanPanel";
 import LatestPapers from "./LatestPapers";
 import CondHub from "./CondHub";
 import QuickMeals from "./QuickMeals";
+import MyNutrition from "./MyNutrition";
 import PlanChart from "./PlanChart";
 import DietForAnyone from "./DietForAnyone";
 import MoreFolds from "./MoreFolds";
@@ -2145,6 +2146,7 @@ function HomeInner() {
           </Link>
           <PlanPanel />
           <PlanChart />
+          <Fold key="p-mynut" id="p-mynut" title="🥗 あなたの食事の、栄養バランス" sub="ホームで選んだ食事から、図で" cls="wfold"><MyNutrition /></Fold>
           <Fold key="p-micro" id="p-micro" title="🧪 ビタミン・ミネラルの1日の目安" sub="あなたの性別・年齢の量" cls="wfold">
             <Micronutrients />
           </Fold>
@@ -2183,6 +2185,7 @@ function HomeInner() {
             <i aria-hidden>›</i>
           </Link>
           <MoreFolds limit={4}>
+          <Fold key="w-mynut" id="w-mynut" title="🥗 あなたの食事の、栄養バランス" sub="ホームで選んだ食事から、図で" cls="wfold"><MyNutrition /></Fold>
           <Fold key="w-me" id="w-me" title="👤 あなたの1日の目安" sub="性別・年齢で、目安が変わります" cls="wfold"><MeCard /></Fold>
           <Fold key="w-sym" id="w-sym" title="🩺 気になることから、足したい栄養を探す" sub="選ぶだけ。記録は、いりません" cls="wfold"><SymptomCheck /></Fold>
           <MyKcal topic="women" />

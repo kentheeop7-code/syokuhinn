@@ -9,6 +9,7 @@ import MoreFolds from "../MoreFolds";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondHub from "../CondHub";
+import MyNutrition from "../MyNutrition";
 import DietForAnyone from "../DietForAnyone";
 import MyKcal from "../MyKcal";
 import type { Metadata } from "next";
@@ -570,6 +571,7 @@ export default function Nutrients() {
       <Fold id="me" title="あなたの1日の目安（性別・年齢）" sub="カロリー・PFCと、各栄養素の目安"><MyKcal topic="nutrients" /><MeCard /></Fold>
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold id="micro" title="ビタミン・ミネラルの1日の目安" sub="18項目：量と、とりやすい食品"><Micronutrients /></Fold>
+      <Fold id="mynut" title="🥗 あなたの食事の、栄養バランス" sub="ホームで選んだ食事から、図で"><MyNutrition /></Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="n-cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）"><CondHub /></Fold>
       <Fold id="h-guide" title="国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）"><NationalGuide bare /></Fold>

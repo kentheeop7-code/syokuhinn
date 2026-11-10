@@ -7,6 +7,7 @@ import MyKcal from "../MyKcal";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondHub from "../CondHub";
+import MyNutrition from "../MyNutrition";
 import DietForAnyone from "../DietForAnyone";
 import Disclosure from "../Disclosure";
 import RelatedProducts from "../RelatedProducts";
@@ -139,6 +140,7 @@ export default function Tips() {
         </Fold>
       ))}
       </MoreFolds>
+      <Fold id="mynut" title="🥗 あなたの食事の、栄養バランス" sub="ホームで選んだ食事から、図で"><MyNutrition /></Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">
         <CondHub />
