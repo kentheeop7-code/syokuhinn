@@ -189,3 +189,80 @@ export function HBars({ items, unit = "", target, targetLabel, color = "#2e9e6a"
     </ul>
   );
 }
+// ゲージ：区分（帯）の上に、印（いま・目標）を置く。BMIや内臓脂肪レベルに使う。
+export function Gauge({ bands, min, max, marks, unit = "" }: { bands: { from: number; to: number; label: string; color: string }[]; min: number; max: number; marks: { v: number; label: string; color?: string }[]; unit?: string }) {
+  const W = 520;
+  const H = 96;
+  const x = (v: number) => 14 + ((Math.min(max, Math.max(min, v)) - min) / (max - min)) * (W - 28);
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="gauge" role="img" aria-label={`ゲージ：${marks.map((m) => `${m.label}${m.v}${unit}`).join("、")}`}>
+      {bands.map((b) => (
+        <g key={b.label}>
+          <rect x={x(b.from)} y={44} width={x(b.to) - x(b.from)} height={18} fill={b.color} />
+          <text x={(x(b.from) + x(b.to)) / 2} y={78} textAnchor="middle" fontSize="10" fill="#445">
+            {b.label}
+          </text>
+          <text x={x(b.from)} y={92} textAnchor="middle" fontSize="9" fill="#889">
+            {b.from}
+          </text>
+        </g>
+      ))}
+      {marks.map((m, i) => (
+        <g key={m.label}>
+          <path d={`M ${x(m.v)} 44 l -6 -10 h 12 z`} fill={m.color ?? "#223"} />
+          <text x={x(m.v)} y={i % 2 === 0 ? 22 : 12} textAnchor="middle" fontSize="11" fontWeight="700" fill={m.color ?? "#223"}>
+            {m.label} {m.v}
+            {unit}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+// 積み上げ棒：体の中身（体脂肪・除脂肪）を、いま と ゴールで、くらべる。
+export function StackBars({ rows, unit = "kg" }: { rows: { label: string; parts: { label: string; value: number; color: string }[] }[]; unit?: string }) {
+  const max = Math.max(...rows.map((r) => r.parts.reduce((s, p) => s + p.value, 0)), 1);
+  return (
+    <div className="stackbars" aria-label="体の中身のくらべ">
+      {rows.map((r) => {
+        const total = r.parts.reduce((s, p) => s + p.value, 0);
+        return (
+          <div key={r.label} className="sbrow">
+            <span>{r.label}</span>
+            <div className="sbtrack" style={{ width: `${(total / max) * 100}%` }}>
+              {r.parts.map((p) => (
+                <i key={p.label} style={{ width: `${(p.value / total) * 100}%`, background: p.color }} title={`${p.label} ${p.value}${unit}`}>
+                  {p.value > 0 && (p.value / total) * 100 > 14 ? `${p.label} ${p.value}${unit}` : ""}
+                </i>
+              ))}
+            </div>
+            <b>
+              {Math.round(total * 10) / 10}
+              {unit}
+            </b>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// 絵の数で見せる：「ごはん 茶碗3杯」のように。
+export function IconRow({ icon, n, label, note }: { icon: string; n: number; label: string; note?: string }) {
+  const full = Math.floor(n + 0.25);
+  const half = n - full >= 0.25;
+  return (
+    <div className="iconrow">
+      <span className="irl">{label}</span>
+      <span className="iri" aria-label={`${label} ${n}`}>
+        {Array.from({ length: Math.max(0, Math.min(full, 10)) }).map((_, i) => (
+          <i key={i}>{icon}</i>
+        ))}
+        {half && <i className="half">{icon}</i>}
+      </span>
+      <b>{n}</b>
+      {note && <small>{note}</small>}
+    </div>
+  );
+}

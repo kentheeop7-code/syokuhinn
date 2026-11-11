@@ -4796,3 +4796,36 @@ input:focus, textarea:focus, select:focus, .adsearch:focus { border-color: var(-
 .rweek td{height:26px;min-width:22px}
 .rcal th{text-align:left;width:34%;font-size:12px}.rcal td{text-align:left;font-size:13px}
 ul.rnote{padding-left:18px;margin:6px 0}
+
+/* pdf export clone */
+.report.pdfmode{border:0!important;border-radius:0!important;padding:0!important;margin:0!important;background:#fff;width:734px;max-width:none;font-size:13px}
+.report.pdfmode h2{margin-top:14px}
+
+/* gauge, stack bars, icon rows */
+.gauge{display:block;width:100%;max-width:520px;height:auto;margin:4px auto}
+.stackbars{display:grid;gap:8px;margin:6px 0}
+.sbrow{display:grid;grid-template-columns:70px 1fr 54px;align-items:center;gap:6px;font-size:12px}
+.sbrow>div.sbtrack{display:flex;height:26px;border-radius:6px;overflow:hidden}
+.sbtrack i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;color:#fff;white-space:nowrap;overflow:hidden}
+.sbrow b{text-align:right}
+.iconrow{display:grid;grid-template-columns:96px 1fr 34px;align-items:center;gap:6px;margin:4px 0;font-size:12px;break-inside:avoid}
+.iconrow small{grid-column:2 / 4;color:#667;font-size:11px;margin-top:-2px}
+.iri{font-size:20px;line-height:1.2;letter-spacing:1px}
+.iri .half{opacity:.4}
+.irl{font-weight:700}
+
+/* day plan timeline */
+.rplan{display:grid;gap:8px}
+.rplc{border:1px solid #cfd4da;border-radius:12px;padding:8px 10px;break-inside:avoid;background:#fff}
+.rplc.same{background:#f7f8fa}
+.rplh{margin:0 0 4px;font-weight:800;color:#1f5f41;font-size:13px}
+.rplb{display:grid;grid-template-columns:1fr 26px 1fr;align-items:center;gap:6px}
+.rplb i{font-style:normal;text-align:center;color:#2e9e6a;font-size:18px;font-weight:800}
+.rplfrom,.rplto{border-radius:10px;padding:6px 8px;font-size:12px;line-height:1.45}
+.rplfrom{background:#f1f3f5;color:#556}
+.rplto{background:#e8f5ee;border:1px solid #2e9e6a;color:#14402b}
+.rplc.same .rplto{background:#f1f3f5;border-color:#d6d9de;color:#556}
+.rplfrom small,.rplto small{display:block;font-size:10px;opacity:.8}
+.rplfrom b,.rplto b{display:block;font-size:13px}
+.rplfrom em,.rplto em{display:block;font-style:normal;font-size:11px;margin-top:2px}
+@media (max-width:420px){.rplb{grid-template-columns:1fr}.rplb i{transform:rotate(90deg)}}

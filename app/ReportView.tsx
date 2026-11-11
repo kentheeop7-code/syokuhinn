@@ -12,9 +12,12 @@ import { microStatus } from "../lib/micro";
 import { OTHER_TYPES, describeEx, guideMin, labelOf, weeklyMin, type OtherEx } from "../lib/exercise";
 import { REPORT_EVIDENCE } from "../lib/evidenceNotes";
 import { decodePayload, shareUrl } from "../lib/shareLink";
-import { Bars, HBars, LineChart, Pie, Radar } from "./Charts";
+import { Bars, Gauge, HBars, IconRow, LineChart, Pie, Radar, StackBars } from "./Charts";
+import { BMI_BANDS, analyzeBody } from "../lib/body";
+import { mealGuide } from "../lib/mealguide";
 import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 import { lineUrl } from "./LineShare";
+import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
 import { BANDS } from "./me";
 
 // お客様向けのまとめ（A4・印刷→「PDFとして保存」）。
@@ -32,6 +35,8 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const [copied, setCopied] = useState("");
   const [link, setLink] = useState("");
   const [bad, setBad] = useState(false);
+  const [busy, setBusy] = useState("");
+  const [msg, setMsg] = useState("");
   useEffect(() => {
     document.body.classList.add("rpt");
     (async () => {
@@ -81,8 +86,10 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const hasConds = (s.conds || []).length > 0;
   const pace: Pace = hasConds ? "slow" : s.pace === "slow" || s.pace === "fast" ? s.pace : "mid";
   const gp = computeGoal(w, wt, days, pace);
-  const energy = calcEnergy({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace });
+  const energy = calcEnergy({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace });
   const want = manualKcal || energy?.target || 0;
+  const bodyA = analyzeBody({ height: num(s.height), weight: w, targetWeight: wt, bodyFat: num(s.bodyFat), fatMass: num(s.fatMass), muscle: num(s.muscle), visceral: num(s.visceral), bmiIn: num(s.bmiIn) });
+  const labelsOf = (st: St, slotId: string) => (SLOTS.find((x) => x.id === slotId)?.tiles ?? []).filter((t) => st.size[t.id] !== undefined).map((t) => t.label);
   const muscleKg = num(s.muscle);
   const fatPct = num(s.bodyFat);
   const bmrIn = num(s.bmr);
@@ -142,6 +149,35 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     } catch {}
     return `【LIFEGYM トレーニングのまとめ】\n${dateText}${name ? `　${name}さん` : ""}\n\n${body}${link && link.length <= 1800 && !body.includes(link) ? `\n\n■ あなた専用のまとめ（スマホで見られます）\n${link}` : ""}\n\n※ 一般的な目安です。持病・服薬のある方は、主治医にご確認ください。`;
   };
+  // PDF・画像のファイルを、この画面の中で、作る（印刷の画面を、使えない端末でも、使える）
+  const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+  const fileBase = `LIFEGYM_まとめ${name ? "_" + name : ""}_${ymd}`;
+  const makeFile = async (kind: "pdf" | "img", how: "download" | "share") => {
+    setMsg("");
+    setBusy("作成中…（しばらく、お待ちください）");
+    try {
+      const pages = await renderReportPages(".report", (a, b) => setBusy(`作成中… ${a}/${b}`));
+      if (kind === "pdf") {
+        const blob = await pagesToPdf(pages);
+        const file = new File([blob], `${fileBase}.pdf`, { type: "application/pdf" });
+        (window as any).__pdfInfo = { pages: pages.length, size: blob.size };
+        if (how === "share") {
+          if (!(await shareFiles([file], "食事・運動のまとめ"))) downloadFile(file, file.name);
+        } else downloadFile(file, file.name);
+        setMsg(`PDFを作りました（${pages.length}ページ・${Math.round(blob.size / 1024)}KB）。ダウンロードされない場合は、ブラウザの「ダウンロード」を、確認してください。`);
+      } else {
+        const files = await pagesToJpegFiles(pages, fileBase);
+        (window as any).__imgInfo = { pages: files.length, size: files.reduce((s, f) => s + f.size, 0) };
+        if (how === "share") {
+          if (!(await shareFiles(files, "食事・運動のまとめ"))) for (const f of files) { downloadFile(f, f.name); await new Promise((r) => setTimeout(r, 400)); }
+        } else for (const f of files) { downloadFile(f, f.name); await new Promise((r) => setTimeout(r, 400)); }
+        setMsg(`画像を作りました（${files.length}枚）。LINEのトークで、画像として、送れます。`);
+      }
+    } catch (e) {
+      setMsg("ファイルを作れませんでした。もう一度、お試しください。うまくいかないときは、「印刷」から、PDFにしてください。");
+    }
+    setBusy("");
+  };
   const copy = async (what: "text" | "link") => {
     const v = what === "text" ? text() : link;
     try {
@@ -160,8 +196,17 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           <>
             <p className="agnote">お客様に渡す「まとめ」の、プレビューです。内容を確かめて、PDFにするか、お客様専用のリンクを送ります。</p>
             <div className="rptbtns">
-              <button type="button" className="linebtn" onClick={() => window.print()}>
-                📄 PDFとして保存（印刷）
+              <button type="button" className="linebtn" onClick={() => makeFile("pdf", "download")} disabled={!!busy}>
+                📥 PDFファイルを作る（ダウンロード）
+              </button>
+              <button type="button" className="btn ghost" onClick={() => makeFile("pdf", "share")} disabled={!!busy}>
+                📤 PDFを、LINEなどで共有
+              </button>
+              <button type="button" className="btn ghost" onClick={() => makeFile("img", "share")} disabled={!!busy}>
+                🖼 画像で保存・共有（LINEに送りやすい）
+              </button>
+              <button type="button" className="btn ghost" onClick={() => window.print()}>
+                🖨 印刷する
               </button>
               <button type="button" className="btn ghost" onClick={() => copy("link")} disabled={!link}>
                 {copied === "link" ? "✓ リンクをコピーしました" : "お客様専用ページの、リンクをコピー"}
@@ -177,19 +222,27 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
               </a>
             </div>
             <ol className="rptsteps">
-              <li>「PDFとして保存」で、PDFを作る（印刷の画面で、送信先を「PDFに保存」）。</li>
+              <li>「PDFファイルを作る」で、PDFを、ダウンロードする（スマホでは「PDFを、LINEなどで共有」で、LINEへ、直接、送れます）。</li>
               <li>「公式LINEを開く」で、文章と、お客様専用ページのリンクを送る。</li>
-              <li>LINEのトークで、保存したPDFを、ファイルとして添付する（PDFは、LINEの仕様上、自動では添付できません）。</li>
+              <li>LINEのトークで、保存したPDF（または、画像）を、添付する。パソコンでは、LINEの仕様上、自動では、添付できません。</li>
             </ol>
+            {(busy || msg) && <p className="agnote" role="status">{busy || msg}</p>}
             <p className="agnote small">お客様専用ページのリンクは、お客様の内容が、リンクの中に入っています（サーバーには、保存されません）。お客様ごとに、送ってください。</p>
           </>
         ) : (
           <>
             <p className="agnote">{name ? `${name}さんの、` : ""}食事・運動のまとめです。スマホで、いつでも見られます。</p>
             <div className="rptbtns">
-              <button type="button" className="linebtn" onClick={() => window.print()}>
-                📄 PDFとして保存する
+              <button type="button" className="linebtn" onClick={() => makeFile("pdf", "download")} disabled={!!busy}>
+                📥 PDFをダウンロードする
               </button>
+              <button type="button" className="btn ghost" onClick={() => makeFile("img", "share")} disabled={!!busy}>
+                🖼 画像で保存する
+              </button>
+              <button type="button" className="btn ghost" onClick={() => window.print()}>
+                🖨 印刷する
+              </button>
+              {(busy || msg) && <p className="agnote" role="status" style={{ flex: "1 1 100%" }}>{busy || msg}</p>}
             </div>
           </>
         )}
@@ -277,6 +330,123 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 ))}
               </tbody>
             </table>
+          </section>
+        )}
+        {bodyA && (
+          <section>
+            <h2>{H("からだの、いま と、これから")}</h2>
+            {bodyA.bmi > 0 && (
+              <>
+                <p className="nbgroup">BMI（体格指数）の位置</p>
+                <Gauge
+                  bands={BMI_BANDS}
+                  min={14}
+                  max={40}
+                  marks={[{ v: bodyA.bmi, label: "いま", color: "#1f5f41" }, ...(bodyA.bmiGoal > 0 && Math.abs(bodyA.bmiGoal - bodyA.bmi) > 0.2 ? [{ v: bodyA.bmiGoal, label: "ゴール", color: "#c0392b" }] : [])]}
+                />
+                <p className="rnote">
+                  いま BMI {bodyA.bmi}（{bodyA.bmiCat}）{bodyA.bmiGoal > 0 ? `→ ゴール BMI ${bodyA.bmiGoal}（${bodyA.bmiGoalCat}）` : ""}。区分は、日本肥満学会の基準です。{bodyA.std22 > 0 ? `BMI22にあたる体重は ${bodyA.std22}kg。` : ""}
+                </p>
+              </>
+            )}
+            {bodyA.has && (
+              <>
+                <p className="nbgroup">体の中身（体脂肪と、それ以外）</p>
+                <StackBars
+                  rows={[
+                    { label: "いま", parts: [{ label: "体脂肪", value: bodyA.fatKg, color: "#e0a030" }, { label: "筋肉・骨など", value: bodyA.ffm, color: "#4a7fd0" }] },
+                    ...(bodyA.goalFatPct > 0 ? [{ label: "ゴール", parts: [{ label: "体脂肪", value: bodyA.goalFatKg, color: "#e0a030" }, { label: "筋肉・骨など", value: bodyA.ffm, color: "#4a7fd0" }] }] : []),
+                  ]}
+                />
+                <p className="rnote">
+                  体脂肪率 {bodyA.fatPct}%{bodyA.goalFatPct > 0 ? ` → 筋肉などを保って ${wt}kg にすると、約 ${bodyA.goalFatPct}%` : ""}。減らしたいのは、体脂肪です。筋肉を守るために、たんぱく質と筋トレが大切です。
+                </p>
+              </>
+            )}
+            {bodyA.visceral > 0 && (
+              <>
+                <p className="nbgroup">内臓脂肪レベル</p>
+                <Gauge
+                  bands={[
+                    { from: 1, to: 10, label: "標準（1〜9）", color: "#6cc08b" },
+                    { from: 10, to: 15, label: "やや高い（10〜14）", color: "#f0c25a" },
+                    { from: 15, to: 30, label: "高い（15〜）", color: "#e0694f" },
+                  ]}
+                  min={1}
+                  max={30}
+                  marks={[{ v: bodyA.visceral, label: "いま", color: "#1f5f41" }]}
+                />
+                <p className="rnote">区分は、一般的な体組成計の目安です（機器により異なります）。</p>
+              </>
+            )}
+            <table className="rtable rcal">
+              <tbody>
+                {bodyA.bmi > 0 && (
+                  <tr>
+                    <th>BMI</th>
+                    <td>
+                      {bodyA.bmi}（{bodyA.bmiCat}）
+                    </td>
+                  </tr>
+                )}
+                {bodyA.fatPct > 0 && (
+                  <tr>
+                    <th>体脂肪率・体脂肪量</th>
+                    <td>
+                      {bodyA.fatPct}%・約{bodyA.fatKg}kg
+                    </td>
+                  </tr>
+                )}
+                {bodyA.musclePct > 0 && (
+                  <tr>
+                    <th>骨格筋量</th>
+                    <td>
+                      {num(s.muscle)}kg（体重の {bodyA.musclePct}%）
+                    </td>
+                  </tr>
+                )}
+                {bmrIn > 0 && (
+                  <tr>
+                    <th>基礎代謝</th>
+                    <td>{bmrIn}kcal</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <p className="rnote">{bodyA.notes.join(" ")}</p>
+          </section>
+        )}
+
+        {pt.any && (
+          <section>
+            <h2>{H("今日の食事プラン（1日の流れ）")}</h2>
+            <p className="rnote">左が「いま」、右が「これから」です。変えるところに、色がついています。</p>
+            <div className="rplan">
+              {SLOTS.map((sl) => {
+                const cl = labelsOf(cur, sl.id);
+                const pl = labelsOf(plan, sl.id);
+                if (!pl.length && !cl.length) return null;
+                const same = cl.length === pl.length && cl.every((x) => pl.includes(x));
+                return (
+                  <div key={sl.id} className={`rplc${same ? " same" : ""}`}>
+                    <p className="rplh">{sl.label}</p>
+                    <div className="rplb">
+                      <div className="rplfrom">
+                        <small>いま</small>
+                        <b>{cl.length ? cl.join("・") : "（なし）"}</b>
+                        <em>{cl.length ? `約${r10(slotKcal(cur, sl)).toLocaleString()}kcal` : ""}</em>
+                      </div>
+                      <i aria-hidden>{same ? "＝" : "▶"}</i>
+                      <div className="rplto">
+                        <small>{same ? "そのまま" : "これから"}</small>
+                        <b>{pl.length ? pl.join("・") : "（なし）"}</b>
+                        <em>{pl.length ? `約${r10(slotKcal(plan, sl)).toLocaleString()}kcal` : ""}</em>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </section>
         )}
         <section>
@@ -419,12 +589,46 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 </tr>
               </tbody>
             </table>
+            <p className="nbgroup">カロリーのくらべ</p>
+            <HBars
+              unit="kcal"
+              items={[
+                ...(energy.bmr > 0 ? [{ label: "基礎代謝", value: energy.bmr, color: "#9aa7b2" }] : []),
+                { label: "維持のカロリー", value: energy.tdee, color: "#4a7fd0" },
+                { label: "1日の目標", value: want || energy.target, color: "#2e9e6a" },
+                ...(ct.any ? [{ label: "いまの食事", value: r10(ct.kcal), color: "#e0a030" }] : []),
+                ...(pt.any ? [{ label: "提案の食事", value: r10(pt.kcal), color: "#7b5ea7" }] : []),
+              ]}
+            />
             <ul className="rnote">
               {energy.notes.map((n) => (
                 <li key={n}>{n}</li>
               ))}
               <li>体重は、食事を変えると、ゆっくり変わり、減るにつれて、減りかたは緩やかになります（Hall 2011）。</li>
             </ul>
+          </section>
+        )}
+        {(want || kcalMain) > 0 && (
+          <section>
+            <h2>{H("食べる量の、めやす（手ばかり）")}</h2>
+            {(() => {
+              const tgt = want || kcalMain;
+              const g2 = mealGuide(tgt, energy?.protein ?? 0, energy?.carb ?? 0);
+              return (
+                <>
+                  <p className="rnote">1日 約{r10(tgt).toLocaleString()}kcalの、食べる量のイメージです。計量しなくても、手と茶碗で、はかれます。</p>
+                  <p className="nbgroup">1日の量（かっこは、1食あたり）</p>
+                  <IconRow icon="🍚" n={g2.rice} label="ごはん" note={`茶碗1杯＝約150g。1食 約${g2.perMeal.rice}杯`} />
+                  <IconRow icon="✋" n={g2.palms} label="主菜（肉・魚）" note={`手のひら1枚＝約90g（卵2個・豆腐1/2丁でも）。1食 約${g2.perMeal.palms}枚`} />
+                  <IconRow icon="🥦" n={g2.veg} label="野菜" note="小鉢1つ＝約70g。1日350g以上が、国の目標（健康日本21）。1食 小鉢1〜2つ" />
+                  <IconRow icon="🥛" n={g2.dairy} label="乳製品" note="牛乳コップ1杯・ヨーグルト1個" />
+                  <IconRow icon="🍎" n={g2.fruit} label="果物" note="みかん1個・りんご1/2個" />
+                  <p className="nbgroup">1日の、カロリーの配分（めやす）</p>
+                  <HBars unit="kcal" items={g2.split.map((x, i) => ({ label: x.label, value: x.kcal, color: ["#f2b84b", "#4a7fd0", "#7b5ea7", "#e0709a"][i] }))} />
+                  <p className="rnote">量は、平均的な目安です。体格・活動量・体調で、調整してください。</p>
+                </>
+              );
+            })()}
           </section>
         )}
         {all.length > 0 && (

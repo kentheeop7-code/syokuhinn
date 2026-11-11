@@ -11,6 +11,7 @@ import { microStatus } from "../lib/micro";
 import { shareUrl } from "../lib/shareLink";
 import { calcEnergy, PAL_VAL } from "../lib/energy";
 import { buildActions } from "../lib/actions";
+import { analyzeBody } from "../lib/body";
 import { PAL_TEXT } from "./me";
 import { Bars } from "./Charts";
 import { swapsFor } from "../lib/swaps";
@@ -39,6 +40,9 @@ export default function TrainerApp() {
   const [muscle, setMuscle] = useState("");
   const [bodyFat, setBodyFat] = useState("");
   const [pal, setPal] = useState(1);
+  const [fatMass, setFatMass] = useState("");
+  const [visceral, setVisceral] = useState("");
+  const [bmiIn, setBmiIn] = useState("");
   const [actOff, setActOff] = useState<string[]>([]);
   const [link, setLink] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
@@ -78,6 +82,9 @@ export default function TrainerApp() {
         setMuscle(s.muscle ?? "");
         setBodyFat(s.bodyFat ?? "");
         setPal(typeof s.pal === "number" ? s.pal : 1);
+        setFatMass(s.fatMass ?? "");
+        setVisceral(s.visceral ?? "");
+        setBmiIn(s.bmiIn ?? "");
         setActOff(Array.isArray(s.actOff) ? s.actOff : []);
         setNote(s.note ?? "");
         setPicked(Array.isArray(s.picked) ? s.picked : []);
@@ -103,9 +110,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn]);
 
   const w = num(now);
   const wt = num(target);
@@ -120,7 +127,9 @@ export default function TrainerApp() {
   const effPace: Pace = conds.length > 0 ? "slow" : pace;
   const plan = computeGoal(w, wt, days, effPace);
   // 目標カロリー：トレーナーが、直接入れた値を、優先。なければ、体のデータから、自動で計算。
-  const energy = calcEnergy({ sex, band, age: num(age), height: num(height), weight: w, bmr: num(bmr), bodyFat: num(bodyFat), muscle: num(muscle), pal, targetWeight: wt, pace: effPace });
+  const bfAuto = num(bodyFat) || (num(fatMass) > 0 && w > 0 ? (num(fatMass) / w) * 100 : 0);
+  const bodyA = analyzeBody({ height: num(height), weight: w, targetWeight: wt, bodyFat: num(bodyFat), fatMass: num(fatMass), muscle: num(muscle), visceral: num(visceral), bmiIn: num(bmiIn) });
+  const energy = calcEnergy({ sex, band, age: num(age), height: num(height), weight: w, bmr: num(bmr), bodyFat: bfAuto, muscle: num(muscle), pal, targetWeight: wt, pace: effPace });
   const wantKcal = manualKcal || energy?.target || 0;
   const swaps = swapsFor(curMeal);
   const swapOn = swaps.filter((s) => !swapOff.includes(s.id));
@@ -129,11 +138,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -189,6 +198,10 @@ export default function TrainerApp() {
     if (swapOn.length) {
       L.push("", "■ 置きかえ（こちらを食べてください）");
       swapOn.forEach((s) => L.push(`・${s.from} → ${s.to}`));
+    }
+    if (bodyA) {
+      const bp = [bodyA.bmi > 0 ? `BMI ${bodyA.bmi}（${bodyA.bmiCat}）` : "", bodyA.fatPct > 0 ? `体脂肪率 ${bodyA.fatPct}%（体脂肪 約${bodyA.fatKg}kg）` : "", num(muscle) > 0 ? `骨格筋 ${num(muscle)}kg` : "", bodyA.visceral > 0 ? `内臓脂肪レベル ${bodyA.visceral}（${bodyA.visceralCat}）` : "", num(bmr) > 0 ? `基礎代謝 ${num(bmr)}kcal` : ""].filter(Boolean);
+      if (bp.length) L.push("", `■ からだのデータ：${bp.join("／")}`);
     }
     if (ct.any) {
       L.push("", `■ 現状の食事（約${r10(ct.kcal).toLocaleString()}kcal・食塩${Math.round(ct.salt * 10) / 10}g）`);
@@ -473,8 +486,20 @@ export default function TrainerApp() {
               <input inputMode="decimal" value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} placeholder="例 28" aria-label="体脂肪率" />
             </label>
             <label className="trf">
-              <span>筋肉量（kg）</span>
+              <span>骨格筋量（kg）</span>
               <input inputMode="decimal" value={muscle} onChange={(e) => setMuscle(e.target.value)} placeholder="体組成計の値" aria-label="筋肉量" />
+            </label>
+            <label className="trf">
+              <span>体脂肪量（kg）</span>
+              <input inputMode="decimal" value={fatMass} onChange={(e) => setFatMass(e.target.value)} placeholder="体組成計の値" aria-label="体脂肪量" />
+            </label>
+            <label className="trf">
+              <span>内臓脂肪（レベル）</span>
+              <input inputMode="numeric" value={visceral} onChange={(e) => setVisceral(e.target.value)} placeholder="例 8" aria-label="内臓脂肪レベル" />
+            </label>
+            <label className="trf">
+              <span>BMI（空欄なら自動）</span>
+              <input inputMode="decimal" value={bmiIn} onChange={(e) => setBmiIn(e.target.value)} placeholder="体組成計の値" aria-label="BMI" />
             </label>
           </div>
           <p className="balh sub">ふだんの活動量</p>
@@ -486,6 +511,39 @@ export default function TrainerApp() {
               </button>
             ))}
           </div>
+          {bodyA && (
+            <div className="trenergy" aria-label="体のデータの分析">
+              <p className="balh sub">体のデータの分析</p>
+              <ul className="trinsight">
+                {bodyA.bmi > 0 && (
+                  <li>
+                    BMI <b>{bodyA.bmi}</b>（{bodyA.bmiCat}）{bodyA.bmiGoal > 0 ? `　ゴールのBMI ${bodyA.bmiGoal}（${bodyA.bmiGoalCat}）` : ""}
+                    {bodyA.std22 > 0 ? `　BMI22の体重 ${bodyA.std22}kg` : ""}
+                  </li>
+                )}
+                {bodyA.fatPct > 0 && (
+                  <li>
+                    体脂肪率 <b>{bodyA.fatPct}%</b>（体脂肪 約{bodyA.fatKg}kg／除脂肪 約{bodyA.ffm}kg）
+                    {bodyA.goalFatPct > 0 ? `　筋肉を保って、${wt}kgにすると、体脂肪率は 約${bodyA.goalFatPct}%` : ""}
+                  </li>
+                )}
+                {bodyA.musclePct > 0 && (
+                  <li>
+                    骨格筋量 <b>{num(muscle)}kg</b>（体重の {bodyA.musclePct}%）
+                  </li>
+                )}
+                {bodyA.visceral > 0 && (
+                  <li>
+                    内臓脂肪レベル <b>{bodyA.visceral}</b>（{bodyA.visceralCat}。体組成計の区分）
+                  </li>
+                )}
+                {bodyA.notes.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+              <p className="agnote small">BMIの区分は、日本肥満学会の基準です。体脂肪・内臓脂肪の区分は、機器により異なるため、値の変化を、見てください。</p>
+            </div>
+          )}
           {energy && (
             <div className="trenergy" aria-label="カロリーの自動計算">
               <p className="trgoal">
