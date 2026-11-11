@@ -13,11 +13,11 @@ const SCALE = 2;
 const BLOCK_STOP = new Set(["TABLE", "TBODY", "THEAD", "TR", "svg"]);
 
 // 高さが、1ページを超える要素は、子ごとに、分ける。小さい子は、まとめて、1つのかたまりにする。
-function collect(el: HTMLElement): HTMLElement[] {
-  if (el.offsetHeight <= LIMIT) return [el];
+function collect(el: HTMLElement, limit: number = LIMIT): HTMLElement[] {
+  if (el.offsetHeight <= limit) return [el];
   const kids = Array.from(el.children) as HTMLElement[];
   if (kids.length === 0) return [el];
-  if (BLOCK_STOP.has(el.tagName)) return kids.flatMap(collect);
+  if (BLOCK_STOP.has(el.tagName)) return kids.flatMap((k) => collect(k, limit));
   const out: HTMLElement[] = [];
   let group: HTMLElement[] = [];
   let gh = 0;
@@ -35,10 +35,10 @@ function collect(el: HTMLElement): HTMLElement[] {
   };
   for (const k of kids) {
     const h = k.offsetHeight + 8;
-    if (k.offsetHeight > LIMIT) {
+    if (k.offsetHeight > limit) {
       flush();
-      out.push(...collect(k));
-    } else if (gh + h > LIMIT) {
+      out.push(...collect(k, limit));
+    } else if (gh + h > limit) {
       flush();
       group.push(k);
       gh = h;
@@ -68,6 +68,7 @@ export async function renderReportPages(selector: string, onProgress?: (done: nu
   try {
     await new Promise((r) => setTimeout(r, 120));
     const pieces = collect(clone);
+    const MIN_ROOM = 220; // 残りの余白が、これより大きければ、区切りを、さらに、小さく分けて、詰める
     const pages: HTMLCanvasElement[] = [];
     const newPage = () => {
       const c = document.createElement("canvas");
@@ -83,7 +84,16 @@ export async function renderReportPages(selector: string, onProgress?: (done: nu
     let y = M_TOP;
     const cr = clone.getBoundingClientRect();
     for (let i = 0; i < pieces.length; i++) {
-      const el = pieces[i];
+      let el = pieces[i];
+      // 入りきらない区切りは、残りの余白に合わせて、子に分ける
+      const room0 = PAGE_H - M_BOTTOM - y;
+      if (y > M_TOP && el.offsetHeight > room0 && room0 > MIN_ROOM && el.children.length > 1) {
+        const sub = collect(el, room0);
+        if (sub.length > 1 || sub[0] !== el) {
+          pieces.splice(i, 1, ...sub);
+          el = pieces[i];
+        }
+      }
       onProgress?.(i, pieces.length);
       const r = el.getBoundingClientRect();
       const shot = await html2canvas(el, { scale: SCALE, backgroundColor: "#ffffff", logging: false, useCORS: true });

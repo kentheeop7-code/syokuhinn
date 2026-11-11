@@ -35,8 +35,9 @@ export function analyzeBody(i: BodyIn): BodyOut | null {
   const h = i.height / 100;
   const w = i.weight;
   const notes: string[] = [];
-  const bmi = i.bmiIn > 0 ? i.bmiIn : h > 0 && w > 0 ? w / (h * h) : 0;
-  const bmiGoal = h > 0 && i.targetWeight > 0 ? i.targetWeight / (h * h) : 0;
+  // 小数第1位で、丸めてから、区分する（25.0が、浮動小数点の誤差で、24.99…になるのを、防ぐ）
+  const bmi = R1(i.bmiIn > 0 ? i.bmiIn : h > 0 && w > 0 ? w / (h * h) : 0);
+  const bmiGoal = R1(h > 0 && i.targetWeight > 0 ? i.targetWeight / (h * h) : 0);
   let fatPct = 0;
   if (i.bodyFat > 0 && i.bodyFat < 70) fatPct = i.bodyFat;
   else if (i.fatMass > 0 && w > 0) fatPct = (i.fatMass / w) * 100;

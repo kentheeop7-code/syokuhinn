@@ -15,6 +15,7 @@ import { decodePayload, shareUrl } from "../lib/shareLink";
 import { Bars, Gauge, HBars, IconRow, LineChart, Pie, Radar, StackBars } from "./Charts";
 import { BMI_BANDS, analyzeBody } from "../lib/body";
 import { mealGuide } from "../lib/mealguide";
+import { METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor } from "../lib/methods";
 import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 import { lineUrl } from "./LineShare";
 import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
@@ -90,6 +91,14 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const want = manualKcal || energy?.target || 0;
   const bodyA = analyzeBody({ height: num(s.height), weight: w, targetWeight: wt, bodyFat: num(s.bodyFat), fatMass: num(s.fatMass), muscle: num(s.muscle), visceral: num(s.visceral), bmiIn: num(s.bmiIn) });
   const labelsOf = (st: St, slotId: string) => (SLOTS.find((x) => x.id === slotId)?.tiles ?? []).filter((t) => st.size[t.id] !== undefined).map((t) => t.label);
+  const mth = getMethod(String(s.method || "balance"));
+  const pctEff = effectivePct(mth, s.pfc);
+  const pctSum = pctEff.p + pctEff.f + pctEff.c || 100;
+  const macKcal = want || (pt.any ? pt.kcal : 0);
+  const mac = macKcal ? macrosFor(macKcal, pctEff) : null;
+  const exSt = exampleSt(mth);
+  const exT = totals(exSt);
+  const exE = exT.p * 4 + exT.f * 9 + exT.c * 4 || 1;
   const muscleKg = num(s.muscle);
   const fatPct = num(s.bodyFat);
   const bmrIn = num(s.bmr);
@@ -157,6 +166,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     setBusy("作成中…（しばらく、お待ちください）");
     try {
       const pages = await renderReportPages(".report", (a, b) => setBusy(`作成中… ${a}/${b}`));
+      if (new URLSearchParams(location.search).has("debug")) (window as any).__pdfPages = pages;
       if (kind === "pdf") {
         const blob = await pagesToPdf(pages);
         const file = new File([blob], `${fileBase}.pdf`, { type: "application/pdf" });
@@ -584,7 +594,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 <tr>
                   <th>たんぱく質・脂質・炭水化物</th>
                   <td>
-                    約{energy.protein}g・約{energy.fat}g・約{energy.carb}g
+                    {mac ? `約${mac.p}g・約${mac.f}g・約${mac.c}g（${mth.name}）` : `約${energy.protein}g・約${energy.fat}g・約${energy.carb}g`}
                   </td>
                 </tr>
               </tbody>
@@ -608,12 +618,116 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             </ul>
           </section>
         )}
+        {mac && (
+          <section>
+            <h2>{H("食事の方法（カロリーとPFCバランス）")}</h2>
+            <p className="rgoal">
+              <span>おすすめの方法</span>
+              <b>
+                {mth.icon} {mth.name}
+              </b>
+              <em>
+                1日 約{r10(macKcal).toLocaleString()}kcal　たんぱく質 約{mac.p}g・脂質 約{mac.f}g・炭水化物 約{mac.c}g
+              </em>
+            </p>
+            <div className="rchartrow">
+              <Pie
+                size={120}
+                title="目標のPFC"
+                data={[
+                  { label: "たんぱく質", value: pctEff.p, color: COL.p },
+                  { label: "脂質", value: pctEff.f, color: COL.f },
+                  { label: "炭水化物", value: pctEff.c, color: COL.c },
+                ]}
+              />
+              <div style={{ flex: "1 1 240px" }}>
+                <HBars
+                  unit="g"
+                  items={[
+                    { label: "たんぱく質", value: mac.p, color: COL.p },
+                    { label: "脂質", value: mac.f, color: COL.f },
+                    { label: "炭水化物", value: mac.c, color: COL.c },
+                  ]}
+                />
+                <p className="rnote">
+                  比率：たんぱく質 {Math.round((pctEff.p / pctSum) * 100)}%・脂質 {Math.round((pctEff.f / pctSum) * 100)}%・炭水化物 {Math.round((pctEff.c / pctSum) * 100)}%。
+                  {inNational(pctEff) ? "国の目標量の範囲内です。" : "国の目標量（たんぱく質13〜20%・脂質20〜30%・炭水化物50〜65%）の範囲の外です。"}
+                </p>
+              </div>
+            </div>
+            <p className="rnote">{mth.summary}</p>
+            <div className="rtwo">
+              <div>
+                <p className="nbgroup">選ぶもの</p>
+                <ul>
+                  {mth.choose.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="nbgroup">控えるもの・気をつけること</p>
+                <ul>
+                  {mth.avoid.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="rexc near">
+              <p className="rext">
+                食事例：{mth.example.name}　<b>約{r10(exT.kcal).toLocaleString()}kcal</b>
+              </p>
+              <p className="rexn">
+                実際の比率：たんぱく質 {Math.round(((exT.p * 4) / exE) * 100)}%・脂質 {Math.round(((exT.f * 9) / exE) * 100)}%・炭水化物 {Math.round(((exT.c * 4) / exE) * 100)}%　{mth.example.note}
+              </p>
+              <ul>
+                {describe(exSt).map((l) => (
+                  <li key={l}>{l.replace(/（約\d[\d,]*kcal）$/, "")}</li>
+                ))}
+              </ul>
+            </div>
+            {mth.risky ? (
+              <p className="rwarn">
+                <b>注意：</b>
+                {mth.caution.join(" ")}
+              </p>
+            ) : (
+              <p className="rnote">注意：{mth.caution.join(" ")}</p>
+            )}
+            <p className="nbgroup">ほかの方法とのくらべ</p>
+            <table className="rtable rcmp">
+              <thead>
+                <tr>
+                  <th>方法</th>
+                  <th>P / F / C（%）</th>
+                  <th>特徴</th>
+                </tr>
+              </thead>
+              <tbody>
+                {METHODS.map((m) => (
+                  <tr key={m.id} className={m.id === mth.id ? "me" : ""}>
+                    <th>
+                      {m.icon} {m.name}
+                      {m.id === mth.id ? "（この方法）" : ""}
+                    </th>
+                    <td>
+                      {m.pct.p} / {m.pct.f} / {m.pct.c}
+                    </td>
+                    <td>{m.tag}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="rnote">どの方法でも、続けられることと、食べる量（カロリー）が、大切です（Sacks 2009）。</p>
+          </section>
+        )}
         {(want || kcalMain) > 0 && (
           <section>
             <h2>{H("食べる量の、めやす（手ばかり）")}</h2>
             {(() => {
               const tgt = want || kcalMain;
-              const g2 = mealGuide(tgt, energy?.protein ?? 0, energy?.carb ?? 0);
+              const g2 = mealGuide(tgt, mac?.p ?? energy?.protein ?? 0, mac?.c ?? energy?.carb ?? 0);
               return (
                 <>
                   <p className="rnote">1日 約{r10(tgt).toLocaleString()}kcalの、食べる量のイメージです。計量しなくても、手と茶碗で、はかれます。</p>

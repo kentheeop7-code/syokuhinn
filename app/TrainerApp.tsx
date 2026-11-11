@@ -13,7 +13,8 @@ import { calcEnergy, PAL_VAL } from "../lib/energy";
 import { buildActions } from "../lib/actions";
 import { analyzeBody } from "../lib/body";
 import { PAL_TEXT } from "./me";
-import { Bars } from "./Charts";
+import { Bars, Pie } from "./Charts";
+import { METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
 import { swapsFor } from "../lib/swaps";
 import { LineChart } from "./Charts";
 import { makeInsights, goodPoints, draftAdvice, ASK, ASK_CARE } from "../lib/advice";
@@ -43,6 +44,8 @@ export default function TrainerApp() {
   const [fatMass, setFatMass] = useState("");
   const [visceral, setVisceral] = useState("");
   const [bmiIn, setBmiIn] = useState("");
+  const [method, setMethod] = useState("balance");
+  const [pfc, setPfc] = useState<{ p: string; f: string; c: string } | null>(null);
   const [actOff, setActOff] = useState<string[]>([]);
   const [link, setLink] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
@@ -85,6 +88,8 @@ export default function TrainerApp() {
         setFatMass(s.fatMass ?? "");
         setVisceral(s.visceral ?? "");
         setBmiIn(s.bmiIn ?? "");
+        setMethod(typeof s.method === "string" ? s.method : "balance");
+        setPfc(s.pfc && typeof s.pfc === "object" ? s.pfc : null);
         setActOff(Array.isArray(s.actOff) ? s.actOff : []);
         setNote(s.note ?? "");
         setPicked(Array.isArray(s.picked) ? s.picked : []);
@@ -110,9 +115,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc]);
 
   const w = num(now);
   const wt = num(target);
@@ -131,6 +136,15 @@ export default function TrainerApp() {
   const bodyA = analyzeBody({ height: num(height), weight: w, targetWeight: wt, bodyFat: num(bodyFat), fatMass: num(fatMass), muscle: num(muscle), visceral: num(visceral), bmiIn: num(bmiIn) });
   const energy = calcEnergy({ sex, band, age: num(age), height: num(height), weight: w, bmr: num(bmr), bodyFat: bfAuto, muscle: num(muscle), pal, targetWeight: wt, pace: effPace });
   const wantKcal = manualKcal || energy?.target || 0;
+  const mth = getMethod(method);
+  const youthNow = band <= 1 || (num(age) > 0 && num(age) < 18);
+  const blocked = methodBlocked(mth, { hasConds: conds.length > 0, youth: youthNow });
+  const pctEff = effectivePct(mth, pfc);
+  const pctSum = pctEff.p + pctEff.f + pctEff.c;
+  const mac = wantKcal ? macrosFor(wantKcal, pctEff) : null;
+  const exSt = exampleSt(mth);
+  const exT = totals(exSt);
+  const exE = exT.p * 4 + exT.f * 9 + exT.c * 4 || 1;
   const swaps = swapsFor(curMeal);
   const swapOn = swaps.filter((s) => !swapOff.includes(s.id));
   // お客様専用ページ（リンク）：内容を、リンクの中に入れる。サーバーには、保存されない。
@@ -138,11 +152,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -194,6 +208,7 @@ export default function TrainerApp() {
       actionsOn.forEach((x, i) => L.push(`${i + 1}. ${x.text}`));
     }
     if (energy && wantKcal) L.push("", `■ 1日の目安：約${wantKcal.toLocaleString()}kcal（${energy.method === "dri" ? "年代・性別の目安" : `基礎代謝 約${energy.bmr}kcal × 活動量${energy.pal}`}）`);
+    if (mac) L.push("", `■ 食事の方法：${mth.name}（たんぱく質${Math.round((pctEff.p / pctSum) * 100)}%・脂質${Math.round((pctEff.f / pctSum) * 100)}%・炭水化物${Math.round((pctEff.c / pctSum) * 100)}%）`, `　1日 約${wantKcal.toLocaleString()}kcal：たんぱく質 約${mac.p}g・脂質 約${mac.f}g・炭水化物 約${mac.c}g`);
     if (plan) L.push("", `■ ゴールの目安：${w}kg → ${wt}kg　約${plan.weeks}週間（筋トレ 週${days}回・合計${plan.sessions}回）`);
     if (swapOn.length) {
       L.push("", "■ 置きかえ（こちらを食べてください）");
@@ -555,7 +570,7 @@ export default function TrainerApp() {
                 {energy.ffm > 0 ? `／除脂肪量 約${energy.ffm}kg` : ""}
               </p>
               <p className="agnote small">
-                たんぱく質 約{energy.protein}g／脂質 約{energy.fat}g／炭水化物 約{energy.carb}g
+                {mac ? `${mth.name}：たんぱく質 約${mac.p}g／脂質 約${mac.f}g／炭水化物 約${mac.c}g` : `たんぱく質 約${energy.protein}g／脂質 約${energy.fat}g／炭水化物 約${energy.carb}g`}
               </p>
               <ul className="trinsight">
                 {energy.notes.map((n) => (
@@ -794,6 +809,149 @@ export default function TrainerApp() {
           </table>
         )}
         {pt.any && wantKcal > 0 && Math.abs(pt.kcal - wantKcal) > 200 && <p className="plwarn">提案の食事が、目標カロリーから、約{r10(Math.abs(pt.kcal - wantKcal)).toLocaleString()}kcal はなれています。量や足したものを、調整しましょう。</p>}
+      </section>
+      <section className="card" id="s3m">
+        <p className="balh">食事の方法（5つの提案）：カロリーとPFCバランス</p>
+        <p className="agnote">方法を選ぶと、1日のカロリー（自動）に合わせて、たんぱく質・脂質・炭水化物（PFC）のグラム数と、食事例が出ます。PFCの%は、手で直せます。</p>
+        <div className="trmeth" role="radiogroup" aria-label="食事の方法">
+          {METHODS.map((m) => {
+            const b = methodBlocked(m, { hasConds: conds.length > 0, youth: youthNow });
+            return (
+              <button key={m.id} type="button" role="radio" aria-checked={method === m.id} className={method === m.id ? "on" : ""} disabled={!!b} onClick={() => { setMethod(m.id); setPfc(null); }}>
+                <span aria-hidden>{m.icon}</span>
+                <b>{m.name}</b>
+                <small>{m.tag}</small>
+                {b && <em>{b}</em>}
+              </button>
+            );
+          })}
+        </div>
+        {blocked && <p className="plwarn">{blocked}</p>}
+        <div className="trmbox">
+          <p className="trgoal">
+            <b>{mth.name}</b>　{wantKcal ? <>1日 約<b>{wantKcal.toLocaleString()}</b> kcal</> : "（体重や体のデータを入れると、カロリーが自動で出ます）"}
+          </p>
+          <p className="agnote">{mth.summary}</p>
+          <p className="balh sub">PFCの比率（%）：直せます</p>
+          <div className="trgrid3">
+            {(
+              [
+                ["p", "たんぱく質"],
+                ["f", "脂質"],
+                ["c", "炭水化物"],
+              ] as const
+            ).map(([k, l]) => (
+              <label key={k} className="trf">
+                <span>{l}（%）</span>
+                <input inputMode="numeric" value={pfc ? pfc[k] : String(mth.pct[k])} onChange={(e) => setPfc({ ...(pfc ?? { p: String(mth.pct.p), f: String(mth.pct.f), c: String(mth.pct.c) }), [k]: e.target.value })} aria-label={`${l}の比率`} />
+              </label>
+            ))}
+          </div>
+          <div className="rchartrow">
+            <Pie
+              size={110}
+              title="目標のPFC"
+              data={[
+                { label: "たんぱく質", value: pctEff.p, color: "#2e9e6a" },
+                { label: "脂質", value: pctEff.f, color: "#e0a030" },
+                { label: "炭水化物", value: pctEff.c, color: "#4a7fd0" },
+              ]}
+            />
+            <div style={{ flex: "1 1 200px" }}>
+              {mac ? (
+                <p className="trgoal">
+                  たんぱく質 <b>{mac.p}</b>g／脂質 <b>{mac.f}</b>g／炭水化物 <b>{mac.c}</b>g
+                </p>
+              ) : null}
+              <p className="agnote small">
+                {Math.abs(pctSum - 100) > 1 ? `合計が ${pctSum}% です。比率で、割りふっています。` : ""}
+                {inNational(pctEff) ? "国の目標量の範囲内です。" : "国の目標量（たんぱく質13〜20%・脂質20〜30%・炭水化物50〜65%）の範囲の外です。"}
+              </p>
+              {pfc && (
+                <button type="button" className="btn ghost" onClick={() => setPfc(null)}>
+                  自動（方法の初期値）に戻す
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="trs">
+            <small>選ぶもの</small>
+            <ol>
+              {mth.choose.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ol>
+          </div>
+          <div className="trs">
+            <small>控えるもの・気をつけること</small>
+            <ol>
+              {mth.avoid.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ol>
+          </div>
+          <p className="tre">
+            <small>向いている人</small>
+            {mth.suits}
+          </p>
+          <div className="trl">
+            <small>注意</small>
+            <ul>
+              {mth.caution.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+          </div>
+          <p className="trsrc">
+            <small>根拠（{mth.level}）</small>
+            {mth.evidence.map((e) => (
+              <a key={e.pmid} href={`https://pubmed.ncbi.nlm.nih.gov/${e.pmid}/`} target="_blank" rel="noopener noreferrer">
+                {e.label}：{e.note}
+              </a>
+            ))}
+          </p>
+          <div className="rexc near" style={{ marginTop: 8 }}>
+            <p className="rext">
+              食事例：{mth.example.name}　<b>約{r10(exT.kcal).toLocaleString()}kcal</b>
+            </p>
+            <p className="rexn">
+              実際の比率：たんぱく質 {Math.round(((exT.p * 4) / exE) * 100)}%・脂質 {Math.round(((exT.f * 9) / exE) * 100)}%・炭水化物 {Math.round(((exT.c * 4) / exE) * 100)}%（{Math.round(exT.p)}g・{Math.round(exT.f)}g・{Math.round(exT.c)}g）　{mth.example.note}
+            </p>
+            <ul>
+              {describe(exSt).map((l) => (
+                <li key={l}>{l.replace(/（約\d[\d,]*kcal）$/, "")}</li>
+              ))}
+            </ul>
+            <button type="button" className="trpick" disabled={!!blocked} onClick={() => setPlanMeal({ date: planMeal.date, size: { ...exSt.size }, ext: { ...exSt.ext } })}>
+              この食事例を、「③提案する食事」に入れる
+            </button>
+            <p className="agnote small">食事例のカロリーは、目標と違います。量（少なめ／多め）や、足したものを、③で、調整してください。</p>
+          </div>
+        </div>
+        <p className="balh sub">5つの方法の、くらべ</p>
+        <table className="nctable trcmp">
+          <thead>
+            <tr>
+              <th>方法</th>
+              <th>P / F / C（%）</th>
+              <th>国の範囲</th>
+              <th>根拠</th>
+            </tr>
+          </thead>
+          <tbody>
+            {METHODS.map((m) => (
+              <tr key={m.id}>
+                <th scope="row">{m.name}</th>
+                <td>
+                  {m.pct.p} / {m.pct.f} / {m.pct.c}
+                </td>
+                <td>{inNational(m.pct) ? "内" : "外"}</td>
+                <td>{m.level}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="agnote small">どの方法でも、続けられることと、食べる量（カロリー）が、大切です（Sacks 2009）。持病・服薬のある人は、主治医の指示が優先です。</p>
       </section>
       <section className="card" id="s3b">
         <p className="balh">ゴールの目安と、置きかえ（増やす食事）</p>
