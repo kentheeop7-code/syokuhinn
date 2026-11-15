@@ -18,6 +18,7 @@ export type EnergyOut = {
   kind: "lose" | "gain" | "keep";
   floored: boolean;
   capped: boolean;
+  floorKcal: number; // これ以下には、しない（代謝を守る下限）
   protein: number;
   fat: number;
   carb: number;
@@ -69,7 +70,8 @@ export function calcEnergy(i: EnergyIn): EnergyOut | null {
   let floored = false;
   if (kind === "lose") {
     const want = (paceRate(w, "lose", i.pace) * 7200) / 7;
-    const cap = tdee * 0.2;
+    // 代謝を落としにくくするため、減らす幅は、維持の15%まで（しっかり＝20%まで）
+    const cap = tdee * (i.pace === "fast" ? 0.2 : 0.15);
     capped = want > cap;
     target = tdee - Math.min(want, cap);
     const floor = Math.max(i.sex === "f" ? 1200 : 1500, bmr > 0 ? bmr : 0);
@@ -78,7 +80,7 @@ export function calcEnergy(i: EnergyIn): EnergyOut | null {
       floored = true;
     }
     refs.push({ label: "Hall 2011 Lancet（体重の変化は、ゆっくり。減るにつれて、減りかたが緩やかになる）", pmid: "21872751" });
-    notes.push(capped ? "ペースが速すぎるため、維持のカロリーの20%までの減らしかたに、抑えています。" : "維持のカロリーから、ペースに応じた分を引いています（体重1kg＝約7,200kcalの目安）。");
+    notes.push(capped ? `ペースが速すぎるため、代謝を守るよう、維持のカロリーの${i.pace === "fast" ? 20 : 15}%までの減らしかたに、抑えています。` : "維持のカロリーから、ペースに応じた分を引いています（体重1kg＝約7,200kcalの目安）。");
     if (floored) notes.push("目標が低くなりすぎないよう、下限（女性1,200・男性1,500kcal、または基礎代謝）に、そろえました。");
   } else if (kind === "gain") {
     target = tdee + 250;
@@ -89,5 +91,22 @@ export function calcEnergy(i: EnergyIn): EnergyOut | null {
   const fat = Math.round((0.25 * target) / 9);
   const carb = Math.max(0, Math.round((target - protein * 4 - fat * 9) / 4));
   if (w > 0 && !youth) refs.push({ label: "Morton 2018 Br J Sports Med（たんぱく質：体重1kgあたり 約1.6g/日）", pmid: "28698222" });
-  return { method, label, bmr: Math.round(bmr), ffm: Math.round(ffm * 10) / 10, pal: PAL_VAL[pal], tdee: r10(tdee), target, diff: target - r10(tdee), kind, floored, capped, protein, fat, carb, notes, refs };
+  const floorKcal = r10(Math.max(i.sex === "f" ? 1200 : 1500, bmr > 0 ? bmr : 0));
+  return { method, label, floorKcal, bmr: Math.round(bmr), ffm: Math.round(ffm * 10) / 10, pal: PAL_VAL[pal], tdee: r10(tdee), target, diff: target - r10(tdee), kind, floored, capped, protein, fat, carb, notes, refs };
+}
+// 体重が減るにつれて、必要なカロリーも、少し変わる。4週ごとに、その時の体重で、計算し直した「カロリー計画」。
+export type Phase = { from: number; to: number; weight: number; target: number; tdee: number; floor: number };
+export function energyPhases(i: EnergyIn, pts: { x: number; y: number }[], weeks: number): Phase[] {
+  if (!pts.length || weeks <= 0 || i.weight <= 0) return [];
+  const ffm = i.bodyFat > 0 ? i.weight * (1 - i.bodyFat / 100) : 0;
+  const out: Phase[] = [];
+  for (let start = 0; start < Math.min(weeks, 26); start += 4) {
+    const W = pts[Math.min(start, pts.length - 1)].y;
+    const bf2 = ffm > 0 ? Math.max(5, ((W - ffm) / W) * 100) : 0;
+    const bmr2 = i.bmr > 400 ? i.bmr + 10 * (W - i.weight) : 0; // 体重1kgで、基礎代謝が、約10kcal（Mifflin式の体重の係数）変わる
+    const e = calcEnergy({ ...i, weight: W, bodyFat: bf2, bmr: bmr2 });
+    if (!e) continue;
+    out.push({ from: start + 1, to: Math.min(start + 4, weeks), weight: W, target: e.target, tdee: e.tdee, floor: e.floorKcal });
+  }
+  return out;
 }

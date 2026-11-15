@@ -14,7 +14,13 @@ import { buildActions } from "../lib/actions";
 import { analyzeBody } from "../lib/body";
 import { PAL_TEXT } from "./me";
 import { Bars, Pie } from "./Charts";
-import { METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
+import { type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
+import { recommend } from "../lib/recommend";
+import { analyzeClient, ageNote } from "../lib/analysis";
+import { TROUBLES } from "../lib/troubles";
+import { NUTS, foodsFor, unitLabel, type NutKey } from "../lib/foodlist";
+import { personalDays } from "../lib/dayfit";
+import { energyPhases } from "../lib/energy";
 import { swapsFor } from "../lib/swaps";
 import { LineChart } from "./Charts";
 import { makeInsights, goodPoints, draftAdvice, ASK, ASK_CARE } from "../lib/advice";
@@ -44,7 +50,10 @@ export default function TrainerApp() {
   const [fatMass, setFatMass] = useState("");
   const [visceral, setVisceral] = useState("");
   const [bmiIn, setBmiIn] = useState("");
-  const [method, setMethod] = useState("balance");
+  const [method, setMethod] = useState(""); // ""＝自動（おすすめ）。選んだら、その方法
+  const [troubles, setTroubles] = useState<string[]>([]);
+  const [foodAmts, setFoodAmts] = useState<Record<string, string>>({});
+  const [foodNut, setFoodNut] = useState<NutKey>("p");
   const [pfc, setPfc] = useState<{ p: string; f: string; c: string } | null>(null);
   const [actOff, setActOff] = useState<string[]>([]);
   const [link, setLink] = useState("");
@@ -88,7 +97,9 @@ export default function TrainerApp() {
         setFatMass(s.fatMass ?? "");
         setVisceral(s.visceral ?? "");
         setBmiIn(s.bmiIn ?? "");
-        setMethod(typeof s.method === "string" ? s.method : "balance");
+        setMethod(s.methodManual === true && typeof s.method === "string" ? s.method : "");
+        setTroubles(Array.isArray(s.troubles) ? s.troubles : []);
+        setFoodAmts(s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {});
         setPfc(s.pfc && typeof s.pfc === "object" ? s.pfc : null);
         setActOff(Array.isArray(s.actOff) ? s.actOff : []);
         setNote(s.note ?? "");
@@ -115,9 +126,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts]);
 
   const w = num(now);
   const wt = num(target);
@@ -136,12 +147,19 @@ export default function TrainerApp() {
   const bodyA = analyzeBody({ height: num(height), weight: w, targetWeight: wt, bodyFat: num(bodyFat), fatMass: num(fatMass), muscle: num(muscle), visceral: num(visceral), bmiIn: num(bmiIn) });
   const energy = calcEnergy({ sex, band, age: num(age), height: num(height), weight: w, bmr: num(bmr), bodyFat: bfAuto, muscle: num(muscle), pal, targetWeight: wt, pace: effPace });
   const wantKcal = manualKcal || energy?.target || 0;
-  const mth = getMethod(method);
+  const rec = recommend({ sex, age: num(age), band, weight: w, height: num(height), conds, goal, hasBody: num(bmr) > 0 || bfAuto > 0 });
+  const methodId: MethodId = ((method as MethodId) || rec.top) as MethodId;
+  const mth = getMethod(methodId);
   const youthNow = band <= 1 || (num(age) > 0 && num(age) < 18);
   const blocked = methodBlocked(mth, { hasConds: conds.length > 0, youth: youthNow });
   const pctEff = effectivePct(mth, pfc);
   const pctSum = pctEff.p + pctEff.f + pctEff.c;
   const mac = wantKcal ? macrosFor(wantKcal, pctEff) : null;
+  const phases = energy && plan ? energyPhases({ sex, band, age: num(age), height: num(height), weight: w, bmr: num(bmr), bodyFat: bfAuto, muscle: num(muscle), pal, targetWeight: wt, pace: effPace }, plan.pts, plan.weeks) : [];
+  const pdays = personalDays(wantKcal, pctEff, methodId, { lipid: conds.includes("lipid"), n: 6 });
+  const ageN = ageNote(num(age), band, sex);
+  const findings = analyzeClient({ sex, age: num(age), band, weight: w, targetWeight: wt, body: bodyA, energy, wantKcal, cur: ct.any ? ct : null, goalP: parseFloat(gl.p || "0"), goalFi: parseFloat(gl.fi || "0"), goalSalt: gl.salt, water, strengthDays: days, otherMin: weeklyMin(others), guideMin: guideMin(band), conds, goal, troubles, weeks: plan?.weeks ?? 0, rate: plan?.rate ?? 0 });
+  const nSev = { 要対策: findings.filter((f) => f.sev === "要対策").length, 注意: findings.filter((f) => f.sev === "注意").length, 良好: findings.filter((f) => f.sev === "良好").length };
   const exSt = exampleSt(mth);
   const exT = totals(exSt);
   const exE = exT.p * 4 + exT.f * 9 + exT.c * 4 || 1;
@@ -152,11 +170,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -248,6 +266,11 @@ export default function TrainerApp() {
       L.push("", "■ 今日のポイント");
       chosen.forEach((p, i) => L.push(`${i + 1}. ${p.share(w)}`));
     }
+    if (troubles.length) {
+      L.push("", "■ 困りごとへの対処");
+      TROUBLES.filter((t) => troubles.includes(t.id)).forEach((t) => L.push(t.share));
+    }
+    if (findings.length) L.push("", `■ 分析（要対策 ${nSev.要対策}・注意 ${nSev.注意}・良好 ${nSev.良好}）`, ...findings.filter((f) => f.sev !== "良好").slice(0, 4).map((f) => `・${f.title}`));
     if (note.trim()) L.push("", "■ トレーナーから", note.trim());
     if (link && link.length <= 1800) L.push("", "■ あなた専用のまとめ（スマホで見られます）", link);
     if (pins.length) {
@@ -435,6 +458,7 @@ export default function TrainerApp() {
         {(
           [
             ["s1", "お客様", !!(name.trim() || w)],
+            ["s1a", "分析・対策", findings.length > 0],
             ["s2", "現状の食事", ct.any],
             ["s3", "提案", pt.any],
             ["s3b", "ゴール・置きかえ", !!plan],
@@ -572,6 +596,29 @@ export default function TrainerApp() {
               <p className="agnote small">
                 {mac ? `${mth.name}：たんぱく質 約${mac.p}g／脂質 約${mac.f}g／炭水化物 約${mac.c}g` : `たんぱく質 約${energy.protein}g／脂質 約${energy.fat}g／炭水化物 約${energy.carb}g`}
               </p>
+              <p className="agnote small">
+                代謝を守る下限：<b>{energy.floorKcal.toLocaleString()}kcal</b>（これ以下に、しない）／目標 <b>{energy.target.toLocaleString()}kcal</b>／維持 <b>{energy.tdee.toLocaleString()}kcal</b>
+              </p>
+              {phases.length > 1 && (
+                <table className="nctable trcmp" aria-label="カロリー計画">
+                  <thead>
+                    <tr>
+                      <th>期間</th>
+                      <th>体重（予定）</th>
+                      <th>目標kcal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {phases.map((p) => (
+                      <tr key={p.from}>
+                        <th scope="row">{p.from}〜{p.to}週</th>
+                        <td>{p.weight}kg</td>
+                        <td>{p.target.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
               <ul className="trinsight">
                 {energy.notes.map((n) => (
                   <li key={n}>{n}</li>
@@ -668,6 +715,84 @@ export default function TrainerApp() {
         )}
       </section>
 
+      <section className="card" id="s1a">
+        <p className="balh">分析と対策（自動）</p>
+        <p className="agnote">年齢・体重・体のデータ・食事・運動・持病に加えて、「いまの状況」を選ぶと、詳しく分析して、対策が出ます。</p>
+        <p className="balh sub">いまの状況（当てはまるもの）</p>
+        <div className="trchips" role="group" aria-label="いまの状況">
+          {TROUBLES.map((t) => {
+            const hint = (t.id === "constipation" && ct.any && ct.fi < parseFloat(gl.fi || "0") * 0.7) || (t.id === "muscleloss" && ct.any && ct.p < parseFloat(gl.p || "0") * 0.7);
+            return (
+              <button key={t.id} type="button" aria-pressed={troubles.includes(t.id)} className={troubles.includes(t.id) ? "trchip on" : "trchip"} onClick={() => setTroubles((x) => (x.includes(t.id) ? x.filter((y) => y !== t.id) : [...x, t.id]))}>
+                {t.icon} {t.label}
+                {hint ? " ★" : ""}
+              </button>
+            );
+          })}
+        </div>
+        <p className="agnote small">★は、現状の食事から、当てはまりそうな項目です（食物繊維・たんぱく質が、目安の7割未満）。</p>
+        {findings.length === 0 && !ageN ? (
+          <p className="agnote">年齢・体重・食事などを入れると、分析と対策が出ます。</p>
+        ) : (
+          <>
+            <div className="trsev" aria-label="分析のまとめ">
+              <span className="s0">要対策 {nSev.要対策}</span>
+              <span className="s1">注意 {nSev.注意}</span>
+              <span className="s2">良好 {nSev.良好}</span>
+            </div>
+            {ageN && (
+              <div className="trage">
+                <p className="trt">
+                  {ageN.icon} 年代のポイント：{ageN.title}
+                </p>
+                <ul>
+                  {ageN.points.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+                {ageN.refs.length > 0 && (
+                  <p className="trsrc">
+                    <small>根拠</small>
+                    {ageN.refs.map((r) => (
+                      <a key={r.pmid} href={`https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/`} target="_blank" rel="noopener noreferrer">
+                        {r.label}
+                      </a>
+                    ))}
+                  </p>
+                )}
+              </div>
+            )}
+            <ul className="trfind">
+              {findings.map((f) => (
+                <li key={f.id} className={`sev-${f.sev}`}>
+                  <p className="trfh">
+                    <span aria-hidden>{f.icon}</span>
+                    <b>{f.title}</b>
+                    <em>{f.sev}</em>
+                  </p>
+                  {f.detail && <p className="trfd">{f.detail}</p>}
+                  {f.actions.length > 0 && (
+                    <ol>
+                      {f.actions.map((a) => (
+                        <li key={a}>{a}</li>
+                      ))}
+                    </ol>
+                  )}
+                  {f.refs && f.refs.length > 0 && (
+                    <p className="trsrc">
+                      {f.refs.map((r) => (
+                        <a key={r.pmid} href={`https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/`} target="_blank" rel="noopener noreferrer">
+                          {r.label}
+                        </a>
+                      ))}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
       <section className="card" id="s2">
         <p className="balh">② 現状の食事（お客様に聞きながら）</p>
         <details className="trask">
@@ -813,15 +938,36 @@ export default function TrainerApp() {
       <section className="card" id="s3m">
         <p className="balh">食事の方法（5つの提案）：カロリーとPFCバランス</p>
         <p className="agnote">方法を選ぶと、1日のカロリー（自動）に合わせて、たんぱく質・脂質・炭水化物（PFC）のグラム数と、食事例が出ます。PFCの%は、手で直せます。</p>
-        <div className="trmeth" role="radiogroup" aria-label="食事の方法">
+        <div className="trrec" aria-label="おすすめの食事の方法">
+          <p>
+            <b>おすすめ：{getMethod(rec.top).icon} {getMethod(rec.top).name}</b>
+            {method && method !== rec.top ? <span>（いまは、手で「{mth.name}」を選んでいます）</span> : <span>（自動）</span>}
+          </p>
+          <p className="agnote small">{rec.basis}</p>
+          <ul>
+            {rec.fits[rec.top].why.slice(0, 3).map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+            {rec.fits[methodId].fit !== "おすすめ" && rec.fits[methodId].why.slice(0, 2).map((x) => <li key={x} className="warn">{mth.name}：{x}</li>)}
+          </ul>
+          {method && (
+            <button type="button" className="btn ghost" onClick={() => { setMethod(""); setPfc(null); }}>
+              おすすめ（自動）に戻す
+            </button>
+          )}
+        </div>        <div className="trmeth" role="radiogroup" aria-label="食事の方法">
           {METHODS.map((m) => {
             const b = methodBlocked(m, { hasConds: conds.length > 0, youth: youthNow });
             return (
-              <button key={m.id} type="button" role="radio" aria-checked={method === m.id} className={method === m.id ? "on" : ""} disabled={!!b} onClick={() => { setMethod(m.id); setPfc(null); }}>
+              <button key={m.id} type="button" role="radio" aria-checked={methodId === m.id} className={methodId === m.id ? "on" : ""} disabled={!!b || rec.fits[m.id].fit === "不可"} onClick={() => { setMethod(m.id); setPfc(null); }}>
                 <span aria-hidden>{m.icon}</span>
                 <b>{m.name}</b>
-                <small>{m.tag}</small>
+                <small>
+                  {m.tag}　<i className={`trfit f-${rec.fits[m.id].fit}`}>{rec.fits[m.id].fit}</i>
+                  {m.id === rec.top ? <i className="trfit f-top">自動で選択</i> : null}
+                </small>
                 {b && <em>{b}</em>}
+                {!b && rec.fits[m.id].fit === "不可" && <em>{rec.fits[m.id].why[0]}</em>}
               </button>
             );
           })}
@@ -952,6 +1098,31 @@ export default function TrainerApp() {
           </tbody>
         </table>
         <p className="agnote small">どの方法でも、続けられることと、食べる量（カロリー）が、大切です（Sacks 2009）。持病・服薬のある人は、主治医の指示が優先です。</p>
+        <p className="balh sub">このお客様の食事例（{pdays.length}パターン：カロリー・PFCに合わせて、量を調整）</p>
+        {pdays.length === 0 ? (
+          <p className="agnote">体重・体のデータを入れて、目標カロリーが出ると、お客様ごとの食事例が出ます。</p>
+        ) : (
+          <div className="rex">
+            {pdays.map((d2) => (
+              <div key={d2.id} className="rexc">
+                <p className="rext">
+                  {d2.name}　<b>約{r10(d2.tot.kcal).toLocaleString()}kcal</b>
+                </p>
+                <p className="rexn">
+                  目標との差 {d2.dk > 0 ? "+" : ""}{d2.dk}kcal／P {d2.pct.p}%・F {d2.pct.f}%・C {d2.pct.c}%　{d2.note}
+                </p>
+                <ul>
+                  {d2.lines.map((l) => (
+                    <li key={l}>{l}</li>
+                  ))}
+                </ul>
+                <button type="button" className="trpick" onClick={() => setPlanMeal({ date: planMeal.date, size: { ...d2.st.size }, ext: { ...d2.st.ext } })}>
+                  この例を、「③提案する食事」に入れる
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
       <section className="card" id="s3b">
         <p className="balh">ゴールの目安と、置きかえ（増やす食事）</p>
@@ -1006,6 +1177,119 @@ export default function TrainerApp() {
           <p className="agnote">②で、現状の食事を選ぶと、「こちらを食べてください」という置きかえが出ます。</p>
         )}
         <p className="agnote small">「減らす」ではなく「増やす」置きかえです。チェックしたものが、お客様用のまとめに入ります。kcalとg は、食品の目安値からの計算です。</p>
+      </section>
+      <section className="card" id="s5t">
+        <p className="balh">困りごとへの対処（くわしく）</p>
+        {troubles.length === 0 && <p className="agnote">上の「いまの状況」で、当てはまるものを選ぶと、原因の見かた・対処・食べるもの・受診の目安・根拠が、ここに出ます。選んだものは、お客様向けまとめに入ります。</p>}
+        {TROUBLES.filter((t) => troubles.includes(t.id)).map((t) => (
+          <details key={t.id} className="trcard" open>
+            <summary>
+              <span className="trt">
+                {t.icon} {t.label}
+              </span>
+              <span className={`trlv lv-${t.level}`}>根拠 {t.level}</span>
+            </summary>
+            <p className="tra">{t.intro}</p>
+            <div className="trs">
+              <small>原因の見かた</small>
+              <ul>
+                {t.check.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="trs">
+              <small>対処のステップ</small>
+              <ol>
+                {t.steps.map((x) => (
+                  <li key={x}>{x.replace(/^[①-⑩]\s*/, "")}</li>
+                ))}
+              </ol>
+            </div>
+            <div className="trs">
+              <small>増やす食べもの</small>
+              <ul>
+                {t.eat.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+            </div>
+            <p className="plwarn">
+              <b>受診の目安：</b>
+              {t.see.join("／")}
+            </p>
+            <p className="trsrc">
+              <small>根拠</small>
+              {t.evidence.map((e) =>
+                e.pmid ? (
+                  <a key={e.label} href={`https://pubmed.ncbi.nlm.nih.gov/${e.pmid}/`} target="_blank" rel="noopener noreferrer">
+                    {e.label}：{e.note}
+                  </a>
+                ) : (
+                  <span key={e.label}>
+                    {e.label}：{e.note}
+                  </span>
+                )
+              )}
+            </p>
+            <p className="trl">
+              <small>限界</small>
+              {t.limits}
+            </p>
+          </details>
+        ))}
+      </section>
+
+      <section className="card" id="s6f">
+        <p className="balh">食品の例（量の早見表）</p>
+        <p className="agnote">「たんぱく質10gをとれる食品」「高炭水化物の食品」など、量を入れると、食品ごとの量が出ます。お客様向けまとめにも、入ります。</p>
+        <div className="trchips" role="group" aria-label="栄養素">
+          {NUTS.map((n) => (
+            <button key={n.key} type="button" aria-pressed={foodNut === n.key} className={foodNut === n.key ? "trchip on" : "trchip"} onClick={() => setFoodNut(n.key)}>
+              {n.label}
+            </button>
+          ))}
+        </div>
+        {(() => {
+          const nut = NUTS.find((n) => n.key === foodNut)!;
+          const amt = parseFloat(foodAmts[foodNut] ?? String(nut.defaults[0])) || nut.defaults[0];
+          const rows = foodsFor(foodNut, amt);
+          return (
+            <>
+              <label className="trf">
+                <span>
+                  {nut.label}の量（{nut.unit}）　{nut.hint}
+                </span>
+                <input inputMode="decimal" value={foodAmts[foodNut] ?? String(nut.defaults[0])} onChange={(e) => setFoodAmts((x) => ({ ...x, [foodNut]: e.target.value }))} aria-label={`${nut.label}の量`} />
+              </label>
+              <table className="nctable trcmp">
+                <thead>
+                  <tr>
+                    <th>
+                      {nut.label} {amt}
+                      {nut.unit} をとれる食品
+                    </th>
+                    <th>量</th>
+                    <th>kcal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r) => (
+                    <tr key={r.name}>
+                      <th scope="row">
+                        {r.name}
+                        <small style={{ display: "block", fontWeight: 400, color: "#667" }}>{unitLabel(r)}</small>
+                      </th>
+                      <td>{r.g}g</td>
+                      <td>{r.kcal}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="agnote small">日本食品標準成分表をもとにした目安値からの計算です。調理法・商品で、変わります。</p>
+            </>
+          );
+        })()}
       </section>
       <section className="card" id="s4a">
         <p className="balh">お客様に示す、アクション（自動）</p>
