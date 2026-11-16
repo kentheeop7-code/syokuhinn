@@ -73,7 +73,7 @@ export default function TrainerApp() {
   const [weekAct, setWeekAct] = useState("");
   const [nextDate, setNextDate] = useState("");
   const [pins, setPins] = useState<Paper[]>([]);
-  const [papers, setPapers] = useState<Record<string, { at: string; list: Paper[] }>>({});
+  const [papers, setPapers] = useState<Record<string, { at: string; ts?: number; list: Paper[] }>>({});
   const [busy, setBusy] = useState("");
   const [err, setErr] = useState("");
 
@@ -194,7 +194,7 @@ export default function TrainerApp() {
       const list = await searchPapers(term, 6);
       const at = new Date().toLocaleString("ja-JP");
       setPapers((prev) => {
-        const next = { ...prev, [key]: { at, list } };
+        const next = { ...prev, [key]: { at, ts: Date.now(), list } };
         try {
           localStorage.setItem("lg-trainer-papers", JSON.stringify(next));
         } catch {}
@@ -205,6 +205,23 @@ export default function TrainerApp() {
     }
     setBusy((b) => (b === key ? "" : b));
   };
+  // 開いたとき、1日以上たった（まだ取得していない）テーマを、自動で最新にする
+  useEffect(() => {
+    if (!loaded) return;
+    let alive = true;
+    (async () => {
+      for (const t of TOPICS) {
+        if (!alive) return;
+        const c = papers[t.key];
+        if (c && c.ts && Date.now() - c.ts < 24 * 3600 * 1000) continue;
+        await fetchTopic(t.key, t.term);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded]);
   const pin = (p: Paper) => setPins((x) => (x.some((y) => y.id === p.id) ? x.filter((y) => y.id !== p.id) : [...x, p]));
 
   const build = () => {

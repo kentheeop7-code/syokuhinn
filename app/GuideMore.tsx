@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TROUBLES } from "../lib/troubles";
 import { CONDS, TOPICS } from "../lib/trainerData";
 import { searchPapers, type Paper } from "../lib/pubmed";
@@ -10,7 +10,7 @@ const inp: React.CSSProperties = { font: "inherit", padding: "8px 10px", border:
 const lvColor = { 強い: "#2e7d32", 中くらい: "#b26a00", 弱い: "#c62828" } as const;
 
 /* ---- 最新の論文：PubMedから、その場で取得（新しい順）---- */
-export function LivePapers({ term, n = 5 }: { term: string; n?: number }) {
+export function LivePapers({ term, n = 5, auto = false }: { term: string; n?: number; auto?: boolean }) {
   const [state, setState] = useState<"idle" | "load" | "ok" | "none" | "err">("idle");
   const [list, setList] = useState<Paper[]>([]);
   const [at, setAt] = useState("");
@@ -25,6 +25,10 @@ export function LivePapers({ term, n = 5 }: { term: string; n?: number }) {
       setState((e as Error).message === "none" ? "none" : "err");
     }
   };
+  useEffect(() => {
+    if (auto) go();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto, term]);
   return (
     <div style={{ margin: "6px 0" }}>
       <button type="button" className="trchip on" onClick={go} disabled={state === "load"}>
@@ -187,13 +191,13 @@ export function LatestTab() {
   const t = TOPICS.find((x) => x.key === key) ?? TOPICS[0];
   return (
     <section>
-      <p style={{ margin: "0 0 8px" }}>PubMed（米国国立医学図書館）から、<b>その場で最新の論文を取得</b>します。ボタンを押すたびに、最新に更新されます。人を対象にしたメタ分析・系統的レビューを、新しい順に表示します。</p>
+      <p style={{ margin: "0 0 8px" }}>PubMed（米国国立医学図書館）から、<b>開くたび・テーマを選ぶたびに、最新の論文を自動で取得</b>します。ボタンでも、いつでも更新できます。人を対象にしたメタ分析・系統的レビューを、新しい順に表示します。</p>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
         {TOPICS.map((x) => <button key={x.key} type="button" className={key === x.key ? "trchip on" : "trchip"} aria-pressed={key === x.key} onClick={() => setKey(x.key)}>{x.label}</button>)}
       </div>
       <div style={box}>
         <b>{t.label}</b>
-        <LivePapers key={t.key} term={t.term} n={8} />
+        <LivePapers key={t.key} term={t.term} n={8} auto />
       </div>
       <div style={{ fontSize: 13, color: "#555" }}>※ 論文の内容は自動では評価していません。指導に使う前に、原文（要旨）の対象者・結論・限界を確認してください。</div>
     </section>

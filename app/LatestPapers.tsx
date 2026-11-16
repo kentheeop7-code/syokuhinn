@@ -8,39 +8,57 @@ import { searchPapers, type Paper } from "../lib/pubmed";
 export type Topic = { key: string; label: string; term: string };
 
 export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; storeKey: string }) {
-  const [data, setData] = useState<Record<string, { at: string; list: Paper[] }>>({});
+  const [data, setData] = useState<Record<string, { at: string; ts?: number; list: Paper[] }>>({});
   const [busy, setBusy] = useState("");
   const [err, setErr] = useState("");
 
+  // 開いたときに、1日以上たった（または、まだ取得していない）テーマを、自動で最新にする
   useEffect(() => {
+    let cache: typeof data = {};
     try {
       const s = JSON.parse(localStorage.getItem(`lg-papers-${storeKey}`) || "null");
-      if (s) setData(s);
+      if (s) {
+        cache = s;
+        setData(s);
+      }
     } catch {}
+    let alive = true;
+    (async () => {
+      for (const t of topics) {
+        if (!alive) return;
+        const c = cache[t.key];
+        if (c && c.ts && Date.now() - c.ts < 24 * 3600 * 1000) continue;
+        await run(t, true);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeKey]);
 
-  const run = async (t: Topic) => {
+  const run = async (t: Topic, quiet = false) => {
     setBusy(t.key);
     setErr("");
     try {
       const list = await searchPapers(t.term, 5);
       const at = new Date().toLocaleString("ja-JP");
       setData((prev) => {
-        const next = { ...prev, [t.key]: { at, list } };
+        const next = { ...prev, [t.key]: { at, ts: Date.now(), list } };
         try {
           localStorage.setItem(`lg-papers-${storeKey}`, JSON.stringify(next));
         } catch {}
         return next;
       });
     } catch (e) {
-      setErr(e instanceof Error && e.message === "none" ? "該当する論文が見つかりませんでした。" : "取得できませんでした。通信を確認して、もう一度お試しください。");
+      if (!quiet) setErr(e instanceof Error && e.message === "none" ? "該当する論文が見つかりませんでした。" : "取得できませんでした。通信を確認して、もう一度お試しください。");
     }
     setBusy((b) => (b === t.key ? "" : b));
   };
 
   return (
     <div className="latest">
-      <p className="agnote">PubMed（米国国立医学図書館）から、メタ分析・系統的レビューを、新しい順に取得します。英語のタイトルの一覧で、内容の評価はしていません。使う前に、専門家が確認してください。</p>
+      <p className="agnote">PubMed（米国国立医学図書館）から、メタ分析・系統的レビューを、新しい順に取得します（開いたとき、1日以上たっていれば、自動で更新）。英語のタイトルの一覧で、内容の評価はしていません。使う前に、専門家が確認してください。</p>
       <div className="trtopics">
         {topics.map((t) => (
           <div key={t.key} className="trtopic">
