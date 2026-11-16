@@ -5022,3 +5022,9 @@ main table{font-size:max(14px,.88rem)}
 .trgoal{font-size:17px}
 .trmeth button span{font-size:26px}
 main .rexn,main .trrec span,main .trrec li b,main table th,main .rcmp th,main .rcmp td{font-size:14px}
+
+/* ===== お客様向けの各ページ：残っていた小さい文字を、14px以上に ===== */
+main .nbh,main .nbh b,main .nbh span,main .nbh em{font-size:14px}
+main .pie figcaption,main .pie ul,main .pie li{font-size:14px}
+main .qm button span,main .qm button i,main .qmsize span,main .qmx,main .qmextra p{font-size:14px}
+main button i{font-size:13px}
