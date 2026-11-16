@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { CATEGORIES } from "../lib/foods";
+import { foodKey, kcalOf, portionOf, searchFoods } from "../lib/foodunits";
 import { EXTRAS, ICON, SIZES, SLOTS, kc, r10, slotKcal, type St, type Tile } from "../lib/meals";
 
 // 食事を、タップで選ぶ部品。使いかたは、3つだけ：
@@ -12,6 +14,9 @@ export default function MealPicker({ value, onChange, hint = false }: { value: S
   const [slot, setSlot] = useState("am");
   const [cats, setCats] = useState<Record<string, string>>({});
   const [q, setQ] = useState("");
+  const [fq, setFq] = useState("");
+  const [fcat, setFcat] = useState("");
+  const foodHits = useMemo(() => searchFoods(fq, fcat, 30), [fq, fcat]);
   const [recent, setRecent] = useState<string[]>([]);
   useEffect(() => {
     try {
@@ -64,19 +69,7 @@ export default function MealPicker({ value, onChange, hint = false }: { value: S
   const recentTiles = recent.map((id) => cur.tiles.find((t) => t.id === id)).filter((t): t is Tile => !!t && value.size[t.id] === undefined).slice(0, 6);
   return (
     <div className="qmp">
-      {hint && (
-        <ol className="qmguide" aria-label="使いかた">
-          <li>
-            <b>1</b>食事の時間を選ぶ
-          </li>
-          <li>
-            <b>2</b>食べたものを、タップ（複数OK）
-          </li>
-          <li>
-            <b>3</b>量を選ぶ（なければ、そのまま）
-          </li>
-        </ol>
-      )}
+      {hint && <p className="qmone">朝・昼・夜を順に、食べたものを<b>タップ</b>するだけ（複数OK）。</p>}
       <div className="qmtabs" role="tablist" aria-label="食事の時間">
         {SLOTS.map((s) => (
           <button key={s.id} type="button" role="tab" aria-selected={slot === s.id} className={slot === s.id ? "on" : ""} onClick={() => { setSlot(s.id); setQ(""); }}>
@@ -144,8 +137,51 @@ export default function MealPicker({ value, onChange, hint = false }: { value: S
         </div>
       ))}
       <details className="qmextra" open={extCount > 0}>
-        <summary>＋ 食品を1つずつ足す（{EXTRAS.length}種類：卵・豆・ナッツ・乳製品・お酒など）{extCount > 0 ? `　${extCount}つ` : ""}</summary>
+        <summary>＋ 食品を1つずつ足す（卵・豆・ナッツ・お酒など、どんな食品でも）{extCount > 0 ? `　${extCount}つ` : ""}</summary>
         <p className="qmx">タップで 1つ → 2つ → なし</p>
+        {Object.entries(value.ext).filter(([k]) => k.startsWith(`${slot}:${"f~"}`)).length > 0 && (
+          <div className="qmextras">
+            {Object.entries(value.ext)
+              .filter(([k]) => k.startsWith(`${slot}:f~`))
+              .map(([k, c]) => (
+                <button key={k} type="button" className="on" onClick={() => bump(k.split(":")[1])}>
+                  {k.split(":")[1].slice(2)}
+                  <i>×{c}</i>
+                </button>
+              ))}
+          </div>
+        )}
+        <label className="qmsearch">
+          <span aria-hidden>🔍</span>
+          <input type="search" value={fq} onChange={(e) => setFq(e.target.value)} placeholder="食品の名前で探す（例：アボカド・しらす・チーズ）" aria-label="食品の名前で探す" />
+          {fq && (
+            <button type="button" onClick={() => setFq("")} aria-label="検索をクリア">
+              ×
+            </button>
+          )}
+        </label>
+        <div className="qmcats" role="tablist" aria-label="食品の分類">
+          {["", ...CATEGORIES].map((c) => (
+            <button key={c || "all"} type="button" role="tab" aria-selected={fcat === c} className={fcat === c ? "on" : ""} onClick={() => setFcat(c)}>
+              {c || "すべて"}
+            </button>
+          ))}
+        </div>
+        <div className="qmfoods">
+          {foodHits.map((f) => {
+            const k = foodKey(f.name);
+            const c = value.ext[`${slot}:${k}`] ?? 0;
+            const p = portionOf(f);
+            return (
+              <button key={f.name} type="button" aria-pressed={c > 0} className={c > 0 ? "on" : ""} onClick={() => bump(k)}>
+                <b>{f.name}{c > 0 && <i> ×{c}</i>}</b>
+                <small>{p.label}（{p.g}g）約{kcalOf(f, p.g)}kcal　P{Math.round(f.p * p.g) / 100}・F{Math.round(f.f * p.g) / 100}・C{Math.round(f.c * p.g) / 100}</small>
+              </button>
+            );
+          })}
+          {foodHits.length === 0 && <p className="agnote">見つかりません。ほかの言葉で、探してください。</p>}
+        </div>
+        <p className="qmx">よく使う食品</p>
         <div className="qmextras">
           {EXTRAS.map((x) => {
             const c = value.ext[`${slot}:${x.k}`] ?? 0;

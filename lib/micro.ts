@@ -4,6 +4,7 @@
 import { FOODS } from "./foods";
 import { U } from "../app/BalanceCheck";
 import { amountOf } from "./microLookup";
+import { foodOfKey, isFoodKey, portionOf } from "./foodunits";
 
 const byName = new Map(FOODS.map((f) => [f.name, f]));
 // 食品の種類 → [代表的な食品, 1回のグラム]
@@ -62,7 +63,8 @@ export function microTotals(vals: Record<string, number>): Micro {
   for (const [k, n] of Object.entries(vals)) {
     const u = U[k];
     if (u) kAll += u.kcal * n;
-    const m = MAP[k];
+    const fk = isFoodKey(k) ? foodOfKey(k) : undefined;
+    const m: [string, number] | undefined = fk ? [fk.name, portionOf(fk).g] : MAP[k];
     const food = m ? byName.get(m[0]) : undefined;
     if (!m || !food) continue;
     if (u) kMap += u.kcal * n;

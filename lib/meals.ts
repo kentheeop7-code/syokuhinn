@@ -1,6 +1,7 @@
 // かんたん入力の、共通の部品（ホームと、トレーナー用で使う）。
 import { U } from "../app/BalanceCheck";
 import { amountOf } from "./microLookup";
+import { foodOfKey, isFoodKey, portionOf, registerFood } from "./foodunits";
 
 export type Tile = { id: string; icon: string; label: string; vals: Record<string, number>; cat?: string };
 export type Slot = { id: string; icon: string; label: string; tiles: Tile[] };
@@ -355,7 +356,8 @@ export const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 };
-export const kc = (vals: Record<string, number>, m = 1) => Object.entries(vals).reduce((s, [k, v]) => s + (U[k]?.kcal ?? 0) * v * m, 0);
+export const unitOf = (k: string) => U[k] ?? (registerFood(k) ? U[k] : undefined);
+export const kc = (vals: Record<string, number>, m = 1) => Object.entries(vals).reduce((s, [k, v]) => s + (unitOf(k)?.kcal ?? 0) * v * m, 0);
 export const r10 = (n: number) => Math.round(n / 10) * 10;
 
 
@@ -370,7 +372,10 @@ export function buildVals(n: St): Record<string, number> {
   );
   for (const [key, c] of Object.entries(n.ext)) {
     const k = key.split(":")[1];
-    if (c > 0) vals[k] = (vals[k] ?? 0) + c;
+    if (c > 0) {
+      registerFood(k);
+      vals[k] = (vals[k] ?? 0) + c;
+    }
   }
   return vals;
 }
@@ -382,7 +387,7 @@ export function totals(n: St): Tot {
   const t: Tot = { any: Object.keys(all).length > 0, kcal: 0, p: 0, f: 0, c: 0, fi: 0, salt: 0 };
   if (!t.any) return t;
   for (const [k, v] of Object.entries({ ...all, base: 1 })) {
-    const u = U[k];
+    const u = unitOf(k);
     if (!u) continue;
     t.kcal += u.kcal * v;
     t.p += u.p * v;
@@ -415,8 +420,13 @@ export function describe(n: St): string[] {
     });
     for (const [key, c] of Object.entries(n.ext)) {
       if (!key.startsWith(s.id + ":")) continue;
-      const x = EXTRAS.find((e) => e.k === key.split(":")[1]);
+      const kk = key.split(":")[1];
+      const x = EXTRAS.find((e) => e.k === kk);
       if (x) parts.push(`＋${x.label}${c > 1 ? `×${c}` : ""}`);
+      else if (isFoodKey(kk)) {
+        const fd = foodOfKey(kk);
+        if (fd) parts.push(`＋${fd.name}（${portionOf(fd).label}）${c > 1 ? `×${c}` : ""}`);
+      }
     }
     if (parts.length) out.push(`${s.label}：${parts.join("、")}（約${r10(slotKcal(n, s)).toLocaleString()}kcal）`);
   }

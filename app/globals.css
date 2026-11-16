@@ -5053,3 +5053,12 @@ main button i{font-size:13px}
 .startres small{display:block;font-size:.8rem;color:#567}
 .startres b{font-size:1.25rem;color:#1f5f41}
 .startnext{display:block;margin-top:10px;text-align:center;padding:12px;border-radius:14px;background:#2f9e75;color:#fff;font-weight:800;text-decoration:none;font-size:1.05rem}
+
+/* ===== 食事選択：シンプルな説明と、食品さがし ===== */
+.qmone{margin:0 0 8px;padding:8px 12px;border-radius:12px;background:#f1f8f3;font-size:1rem}
+.qmfoods{display:grid;gap:6px;margin:8px 0;max-height:360px;overflow:auto}
+.qmfoods button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px;border:2px solid #cfe6d8;border-radius:12px;background:#fff;font:inherit;cursor:pointer}
+.qmfoods button b{font-size:1rem}
+.qmfoods button small{font-size:.85rem;color:#567}
+.qmfoods button.on{background:#e6f5ec;border-color:#2f9e75}
+.qmfoods button i{font-style:normal;color:#1f6f54}
