@@ -1,4 +1,4 @@
-// 印刷にも強い、かんたんなグラフ（SVG）。外部のライブラリは、使わない。
+﻿// 印刷にも強い、かんたんなグラフ（SVG）。外部のライブラリは、使わない。
 type Slice = { label: string; value: number; color: string };
 
 export function Pie({ data, size = 130, title }: { data: Slice[]; size?: number; title?: string }) {
@@ -66,20 +66,20 @@ export function LineChart({ pts, unit = "kg", target, marks, width = 520, height
       {yt.map((v) => (
         <g key={v}>
           <line x1={P.l} x2={width - P.r} y1={sy(v)} y2={sy(v)} stroke="#e3e6ea" />
-          <text x={P.l - 6} y={sy(v) + 4} textAnchor="end" fontSize="11" fill="#667">
+          <text x={P.l - 6} y={sy(v) + 4} textAnchor="end" fontSize="13" fill="#667">
             {(Math.round(v * 10) / 10).toString()}
           </text>
         </g>
       ))}
       {xt.map((v) => (
-        <text key={v} x={sx(v)} y={height - 14} textAnchor="middle" fontSize="11" fill="#667">
+        <text key={v} x={sx(v)} y={height - 14} textAnchor="middle" fontSize="13" fill="#667">
           {v === 0 ? "いま" : `${v}週`}
         </text>
       ))}
       {target ? (
         <g>
           <line x1={P.l} x2={width - P.r} y1={sy(target)} y2={sy(target)} stroke="#d9822b" strokeDasharray="5 4" />
-          <text x={width - P.r} y={sy(target) - 5} textAnchor="end" fontSize="11" fill="#b8651a">
+          <text x={width - P.r} y={sy(target) - 5} textAnchor="end" fontSize="13" fill="#b8651a">
             ゴール {target}
             {unit}
           </text>
@@ -89,13 +89,13 @@ export function LineChart({ pts, unit = "kg", target, marks, width = 520, height
       {(marks ?? []).map((m) => (
         <g key={m.week}>
           <circle cx={sx(m.week)} cy={sy(m.kg)} r="4.5" fill="#fff" stroke="#2e9e6a" strokeWidth="2.5" />
-          <text x={sx(m.week)} y={sy(m.kg) - 9} textAnchor="middle" fontSize="11" fontWeight="700" fill="#1f5f41">
+          <text x={sx(m.week)} y={sy(m.kg) - 9} textAnchor="middle" fontSize="13" fontWeight="700" fill="#1f5f41">
             {m.kg}
           </text>
         </g>
       ))}
       <circle cx={sx(first.x)} cy={sy(first.y)} r="5" fill="#2e9e6a" />
-      <text x={sx(first.x) + 8} y={sy(first.y) - 8} fontSize="12" fontWeight="700" fill="#1f5f41">
+      <text x={sx(first.x) + 8} y={sy(first.y) - 8} fontSize="14" fontWeight="700" fill="#1f5f41">
         {first.y}
         {unit}
       </text>
@@ -147,7 +147,7 @@ export function Radar({ axes, size = 260 }: { axes: { label: string; plan: numbe
         return (
           <g key={a.label}>
             <line x1={c} y1={c} x2={x} y2={y} stroke="#e3e6ea" />
-            <text x={lx} y={ly + 4} textAnchor={lx < c - 6 ? "end" : lx > c + 6 ? "start" : "middle"} fontSize="10" fill="#334">
+            <text x={lx} y={ly + 4} textAnchor={lx < c - 6 ? "end" : lx > c + 6 ? "start" : "middle"} fontSize="12" fill="#334">
               {a.label}
             </text>
           </g>
@@ -199,10 +199,10 @@ export function Gauge({ bands, min, max, marks, unit = "" }: { bands: { from: nu
       {bands.map((b) => (
         <g key={b.label}>
           <rect x={x(b.from)} y={44} width={x(b.to) - x(b.from)} height={18} fill={b.color} />
-          <text x={(x(b.from) + x(b.to)) / 2} y={78} textAnchor="middle" fontSize="10" fill="#445">
+          <text x={(x(b.from) + x(b.to)) / 2} y={78} textAnchor="middle" fontSize="12" fill="#445">
             {b.label}
           </text>
-          <text x={x(b.from)} y={92} textAnchor="middle" fontSize="9" fill="#889">
+          <text x={x(b.from)} y={92} textAnchor="middle" fontSize="11" fill="#889">
             {b.from}
           </text>
         </g>
@@ -210,7 +210,7 @@ export function Gauge({ bands, min, max, marks, unit = "" }: { bands: { from: nu
       {marks.map((m, i) => (
         <g key={m.label}>
           <path d={`M ${x(m.v)} 44 l -6 -10 h 12 z`} fill={m.color ?? "#223"} />
-          <text x={x(m.v)} y={i % 2 === 0 ? 22 : 12} textAnchor="middle" fontSize="11" fontWeight="700" fill={m.color ?? "#223"}>
+          <text x={x(m.v)} y={i % 2 === 0 ? 22 : 12} textAnchor="middle" fontSize="13" fontWeight="700" fill={m.color ?? "#223"}>
             {m.label} {m.v}
             {unit}
           </text>

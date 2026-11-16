@@ -4937,3 +4937,69 @@ ul.rnote{padding-left:18px;margin:6px 0}
 .qmnextb{width:100%;min-height:48px;border-radius:12px;border:2px solid #2e9e6a;background:#fff;color:#1f5f41;font-weight:800;font-size:15px}
 .qmnextb.on{background:#2e9e6a;color:#fff}
 @media (max-width:420px){.qmguide{grid-template-columns:1fr}}
+
+/* ===== お客様に送る内容：文字を大きく（レポート・PDF・共有ページ） ===== */
+.report{font-size:16px;line-height:1.65}
+.report.pdfmode{font-size:16px}
+.report h1{font-size:26px}
+.report h2{font-size:21px;margin:20px 0 8px}
+.report li,.report ul{line-height:1.6}
+.report .rbig{font-size:22px}
+.report .rtable,.report .rtable th,.report .rtable td{font-size:15px}
+.report .rnote,.report .rsrc{font-size:14px}
+.report .rfoot{font-size:13px}
+.report .pie figcaption{font-size:16px}
+.report .pie ul{font-size:14px}
+.report .tbars li{font-size:14px}
+.report .rgoal span{font-size:15px}
+.report .rgoal b{font-size:30px}
+.report .rgoal em{font-size:16px}
+.report .rext,.report .rfoodc .rext{font-size:16px}
+.report .rexn{font-size:14px}
+.report .rexc ul,.report .rtwo ul{font-size:15px}
+.report .nbh,.report .nbh b{font-size:15px}
+.report .nbh em{font-size:14px}
+.report .nb small{font-size:13px}
+.report .nbgroup{font-size:15px}
+.report .rscore b{font-size:26px}
+.report .rshort{font-size:15px}
+.report .rinct th,.report .rinct td,.report .rev td,.report .rev th,.report .rinc .rext span{font-size:14px}
+.report .rfoodc .rinct th,.report .rfoodc .rinct td{font-size:13px}
+.report .rlim{font-size:13px}
+.report .hbars li,.report .hbars b{font-size:14px}
+.report .rkpi small{font-size:13px}
+.report .rkpi b{font-size:22px}
+.report .rkpi em{font-size:13px}
+.report .ract-list b{font-size:18px}
+.report .ract-list span{font-size:14px}
+.report .ract-list em{font-size:13px}
+.report .rweek th,.report .rweek td,.report .rweek tbody th{font-size:13px}
+.report .rcal th{font-size:15px}
+.report .sbrow,.report .iconrow{font-size:14px}
+.report .iconrow small{font-size:13px}
+.report .rplh{font-size:15px}
+.report .rplfrom,.report .rplto{font-size:14px}
+.report .rplfrom small,.report .rplto small{font-size:12px}
+.report .rplfrom b,.report .rplto b{font-size:15px}
+.report .rplfrom em,.report .rplto em{font-size:13px}
+.report .rwarn,.report .rcmp th,.report .rcmp td{font-size:14px}
+.report .rcover .rbrand{font-size:20px}
+.report .rcover h1{font-size:25px}
+.report .rhero small{font-size:13px}
+.report .rpromise small{font-size:15px}
+.report .rage,.report .rfh{font-size:15px}
+.report .rfh em{font-size:13px}
+.report .rfd,.report .rfind ol,.report .rgood{font-size:14px}
+.report .rth{font-size:16px}
+.report .rsteps li{font-size:14px}
+.report .rsteps li::before{font-size:13px}
+.report .rtrouble li,.report .rtrouble p{font-size:15px}
+.rptbtns .btn{flex:1 1 calc(50% - 8px);min-width:150px;white-space:normal;text-align:center;font-size:15px;padding:10px 8px}
+.report .rpromise div{font-size:15px}
+.report .rpromise small{font-size:14px}
+.report .rkpi div{font-size:15px}
+.report .rhero>div{font-size:15px}
+.report .ract-list li{font-size:15px}
+.report .rfh,.report .rfh b{font-size:16px}
+.report .rweek tbody th,.report .rweek td{white-space:normal;overflow:visible;text-overflow:clip}
+.report .rweek tbody th{font-size:14px;line-height:1.4}
