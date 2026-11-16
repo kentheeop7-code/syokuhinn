@@ -5009,3 +5009,16 @@ main small, main .agnote, main .trat, main .trpapers small, main .rnote{font-siz
 main .trpapers li, main .trpapers a{font-size:max(15px,.92rem)}
 .trchip{font-size:max(15px,.9rem);padding:8px 12px;line-height:1.35}
 main table{font-size:max(14px,.88rem)}
+
+/* ===== トレーナーページ：文字を大きく ===== */
+.trgood,.trchk,.trfh,.trmeth button b,.trex select,.trfab{font-size:16px}
+.trswap em,.trfd,.trfind ol,.trage ul,.trrec ul,.trsev span,.trex,.trsteps a,.trbody summary,.qmdet summary,.qmextra summary{font-size:15px}
+.trswap b,.tract b,.ract-list b{font-size:17px}
+.trswap small,.tract small,.trrec p,.trrec b{font-size:14px}
+.tract em,.trfh em,.trmeth button em,.trsteps a i,.qmcats i,.qmrecent small{font-size:13px}
+.trfit{font-size:13px}
+.qmcats button,.qmrecent button,.qmguide li,.qmguide b{font-size:14px}
+.qm .qmtabs button em{font-size:12px}
+.trgoal{font-size:17px}
+.trmeth button span{font-size:26px}
+main .rexn,main .trrec span,main .trrec li b,main table th,main .rcmp th,main .rcmp td{font-size:14px}
