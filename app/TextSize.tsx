@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
 // 文字の大きさを、ワンタップで切りかえる（標準 → 大 → 特大）。選んだ大きさは、保存される。
 const SIZES = [
-  { key: "m", label: "標準", px: 17 },
-  { key: "l", label: "大", px: 19 },
-  { key: "xl", label: "特大", px: 22 },
+  { key: "m", label: "標準", px: 19 },
+  { key: "l", label: "大", px: 21 },
+  { key: "xl", label: "特大", px: 24 },
 ];
 
 export default function TextSize() {
@@ -34,4 +34,5 @@ export default function TextSize() {
     </button>
   );
 }
+
 

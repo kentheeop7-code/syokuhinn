@@ -5003,3 +5003,9 @@ ul.rnote{padding-left:18px;margin:6px 0}
 .report .rfh,.report .rfh b{font-size:16px}
 .report .rweek tbody th,.report .rweek td{white-space:normal;overflow:visible;text-overflow:clip}
 .report .rweek tbody th{font-size:14px;line-height:1.4}
+
+/* ===== 全ページ：小さい文字を、読みやすく ===== */
+main small, main .agnote, main .trat, main .trpapers small, main .rnote{font-size:max(14px,.85rem)}
+main .trpapers li, main .trpapers a{font-size:max(15px,.92rem)}
+.trchip{font-size:max(15px,.9rem);padding:8px 12px;line-height:1.35}
+main table{font-size:max(14px,.88rem)}
