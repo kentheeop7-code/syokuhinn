@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { CONDS, ISSUES, PLAYS } from "../lib/trainerData";
-import { SLOTS, describe, goalOf, r10, slotKcal, totals, type St } from "../lib/meals";
+import { EXTRAS, SLOTS, describe, goalOf, r10, slotKcal, totals, type St } from "../lib/meals";
+import { foodOfKey, isFoodKey } from "../lib/foodunits";
 import { makeInsights } from "../lib/advice";
 import { computeGoal, PACES, type Pace } from "../lib/goal";
 import { calcEnergy } from "../lib/energy";
@@ -97,7 +98,18 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const energy = calcEnergy({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace });
   const want = manualKcal || energy?.target || 0;
   const bodyA = analyzeBody({ height: num(s.height), weight: w, targetWeight: wt, bodyFat: num(s.bodyFat), fatMass: num(s.fatMass), muscle: num(s.muscle), visceral: num(s.visceral), bmiIn: num(s.bmiIn) });
-  const labelsOf = (st: St, slotId: string) => (SLOTS.find((x) => x.id === slotId)?.tiles ?? []).filter((t) => st.size[t.id] !== undefined).map((t) => t.label);
+  const extLabel = (k: string, c: number) => {
+    const x = EXTRAS.find((e) => e.k === k);
+    const name = x ? x.label : isFoodKey(k) ? foodOfKey(k)?.name : "";
+    return name ? `＋${name}${c > 1 ? `×${c}` : ""}` : "";
+  };
+  const labelsOf = (st: St, slotId: string) => [
+    ...(SLOTS.find((x) => x.id === slotId)?.tiles ?? []).filter((t) => st.size[t.id] !== undefined).map((t) => t.label),
+    ...Object.entries(st.ext)
+      .filter(([key, c]) => key.startsWith(slotId + ":") && c > 0)
+      .map(([key, c]) => extLabel(key.split(":")[1], c))
+      .filter(Boolean),
+  ];
   const mth = getMethod(String(s.method || "balance"));
   const pctEff = effectivePct(mth, s.pfc);
   const pctSum = pctEff.p + pctEff.f + pctEff.c || 100;
