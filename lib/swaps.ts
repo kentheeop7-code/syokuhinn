@@ -57,6 +57,39 @@ const TABLE = Object.fromEntries([
   S("pm-x-juice-only", "おにぎり＋ヨーグルト＋果物", "たんぱく質と食物繊維が、増える", { rice: 1, yogurt: 1, fruit: 1 }),
   S("sn-x-cracker", "ナッツ・小魚・のり", "たんぱく質・ミネラルが、増える", { nuts: 0.7, smallfish: 0.5 }),]) as Record<string, { to: string; why: string; vals: Record<string, number> }>;
 
+// 追加した食事（昼・夜は、同じ案を、両方に）の置きかえ
+type Sw = { to: string; why: string; vals: Record<string, number> };
+const FISH: Sw = { to: "焼き魚の定食（魚・野菜・みそ汁）", why: "魚の脂（n-3）と野菜が、増える", vals: { rice: 1, fish: 1, greenveg: 1, soup: 1 } };
+const NOOD: Sw = { to: "具だくさんの麺＋ゆで卵＋サラダ", why: "たんぱく質と野菜が、増える", vals: { noodle: 1, egg: 1, salad: 1, out: 0.7 } };
+const RICE: Sw = { to: "鶏の定食（ごはん1杯・緑黄色野菜・みそ汁）", why: "野菜とたんぱく質が、増える", vals: { rice: 1, chicken: 1, greenveg: 1, soup: 1 } };
+const VEGX: Sw = { to: "同じ料理に、サラダ・野菜の小鉢・汁物を足す", why: "野菜と食物繊維が、増える", vals: { rice: 1, chicken: 1, salad: 1, veg: 1, soup: 1 } };
+const PAST: Sw = { to: "トマト系パスタ＋サラダ＋ゆで卵", why: "野菜とたんぱく質が、増える", vals: { noodle: 1, salad: 1, egg: 1, out: 0.5 } };
+const BURG: Sw = { to: "ハンバーガー（または、チキンバーガー）＋サラダ＋牛乳", why: "野菜とカルシウムが、増える", vals: { bread: 2, chicken: 1, salad: 1, milk: 1, out: 1 } };
+const EXTRA: Record<string, Sw> = {
+  "z-tonkatsu": FISH, "z-karaage": FISH, "z-tendon": FISH, "z-yurinchi": FISH, "z-nugget": RICE,
+  "z-carbonara": PAST, "z-meatsauce": PAST, "z-peperoncino": PAST, "z-pizza": { to: "ピザ2切れ＋サラダ＋スープ", why: "野菜が、増える", vals: { bread: 1.3, yogurt: 1, veg: 1, soup: 1, out: 1 } },
+  "z-chahan": VEGX, "z-tenshinhan": VEGX, "z-omurice": VEGX, "z-doria": VEGX, "z-bento-nori": FISH,
+  "z-ramen-set": NOOD, "z-tteok": NOOD, "z-chickenburger": BURG, "z-fishburger": BURG,
+  "z-conv-pasta": PAST, "z-gyoza-set": VEGX, "z-shumai": VEGX, "z-takoyaki": NOOD, "z-okonomi": VEGX,
+};
+for (const [k, v] of Object.entries(EXTRA)) for (const p of ["no", "pm"]) (TABLE as Record<string, Sw>)[`${p}-x-${k}`] = v;
+const EXTRA2: Record<string, Sw> = {
+  "am-z-croissant": { to: "全粒粉パン＋卵＋牛乳", why: "たんぱく質と食物繊維が、増える", vals: { wbread: 2, egg: 1, milk: 1 } },
+  "sn-z-cheesecake": { to: "ヨーグルト＋果物", why: "たんぱく質・カルシウム・食物繊維が、増える", vals: { yogurt: 1, fruit: 1 } },
+  "sn-z-shuku": { to: "ヨーグルト＋果物", why: "たんぱく質・カルシウム・食物繊維が、増える", vals: { yogurt: 1, fruit: 1 } },
+  "sn-z-fries": { to: "枝豆・ナッツ（無塩）", why: "たんぱく質と食物繊維が、増える", vals: { beans: 1, nuts: 0.5 } },
+  "sn-z-popcorn": { to: "ナッツ・小魚・のり", why: "たんぱく質・ミネラルが、増える", vals: { nuts: 0.7, smallfish: 0.5 } },
+  "sn-z-pizzapan": { to: "おにぎり（小）＋ゆで卵", why: "たんぱく質が、増える", vals: { rice: 0.7, egg: 1 } },
+  "sn-y-donut": { to: "ヨーグルト＋果物", why: "たんぱく質・カルシウム・食物繊維が、増える", vals: { yogurt: 1, fruit: 1 } },
+  "sn-y-chips": { to: "ナッツ ひとつかみ", why: "たんぱく質と、よい脂質が、増える", vals: { nuts: 1 } },
+  "sn-y-cookie": { to: "ヨーグルト＋ナッツ", why: "たんぱく質が、増える", vals: { yogurt: 1, nuts: 0.5 } },
+  "dr-y-cola": { to: "無糖の炭酸水・お茶（または、豆乳）", why: "たんぱく質が、増える（砂糖をとらない）", vals: { soymilk: 1 } },
+  "dr-y-juice": { to: "果物そのもの（みかん・りんご）", why: "食物繊維・ビタミンが、増える", vals: { fruit: 1.5 } },
+  "dr-z-chuhai": { to: "ハイボール・焼酎の水割り＋冷奴", why: "糖分を減らし、たんぱく質を足す", vals: { alcohol: 0.7, soy: 1 } },
+  "dr-z-energy": { to: "水・無糖のお茶（運動中は、スポーツドリンクを少し）", why: "砂糖の飲み物を、減らす", vals: {} },
+};
+for (const [k, v] of Object.entries(EXTRA2)) (TABLE as Record<string, Sw>)[k] = v;
+
 const sum = (vals: Record<string, number>, m = 1) => {
   const t = { kcal: 0, p: 0, fi: 0 };
   for (const [k, v] of Object.entries(vals)) {
