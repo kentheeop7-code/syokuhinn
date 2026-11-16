@@ -95,7 +95,7 @@ export default function HomeHero() {
         </p>
       )}
 
-      <p className="herolabel sub">いつもの食事は？（1タップ）</p>
+      <p className="herolabel sub">① まずは、いつもの食事に近いものを、1タップ（あとで、直せます）</p>
       <div className="heropick">
         {PRESETS.map((p) => (
           <button key={p.id} type="button" aria-pressed={preset === p.id} className={preset === p.id ? "on" : ""} onClick={() => pick(p.id)}>
@@ -133,8 +133,8 @@ export default function HomeHero() {
       )}
 
       <div className="heroacts">
-        <a href="#bal" className="heroa main">
-          くわしく直す
+        <a href="#qm" className="heroa main">
+          ② 朝・昼・夜を、選ぶ
         </a>
         <a href="#cause" className="heroa">
           原因を知る

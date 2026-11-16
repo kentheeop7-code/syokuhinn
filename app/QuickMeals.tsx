@@ -68,15 +68,15 @@ export default function QuickMeals() {
   if (tot.any && parseFloat(g.p || "0") > 0) radar.unshift({ label: "たんぱく質", plan: tot.p / parseFloat(g.p || "1") });
   const has = Object.keys(st.size).length > 0 || Object.keys(st.ext).length > 0;
   return (
-    <section className="card qm" aria-label="かんたん入力">
-      <p className="balh">🍽 今日の食事を、タップで選ぶ</p>
+    <section className="card qm" id="qm" aria-label="かんたん入力">
+      <p className="balh">🍽 ② 朝・昼・夜を、くわしく選ぶ</p>
       <p className="agnote">朝・昼・夜・おやつを選ぶと、上の推定カロリーに、すぐ反映されます。量も、足したものも、直せます。</p>
       {prev && !has && (
         <button type="button" className="btn ghost qmprev" onClick={() => save({ date: today(), size: prev.size, ext: prev.ext })}>
           前回の内容を、今日にコピーする
         </button>
       )}
-      <MealPicker value={st} onChange={save} />
+      <MealPicker value={st} onChange={save} hint />
       <p className="qmsum">
         {kcal > 0 ? (
           <>

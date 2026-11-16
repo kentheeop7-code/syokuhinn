@@ -4919,3 +4919,21 @@ ul.rnote{padding-left:18px;margin:6px 0}
 .rhero>div{background:rgba(255,255,255,.26)}
 .rhero .goalc small{color:#445}
 
+
+/* meal picker: simpler guide, search, recent, next */
+.qmguide{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0;padding:0}
+.qmguide li{font-size:12px;line-height:1.4;background:#f3faf6;border:1px solid #cfe6d8;border-radius:10px;padding:6px 8px}
+.qmguide b{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#2e9e6a;color:#fff;align-items:center;justify-content:center;margin-right:6px;font-size:12px}
+.qm .qmtabs button em{font-style:normal;font-size:10px;color:#889}
+.qmsearch{display:flex;align-items:center;gap:6px;border:1px solid #d6d9de;border-radius:12px;padding:0 10px;margin:6px 0;background:#fff;min-height:44px}
+.qmsearch input{flex:1;border:0;outline:0;font-size:15px;min-height:42px;background:transparent}
+.qmsearch button{border:0;background:#eef1f4;border-radius:50%;width:26px;height:26px;font-size:16px}
+.qmrecent{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0}
+.qmrecent small{font-size:11px;color:#667}
+.qmrecent button{border:1px solid #cfe6d8;background:#f3faf6;border-radius:999px;padding:5px 10px;font-size:12px}
+.qmextra{border:1px dashed #cfd4da;border-radius:10px;padding:6px 10px;margin:8px 0}
+.qmextra summary{cursor:pointer;font-size:13px;min-height:34px;display:flex;align-items:center}
+.qmnext{margin:10px 0 2px}
+.qmnextb{width:100%;min-height:48px;border-radius:12px;border:2px solid #2e9e6a;background:#fff;color:#1f5f41;font-weight:800;font-size:15px}
+.qmnextb.on{background:#2e9e6a;color:#fff}
+@media (max-width:420px){.qmguide{grid-template-columns:1fr}}
