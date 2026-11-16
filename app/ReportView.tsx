@@ -16,6 +16,12 @@ import { Bars, Gauge, HBars, IconRow, LineChart, Pie, Radar, StackBars } from ".
 import { BMI_BANDS, analyzeBody } from "../lib/body";
 import { mealGuide } from "../lib/mealguide";
 import { METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor } from "../lib/methods";
+import { recommend } from "../lib/recommend";
+import { analyzeClient, ageNote } from "../lib/analysis";
+import { TROUBLES } from "../lib/troubles";
+import { energyPhases } from "../lib/energy";
+import { personalDays } from "../lib/dayfit";
+import { NUTS, foodsFor, unitLabel } from "../lib/foodlist";
 import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 import { lineUrl } from "./LineShare";
 import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
@@ -38,6 +44,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const [bad, setBad] = useState(false);
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState("");
+  const [compact, setCompact] = useState(false); // 簡易版：栄養素のくわしい図・食品の早見表を、はぶいて、ページ数を、減らす
   useEffect(() => {
     document.body.classList.add("rpt");
     (async () => {
@@ -99,6 +106,16 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const exSt = exampleSt(mth);
   const exT = totals(exSt);
   const exE = exT.p * 4 + exT.f * 9 + exT.c * 4 || 1;
+  const pdays = personalDays(macKcal, pctEff, mth.id, { lipid: (s.conds || []).includes("lipid"), n: 6 });
+  const hasBodyData = num(s.bmr) > 0 || num(s.bodyFat) > 0 || num(s.fatMass) > 0;
+  const goalK: "diet" | "muscle" | "both" = s.goal === "diet" ? "diet" : s.goal === "muscle" ? "muscle" : "both";
+  const rec = recommend({ sex, age: num(s.age), band, weight: w, height: num(s.height), conds: s.conds || [], goal: goalK, hasBody: hasBodyData });
+  const ageN = ageNote(num(s.age), band, sex);
+  const findings = analyzeClient({ sex, age: num(s.age), band, weight: w, targetWeight: wt, body: bodyA, energy, wantKcal: want, cur: ct.any ? ct : null, goalP: parseFloat(g.p || "0"), goalFi: parseFloat(g.fi || "0"), goalSalt: g.salt, water, strengthDays: days, otherMin: weeklyMin(others), guideMin: guideMin(band), conds: s.conds || [], goal: goalK, troubles: s.troubles || [], weeks: gp?.weeks ?? 0, rate: gp?.rate ?? 0 });
+  const nSev = { 要対策: findings.filter((f) => f.sev === "要対策").length, 注意: findings.filter((f) => f.sev === "注意").length, 良好: findings.filter((f) => f.sev === "良好").length };
+  const phases = energy && gp ? energyPhases({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace }, gp.pts, gp.weeks) : [];
+  const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
+  const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
   const muscleKg = num(s.muscle);
   const fatPct = num(s.bodyFat);
   const bmrIn = num(s.bmr);
@@ -116,8 +133,21 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const kcalMain = pt.any ? pt.kcal : want || 0;
   const aim = want || kcalMain;
   const near = aim ? EXAMPLES.map((e) => ({ id: e.id, d: Math.abs(totals(e.st).kcal - aim) })).sort((a, b) => a.d - b.d)[0]?.id : "";
+  const trs: string[] = s.troubles || [];
+  const evShow = (topic: string) => {
+    if (topic === "60歳以上の筋トレ") return num(s.age) >= 60 || band >= 5;
+    if (topic === "高齢者とたんぱく質") return num(s.age) >= 65 || band >= 5;
+    if (topic === "糖質を減らす食事") return mth.id === "lowcarb" || mth.id === "keto";
+    if (topic.startsWith("ケトジェニック")) return mth.id === "keto";
+    if (topic.startsWith("便秘")) return trs.includes("constipation");
+    if (topic === "睡眠と減量") return trs.some((x) => ["sleep", "plateau", "hunger"].includes(x));
+    if (topic === "減量中の代謝の低下") return trs.includes("plateau");
+    if (topic === "年齢と代謝") return num(s.age) > 0;
+    return true;
+  };
   let secNo = 0;
-  const H = (t: string) => `${++secNo}. ${t}`;
+  const ICONS: [string, string][] = [["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
+  const H = (t: string) => `${ICONS.find(([k]) => t.includes(k))?.[1] ?? "▪"} ${++secNo}. ${t}`;
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
 
@@ -218,6 +248,9 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
               <button type="button" className="btn ghost" onClick={() => window.print()}>
                 🖨 印刷する
               </button>
+              <button type="button" className={compact ? "btn on" : "btn ghost"} aria-pressed={compact} onClick={() => setCompact((v) => !v)}>
+                {compact ? "✓ 簡易版（ページ少なめ）" : "📄 簡易版にする（ページを減らす）"}
+              </button>
               <button type="button" className="btn ghost" onClick={() => copy("link")} disabled={!link}>
                 {copied === "link" ? "✓ リンクをコピーしました" : "お客様専用ページの、リンクをコピー"}
               </button>
@@ -259,15 +292,34 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
       </div>
 
       <article className="report" aria-label="お客様向けのまとめ">
-        <header className="rhead">
-          <p className="rbrand">LIFEGYM</p>
-          <h1>あなたの目指す姿と、食事・運動のまとめ</h1>
-          <p className="rmeta">
-            {dateText}
-            {name ? `　${name} さん` : ""}
-          </p>
+        <header className="rcover">
+          <div className="rcb">
+            <p className="rbrand">LIFEGYM</p>
+            <p className="rtag">食事・運動 パーソナルプラン</p>
+          </div>
+          <h1>{name ? `${name}さんの、` : ""}目指す姿と、食事・運動のプラン</h1>
+          <p className="rmeta">{dateText}</p>
+          <div className="rhero">
+            <div>
+              <small>いま</small>
+              <b>{w ? `${w}kg` : "—"}</b>
+            </div>
+            <i aria-hidden>▶</i>
+            <div className="goalc">
+              <small>ゴール</small>
+              <b>{wt ? `${wt}kg` : "—"}</b>
+            </div>
+            <div>
+              <small>期間</small>
+              <b>{gp ? `約${gp.weeks}週` : "—"}</b>
+            </div>
+            <div>
+              <small>1日の食事</small>
+              <b>{(want || kcalMain) > 0 ? `${r10(want || kcalMain).toLocaleString()}` : "—"}</b>
+              <em>kcal</em>
+            </div>
+          </div>
         </header>
-
         <div className="rkpi" aria-label="サマリー">
           <div>
             <small>目標</small>
@@ -307,6 +359,14 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           <section className="ractions">
             <h2>{H("今日から、やること（まず、これだけ）")}</h2>
             <p className="rnote">「何を、どう変えるか」です。できることから、1つずつ、始めましょう。</p>
+            <div className="rpromise">
+              {actionsOn.slice(0, 3).map((x, i) => (
+                <div key={x.id}>
+                  <small>約束 {i + 1}</small>
+                  <b>{x.text}</b>
+                </div>
+              ))}
+            </div>
             <ol className="ract-list">
               {actionsOn.map((x) => (
                 <li key={x.id}>
@@ -340,6 +400,68 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 ))}
               </tbody>
             </table>
+          </section>
+        )}
+        {findings.length > 0 && (
+          <section>
+            <h2>{H("現状の分析と対策")}</h2>
+            <div className="rchartrow">
+              <Pie
+                size={104}
+                title="分析のまとめ"
+                data={[
+                  { label: "要対策", value: nSev.要対策, color: "#e0694f" },
+                  { label: "注意", value: nSev.注意, color: "#f0b84a" },
+                  { label: "良好", value: nSev.良好, color: "#2e9e6a" },
+                ]}
+              />
+              <p className="rnote" style={{ maxWidth: 300 }}>
+                年齢・体のデータ・食事・運動・持病・いまの状況から、分析しました。赤＝まず対策、黄＝気をつける、緑＝よくできています。
+              </p>
+            </div>
+            {ageN && (
+              <div className="rage">
+                <p>
+                  {ageN.icon} <b>年代のポイント：{ageN.title}</b>
+                </p>
+                <ul>
+                  {ageN.points.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <ul className="rfind">
+              {findings
+                .filter((f) => f.sev !== "良好")
+                .slice(0, 9)
+                .map((f) => (
+                  <li key={f.id} className={`sev-${f.sev}`}>
+                    <p className="rfh">
+                      <span aria-hidden>{f.icon}</span>
+                      <b>{f.title}</b>
+                      <em>{f.sev}</em>
+                    </p>
+                    {f.detail && <p className="rfd">{f.detail}</p>}
+                    {f.actions.length > 0 && (
+                      <ol>
+                        {f.actions.map((a) => (
+                          <li key={a}>{a}</li>
+                        ))}
+                      </ol>
+                    )}
+                  </li>
+                ))}
+            </ul>
+            {findings.some((f) => f.sev === "良好") && (
+              <p className="rgood">
+                <b>✔ できていること：</b>
+                {findings
+                  .filter((f) => f.sev === "良好")
+                  .map((f) => f.title.replace(/（.*$/, ""))
+                  .join("／")}
+              </p>
+            )}
           </section>
         )}
         {bodyA && (
@@ -610,7 +732,11 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 ...(pt.any ? [{ label: "提案の食事", value: r10(pt.kcal), color: "#7b5ea7" }] : []),
               ]}
             />
-            <ul className="rnote">
+            <p className="nbgroup">カロリー計画（体重が減るたびに、4週ごとに、計算し直します）</p>
+            {phases.length > 0 && <HBars unit="kcal" target={energy.floorKcal} targetLabel="下限" items={phases.map((p) => ({ label: `${p.from}〜${p.to}週（${p.weight}kg）`, value: p.target, color: "#2e9e6a" }))} />}
+            <p className="rnote">
+              代謝を守る下限は <b>{energy.floorKcal.toLocaleString()}kcal</b>（基礎代謝、または、女性1,200・男性1,500kcalの、大きいほう）。これ以下には、しません。減らす幅は、維持のカロリーの{pace === "fast" ? 20 : 15}%までです。体重が2〜4週つづけて止まったら、減らす前に、記録・睡眠・たんぱく質を確かめ、1〜2週間、維持のカロリーに戻す「休み期間」を入れます。
+            </p>            <ul className="rnote">
               {energy.notes.map((n) => (
                 <li key={n}>{n}</li>
               ))}
@@ -656,6 +782,10 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
               </div>
             </div>
             <p className="rnote">{mth.summary}</p>
+            <p className="rnote">
+              <b>この方法を選んだ理由：</b>
+              {rec.fits[mth.id].why.slice(0, 2).join("。")}。{rec.basis}
+            </p>
             <div className="rtwo">
               <div>
                 <p className="nbgroup">選ぶもの</p>
@@ -745,7 +875,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             })()}
           </section>
         )}
-        {all.length > 0 && (
+        {all.length > 0 && !compact && (
           <section>
             <h2>{H("栄養素のチェック（食物繊維・脂質・水分・塩分・ビタミン・ミネラル）")}</h2>
             <div className="rscore">
@@ -841,64 +971,37 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
               <p className="nbgroup">置きかえで、変わるカロリー（kcal）</p>
               <HBars unit="kcal" items={swaps.map((x) => ({ label: x.from.slice(0, 8), value: Math.abs(x.dk), color: x.dk <= 0 ? "#4a7fd0" : "#e0a030" }))} />
               <p className="rnote">青＝カロリーが減る置きかえ、オレンジ＝カロリーが増える置きかえ（栄養が増えるため）。</p>
-              <p className="rnote">そのほかの置きかえ</p>
-              <table className="rtable rswap">
-                <tbody>
-                  {GENERIC_SWAPS.map(([a, b]) => (
-                    <tr key={a}>
-                      <td>{a}</td>
-                      <td>
-                        <b>{b}</b>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </>
           )}
         </section>
 
-        <section>
-          <h2>{H("増やしたい食品リスト（目的別）")}</h2>
-          <p className="rnote">1回ぶんの目安です。栄養は、日本食品標準成分表をもとにした目安値からの計算です。</p>
-          <p className="nbgroup">たんぱく質が多い食品（1回ぶん・g）</p>
-          <HBars unit="g" items={[...INCREASE[0].items].sort((a, b) => b.p - a.p).slice(0, 8).map((it) => ({ label: it.label.replace(/ .*$/, ""), value: it.p }))} />
-          <p className="nbgroup">食物繊維が多い食品（1回ぶん・g）</p>
-          <HBars unit="g" color="#4a7fd0" items={[...INCREASE[1].items].sort((a, b) => b.fi - a.fi).slice(0, 8).map((it) => ({ label: it.label.replace(/ .*$/, ""), value: it.fi }))} />
-          {INCREASE.map((grp) => (
-            <div key={grp.title} className="rinc">
-              <p className="rext">
-                {grp.title}
-                <span> {grp.why}</span>
-              </p>
-              <table className="rtable rinct">
-                <thead>
-                  <tr>
-                    <th>食品（1回ぶん）</th>
-                    <th>kcal</th>
-                    <th>たんぱく質</th>
-                    <th>食物繊維</th>
-                    <th>カルシウム</th>
-                    <th>鉄</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {grp.items.map((it) => (
-                    <tr key={it.label}>
-                      <th>{it.label}</th>
-                      <td>{it.kcal}</td>
-                      <td>{it.p}g</td>
-                      <td>{it.fi}g</td>
-                      <td>{it.ca}mg</td>
-                      <td>{it.fe}mg</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {pdays.length > 0 && (
+          <section>
+            <h2>{H("あなたの食事例（カロリー・PFCに合わせた6パターン）")}</h2>
+            <p className="rnote">1日 約{r10(macKcal).toLocaleString()}kcal・{mth.name}に合わせて、量を調整した例です。そのまま、まねできます。</p>
+            <HBars unit="kcal" target={macKcal} targetLabel="目標" items={pdays.map((d2) => ({ label: d2.name.replace(/（.*$/, "").slice(0, 12), value: r10(d2.tot.kcal), color: "#2e9e6a" }))} />
+            <div className="rex">
+              {pdays.map((d2, i) => (
+                <div key={d2.id} className={`rexc${i === 0 ? " near" : ""}`}>
+                  <p className="rext">
+                    {i === 0 ? "★ " : ""}
+                    {d2.name}　<b>約{r10(d2.tot.kcal).toLocaleString()}kcal</b>
+                  </p>
+                  <p className="rexn">
+                    たんぱく質 {d2.pct.p}%・脂質 {d2.pct.f}%・炭水化物 {d2.pct.c}%（{Math.round(d2.tot.p)}g・{Math.round(d2.tot.f)}g・{Math.round(d2.tot.c)}g）　{d2.note}
+                  </p>
+                  <ul>
+                    {d2.lines.map((l) => (
+                      <li key={l}>{l}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
-        </section>
-
+            <p className="rnote">お客様の目標に近い順に、並べています。量は「ふつうの1食ぶん」からの目安で、実際とは、ずれます。</p>
+          </section>
+        )}
+        {!pdays.length && (
         <section>
           <h2>{H(`1日の食事の例（${EXAMPLES.length}パターン）`)}</h2>
           <p className="rnote">そのまま、まねできる例です。{near ? "目安のカロリーに近い例に、★をつけています。" : ""}カロリーが目安より少ない例は、ごはんや主菜を、少し増やして、調整してください。</p>
@@ -926,7 +1029,87 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             })}
           </div>
         </section>
+        )}
 
+        {!compact && (
+        <section>
+          <h2>{H("食品の早見表（量の目安）")}</h2>
+          <p className="rnote">「この栄養を、これだけとるには、何を、どれだけ食べるか」の目安です（日本食品標準成分表をもとにした目安値）。</p>
+          <div className="rfoods">
+            {NUTS.map((n) => {
+              const amt = parseFloat(foodAmts[n.key] ?? "") || n.defaults[0];
+              const rows = foodsFor(n.key, amt).slice(0, 8);
+              return (
+                <div key={n.key} className="rfoodc">
+                  <p className="rext">
+                    {n.label} {amt}
+                    {n.unit}
+                    <small> {n.hint}</small>
+                  </p>
+                  <table className="rtable rinct">
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.name}>
+                          <th>
+                            {r.name}
+                            <small style={{ display: "block", fontWeight: 400, color: "#667" }}>{unitLabel(r)}</small>
+                          </th>
+                          <td>{r.g}g</td>
+                          <td>{r.kcal}kcal</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+        )}
+
+        {myTroubles.length > 0 && (
+          <section>
+            <h2>{H("困ったときの対処")}</h2>
+            <p className="rnote">いまの状況に合わせた、原因の見かたと、対処のステップです。強い症状・続くときは、受診してください。</p>
+            {myTroubles.map((t) => (
+              <div key={t.id} className="rtrouble">
+                <p className="rth">
+                  <span aria-hidden>{t.icon}</span> {t.label}
+                </p>
+                <p className="rfd">{t.intro}</p>
+                <div className="rtwo">
+                  <div>
+                    <p className="nbgroup">原因の見かた</p>
+                    <ul>
+                      {t.check.map((x) => (
+                        <li key={x}>{x}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="nbgroup">増やす食べもの</p>
+                    <ul>
+                      {t.eat.map((x) => (
+                        <li key={x}>{x}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <p className="nbgroup">対処のステップ</p>
+                <ol className="rsteps">
+                  {t.steps.map((x) => (
+                    <li key={x}>{x.replace(/^[①-⑩]\s*/, "")}</li>
+                  ))}
+                </ol>
+                <p className="rwarn">
+                  <b>受診の目安：</b>
+                  {t.see.join("／")}
+                </p>
+                <p className="rlim">根拠：{t.evidence.map((e) => `${e.label}${e.pmid ? `（PMID ${e.pmid}）` : ""}`).join("／")}。限界：{t.limits}</p>
+              </div>
+            ))}
+          </section>
+        )}
         {(issues.length > 0 || String(s.problem || "").trim() || ins.length > 0) && (
           <section>
             <h2>{H("いまの課題と、対策")}</h2>
@@ -1004,7 +1187,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
               </tr>
             </thead>
             <tbody>
-              {REPORT_EVIDENCE.map((e) => (
+              {REPORT_EVIDENCE.filter((e) => evShow(e.topic)).slice(0, compact ? 6 : 99).map((e) => (
                 <tr key={e.pmid}>
                   <th>{e.topic}</th>
                   <td>

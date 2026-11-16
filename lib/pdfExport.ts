@@ -8,7 +8,7 @@ const M_BOTTOM = 40;
 const BODY_W = PAGE_W - M_X * 2; // 734
 const LIMIT = PAGE_H - M_TOP - M_BOTTOM; // 1 ページに入る高さ
 const GAP = 8;
-const SCALE = 2;
+const SCALE = 1.6;
 
 const BLOCK_STOP = new Set(["TABLE", "TBODY", "THEAD", "TR", "svg"]);
 
