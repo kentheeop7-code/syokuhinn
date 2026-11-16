@@ -22,6 +22,13 @@ const TABS: { id: Tab; t: string }[] = [
   { id: "latest", t: "⑥ 最新の論文（自動取得）" },
   { id: "calc", t: "⑦ 計算方法と根拠" },
 ];
+// 検索：ひらがな・カタカナの違いを無視し、よく使う漢字も、食品名に合わせる
+const ALIAS: [string, string][] = [["鮭", "さけ"], ["鯖", "さば"], ["鶏", "とり"], ["豚", "ぶた"], ["牛乳", "ぎゅうにゅう"], ["牛", "うし"], ["卵", "たまご"], ["豆腐", "とうふ"], ["納豆", "なっとう"], ["米", "こめ"], ["飯", "ごはん"], ["鯵", "あじ"], ["海老", "えび"], ["蛸", "たこ"], ["烏賊", "いか"]];
+const norm = (s: string) => {
+  let t = s.trim();
+  for (const [a, b] of ALIAS) t = t.split(a).join(b);
+  return t.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60)).toLowerCase();
+};
 const METHOD_TERM: Record<MethodId, string> = {
   balance: '("weight loss"[ti] AND (diet[ti] OR dietary[ti] OR "macronutrient"[ti]))',
   lowfat: '("low-fat"[ti] AND ("weight loss"[ti] OR diet[ti]))',
@@ -193,8 +200,8 @@ function FoodTab() {
   const [copied, setCopied] = useState(false);
 
   const rows = useMemo(() => {
-    const k = q.trim();
-    const list = FOODS.filter((f) => (!cat || f.cat === cat) && (!k || f.name.includes(k)));
+    const k = norm(q);
+    const list = FOODS.filter((f) => (!cat || f.cat === cat) && (!k || norm(f.name).includes(k)));
     const val = (f: (typeof FOODS)[number]) => {
       const kc = f.p * 4 + f.f * 9 + f.c * 4;
       return sort === "kcal" ? kc : sort === "pk" ? (kc ? (f.p * 4) / kc : 0) : sort === "name" ? 0 : f[sort];
