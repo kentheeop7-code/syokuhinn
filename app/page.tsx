@@ -5,6 +5,7 @@ import PlanPanel from "./PlanPanel";
 import LatestPapers from "./LatestPapers";
 import CondHub from "./CondHub";
 import QuickMeals from "./QuickMeals";
+import StartCard from "./StartCard";
 import MyNutrition from "./MyNutrition";
 import PlanChart from "./PlanChart";
 import DietForAnyone from "./DietForAnyone";
@@ -2123,6 +2124,7 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
+          <StartCard />
           <HomeHero />
           <QuickMeals />
           <SiteMap />

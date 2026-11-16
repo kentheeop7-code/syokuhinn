@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { BAND_SHORT, readMe } from "./me";
@@ -95,7 +95,7 @@ export default function HomeHero() {
         </p>
       )}
 
-      <p className="herolabel sub">① まずは、いつもの食事に近いものを、1タップ（あとで、直せます）</p>
+      <p className="herolabel sub">② 食事を選ぶ：まず、いつもの食事に近いものを、1タップ（あとで、直せます）</p>
       <div className="heropick">
         {PRESETS.map((p) => (
           <button key={p.id} type="button" aria-pressed={preset === p.id} className={preset === p.id ? "on" : ""} onClick={() => pick(p.id)}>
@@ -134,7 +134,7 @@ export default function HomeHero() {
 
       <div className="heroacts">
         <a href="#qm" className="heroa main">
-          ② 朝・昼・夜を、選ぶ
+          朝・昼・夜を選ぶ
         </a>
         <a href="#cause" className="heroa">
           原因を知る
@@ -146,3 +146,5 @@ export default function HomeHero() {
     </section>
   );
 }
+
+

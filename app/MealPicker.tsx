@@ -144,7 +144,7 @@ export default function MealPicker({ value, onChange, hint = false }: { value: S
         </div>
       ))}
       <details className="qmextra" open={extCount > 0}>
-        <summary>＋ ちょっと足したもの（サラダ・卵・汁物など）{extCount > 0 ? `　${extCount}つ` : ""}</summary>
+        <summary>＋ 食品を1つずつ足す（{EXTRAS.length}種類：卵・豆・ナッツ・乳製品・お酒など）{extCount > 0 ? `　${extCount}つ` : ""}</summary>
         <p className="qmx">タップで 1つ → 2つ → なし</p>
         <div className="qmextras">
           {EXTRAS.map((x) => {
