@@ -11,6 +11,9 @@ export default function Trainer() {
   return (
     <main className="container">
       <h1 className="title sm">トレーナー用</h1>
+      <p style={{ margin: "0 0 12px" }}>
+        <a className="trchip on" href="/trainer/guide">📚 トレーナー向け資料集（食事法・食品PFC・お客様別レコメンド）</a>
+      </p>
       <TrainerApp />
     </main>
   );
