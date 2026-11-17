@@ -1,8 +1,8 @@
 // 食品の早見表：「たんぱく質10gをとれる食品」「炭水化物50gの食品」など。
 // 栄養は、日本食品標準成分表をもとにした、100gあたりの目安値（lib/foods.ts）から、計算。量は、1回ぶんの目安（unit）の何個ぶんか、で示す。
-import { FOODS } from "./foods";
+import { COMMON_FOODS, FOODS, portionsOf } from "./foods";
 
-export type NutKey = "p" | "c" | "f" | "fi" | "ca" | "fe";
+export type NutKey = "p" | "c" | "f" | "fi" | "ca" | "fe" | "vc" | "k" | "mg" | "zn" | "vd" | "va" | "b1" | "b2" | "b6" | "b12" | "fol";
 export const NUTS: { key: NutKey; label: string; unit: string; defaults: number[]; hint: string }[] = [
   { key: "p", label: "たんぱく質", unit: "g", defaults: [10, 20], hint: "筋肉・満腹感" },
   { key: "c", label: "炭水化物", unit: "g", defaults: [50], hint: "エネルギー源（高炭水化物の食品）" },
@@ -10,9 +10,20 @@ export const NUTS: { key: NutKey; label: string; unit: string; defaults: number[
   { key: "fi", label: "食物繊維", unit: "g", defaults: [5], hint: "おなかの調子・満腹感" },
   { key: "ca", label: "カルシウム", unit: "mg", defaults: [200], hint: "骨・歯" },
   { key: "fe", label: "鉄", unit: "mg", defaults: [3], hint: "貧血・疲れ" },
+  { key: "vc", label: "ビタミンC", unit: "mg", defaults: [50], hint: "肌・免疫・鉄の吸収" },
+  { key: "k", label: "カリウム", unit: "mg", defaults: [500], hint: "むくみ・血圧" },
+  { key: "mg", label: "マグネシウム", unit: "mg", defaults: [80], hint: "筋肉・睡眠" },
+  { key: "zn", label: "亜鉛", unit: "mg", defaults: [3], hint: "味覚・免疫" },
+  { key: "vd", label: "ビタミンD", unit: "μg", defaults: [5], hint: "骨・筋肉" },
+  { key: "va", label: "ビタミンA", unit: "μg", defaults: [300], hint: "目・肌" },
+  { key: "b1", label: "ビタミンB1", unit: "mg", defaults: [0.5], hint: "疲れ・糖質の代謝" },
+  { key: "b2", label: "ビタミンB2", unit: "mg", defaults: [0.5], hint: "脂質の代謝・肌" },
+  { key: "b6", label: "ビタミンB6", unit: "mg", defaults: [0.5], hint: "たんぱく質の代謝" },
+  { key: "b12", label: "ビタミンB12", unit: "μg", defaults: [2.4], hint: "貧血・神経" },
+  { key: "fol", label: "葉酸", unit: "μg", defaults: [120], hint: "貧血・妊娠前後" },
 ];
 // [食品名, 1回ぶんの重さ(g), 1回ぶんの呼びかた]
-const L: Record<NutKey, [string, number, string][]> = {
+const L: Partial<Record<NutKey, [string, number, string][]>> = {
   p: [["卵", 50, "個"], ["ゆで卵", 50, "個"], ["納豆", 45, "パック"], ["蒸し大豆", 50, "パック"], ["大豆水煮缶", 110, "缶"], ["木綿豆腐", 150, "丁の半分"], ["絹ごし豆腐", 150, "丁の半分"], ["焼き豆腐", 100, "丁の半分"], ["厚揚げ", 75, "1/2枚"], ["油揚げ", 30, "枚"], ["高野豆腐（乾）", 16, "個"], ["枝豆", 60, "小鉢1つ"], ["きな粉", 6, "大さじ1"], ["豆乳（無調整）", 200, "杯"], ["鶏むね肉（皮なし）", 90, "手のひら1枚"], ["鶏ささみ", 50, "本"], ["鶏もも肉（皮なし）", 90, "手のひら1枚"], ["鶏ひき肉", 90, "手のひら1枚"], ["豚ヒレ肉", 90, "手のひら1枚"], ["豚もも肉（赤身）", 90, "手のひら1枚"], ["牛もも肉（赤身）", 90, "手のひら1枚"], ["牛ヒレ肉", 90, "手のひら1枚"], ["馬肉", 90, "手のひら1枚"], ["ロースハム", 20, "枚"], ["ボンレスハム", 20, "枚"], ["サケ（焼き）", 80, "切れ"], ["アジ", 80, "切れ"], ["カツオ", 80, "切れ"], ["マグロ赤身", 80, "切れ"], ["タラ", 80, "切れ"], ["カレイ", 80, "切れ"], ["ホッケ", 80, "切れ"], ["ブリ", 80, "切れ"], ["サバ（焼き）", 80, "切れ"], ["イカ", 80, "切れ"], ["エビ", 20, "尾"], ["ホタテ貝柱", 25, "個"], ["しらす干し", 15, "大さじ1"], ["ツナ缶（水煮）", 70, "缶"], ["サバ水煮缶", 120, "缶"], ["いわし缶（味付け）", 100, "缶"], ["さんま缶（味付け）", 100, "缶"], ["ちくわ", 30, "本"], ["カニかま", 10, "本"], ["牛乳", 200, "杯"], ["無糖ヨーグルト", 100, "個"], ["無脂肪ヨーグルト（無糖）", 100, "個"], ["カッテージチーズ", 50, "大さじ3"], ["プロセスチーズ", 18, "個"], ["チェダーチーズ", 18, "枚"]],
   c: [["白ごはん", 150, "杯"], ["玄米ごはん", 150, "杯"], ["もち麦ごはん", 150, "杯"], ["雑穀米", 150, "杯"], ["発芽玄米ごはん", 150, "杯"], ["麦ごはん（米7:麦3）", 150, "杯"], ["おかゆ（全粥）", 200, "杯"], ["食パン", 60, "枚"], ["全粒粉パン", 60, "枚"], ["ライ麦パン", 40, "切れ"], ["フランスパン", 30, "切れ"], ["ベーグル", 90, "個"], ["ゆでうどん", 220, "玉"], ["ゆでそば", 170, "玉"], ["そうめん（ゆで）", 200, "玉"], ["パスタ（ゆで）", 200, "皿"], ["ビーフン", 50, "皿"], ["はるさめ（乾）", 20, "皿"], ["さつまいも", 150, "中1/2本"], ["蒸しさつまいも", 100, "1/2本"], ["焼き芋", 100, "1/2本"], ["じゃがいも", 100, "中1個"], ["里芋", 50, "個"], ["とうもろこし", 150, "本"], ["かぼちゃ", 80, "小鉢1つ"], ["もち", 50, "個"], ["オートミール", 30, "30g"], ["コーンフレーク", 40, "1食分"], ["バナナ", 100, "本"], ["りんご", 125, "1/2個"], ["みかん", 80, "個"], ["ぶどう", 100, "10粒"]],
   f: [["アーモンド", 12, "10粒"], ["くるみ", 25, "ひとつかみ"], ["カシューナッツ", 15, "10粒"], ["マカダミアナッツ", 15, "5粒"], ["ピスタチオ", 25, "ひとつかみ"], ["ピーナッツ（いり）", 25, "ひとつかみ"], ["ヘーゼルナッツ", 25, "ひとつかみ"], ["いりごま", 6, "小さじ2"], ["ピーナッツバター", 15, "大さじ1"], ["アボカド", 70, "1/2個"], ["オリーブ油", 12, "大さじ1"], ["ごま油", 12, "大さじ1"], ["えごま油", 12, "大さじ1"], ["あまに油", 12, "大さじ1"], ["サラダ油（調合油）", 12, "大さじ1"], ["ココナッツオイル（やし油）", 12, "大さじ1"], ["バター", 10, "かけ"], ["マヨネーズ", 12, "大さじ1"], ["生クリーム（乳脂肪）", 15, "大さじ1"], ["プロセスチーズ", 18, "個"], ["チェダーチーズ", 18, "枚"], ["卵黄", 18, "個"], ["卵", 50, "個"], ["サケ（生）", 80, "切れ"], ["サバ（焼き）", 80, "切れ"], ["サンマ", 80, "切れ"], ["ブリ", 80, "切れ"], ["ツナ缶（油漬）", 70, "缶"], ["うなぎ蒲焼", 100, "枚"], ["豚バラ肉", 80, "3枚"], ["豚ロース", 90, "手のひら1枚"], ["鶏もも肉（皮つき）", 90, "手のひら1枚"], ["牛ひき肉", 100, "100g"], ["ベーコン", 20, "枚"], ["油揚げ", 30, "枚"], ["厚揚げ", 75, "1/2枚"]],
@@ -26,7 +37,8 @@ export type FoodRow = { name: string; g: number; units: number; unitText: string
 // key の栄養を amount だけ、とれる量を、食品ごとに、出す（多い食品＝少ない量で、とれる順）
 export function foodsFor(key: NutKey, amount: number): FoodRow[] {
   const rows: FoodRow[] = [];
-  for (const [name, unitG, unitName] of L[key]) {
+  const seen = new Set<string>();
+  for (const [name, unitG, unitName] of L[key] ?? []) {
     const f = byName.get(name);
     const per100 = f ? ((f as unknown as Record<string, number>)[key] ?? 0) : 0;
     if (!f || per100 <= 0 || amount <= 0) continue;
@@ -34,6 +46,26 @@ export function foodsFor(key: NutKey, amount: number): FoodRow[] {
     const units = g / unitG;
     const kcal = ((f.p * 4 + f.f * 9 + f.c * 4) * g) / 100;
     rows.push({ name, g: Math.round(g), units: Math.round(units * 10) / 10, unitText: unitName, kcal: Math.round(kcal), share: per100 });
+    seen.add(name);
+  }
+  // 手で選んだ食品が少ない栄養は、食品データベース全体（よく使う食品）から、自動で、足す
+  if (rows.length < 30 && amount > 0) {
+    const auto: FoodRow[] = [];
+    for (const f of COMMON_FOODS) {
+      if (seen.has(f.name) || /（乾|粉末|ドレッシング|ソース|だし/.test(f.name)) continue;
+      if (f.cat === "調味料・油" && key !== "f") continue;
+      const per100 = (f as unknown as Record<string, number>)[key] ?? 0;
+      if (per100 <= 0) continue;
+      const g = (amount / per100) * 100;
+      if (g < 8 || g > 400) continue;
+      const p0 = portionsOf(f)[0];
+      const unitG = p0?.g || 100;
+      const units = g / unitG;
+      const kcal = ((f.p * 4 + f.f * 9 + f.c * 4) * g) / 100;
+      auto.push({ name: f.name, g: Math.round(g), units: Math.round(units * 10) / 10, unitText: p0?.label ?? "100g", kcal: Math.round(kcal), share: per100 });
+    }
+    auto.sort((a, b) => a.g - b.g);
+    rows.push(...auto.slice(0, 30 - rows.length));
   }
   return rows.sort((a, b) => a.g - b.g);
 }

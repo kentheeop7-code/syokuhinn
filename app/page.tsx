@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import HomeHero from "./HomeHero";
 import PlanPanel from "./PlanPanel";
@@ -10,6 +10,8 @@ import DayCompare from "./DayCompare";
 import LifeCard from "./LifeCard";
 import PlanResult from "./PlanResult";
 import ShareAll from "./ShareAll";
+import NutrientFoods from "./NutrientFoods";
+import HomeNav from "./HomeNav";
 import TrendCard from "./TrendCard";
 import MyNutrition from "./MyNutrition";
 import PlanChart from "./PlanChart";
@@ -2129,10 +2131,12 @@ function HomeInner() {
 
       {tab === "record" ? (
         <>
+          <HomeNav />
           <StartCard />
           <LifeCard />
           <PlanResult />
           <DayCompare />
+          <NutrientFoods />
           <TrendCard />
           <ShareAll />
           <Fold key="h-detail" id="h-detail" title="🍽 くわしい分析（栄養バランス・原因）" sub="いつもの1日の食事から、栄養のバランスを見る" cls="wfold">

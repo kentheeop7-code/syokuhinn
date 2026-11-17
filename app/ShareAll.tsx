@@ -72,7 +72,7 @@ export default function ShareAll() {
   if (!ready) return null;
   return (
     <section className="card shareall" id="shareall" aria-label="まとめて共有">
-      <p className="dch">⑦ まとめて、コピー・共有</p>
+      <p className="dch">⑧ まとめて、コピー・共有</p>
       {text ? (
         <>
           <pre className="sharepre">{text}</pre>

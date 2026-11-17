@@ -5301,3 +5301,39 @@ main button i{font-size:13px}
 .report .rxcard .rxm{font-size:14px}
 .report.pdfmode .rxcard .rxm{font-size:15px}
 @media (max-width:520px){.report:not(.pdfmode) .rxcards{grid-template-columns:1fr}.report .rnl li{grid-template-columns:auto 1fr}.report .rnl b{grid-column:1 / 3}}
+
+/* ===== ホーム：目次バー・1タップ入力・栄養から食品をさがす ===== */
+.homenav{display:flex;gap:8px;overflow-x:auto;position:sticky;top:0;z-index:20;margin:4px -4px 10px;padding:6px 4px;background:rgba(246,250,248,.96);backdrop-filter:blur(6px);-webkit-overflow-scrolling:touch}
+.homenav a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:42px;padding:6px 14px;border:2px solid #b9d9c8;border-radius:999px;background:#fff;color:#1f6f54;font-weight:800;font-size:.95rem;text-decoration:none;white-space:nowrap}
+.homenav a:active{background:#2f9e75;color:#fff}
+html{scroll-behavior:smooth}
+.startcard,.daycmp,.foodfind,.trendcard,.shareall,.planres{scroll-margin-top:64px}
+.dcquick{margin:6px 0 8px;padding:8px 10px;border-radius:12px;background:#fff8ec;border:1px solid #f0dcb4}
+.dcquick b{display:block;font-size:.9rem;color:#7a4b00;margin-bottom:6px}
+.dcquick div{display:flex;flex-wrap:wrap;gap:6px}
+.dcquick button{padding:8px 12px;min-height:40px;border:2px solid #e0c27a;border-radius:999px;background:#fff;font:inherit;font-size:.9rem;font-weight:700;color:#7a4b00;cursor:pointer}
+.foodfind{padding:14px 16px}
+.ffchips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.ffchips button{position:relative;padding:8px 12px;min-height:44px;border:2px solid #b9d9c8;border-radius:999px;background:#fff;font:inherit;font-weight:800;color:#1f6f54;cursor:pointer}
+.ffchips button.on{background:#2f9e75;border-color:#2f9e75;color:#fff}
+.ffchips button i{display:block;font-style:normal;font-size:.7rem;color:#c62828;font-weight:800}
+.ffchips button.on i{color:#ffe9b0}
+.ffchips .ffmore{border-style:dashed;color:#456}
+.ffamt{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:6px 0}
+.ffamt label{flex:1 1 160px}
+.ffamt label>span{display:block;font-size:.9rem;font-weight:700;color:#355;margin-bottom:4px}
+.ffamt label>b{display:flex;align-items:center;gap:6px}
+.ffamt input{width:100%;min-width:0;box-sizing:border-box;font:inherit;font-size:1.3rem;font-weight:800;padding:10px 12px;border:2px solid #b9d9c8;border-radius:12px;background:#fff}
+.ffq{display:flex;gap:6px;flex-wrap:wrap}
+.ffq button{padding:8px 12px;min-height:44px;border:2px solid #2f9e75;border-radius:999px;background:#fff;color:#1f6f54;font:inherit;font-weight:800;cursor:pointer}
+.ffgap{margin:6px 0;padding:8px 10px;border-radius:10px;background:#fff4e0;color:#7a4b00;font-weight:700;font-size:.95rem}
+.ffhint{margin:8px 0 4px;font-weight:800;color:#0f3d2e}
+.fflist{list-style:none;margin:6px 0;padding:0;display:grid;gap:8px;max-height:520px;overflow:auto}
+.fflist li{padding:8px 10px;border:1px solid #d5e8dd;border-radius:12px;background:#fbfdfc}
+.ffrow{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ffrow b{font-size:1rem}
+.ffrow span{font-weight:800;color:#1f5f41}
+.ffrow em{font-style:normal;font-weight:400;color:#667;font-size:.9rem}
+.fflist small{display:block;color:#567;font-size:.85rem}
+.ffbar{height:8px;border-radius:6px;background:#e9efe9;margin-top:4px;overflow:hidden}
+.ffbar i{display:block;height:100%;background:#2f9e75;border-radius:6px}

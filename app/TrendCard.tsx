@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { averageIntake, dateLabel, readLog } from "../lib/daylog";
@@ -6,7 +6,7 @@ import { readTarget, type Target } from "../lib/target";
 import { TROUBLES } from "../lib/troubles";
 import { analyzeTrend, type TrendOut } from "../lib/trend";
 
-// ⑥ 体重の推移と、いまの状況を入れる → 判定・原因・対策・今後のアクション（根拠つき）
+// ⑦ 体重の推移と、いまの状況を入れる → 判定・原因・対策・今後のアクション（根拠つき）
 const ROWS = [
   { i: 0, t: "今日" },
   { i: 1, t: "1週間前" },
@@ -106,7 +106,7 @@ export default function TrendCard() {
 
   return (
     <section className="card trendcard" id="trend" aria-label="体重の推移と、いまの状況">
-      <p className="dch">⑥ 体重の推移と、いまの状況</p>
+      <p className="dch">⑦ 体重の推移と、いまの状況</p>
       <p className="agnote">体重は、朝・トイレのあとに、同じ条件で測った値を入れます。1週間ごとの値が、わかる範囲で、大丈夫です。{at && `（保存：${at}）`}</p>
       <div className="trw">
         {ROWS.map((r) => (

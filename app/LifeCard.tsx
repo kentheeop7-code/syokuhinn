@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { DEFAULT_LIFE, JOBS, LIFE_KEY, palFromLife, readLife, type Life } from "../lib/life";
@@ -7,6 +7,7 @@ import { DEFAULT_LIFE, JOBS, LIFE_KEY, palFromLife, readLife, type Life } from "
 export default function LifeCard() {
   const [l, setL] = useState<Life>(DEFAULT_LIFE);
   const [ready, setReady] = useState(false);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     setL(readLife());
     setReady(true);
@@ -37,9 +38,11 @@ export default function LifeCard() {
 
   return (
     <section className="card startcard lifecard" id="life" aria-label="生活習慣">
-      <div className="startcard-h static">
-        <b>② 生活習慣（入れるほど、正確になります）</b>
-      </div>
+      <button type="button" className="startcard-h" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        <b>② 生活習慣（任意：入れるほど、正確）</b>
+        <span>{l.steps || l.strength || l.cardio || l.sleep || l.bmr ? `✓ 入力ずみ（${open ? "閉じる" : "直す"}）` : open ? "閉じる" : "歩数・運動・睡眠など"}</span>
+      </button>
+      {open && (
       <div className="startcard-b">
         <p className="startlabel">仕事・ふだんの動き</p>
         <div className="lifejobs" role="radiogroup" aria-label="仕事・ふだんの動き">
@@ -90,6 +93,7 @@ export default function LifeCard() {
         {num(l.sleep) > 0 && num(l.sleep) < 6 && <p className="dcwarn">睡眠が6時間未満です。睡眠が短いと、減量の効果が下がり、筋肉が落ちやすいと報告されています（Nedeltcheva 2010）。</p>}
         <a href="#plan" className="startnext">1日の目安を見る ▼</a>
       </div>
+      )}
     </section>
   );
 }

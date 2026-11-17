@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { calcEnergy } from "../lib/energy";
@@ -89,7 +89,7 @@ export default function StartCard() {
   const filled = ag > 0 && hh > 0 && w > 0 && wt > 0;
 
   return (
-    <section className="card startcard" aria-label="はじめに、基本情報">
+    <section className="card startcard" id="start" aria-label="はじめに、基本情報">
       <button type="button" className="startcard-h" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
         <b>① はじめに：基本情報</b>
         <span>{filled ? `✓ 入力ずみ（${open ? "閉じる" : "直す"}）` : "身長・体重・目標体重・運動量"}</span>

@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { dateLabel, readLog, saveDay, stOfDay, averageIntake, type DayLog } from "../lib/daylog";
 import { goalOf, totals, type St } from "../lib/meals";
-import { swapsFor } from "../lib/swaps";
+import { EXAMPLES, swapsFor } from "../lib/swaps";
 import { readTarget, type Target } from "../lib/target";
 import MealPicker from "./MealPicker";
 
@@ -59,7 +59,7 @@ export default function DayCompare() {
 
   return (
     <section className="card daycmp" id="qm" aria-label="昨日・一昨日の食事と、目標との差">
-      <p className="dch">④ 昨日・一昨日の食事を入れる</p>
+      <p className="dch">④ 今の食事を入れる（昨日・一昨日）</p>
       {!target && <p className="dcwarn">先に、上の「① 基本情報」（年齢・身長・体重・目標体重・運動量）を入れると、1日の目標カロリーが決まります。</p>}
       {target && (
         <div className="dctarget">
@@ -83,6 +83,16 @@ export default function DayCompare() {
         })}
       </div>
       <p className="qmone">{DAYS.find((x) => x.d === sel)!.t}の、朝・昼・夜・おやつを、タップで選びます（だいたいでOK）。</p>
+      <div className="dcquick">
+        <b>かんたん：1日のパターンを、1タップで入れる（あとで直せます）</b>
+        <div>
+          {EXAMPLES.slice(0, 8).map((ex) => (
+            <button key={ex.id} type="button" onClick={() => change({ date: st.date, size: { ...ex.st.size }, ext: { ...ex.st.ext } })}>
+              {ex.name}
+            </button>
+          ))}
+        </div>
+      </div>
       <MealPicker key={sel} value={st} onChange={change} />
 
       <p className="dch">⑤ 目標との差</p>
