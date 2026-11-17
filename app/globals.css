@@ -5216,3 +5216,15 @@ main button i{font-size:13px}
 .trhub-list button{min-height:42px;padding:6px 14px;border:2px solid #2f9e75;border-radius:999px;background:#fff;color:#1f6f54;font:inherit;font-weight:800;cursor:pointer}
 .trhub-note{margin:18px 0;padding:12px 14px;border-radius:14px;background:#fff8ec;border:1px solid #f0dcb4}
 .trhub-note p{margin:6px 0 0;font-size:.95rem}
+
+/* ===== 共通の指導方針（14時間断食・夜の糖質） ===== */
+.trcommon{border:2px solid #f0c36a;border-radius:14px;background:#fffaf0;padding:10px 12px;margin:10px 0}
+.trcn{margin:8px 0}
+.trcn b{display:block;font-size:1.05rem;color:#7a4b00}
+.trcn ul,.trcaution{margin:4px 0 4px 18px;padding:0}
+.trcaution li{color:#a33;font-weight:700}
+.report .rcommon{border:2px solid #f0c36a;border-radius:14px;background:#fffaf0;padding:10px 12px;margin:10px 0}
+.report .rcommon h3{margin:0 0 6px;font-size:18px;color:#7a4b00}
+.report .rcommon b{display:block;font-size:17px;margin-top:6px;color:#7a4b00}
+.report .rcommon ul{margin:4px 0 4px 20px;padding:0}
+.report .rcommon .rcaut li{color:#a33;font-weight:700}

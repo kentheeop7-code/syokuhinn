@@ -16,7 +16,7 @@ import { decodePayload, shareUrl } from "../lib/shareLink";
 import { Bars, Gauge, HBars, IconRow, LineChart, Pie, Radar, StackBars } from "./Charts";
 import { BMI_BANDS, analyzeBody } from "../lib/body";
 import { mealGuide } from "../lib/mealguide";
-import { METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor } from "../lib/methods";
+import { COMMON_CAUTION, COMMON_NOTES, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor } from "../lib/methods";
 import { recommend } from "../lib/recommend";
 import { analyzeClient, ageNote } from "../lib/analysis";
 import { TROUBLES } from "../lib/troubles";
@@ -815,6 +815,24 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                   ))}
                 </ul>
               </div>
+            </div>
+            <div className="rcommon">
+              <h3>気をつけること（トレーナーの指導方針）</h3>
+              {COMMON_NOTES.map((n) => (
+                <div key={n.id}>
+                  <b>{n.icon} {n.title}</b>
+                  <ul>
+                    {n.points.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <ul className="rcaut">
+                {COMMON_CAUTION.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
             </div>
             <div className="rexc near">
               <p className="rext">

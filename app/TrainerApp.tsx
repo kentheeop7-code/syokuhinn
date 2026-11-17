@@ -14,7 +14,7 @@ import { buildActions } from "../lib/actions";
 import { analyzeBody } from "../lib/body";
 import { PAL_TEXT } from "./me";
 import { Bars, Pie } from "./Charts";
-import { type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
+import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
 import { recommend } from "../lib/recommend";
 import { analyzeClient, ageNote } from "../lib/analysis";
 import { TROUBLES } from "../lib/troubles";
@@ -244,6 +244,7 @@ export default function TrainerApp() {
     }
     if (energy && wantKcal) L.push("", `■ 1日の目安：約${wantKcal.toLocaleString()}kcal（${energy.method === "dri" ? "年代・性別の目安" : `基礎代謝 約${energy.bmr}kcal × 活動量${energy.pal}`}）`);
     if (mac) L.push("", `■ 食事の方法：${mth.name}（たんぱく質${Math.round((pctEff.p / pctSum) * 100)}%・脂質${Math.round((pctEff.f / pctSum) * 100)}%・炭水化物${Math.round((pctEff.c / pctSum) * 100)}%）`, `　1日 約${wantKcal.toLocaleString()}kcal：たんぱく質 約${mac.p}g・脂質 約${mac.f}g・炭水化物 約${mac.c}g`);
+    L.push("", "■ 気をつけること（指導方針）", ...COMMON_LINES);
     if (plan) L.push("", `■ ゴールの目安：${w}kg → ${wt}kg　約${plan.weeks}週間（筋トレ 週${days}回・合計${plan.sessions}回）`);
     if (swapOn.length) {
       L.push("", "■ 置きかえ（こちらを食べてください）");
@@ -1052,6 +1053,25 @@ export default function TrainerApp() {
                 <li key={x}>{x}</li>
               ))}
             </ol>
+          </div>
+          <div className="trs trcommon">
+            <small>トレーナーの指導方針（全員共通）：気をつけること</small>
+            {COMMON_NOTES.map((n) => (
+              <div key={n.id} className="trcn">
+                <b>{n.icon} {n.title}</b>
+                <ul>
+                  {n.points.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <ul className="trcaution">
+              {COMMON_CAUTION.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+            <p className="agnote small">現場の指導方針です。このアプリでは、効果を示す論文は確認できていません（時間を決めて食べる方法の研究は、結果が分かれています）。</p>
           </div>
           <p className="tre">
             <small>向いている人</small>
