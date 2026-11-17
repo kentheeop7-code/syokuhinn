@@ -1,11 +1,11 @@
-// お客様の体のデータから、1日の目標カロリーを、自動で計算する。
+﻿// お客様の体のデータから、1日の目標カロリーを、自動で計算する。
 // 使う方法は、入力できたデータで、決まる（上から順に）：
 //  ① 基礎代謝（体組成計などの値）が、ある ② 体脂肪率がある → 除脂肪量から ③ 身長・年齢・体重がある → Mifflin-St Jeor式 ④ どれもない → 食事摂取基準の、推定エネルギー必要量
 // 中学生・高校生は、大人の式を使わない（④のみ）。診断や処方ではなく、目安です。
 import { REF } from "../app/me";
 import { paceRate, type Pace } from "./goal";
 
-export type EnergyIn = { sex: "f" | "m"; band: number; age: number; height: number; weight: number; bmr: number; bodyFat: number; muscle: number; pal: number; targetWeight: number; pace: Pace };
+export type EnergyIn = { sex: "f" | "m"; band: number; age: number; height: number; weight: number; bmr: number; bodyFat: number; muscle: number; pal: number; targetWeight: number; pace: Pace; palValue?: number };
 export type EnergyOut = {
   method: "measured" | "ffm" | "mifflin" | "dri";
   label: string;
@@ -54,14 +54,15 @@ export function calcEnergy(i: EnergyIn): EnergyOut | null {
       refs.push({ label: "Frankenfield 2005 J Am Diet Assoc（系統的レビュー：この式が、最も信頼できた）", pmid: "15883556" });
     }
   }
-  const tdee = bmr > 0 ? bmr * PAL_VAL[pal] : REF[i.sex].kcal[i.band]?.[pal] ?? 0;
+  const palV = i.palValue && i.palValue >= 1.3 && i.palValue <= 2.3 ? i.palValue : PAL_VAL[pal];
+  const tdee = bmr > 0 ? bmr * palV : i.palValue && REF[i.sex].kcal[i.band] ? (REF[i.sex].kcal[i.band][1] / PAL_VAL[1]) * palV : REF[i.sex].kcal[i.band]?.[pal] ?? 0;
   if (!tdee) return null;
   const label = method === "measured" ? "基礎代謝（入力値）× 活動量" : method === "ffm" ? "体脂肪率から（除脂肪量の式）× 活動量" : method === "mifflin" ? "Mifflin-St Jeor式（身長・年齢・体重）× 活動量" : "食事摂取基準の、推定エネルギー必要量（性別・年代・活動量）";
   if (method === "dri") {
     refs.push({ label: "厚生労働省 日本人の食事摂取基準（2025年版）の、推定エネルギー必要量", pmid: "" });
     if (youth) notes.push("中学生・高校生は、大人の計算式を使わず、年代の目安だけを使います。減量の計算は、行いません。");
     else notes.push("体のデータが足りないため、年代・性別の目安を使っています。基礎代謝などを入れると、より個人に合います。");
-  } else notes.push(`活動量の係数は、${PAL_VAL[pal]}（低い1.50・ふつう1.75・高い2.00。食事摂取基準の区分）です。`);
+  } else notes.push(`活動量の係数は、${palV}（食事摂取基準の区分：低い1.50・ふつう1.75・高い2.00。生活習慣の入力がある場合は、その間を、このアプリが補っています）です。`);
 
   const w = i.weight;
   const kind: EnergyOut["kind"] = youth || !w || !i.targetWeight || Math.abs(w - i.targetWeight) < 0.4 ? "keep" : i.targetWeight < w ? "lose" : "gain";
@@ -92,7 +93,7 @@ export function calcEnergy(i: EnergyIn): EnergyOut | null {
   const carb = Math.max(0, Math.round((target - protein * 4 - fat * 9) / 4));
   if (w > 0 && !youth) refs.push({ label: "Morton 2018 Br J Sports Med（たんぱく質：体重1kgあたり 約1.6g/日）", pmid: "28698222" });
   const floorKcal = r10(Math.max(i.sex === "f" ? 1200 : 1500, bmr > 0 ? bmr : 0));
-  return { method, label, floorKcal, bmr: Math.round(bmr), ffm: Math.round(ffm * 10) / 10, pal: PAL_VAL[pal], tdee: r10(tdee), target, diff: target - r10(tdee), kind, floored, capped, protein, fat, carb, notes, refs };
+  return { method, label, floorKcal, bmr: Math.round(bmr), ffm: Math.round(ffm * 10) / 10, pal: palV, tdee: r10(tdee), target, diff: target - r10(tdee), kind, floored, capped, protein, fat, carb, notes, refs };
 }
 // 体重が減るにつれて、必要なカロリーも、少し変わる。4週ごとに、その時の体重で、計算し直した「カロリー計画」。
 export type Phase = { from: number; to: number; weight: number; target: number; tdee: number; floor: number };

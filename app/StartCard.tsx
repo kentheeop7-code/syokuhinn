@@ -121,7 +121,7 @@ export default function StartCard() {
               <b><input inputMode="decimal" value={target} placeholder="55" onChange={(e) => save({ target: e.target.value })} aria-label="目標体重（kg）" />kg</b>
             </label>
           </div>
-          <p className="startlabel">1日の運動量（ふだんの動き）</p>
+          <p className="startlabel">ふだんの動き（かんたん選択。次の「生活習慣」を入れると、自動で細かくなります）</p>
           <div className="startpal" role="radiogroup" aria-label="1日の運動量">
             {PALS.map((p, i) => (
               <button key={p.k} type="button" role="radio" aria-checked={pal === i} className={pal === i ? "on" : ""} onClick={() => save({ pal: i })}>
@@ -130,20 +130,12 @@ export default function StartCard() {
               </button>
             ))}
           </div>
-          {filled && (
-            <div className="startres">
-              {bmi > 0 && <div><small>BMI</small><b>{bmi}</b></div>}
-              {energy && <div><small>維持のカロリー</small><b>約{Math.round(energy.tdee / 10) * 10}</b></div>}
-              {energy && !youth && <div><small>目標のカロリー</small><b>約{energy.target.toLocaleString()}</b></div>}
-              {weeks > 0 && !youth && <div><small>ゴールまで</small><b>約{weeks}週</b></div>}
-            </div>
-          )}
-          {youth && filled && <p className="agnote">中学生・高校生は、成長期のため、体重を減らす計算はしません。必要な量を、しっかり食べましょう。</p>}
-          {filled && !youth && <p className="agnote">診断ではなく、目安です。次の「② 昨日・一昨日の食事」を入れると、この目標との差が分かります。</p>}
-          <a href="#qm" className="startnext">② 昨日・一昨日の食事を入れる ▼</a>
+          {filled && bmi > 0 && <p className="agnote">BMI {bmi}。次の「生活習慣」を入れると、1日のカロリーと食事量が、より正確に出ます。</p>}
+          <a href="#life" className="startnext">次は、生活習慣を入れる ▼</a>
         </div>
       )}
     </section>
   );
 }
+
 

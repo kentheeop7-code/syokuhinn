@@ -59,7 +59,7 @@ export default function DayCompare() {
 
   return (
     <section className="card daycmp" id="qm" aria-label="昨日・一昨日の食事と、目標との差">
-      <p className="dch">② 昨日・一昨日の食事を入れる</p>
+      <p className="dch">④ 昨日・一昨日の食事を入れる</p>
       {!target && <p className="dcwarn">先に、上の「① 基本情報」（年齢・身長・体重・目標体重・運動量）を入れると、1日の目標カロリーが決まります。</p>}
       {target && (
         <div className="dctarget">
@@ -85,7 +85,7 @@ export default function DayCompare() {
       <p className="qmone">{DAYS.find((x) => x.d === sel)!.t}の、朝・昼・夜・おやつを、タップで選びます（だいたいでOK）。</p>
       <MealPicker key={sel} value={st} onChange={change} />
 
-      <p className="dch">③ 目標との差</p>
+      <p className="dch">⑤ 目標との差</p>
       {state === "none" && <p className="agnote">{target ? "昨日か一昨日の食事を、1つ以上、入れてください。" : "基本情報を入れてください。"}</p>}
       {target && (
         <ul className="dcrows">
@@ -166,4 +166,6 @@ export default function DayCompare() {
   );
 }
 const r1 = (n: number) => Math.round(n * 10) / 10;
+
+
 

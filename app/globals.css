@@ -5120,3 +5120,41 @@ main button i{font-size:13px}
 .tract3{margin:4px 0 4px 20px;padding:0}
 .trsee{display:block;margin-top:4px;color:#8a4b00}
 .trev summary,.trsee2 summary{cursor:pointer;font-weight:800}
+
+/* ===== 生活習慣・1日の目安・共有 ===== */
+.startcard-h.static{cursor:default}
+.startgrid label>span small{display:block;font-weight:400;color:#789;font-size:.78rem}
+.lifejobs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.lifejobs button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:10px 12px;min-height:60px;border:2px solid #b9d9c8;border-radius:14px;background:#fff;font:inherit;cursor:pointer;text-align:left}
+.lifejobs button b{font-size:1rem}
+.lifejobs button small{font-size:.8rem;color:#567}
+.lifejobs button.on{background:#2f9e75;border-color:#2f9e75;color:#fff}
+.lifejobs button.on small{color:#eafff4}
+.startpal.two{grid-template-columns:1fr 1fr}
+.lifemore{margin:8px 0}
+.lifemore summary{cursor:pointer;font-weight:800;color:#1f6f54}
+.lifecond{display:flex;gap:8px;align-items:flex-start;margin:10px 0;font-size:.95rem}
+.lifecond input{width:22px;height:22px;margin-top:2px;flex:0 0 auto}
+.planres{padding:14px 16px}
+.plbig{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#1f6f54,#2f9e75);color:#fff}
+.plbig small{opacity:.9}
+.plbig b{font-size:2.2rem;line-height:1.1}
+.plbig b span{font-size:1rem;margin-left:4px}
+.plbig em{align-self:flex-start;font-style:normal;font-size:.85rem;font-weight:800;padding:2px 10px;border-radius:999px;color:#fff}
+.plgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:8px 0}
+.plgrid div{background:#f1f8f3;border-radius:12px;padding:8px 10px;text-align:center}
+.plgrid small{display:block;font-size:.8rem;color:#567}
+.plgrid b{font-size:1.15rem;color:#1f5f41}
+.plpfc{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:6px 0}
+.plpfc span{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;white-space:nowrap}
+.pltable{width:100%;border-collapse:collapse;margin:6px 0;font-size:.95rem}
+.pltable th,.pltable td{padding:6px 6px;border-bottom:1px solid #e3ece6;text-align:center}
+.pltable th:first-child{text-align:left}
+.pltable tr.tot{background:#eaf6ef;font-weight:800}
+.plguide{list-style:none;margin:6px 0;padding:0;display:grid;gap:6px}
+.plguide li{padding:8px 10px;border-radius:12px;background:#f6fbf8;border:1px solid #d5e8dd;font-size:.95rem}
+.plguide b{margin-right:6px}
+.sharebtns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.sharebtns button,.sharebtns a{flex:1 1 140px;min-height:48px;padding:10px 12px;border:2px solid #2f9e75;border-radius:14px;background:#fff;color:#1f6f54;font:inherit;font-weight:800;text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sharebtns .main{background:#2f9e75;color:#fff}
+.sharepre{white-space:pre-wrap;word-break:break-word;margin:8px 0;padding:12px;border-radius:12px;background:#f6fbf8;border:1px solid #d5e8dd;font:inherit;font-size:.9rem;line-height:1.6;max-height:360px;overflow:auto}
