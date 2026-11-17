@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { calcEnergy } from "../lib/energy";
@@ -40,6 +40,14 @@ export default function StartCard() {
       if (done) setOpen(false);
     } catch {}
     setReady(true);
+    const sync = () => {
+      try {
+        const n = localStorage.getItem("lg-now") || "";
+        setNow((x) => (x === n ? x : n));
+      } catch {}
+    };
+    window.addEventListener("lg-profile-change", sync);
+    return () => window.removeEventListener("lg-profile-change", sync);
   }, []);
 
   const save = (patch: { age?: string; height?: string; now?: string; target?: string; pal?: number }) => {
@@ -131,10 +139,11 @@ export default function StartCard() {
             </div>
           )}
           {youth && filled && <p className="agnote">中学生・高校生は、成長期のため、体重を減らす計算はしません。必要な量を、しっかり食べましょう。</p>}
-          {filled && !youth && <p className="agnote">診断ではなく、目安です。次の「② 食事を選ぶ」で、いまの食事と比べられます。</p>}
-          <a href="#qm" className="startnext">② 食事を選ぶ ▼</a>
+          {filled && !youth && <p className="agnote">診断ではなく、目安です。次の「② 昨日・一昨日の食事」を入れると、この目標との差が分かります。</p>}
+          <a href="#qm" className="startnext">② 昨日・一昨日の食事を入れる ▼</a>
         </div>
       )}
     </section>
   );
 }
+

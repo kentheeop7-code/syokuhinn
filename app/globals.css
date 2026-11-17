@@ -5062,3 +5062,61 @@ main button i{font-size:13px}
 .qmfoods button small{font-size:.85rem;color:#567}
 .qmfoods button.on{background:#e6f5ec;border-color:#2f9e75}
 .qmfoods button i{font-style:normal;color:#1f6f54}
+
+/* ===== ホーム：昨日・一昨日の食事／目標との差／体重の推移 ===== */
+.daycmp,.trendcard{padding:14px 16px}
+.dch{margin:0 0 8px;font-size:1.15rem;font-weight:800;color:#0f3d2e}
+.dcwarn{margin:6px 0 10px;padding:10px 12px;border-radius:12px;background:#fff4e0;color:#7a4b00;font-weight:700}
+.dctarget{display:flex;flex-direction:column;gap:2px;margin:6px 0 10px;padding:10px 14px;border-radius:14px;background:#eaf6ef}
+.dctarget small{font-size:.85rem;color:#456}
+.dctarget b{font-size:1.5rem;color:#1f5f41}
+.dctarget span{font-size:.9rem;color:#345}
+.dcseg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.dcseg button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;min-height:64px;border:2px solid #b9d9c8;border-radius:14px;background:#fff;font:inherit;cursor:pointer}
+.dcseg button b{font-size:1.05rem}
+.dcseg button small{font-size:.8rem;color:#567}
+.dcseg button em{font-style:normal;font-size:.8rem;color:#789}
+.dcseg button.on{background:#2f9e75;border-color:#2f9e75;color:#fff}
+.dcseg button.on small,.dcseg button.on em{color:#eafff4}
+.dcrows{list-style:none;margin:6px 0;padding:0;display:grid;gap:10px}
+.dcl{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.dcl b{font-size:1.05rem}
+.dcl em{font-style:normal;font-weight:800;font-size:.9rem}
+.dcl em.ok{color:#1f8a5b}.dcl em.high{color:#d23f2b}.dcl em.low{color:#b57b00}
+.dcb{position:relative;margin-top:4px}
+.dcbar{display:block;height:14px;border-radius:8px;background:#e9efe9;overflow:hidden}
+.dcbar i{display:block;height:100%;border-radius:8px}
+.dcmark{position:absolute;top:-3px;width:3px;height:20px;background:#0f3d2e;border-radius:2px}
+.dcverdict{margin:10px 0 0;padding:12px 14px;border-radius:14px;border:2px solid #b9d9c8;background:#f6fbf8}
+.dcverdict.over{border-color:#e8503c;background:#fff6f4}
+.dcverdict.under{border-color:#e0a526;background:#fffaf0}
+.dcverdict>b{display:block;font-size:1.05rem;margin-bottom:4px}
+.dcverdict p{margin:6px 0}
+.dcbad{color:#c62828;font-weight:700}
+.dcn{margin:6px 0 6px 18px;padding:0}
+.dcn li.low,.dcn li.high{color:#a85b00;font-weight:700}
+.dcswap{margin:8px 0;padding:8px 10px;border-radius:12px;background:#fff}
+.dcswap ul{margin:4px 0 0 18px;padding:0}
+.trw{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.trw label{display:block}
+.trw label>span{display:block;font-size:.9rem;font-weight:700;color:#355}
+.trw label>span small{margin-left:6px;color:#789;font-weight:400}
+.trw label>b{display:flex;align-items:center;gap:6px}
+.trw input{width:100%;min-width:0;box-sizing:border-box;font:inherit;font-size:1.2rem;font-weight:800;padding:8px 10px;border:2px solid #b9d9c8;border-radius:12px;background:#fff}
+.trchips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.trchips button{padding:8px 12px;border:2px solid #b9d9c8;border-radius:999px;background:#fff;font:inherit;font-size:.95rem;cursor:pointer;text-align:left}
+.trchips button.on{background:#2f9e75;border-color:#2f9e75;color:#fff}
+.trres{margin-top:10px;display:grid;gap:10px}
+.trjudge{padding:12px 14px;border:3px solid;border-radius:14px;background:#fff}
+.trjudge b{display:block;font-size:1.2rem}
+.trjudge span{display:block;margin-top:2px;font-size:.95rem;color:#345}
+.trblock{padding:10px 12px;border-radius:12px;background:#f6fbf8;border:1px solid #d5e8dd}
+.trblock>b{display:block;margin-bottom:4px;font-size:1.05rem}
+.trblock ul{margin:4px 0 0 18px;padding:0}
+.trblock li small{display:block;color:#456;font-size:.9rem}
+.tract2{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tract2 li{display:grid;grid-template-columns:78px 1fr;gap:8px;align-items:start}
+.tract2 em{font-style:normal;font-weight:800;background:#2f9e75;color:#fff;border-radius:8px;padding:3px 6px;text-align:center;font-size:.85rem}
+.tract3{margin:4px 0 4px 20px;padding:0}
+.trsee{display:block;margin-top:4px;color:#8a4b00}
+.trev summary,.trsee2 summary{cursor:pointer;font-weight:800}

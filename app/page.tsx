@@ -6,6 +6,8 @@ import LatestPapers from "./LatestPapers";
 import CondHub from "./CondHub";
 import QuickMeals from "./QuickMeals";
 import StartCard from "./StartCard";
+import DayCompare from "./DayCompare";
+import TrendCard from "./TrendCard";
 import MyNutrition from "./MyNutrition";
 import PlanChart from "./PlanChart";
 import DietForAnyone from "./DietForAnyone";
@@ -2125,8 +2127,12 @@ function HomeInner() {
       {tab === "record" ? (
         <>
           <StartCard />
-          <HomeHero />
-          <QuickMeals />
+          <DayCompare />
+          <TrendCard />
+          <Fold key="h-detail" id="h-detail" title="🍽 くわしい分析（栄養バランス・原因）" sub="いつもの1日の食事から、栄養のバランスを見る" cls="wfold">
+            <HomeHero />
+            <QuickMeals />
+          </Fold>
           <Fold key="h-bal" id="h-bal" title="🥗 食事を細かく入力・結果を見る" sub="いつもの食事を選ぶ／原因／LINEで送る" cls="wfold">
             <BalanceCheck />
           </Fold>

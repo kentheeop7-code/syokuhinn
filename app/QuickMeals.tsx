@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import MealPicker from "./MealPicker";
@@ -68,7 +68,7 @@ export default function QuickMeals() {
   if (tot.any && parseFloat(g.p || "0") > 0) radar.unshift({ label: "たんぱく質", plan: tot.p / parseFloat(g.p || "1") });
   const has = Object.keys(st.size).length > 0 || Object.keys(st.ext).length > 0;
   return (
-    <section className="card qm" id="qm" aria-label="かんたん入力">
+    <section className="card qm" id="qm-detail" aria-label="かんたん入力">
       <p className="balh">🍽 ② 朝・昼・夜を、くわしく選ぶ</p>
       <p className="agnote">朝・昼・夜・おやつを選ぶと、上の推定カロリーに、すぐ反映されます。量も、足したものも、直せます。</p>
       {prev && !has && (
