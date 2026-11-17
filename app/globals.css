@@ -5158,3 +5158,27 @@ main button i{font-size:13px}
 .sharebtns button,.sharebtns a{flex:1 1 140px;min-height:48px;padding:10px 12px;border:2px solid #2f9e75;border-radius:14px;background:#fff;color:#1f6f54;font:inherit;font-weight:800;text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .sharebtns .main{background:#2f9e75;color:#fff}
 .sharepre{white-space:pre-wrap;word-break:break-word;margin:8px 0;padding:12px;border-radius:12px;background:#f6fbf8;border:1px solid #d5e8dd;font:inherit;font-size:.9rem;line-height:1.6;max-height:360px;overflow:auto}
+
+/* ===== 定期フォロー資料（お客様向けPDF） ===== */
+.fureport .furk{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.fureport .furk div{background:#f1f8f3;border-radius:12px;padding:8px 6px;text-align:center}
+.fureport .furk small{display:block;font-size:13px;color:#567}
+.fureport .furk b{font-size:20px;color:#1f5f41}
+.fureport .fuh3{font-size:17px;margin:14px 0 4px}
+.fureport .fujudge{padding:12px 14px;border:3px solid #2f9e75;border-radius:14px;background:#fff}
+.fureport .fujudge b{display:block;font-size:20px;color:#1f5f41}
+.fureport .fujudge span{display:block;font-size:15px;color:#345;margin-top:2px}
+.fureport .fucauses{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.fureport .fucauses li{padding:8px 10px;border-radius:12px;background:#fff8ec;border:1px solid #f0dcb4}
+.fureport .fucauses li b{display:block;font-size:16px}
+.fureport .fucauses li small{display:block;font-size:14px;color:#554}
+.fureport .furow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.fureport .fubig{font-size:32px;font-weight:800;color:#1f5f41;margin:0}
+.fureport .fubig span{font-size:16px;margin-left:4px}
+.fureport .fuhw{margin:6px 0 10px 22px;padding:0;font-size:17px;font-weight:700}
+.fureport .fuweek th,.fureport .fuweek td{text-align:center;font-size:14px}
+.fureport .fuweek tbody th{text-align:left;white-space:normal}
+.fureport .fuweek td{height:30px}
+.fureport .fucomment{white-space:pre-wrap;padding:10px 12px;border-radius:12px;background:#f1f8f3;font-size:16px}
+.fureport .fuev{margin:4px 0 0 18px;padding:0;font-size:13px;color:#445}
+@media (max-width:480px){.fureport .furk{grid-template-columns:repeat(2,1fr)}}
