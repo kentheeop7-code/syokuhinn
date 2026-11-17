@@ -5228,3 +5228,30 @@ main button i{font-size:13px}
 .report .rcommon b{display:block;font-size:17px;margin-top:6px;color:#7a4b00}
 .report .rcommon ul{margin:4px 0 4px 20px;padding:0}
 .report .rcommon .rcaut li{color:#a33;font-weight:700}
+
+/* ===== お客様向けPDF：さらに大きく・見やすく（PDFの出力時） ===== */
+.report.pdfmode{font-size:18px;line-height:1.7}
+.report.pdfmode h1{font-size:30px}
+.report.pdfmode h2{font-size:24px;margin:22px 0 10px;padding-bottom:4px;border-bottom:3px solid #2f9e75}
+.report.pdfmode .rtable,.report.pdfmode .rtable th,.report.pdfmode .rtable td{font-size:17px}
+.report.pdfmode .rnote,.report.pdfmode .rsrc{font-size:16px}
+.report.pdfmode .rkpi b{font-size:26px}
+.report.pdfmode .rkpi small,.report.pdfmode .rkpi em{font-size:15px}
+.report.pdfmode .rgoal b{font-size:34px}
+.report.pdfmode .rext,.report.pdfmode .rfoodc .rext{font-size:18px}
+.report.pdfmode .rexc ul,.report.pdfmode .rtwo ul,.report.pdfmode .rcommon li{font-size:17px}
+.report.pdfmode .rinct th,.report.pdfmode .rinct td,.report.pdfmode .rfoodc .rinct th,.report.pdfmode .rfoodc .rinct td{font-size:16px}
+.report.pdfmode .hbars li,.report.pdfmode .hbars b{font-size:16px}
+.report.pdfmode .pie figcaption{font-size:18px}
+.report.pdfmode .pie ul{font-size:16px}
+.report.pdfmode .nbh,.report.pdfmode .nbh b{font-size:17px}
+.report.pdfmode .nbgroup{font-size:17px}
+.report.pdfmode .ract-list b{font-size:20px}
+.report.pdfmode .ract-list span{font-size:16px}
+.report.pdfmode .rpromise div,.report.pdfmode .rpromise small{font-size:17px}
+.report.pdfmode .rage,.report.pdfmode .rfh,.report.pdfmode .rfd,.report.pdfmode .rfind ol{font-size:17px}
+.report.pdfmode .rfoods{display:grid;grid-template-columns:1fr;gap:12px}
+.report.pdfmode .rfoodc{border:2px solid #d5e8dd;border-radius:14px;padding:10px 12px;background:#fbfdfc}
+.report.pdfmode .rfoodc .rext{color:#1f5f41;font-weight:800;border-bottom:2px solid #2f9e75;padding-bottom:4px;margin-bottom:6px}
+.report.pdfmode .rtrouble li,.report.pdfmode .rtrouble p{font-size:17px}
+.report.pdfmode .rfoot{font-size:14px}

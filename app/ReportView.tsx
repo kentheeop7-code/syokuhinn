@@ -1068,7 +1068,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           <div className="rfoods">
             {NUTS.map((n) => {
               const amt = parseFloat(foodAmts[n.key] ?? "") || n.defaults[0];
-              const rows = foodsFor(n.key, amt).slice(0, 8);
+              const rows = foodsFor(n.key, amt).slice(0, n.key === "p" || n.key === "c" || n.key === "f" ? 14 : 8);
               return (
                 <div key={n.key} className="rfoodc">
                   <p className="rext">
