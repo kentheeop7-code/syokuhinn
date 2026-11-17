@@ -812,7 +812,8 @@ export default function TrainerApp() {
         )}
       </section>
       <section className="card" id="s2">
-        <p className="balh">② 現状の食事（お客様に聞きながら）</p>
+        <p className="balh">② 現状の食事（任意：聞けたときだけ）</p>
+        <p className="agnote">食事は、入れなくても、大丈夫です。入れなくても、目標カロリー・PFC・食事例・専門家の評価・アクションは、基本情報から、出ます。入れると、現状との差も、出ます。</p>
         <details className="trask">
           <summary>聞くことのリスト（タップで開く）</summary>
           {ASK.map((g) => (
@@ -898,7 +899,8 @@ export default function TrainerApp() {
       </section>
 
       <section className="card" id="s3">
-        <p className="balh">③ 提案する食事内容</p>
+        <p className="balh">③ 提案する食事内容（任意）</p>
+        <p className="agnote">こちらも、任意です。入れなくても、自動の食事例が、お客様向けのまとめに、出ます。</p>
         <p className="agnote">現状を、コピーして、直すと、早いです。比べながら、お客様に、示せます。</p>
         <div className="trgrid">
           <button type="button" className="btn ghost" onClick={() => setPlanMeal({ date: curMeal.date, size: { ...curMeal.size }, ext: { ...curMeal.ext } })}>

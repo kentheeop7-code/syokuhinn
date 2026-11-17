@@ -9,6 +9,8 @@ import { computeGoal, PACES, type Pace } from "../lib/goal";
 import { calcEnergy } from "../lib/energy";
 import { buildActions, WEEK_DAYS } from "../lib/actions";
 import { EXAMPLES, GENERIC_SWAPS, INCREASE, swapsFor } from "../lib/swaps";
+import { expertAssess } from "../lib/expert";
+import ExpertSection, { NextActions } from "./ExpertSection";
 import { microStatus } from "../lib/micro";
 import { OTHER_TYPES, describeEx, guideMin, labelOf, weeklyMin, type OtherEx } from "../lib/exercise";
 import { REPORT_EVIDENCE } from "../lib/evidenceNotes";
@@ -45,7 +47,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const [bad, setBad] = useState(false);
   const [busy, setBusy] = useState("");
   const [msg, setMsg] = useState("");
-  const [compact, setCompact] = useState(false); // 簡易版：栄養素のくわしい図・食品の早見表を、はぶいて、ページ数を、減らす
+  const [compact, setCompact] = useState(true); // 簡易版：栄養素のくわしい図・食品の早見表を、はぶいて、ページ数を、減らす
   useEffect(() => {
     document.body.classList.add("rpt");
     (async () => {
@@ -125,6 +127,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const ageN = ageNote(num(s.age), band, sex);
   const findings = analyzeClient({ sex, age: num(s.age), band, weight: w, targetWeight: wt, body: bodyA, energy, wantKcal: want, cur: ct.any ? ct : null, goalP: parseFloat(g.p || "0"), goalFi: parseFloat(g.fi || "0"), goalSalt: g.salt, water, strengthDays: days, otherMin: weeklyMin(others), guideMin: guideMin(band), conds: s.conds || [], goal: goalK, troubles: s.troubles || [], weeks: gp?.weeks ?? 0, rate: gp?.rate ?? 0 });
   const nSev = { 要対策: findings.filter((f) => f.sev === "要対策").length, 注意: findings.filter((f) => f.sev === "注意").length, 良好: findings.filter((f) => f.sev === "良好").length };
+  const expert = expertAssess({ sex, age: num(s.age), band, height: num(s.height), weight: w, targetWeight: wt, goal: goalK, body: bodyA, energy, gp, bmrInput: num(s.bmr), strengthDays: days, otherMin: weeklyMin(others), guideMin: guideMin(band), water, conds: s.conds || [], cur: ct.any ? ct : null, goalP: parseFloat(g.p || "0"), goalFi: parseFloat(g.fi || "0"), want, nextDate: typeof s.nextDate === "string" ? s.nextDate : "" });
   const phases = energy && gp ? energyPhases({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace }, gp.pts, gp.weeks) : [];
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
@@ -158,7 +161,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     return true;
   };
   let secNo = 0;
-  const ICONS: [string, string][] = [["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
+  const ICONS: [string, string][] = [["次回までの", "📌"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
   const H = (t: string) => `${ICONS.find(([k]) => t.includes(k))?.[1] ?? "▪"} ${++secNo}. ${t}`;
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
@@ -261,7 +264,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                 🖨 印刷する
               </button>
               <button type="button" className={compact ? "btn on" : "btn ghost"} aria-pressed={compact} onClick={() => setCompact((v) => !v)}>
-                {compact ? "✓ 簡易版（ページ少なめ）" : "📄 簡易版にする（ページを減らす）"}
+                {compact ? "📄 くわしい版にする（ページが増えます）" : "✓ くわしい版（要点版に戻す）"}
               </button>
               <button type="button" className="btn ghost" onClick={() => copy("link")} disabled={!link}>
                 {copied === "link" ? "✓ リンクをコピーしました" : "お客様専用ページの、リンクをコピー"}
@@ -367,6 +370,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </div>
         </div>
 
+        {expert.evals.length > 0 && <NextActions e={expert} title={H("次回までのアクション")} nextDate={typeof s.nextDate === "string" ? s.nextDate : ""} />}
         {actionsOn.length > 0 && (
           <section className="ractions">
             <h2>{H("今日から、やること（まず、これだけ）")}</h2>
@@ -414,6 +418,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             </table>
           </section>
         )}
+        {expert.evals.length > 0 && <ExpertSection e={expert} compact={compact} title1={H("専門家の評価（基礎情報から）")} title2={H("今後の見通し")} title3={H("増やす食事で、変えていく")} />}
         {findings.length > 0 && (
           <section>
             <h2>{H("現状の分析と対策")}</h2>
@@ -699,7 +704,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </section>
         )}
 
-        {energy && (
+        {energy && !compact && (
           <section>
             <h2>{H("カロリーの、出しかた")}</h2>
             <table className="rtable rcal">
@@ -952,8 +957,8 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </section>
         )}
 
-        <section>
-          <h2>{H("こちらを食べてください（増やす食事・置きかえ）")}</h2>
+        <section style={compact ? { display: "none" } : undefined}>
+          <h2>{compact ? "" : H("こちらを食べてください（増やす食事・置きかえ）")}</h2>
           <p className="rnote">食べるのを、がまんするのではなく、「代わりに、こちらを食べる」置きかえです。栄養が、増えます。</p>
           <table className="rtable rswap">
             <thead>
@@ -1066,9 +1071,9 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           <h2>{H("食品の早見表（量の目安）")}</h2>
           <p className="rnote">「この栄養を、これだけとるには、何を、どれだけ食べるか」の目安です（日本食品標準成分表をもとにした目安値）。</p>
           <div className="rfoods">
-            {NUTS.map((n) => {
+            {NUTS.filter((n) => n.key === "p" || n.key === "c" || n.key === "f").map((n) => {
               const amt = parseFloat(foodAmts[n.key] ?? "") || n.defaults[0];
-              const rows = foodsFor(n.key, amt).slice(0, n.key === "p" || n.key === "c" || n.key === "f" ? 14 : 8);
+              const rows = foodsFor(n.key, amt).slice(0, 14);
               return (
                 <div key={n.key} className="rfoodc">
                   <p className="rext">

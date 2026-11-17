@@ -5255,3 +5255,49 @@ main button i{font-size:13px}
 .report.pdfmode .rfoodc .rext{color:#1f5f41;font-weight:800;border-bottom:2px solid #2f9e75;padding-bottom:4px;margin-bottom:6px}
 .report.pdfmode .rtrouble li,.report.pdfmode .rtrouble p{font-size:17px}
 .report.pdfmode .rfoot{font-size:14px}
+
+/* ===== 専門家の評価・今後の見通し・増やす食事 ===== */
+.report .rxhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 14px;border:3px solid;border-radius:16px;background:#fff;margin:8px 0}
+.report .rxscore{display:flex;align-items:baseline;gap:2px}
+.report .rxscore b{font-size:54px;line-height:1}
+.report .rxscore small{font-size:18px;color:#667}
+.report .rxtxt{flex:1 1 220px}
+.report .rxtxt b{display:block;font-size:17px;color:#445}
+.report .rxtxt p{margin:2px 0 0;font-size:17px;font-weight:700;line-height:1.5}
+.report .rxcards{display:grid;gap:10px;margin:10px 0}
+.report .rxcard{border:1px solid #d9e6df;border-left:8px solid #2e9e6a;border-radius:12px;padding:10px 12px;background:#fbfdfc;break-inside:avoid}
+.report .rxch{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.report .rxch b{font-size:18px}
+.report .rxch em{font-style:normal;color:#fff;font-weight:800;font-size:14px;padding:2px 10px;border-radius:999px;margin-left:auto}
+.report .rxv{margin:4px 0 0;font-size:18px;font-weight:800;color:#0f3d2e}
+.report .rxc{margin:2px 0;font-size:14px;color:#667}
+.report .rxm{margin:4px 0 0;font-size:16px;line-height:1.6}
+.report .rxr{margin:4px 0 0;font-size:13px;color:#667}
+.report .rxmile th,.report .rxmile td{vertical-align:top}
+.report .rxkey{background:#eaf6ef;border-radius:12px;padding:10px 12px;font-size:17px;color:#0f3d2e}
+.report .rxg{border:2px solid #d5e8dd;border-radius:14px;padding:10px 12px;margin:12px 0;background:#fff}
+.report .rxgh{margin:0;font-size:19px;display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}
+.report .rxgh small{margin-left:auto;font-size:14px;color:#445;font-weight:700}
+.report .rxgw{margin:4px 0;font-size:16px}
+.report .rxgt{margin:4px 0 6px;font-size:15px;color:#7a4b00;background:#fff8ec;border-radius:10px;padding:6px 10px}
+.report .rxrefs{font-size:13px;color:#667;margin:10px 0 0}
+.report.pdfmode .rxcard .rxm{font-size:17px}
+.report.pdfmode .rxg .hbars li,.report.pdfmode .rxg .hbars b{font-size:16px}
+
+/* ===== 次回までのアクション／専門家の評価（見やすく） ===== */
+.report .rnext{border:3px solid #2f9e75;border-radius:16px;padding:10px 14px;background:#f4fbf7;margin:14px 0}
+.report .rnl{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.report .rnl li{display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:#fff;border:1px solid #d5e8dd}
+.report .rnl em{font-style:normal;font-weight:800;background:#0f3d2e;color:#fff;border-radius:8px;padding:3px 10px;font-size:14px;white-space:nowrap}
+.report .rnl .who{font-weight:800;font-size:14px;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.report .rnl li.me .who{background:#e3f1fb;color:#1c5d99}
+.report .rnl li.tr .who{background:#fff0d9;color:#8a4b00}
+.report .rnl b{font-size:16px;line-height:1.55;font-weight:700}
+.report.pdfmode .rnl b{font-size:17px}
+.report .rxcards{grid-template-columns:1fr 1fr}
+.report .rxcard{padding:8px 10px}
+.report .rxcard .rxch b{font-size:16px}
+.report .rxcard .rxv{font-size:16px}
+.report .rxcard .rxm{font-size:14px}
+.report.pdfmode .rxcard .rxm{font-size:15px}
+@media (max-width:520px){.report:not(.pdfmode) .rxcards{grid-template-columns:1fr}.report .rnl li{grid-template-columns:auto 1fr}.report .rnl b{grid-column:1 / 3}}

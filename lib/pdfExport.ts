@@ -8,7 +8,7 @@ const M_BOTTOM = 40;
 const BODY_W = PAGE_W - M_X * 2; // 734
 const LIMIT = PAGE_H - M_TOP - M_BOTTOM; // 1 ページに入る高さ
 const GAP = 8;
-const SCALE = 1.6;
+const SCALE = 1.45;
 
 const BLOCK_STOP = new Set(["TABLE", "TBODY", "THEAD", "TR", "svg"]);
 
@@ -138,7 +138,7 @@ export async function pagesToPdf(pages: HTMLCanvasElement[]): Promise<Blob> {
   const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
   pages.forEach((c, i) => {
     if (i > 0) pdf.addPage();
-    pdf.addImage(c.toDataURL("image/jpeg", 0.88), "JPEG", 0, 0, 210, 297, undefined, "FAST");
+    pdf.addImage(c.toDataURL("image/jpeg", 0.8), "JPEG", 0, 0, 210, 297, undefined, "FAST");
   });
   return pdf.output("blob");
 }
