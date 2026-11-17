@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ReportView from "../../ReportView";
+import TrainerNav from "../../TrainerNav";
 
 export const metadata: Metadata = {
   title: "お客様用のまとめ（PDF）",
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 export default function Report() {
   return (
     <main className="container">
+      <TrainerNav />
       <ReportView />
     </main>
   );

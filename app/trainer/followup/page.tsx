@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import FollowUpApp from "../../FollowUpApp";
+import TrainerNav from "../../TrainerNav";
 
 export const metadata: Metadata = {
   title: "トレーナー用 定期フォロー資料",
@@ -12,9 +12,7 @@ export default function FollowUp() {
   return (
     <main className="container">
       <h1 className="title sm">定期フォロー資料（トレーナー専用）</h1>
-      <p style={{ margin: "0 0 12px" }}>
-        <Link href="/trainer">← 指導メモ（開始時の総合まとめ）</Link>
-      </p>
+      <TrainerNav />
       <FollowUpApp />
     </main>
   );

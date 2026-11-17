@@ -105,9 +105,12 @@ const DEFAULT: S = {
   comment: "",
 };
 
-const box: React.CSSProperties = { border: "1px solid #d5e8dd", borderRadius: 14, padding: 12, margin: "12px 0", background: "#fff" };
-const inp: React.CSSProperties = { font: "inherit", padding: "8px 10px", border: "2px solid #b9d9c8", borderRadius: 10, width: "100%", boxSizing: "border-box", background: "#fff" };
-const lab: React.CSSProperties = { display: "block", fontSize: 14, fontWeight: 700, color: "#355" };
+const box: React.CSSProperties = { border: "2px solid #cfe6d8", borderRadius: 18, padding: "14px 16px", margin: "16px 0", background: "#fff" };
+const inp: React.CSSProperties = { font: "inherit", fontSize: 17, padding: "11px 12px", border: "2px solid #b9d9c8", borderRadius: 12, width: "100%", boxSizing: "border-box", background: "#fff", minHeight: 48 };
+const lab: React.CSSProperties = { display: "block", fontSize: 15, fontWeight: 800, color: "#244" };
+const sum: React.CSSProperties = { fontSize: 19, fontWeight: 800, color: "#0f3d2e", cursor: "pointer", padding: "4px 0" };
+const card: React.CSSProperties = { position: "relative", border: "2px solid #e0eee6", borderRadius: 14, padding: "12px 12px 10px", margin: "10px 0", background: "#f9fcfa", display: "grid", gap: 8 };
+const del: React.CSSProperties = { position: "absolute", top: 6, right: 6, width: 40, height: 40, border: "none", borderRadius: 999, background: "#fff", fontSize: 18, cursor: "pointer", color: "#a33" };
 
 export default function FollowUpApp() {
   const [s, setS] = useState<S>(DEFAULT);
@@ -266,12 +269,18 @@ export default function FollowUpApp() {
         <p className="agnote" style={{ margin: "6px 0 0" }}>ダイエット開始時の総合まとめは「指導メモ（/trainer）」です。こちらは、2回目以降の、定期フォロー用です。</p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}>
           <button type="button" className="trchip on" onClick={loadFromMemo}>指導メモから読み込む</button>
-          <a className="trchip" href="/trainer">← 指導メモ</a>
         </div>
       </div>
 
+      <div className="fustrip" aria-label="いまの状況">
+        <div><small>最新の体重</small><b>{last ? `${nowW}kg` : "—"}</b></div>
+        <div><small>判定</small><b>{res?.judge ? res.judge.label.replace(/（.*$/, "") : "—"}</b></div>
+        <div><small>目標</small><b>{kcal ? `${r10(kcal).toLocaleString()}kcal` : "—"}</b></div>
+        <a href="#fu-share">共有へ ▼</a>
+      </div>
+
       <details style={box} open>
-        <summary><b>① お客様・回</b></summary>
+        <summary style={sum}>① お客様・回{s.name ? `：${s.name}さん` : ""}</summary>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 8, marginTop: 8 }}>
           <label style={lab}>お名前<input style={inp} value={s.name} onChange={(e) => up({ name: e.target.value })} /></label>
           <label style={lab}>第 何回<input style={inp} inputMode="numeric" value={s.round} onChange={(e) => up({ round: e.target.value })} /></label>
@@ -288,15 +297,16 @@ export default function FollowUpApp() {
       </details>
 
       <details style={box} open>
-        <summary><b>② 途中結果（体重・ウエスト・体脂肪）</b></summary>
+        <summary style={sum}>② 途中結果（体重・ウエスト・体脂肪）</summary>
         <p className="agnote">「週」は、開始からの週数（開始＝0）です。朝・トイレのあとに、同じ条件で測った値を入れます。</p>
         {s.rows.map((r, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "60px 1fr 1fr 1fr 36px", gap: 6, margin: "4px 0", alignItems: "end" }}>
-            <label style={lab}>週<input style={inp} inputMode="numeric" value={r.w} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, w: e.target.value } : x)) })} /></label>
-            <label style={lab}>体重kg<input style={inp} inputMode="decimal" value={r.kg} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, kg: e.target.value } : x)) })} /></label>
-            <label style={lab}>ウエストcm<input style={inp} inputMode="decimal" value={r.waist} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, waist: e.target.value } : x)) })} /></label>
-            <label style={lab}>体脂肪%<input style={inp} inputMode="decimal" value={r.fat} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, fat: e.target.value } : x)) })} /></label>
-            <button type="button" className="trchip" aria-label="この行を消す" onClick={() => up({ rows: s.rows.filter((_, j) => j !== i) })}>✕</button>
+          <div key={i} style={{ ...card, gridTemplateColumns: "1fr 1fr" }}>
+            <b style={{ gridColumn: "1 / 3", fontSize: 16, color: "#1f6f54" }}>{r.w === "0" ? "開始" : r.w ? `${r.w}週目` : "週を入れてください"}</b>
+            <label style={lab}>週（開始＝0）<input style={inp} inputMode="numeric" value={r.w} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, w: e.target.value } : x)) })} /></label>
+            <label style={lab}>体重（kg）<input style={inp} inputMode="decimal" value={r.kg} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, kg: e.target.value } : x)) })} /></label>
+            <label style={lab}>ウエスト（cm）<input style={inp} inputMode="decimal" value={r.waist} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, waist: e.target.value } : x)) })} /></label>
+            <label style={lab}>体脂肪率（%）<input style={inp} inputMode="decimal" value={r.fat} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, fat: e.target.value } : x)) })} /></label>
+            <button type="button" style={del} aria-label="この行を消す" onClick={() => up({ rows: s.rows.filter((_, j) => j !== i) })}>✕</button>
           </div>
         ))}
         <button type="button" className="trchip" onClick={() => up({ rows: [...s.rows, { w: String(Math.max(0, ...s.rows.map((x) => num(x.w))) + 1), kg: "", waist: "", fat: "" }] })}>＋ 行を足す（次の週）</button>
@@ -317,20 +327,20 @@ export default function FollowUpApp() {
       </details>
 
       <details style={box}>
-        <summary><b>③ 調整（カロリー・PFC）</b></summary>
+        <summary style={sum}>③ 調整（カロリー・PFC）</summary>
         <p className="agnote">最新の体重から、目標カロリーを出し直します。変えたいときは、数字を入れます。</p>
         <label style={lab}>目標kcalを、直接、決める（空欄＝自動：{energy ? energy.target.toLocaleString() : "—"}kcal）<input style={inp} inputMode="numeric" value={s.kcalOverride} onChange={(e) => up({ kcalOverride: e.target.value })} /></label>
       </details>
 
       <details style={box} open>
-        <summary><b>④ プログラム表・対策表・宿題</b></summary>
+        <summary style={sum}>④ プログラム表・対策表・宿題</summary>
         <p style={lab}>プログラム表（直せます）</p>
         {s.prog.map((p, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 36px", gap: 6, margin: "4px 0" }}>
-            <input style={inp} value={p.d} onChange={(e) => up({ prog: s.prog.map((x, j) => (j === i ? { ...x, d: e.target.value } : x)) })} aria-label="日・種類" />
-            <input style={inp} value={p.c} onChange={(e) => up({ prog: s.prog.map((x, j) => (j === i ? { ...x, c: e.target.value } : x)) })} aria-label="内容" />
-            <input style={inp} value={p.s} onChange={(e) => up({ prog: s.prog.map((x, j) => (j === i ? { ...x, s: e.target.value } : x)) })} aria-label="量" />
-            <button type="button" className="trchip" aria-label="消す" onClick={() => up({ prog: s.prog.filter((_, j) => j !== i) })}>✕</button>
+          <div key={i} style={card}>
+            <label style={{ ...lab, paddingRight: 44 }}>日・種類<input style={inp} value={p.d} onChange={(e) => up({ prog: s.prog.map((x, j) => (j === i ? { ...x, d: e.target.value } : x)) })} /></label>
+            <label style={lab}>内容<textarea style={{ ...inp, minHeight: 70, resize: "vertical" }} value={p.c} onChange={(e) => up({ prog: s.prog.map((x, j) => (j === i ? { ...x, c: e.target.value } : x)) })} /></label>
+            <label style={lab}>量・時間<input style={inp} value={p.s} onChange={(e) => up({ prog: s.prog.map((x, j) => (j === i ? { ...x, s: e.target.value } : x)) })} /></label>
+            <button type="button" style={del} aria-label="この行を消す" onClick={() => up({ prog: s.prog.filter((_, j) => j !== i) })}>✕</button>
           </div>
         ))}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -340,12 +350,12 @@ export default function FollowUpApp() {
         <p style={{ ...lab, marginTop: 12 }}>対策表</p>
         <button type="button" className="trchip on" onClick={autoMeasures}>🔄 判定から、自動で入れる</button>
         {s.meas.map((m2, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr 1.6fr 70px 36px", gap: 6, margin: "4px 0" }}>
-            <input style={inp} value={m2.issue} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, issue: e.target.value } : x)) })} aria-label="課題" />
-            <input style={inp} value={m2.cause} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, cause: e.target.value } : x)) })} aria-label="原因" />
-            <input style={inp} value={m2.action} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, action: e.target.value } : x)) })} aria-label="対策" />
-            <input style={inp} value={m2.due} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, due: e.target.value } : x)) })} aria-label="いつまで" />
-            <button type="button" className="trchip" aria-label="消す" onClick={() => up({ meas: s.meas.filter((_, j) => j !== i) })}>✕</button>
+          <div key={i} style={card}>
+            <label style={{ ...lab, paddingRight: 44 }}>課題<input style={inp} value={m2.issue} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, issue: e.target.value } : x)) })} /></label>
+            <label style={lab}>原因<textarea style={{ ...inp, minHeight: 64, resize: "vertical" }} value={m2.cause} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, cause: e.target.value } : x)) })} /></label>
+            <label style={lab}>対策<textarea style={{ ...inp, minHeight: 64, resize: "vertical" }} value={m2.action} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, action: e.target.value } : x)) })} /></label>
+            <label style={lab}>いつまで<input style={inp} value={m2.due} onChange={(e) => up({ meas: s.meas.map((x, j) => (j === i ? { ...x, due: e.target.value } : x)) })} /></label>
+            <button type="button" style={del} aria-label="この行を消す" onClick={() => up({ meas: s.meas.filter((_, j) => j !== i) })}>✕</button>
           </div>
         ))}
         <button type="button" className="trchip" onClick={() => up({ meas: [...s.meas, { issue: "", cause: "", action: "", due: "", who: "本人＋トレーナー" }] })}>＋ 行を足す</button>
@@ -356,8 +366,8 @@ export default function FollowUpApp() {
         <label style={lab}>トレーナーから、ひとこと<textarea style={{ ...inp, minHeight: 80 }} value={s.comment} onChange={(e) => up({ comment: e.target.value })} /></label>
       </details>
 
-      <div style={box}>
-        <b>⑤ お客様に共有</b>
+      <div style={box} id="fu-share">
+        <b style={{ fontSize: 19, color: "#0f3d2e" }}>⑤ お客様に共有</b>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}>
           <button type="button" className="linebtn" onClick={() => makeFile("pdf", "download")} disabled={!!busy}>📥 PDFを作る（ダウンロード）</button>
           <button type="button" className="btn ghost" onClick={() => makeFile("pdf", "share")} disabled={!!busy}>📤 PDFを、LINEなどで共有</button>
@@ -474,3 +484,4 @@ export default function FollowUpApp() {
     </div>
   );
 }
+

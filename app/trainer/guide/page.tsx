@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import GuideApp from "../../GuideApp";
+import TrainerNav from "../../TrainerNav";
 
 export const metadata: Metadata = {
   title: "トレーナー向け 資料集",
@@ -12,9 +12,7 @@ export default function Guide() {
   return (
     <main className="container">
       <h1 className="title sm">トレーナー向け 資料集</h1>
-      <p style={{ margin: "0 0 12px" }}>
-        <Link href="/trainer">← 指導メモに戻る</Link>
-      </p>
+      <TrainerNav />
       <GuideApp />
     </main>
   );
