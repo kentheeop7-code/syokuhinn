@@ -106,7 +106,7 @@ export default function ExpertSection({ e, compact, title1, title2, title3 }: { 
         <p className="rnote rxkey">
           <b>減らす</b>のではなく、<b>足す</b>。まず、足りない栄養を、食事に<b>1つずつ足して</b>いきます。足すほど、満足感が上がり、食べすぎや間食が、自然に整います。
         </p>
-        {(compact ? e.adds.slice(0, 2) : e.adds).map((g) => (
+        {(compact ? e.adds.slice(0, 3) : e.adds).map((g) => (
           <div key={g.id} className="rxg">
             <p className="rxgh">
               <span aria-hidden>{g.icon}</span> <b>{g.title}</b>
@@ -119,7 +119,7 @@ export default function ExpertSection({ e, compact, title1, title2, title3 }: { 
               color={g.id === "p" ? "#3b82c4" : g.id === "fi" ? "#2e9e6a" : g.id === "ca" ? "#7a5bd0" : "#e0a526"}
               items={[...g.items]
                 .sort((a, b) => (b[g.metric === "kcal" ? "kcal" : g.metric] as number) - (a[g.metric === "kcal" ? "kcal" : g.metric] as number))
-                .slice(0, compact ? 5 : 8)
+                .slice(0, compact ? 8 : 12)
                 .map((x) => ({ label: `${x.label}`, value: x[g.metric === "kcal" ? "kcal" : g.metric] as number }))}
             />
             <p className="rnote">1回あたりの「{METRIC_LABEL[g.metric]}」の量です（日本食品標準成分表をもとにした目安）。</p>

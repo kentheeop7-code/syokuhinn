@@ -86,7 +86,7 @@ export default function DayCompare() {
       <div className="dcquick">
         <b>かんたん：1日のパターンを、1タップで入れる（あとで直せます）</b>
         <div>
-          {EXAMPLES.slice(0, 8).map((ex) => (
+          {EXAMPLES.map((ex) => (
             <button key={ex.id} type="button" onClick={() => change({ date: st.date, size: { ...ex.st.size }, ext: { ...ex.st.ext } })}>
               {ex.name}
             </button>
