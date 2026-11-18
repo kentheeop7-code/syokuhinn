@@ -9,7 +9,7 @@ import { analyzeTrend } from "../lib/trend";
 import { TROUBLES } from "../lib/troubles";
 import { HBars, LineChart, Pie } from "./Charts";
 import ShareButtons from "./ShareButtons";
-import { AddFoods } from "./ExpertSection";
+import { AddFoods, NextActions } from "./ExpertSection";
 import { expertAssess } from "../lib/expert";
 import { computeGoal } from "../lib/goal";
 import { goalOf } from "../lib/meals";
@@ -206,7 +206,7 @@ export default function FollowUpApp() {
   const delta = kcal && num(s.prevKcal) ? kcal - num(s.prevKcal) : 0;
   const gpF = nowW > 0 && tW > 0 ? computeGoal(nowW, tW, s.days, s.conds ? "slow" : s.pace) : null;
   const glF = goalOf(s.sex, band);
-  const expert = expertAssess({ sex: s.sex, age, band, height: num(s.height), weight: nowW, targetWeight: tW, goal: "diet", body: null, energy, gp: gpF, bmrInput: 0, strengthDays: s.days, otherMin: 0, guideMin: 150, water: 0, conds: s.conds ? ["cond"] : [], cur: null, goalP: energy?.protein ?? parseFloat(glF.p || "0"), goalFi: parseFloat(glF.fi || "0"), want: kcal });
+  const expert = expertAssess({ sex: s.sex, age, band, height: num(s.height), weight: nowW, targetWeight: tW, goal: "diet", body: null, energy, gp: gpF, bmrInput: 0, strengthDays: s.days, otherMin: 0, guideMin: 150, water: 0, conds: s.conds ? ["cond"] : [], cur: null, goalP: energy?.protein ?? parseFloat(glF.p || "0"), goalFi: parseFloat(glF.fi || "0"), want: kcal, nextDate: s.nextDate ? s.nextDate.replace(/-/g, "/") : "" });
 
   const autoMeasures = () => {
     if (!res) return setMsg("先に、体重（最新）を入れてください。");
@@ -397,6 +397,7 @@ export default function FollowUpApp() {
           <h1>{s.name ? `${s.name}さんの、` : ""}これまでの結果と、これからの調整</h1>
           <p className="rmeta">{dateText}{s.nextDate ? `　／　次回：${s.nextDate.replace(/-/g, "/")}` : ""}</p>
         </header>
+        {nowW > 0 && <NextActions e={expert} title={H("次回までのアクション")} nextDate={s.nextDate ? s.nextDate.replace(/-/g, "/") : ""} />}
 
         <section>
           <h2>{H("途中結果")}</h2>
