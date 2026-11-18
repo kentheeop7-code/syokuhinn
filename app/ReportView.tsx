@@ -161,7 +161,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     return true;
   };
   let secNo = 0;
-  const ICONS: [string, string][] = [["次回までの", "📌"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
+  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["次回までの", "📌"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
   const H = (t: string) => `${ICONS.find(([k]) => t.includes(k))?.[1] ?? "▪"} ${++secNo}. ${t}`;
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
@@ -1066,6 +1066,36 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         </section>
         )}
 
+        {compact && (
+          <section>
+            <h2>{H("食べ物の例（10gぶん）")}</h2>
+            <p className="rnote">「たんぱく質10g」「炭水化物10g」「脂質10g」を、それぞれ、とれる食品の例です。量が少なくて済む食品が、上に出ます（日本食品標準成分表をもとにした目安）。</p>
+            <div className="rfoods">
+              {NUTS.filter((n) => n.key === "p" || n.key === "c" || n.key === "f").map((n) => (
+                <div key={n.key} className="rfoodc">
+                  <p className="rext">
+                    {n.label} 10{n.unit}
+                    <small> {n.hint}</small>
+                  </p>
+                  <table className="rtable rinct">
+                    <tbody>
+                      {foodsFor(n.key, 10).slice(0, 8).map((r) => (
+                        <tr key={r.name}>
+                          <th>
+                            {r.name}
+                            <small style={{ display: "block", fontWeight: 400, color: "#667" }}>{unitLabel(r)}</small>
+                          </th>
+                          <td>{r.g}g</td>
+                          <td>{r.kcal}kcal</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
         {!compact && (
         <section>
           <h2>{H("食品の早見表（量の目安）")}</h2>

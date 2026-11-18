@@ -5,7 +5,7 @@ import { COMMON_FOODS, FOODS, portionsOf } from "./foods";
 export type NutKey = "p" | "c" | "f" | "fi" | "ca" | "fe" | "vc" | "k" | "mg" | "zn" | "vd" | "va" | "b1" | "b2" | "b6" | "b12" | "fol";
 export const NUTS: { key: NutKey; label: string; unit: string; defaults: number[]; hint: string }[] = [
   { key: "p", label: "たんぱく質", unit: "g", defaults: [10, 20], hint: "筋肉・満腹感" },
-  { key: "c", label: "炭水化物", unit: "g", defaults: [50], hint: "エネルギー源（高炭水化物の食品）" },
+  { key: "c", label: "炭水化物", unit: "g", defaults: [10, 50], hint: "エネルギー源（高炭水化物の食品）" },
   { key: "f", label: "脂質", unit: "g", defaults: [10], hint: "ホルモン・脂溶性ビタミン" },
   { key: "fi", label: "食物繊維", unit: "g", defaults: [5], hint: "おなかの調子・満腹感" },
   { key: "ca", label: "カルシウム", unit: "mg", defaults: [200], hint: "骨・歯" },
