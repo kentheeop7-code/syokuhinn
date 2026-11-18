@@ -49,7 +49,7 @@ export function foodsFor(key: NutKey, amount: number): FoodRow[] {
     seen.add(name);
   }
   // 手で選んだ食品が少ない栄養は、食品データベース全体（よく使う食品）から、自動で、足す
-  if (rows.length < 30 && amount > 0) {
+  if (rows.length < 100 && amount > 0) {
     const auto: FoodRow[] = [];
     for (const f of COMMON_FOODS) {
       if (seen.has(f.name) || /（乾|粉末|ドレッシング|ソース|だし/.test(f.name)) continue;
@@ -65,7 +65,7 @@ export function foodsFor(key: NutKey, amount: number): FoodRow[] {
       auto.push({ name: f.name, g: Math.round(g), units: Math.round(units * 10) / 10, unitText: p0?.label ?? "100g", kcal: Math.round(kcal), share: per100 });
     }
     auto.sort((a, b) => a.g - b.g);
-    rows.push(...auto.slice(0, 30 - rows.length));
+    rows.push(...auto.slice(0, 100 - rows.length));
   }
   return rows.sort((a, b) => a.g - b.g);
 }

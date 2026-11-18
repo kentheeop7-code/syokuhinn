@@ -1079,7 +1079,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                   </p>
                   <table className="rtable rinct">
                     <tbody>
-                      {foodsFor(n.key, 10).slice(0, 20).map((r) => (
+                      {foodsFor(n.key, 10).slice(0, 40).map((r) => (
                         <tr key={r.name}>
                           <th>
                             {r.name}
@@ -1103,7 +1103,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           <div className="rfoods">
             {NUTS.filter((n) => n.key === "p" || n.key === "c" || n.key === "f").map((n) => {
               const amt = parseFloat(foodAmts[n.key] ?? "") || n.defaults[0];
-              const rows = foodsFor(n.key, amt).slice(0, 40);
+              const rows = foodsFor(n.key, amt).slice(0, 100);
               return (
                 <div key={n.key} className="rfoodc">
                   <p className="rext">

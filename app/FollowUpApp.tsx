@@ -445,7 +445,7 @@ export default function FollowUpApp() {
           <div className="fufoods">
             {(["p", "c", "f"] as const).map((k) => {
               const n = NUTS.find((x) => x.key === k)!;
-              const rows = foodsFor(k, 10).slice(0, 20);
+              const rows = foodsFor(k, 10).slice(0, 40);
               return (
                 <div key={k} className="fufood">
                   <p className="fufh">{n.label} 10g<small>{n.hint}</small></p>
