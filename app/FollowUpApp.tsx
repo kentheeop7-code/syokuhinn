@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { calcEnergy } from "../lib/energy";
 import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
 import { effectivePct, getMethod, macrosFor } from "../lib/methods";
+import { NUTS, foodsFor, unitLabel } from "../lib/foodlist";
 import { analyzeTrend } from "../lib/trend";
 import { TROUBLES } from "../lib/troubles";
 import { HBars, LineChart, Pie } from "./Charts";
@@ -257,6 +258,8 @@ export default function FollowUpApp() {
     .join("\n");
 
   if (!ready) return null;
+  let sec = 0;
+  const H = (t: string) => `${++sec}. ${t}`;
   return (
     <div className="fu">
       <div style={box}>
@@ -389,7 +392,7 @@ export default function FollowUpApp() {
         </header>
 
         <section>
-          <h2>1. 途中結果</h2>
+          <h2>{H("途中結果")}</h2>
           <div className="furk">
             <div><small>開始</small><b>{first ? `${num(first.kg)}kg` : "—"}</b></div>
             <div><small>いま</small><b>{last ? `${nowW}kg` : "—"}</b></div>
@@ -415,7 +418,7 @@ export default function FollowUpApp() {
 
         {res?.judge && (
           <section>
-            <h2>2. いまの判定と、原因</h2>
+            <h2>{H("いまの判定と、原因")}</h2>
             <div className="fujudge"><b>{res.judge.label}</b><span>{res.slopeText}</span></div>
             {res.causes.length > 0 && <ul className="fucauses">{res.causes.map((c, i) => <li key={i}><b>{c.t}</b><small>{c.d}</small></li>)}</ul>}
           </section>
@@ -423,7 +426,7 @@ export default function FollowUpApp() {
 
         {kcal > 0 && mac && (
           <section>
-            <h2>3. これからの食事の目安（調整）</h2>
+            <h2>{H("これからの食事の目安（調整）")}</h2>
             <div className="furow">
               <Pie data={[{ label: "たんぱく質", value: mac.p * 4, color: "#3b82c4" }, { label: "脂質", value: mac.f * 9, color: "#e0a526" }, { label: "炭水化物", value: mac.c * 4, color: "#2f9e75" }]} />
               <div>
@@ -437,7 +440,37 @@ export default function FollowUpApp() {
         )}
 
         <section>
-          <h2>4. トレーニング・プログラム表</h2>
+          <h2>{H("食べ物の例（10gぶん）")}</h2>
+          <p className="rnote">「たんぱく質10g」「炭水化物10g」「脂質10g」を、それぞれ、とれる食品の例です。量が少なくて済む食品が、上に出ます（日本食品標準成分表をもとにした目安）。</p>
+          <div className="fufoods">
+            {(["p", "c", "f"] as const).map((k) => {
+              const n = NUTS.find((x) => x.key === k)!;
+              const rows = foodsFor(k, 10).slice(0, 10);
+              return (
+                <div key={k} className="fufood">
+                  <p className="fufh">{n.label} 10g<small>{n.hint}</small></p>
+                  <table className="rtable rinct">
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.name}>
+                          <th>
+                            {r.name}
+                            <small style={{ display: "block", fontWeight: 400, color: "#667" }}>{unitLabel(r)}</small>
+                          </th>
+                          <td>{r.g}g</td>
+                          <td>{r.kcal}kcal</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section>
+          <h2>{H("トレーニング・プログラム表")}</h2>
           <table className="rtable">
             <thead><tr><th>日・種類</th><th>内容</th><th>量</th></tr></thead>
             <tbody>{s.prog.filter((p) => p.d || p.c).map((p, i) => <tr key={i}><td>{p.d}</td><td>{p.c}</td><td>{p.s}</td></tr>)}</tbody>
@@ -447,7 +480,7 @@ export default function FollowUpApp() {
 
         {s.meas.filter((x) => x.issue || x.action).length > 0 && (
           <section>
-            <h2>5. 対策表（課題 → 原因 → 対策）</h2>
+            <h2>{H("対策表（課題 → 原因 → 対策）")}</h2>
             <table className="rtable">
               <thead><tr><th>課題</th><th>原因</th><th>対策</th><th>いつまで</th></tr></thead>
               <tbody>{s.meas.filter((x) => x.issue || x.action).map((x, i) => <tr key={i}><td>{x.issue}</td><td>{x.cause}</td><td>{x.action}</td><td>{x.due}</td></tr>)}</tbody>
@@ -456,7 +489,7 @@ export default function FollowUpApp() {
         )}
 
         <section>
-          <h2>6. 今週の宿題とチェック表</h2>
+          <h2>{H("今週の宿題とチェック表")}</h2>
           {s.homework.filter(Boolean).length > 0 && <ol className="fuhw">{s.homework.filter(Boolean).map((h, i) => <li key={i}>{h}</li>)}</ol>}
           <table className="rtable fuweek">
             <thead><tr><th>できたら ○</th>{["月", "火", "水", "木", "金", "土", "日"].map((d) => <th key={d}>{d}</th>)}</tr></thead>

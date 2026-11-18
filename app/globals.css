@@ -5337,3 +5337,9 @@ html{scroll-behavior:smooth}
 .fflist small{display:block;color:#567;font-size:.85rem}
 .ffbar{height:8px;border-radius:6px;background:#e9efe9;margin-top:4px;overflow:hidden}
 .ffbar i{display:block;height:100%;background:#2f9e75;border-radius:6px}
+
+/* ===== 定期フォロー：食べ物の例（10gぶん） ===== */
+.fureport .fufoods{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:8px}
+.fureport .fufood{border:2px solid #d5e8dd;border-radius:14px;padding:8px 10px;background:#fbfdfc;break-inside:avoid}
+.fureport .fufh{margin:0 0 4px;font-size:18px;font-weight:800;color:#1f5f41;border-bottom:2px solid #2f9e75;padding-bottom:3px}
+.fureport .fufh small{margin-left:8px;font-size:13px;font-weight:400;color:#667}
