@@ -5343,3 +5343,10 @@ html{scroll-behavior:smooth}
 .fureport .fufood{border:2px solid #d5e8dd;border-radius:14px;padding:8px 10px;background:#fbfdfc;break-inside:avoid}
 .fureport .fufh{margin:0 0 4px;font-size:18px;font-weight:800;color:#1f5f41;border-bottom:2px solid #2f9e75;padding-bottom:3px}
 .fureport .fufh small{margin-left:8px;font-size:13px;font-weight:400;color:#667}
+
+/* 10gぶんの食品の例：PDFでは2列に並べて、ページを増やしすぎない */
+.report.pdfmode .rfoods{grid-template-columns:1fr 1fr}
+.report.pdfmode .rfoodc .rinct th,.report.pdfmode .rfoodc .rinct td{font-size:15px;padding:4px 6px}
+.report.pdfmode .rfoodc .rinct th small{font-size:12px}
+.fureport.pdfmode .fufoods{grid-template-columns:1fr 1fr}
+.fureport.pdfmode .rinct th,.fureport.pdfmode .rinct td{font-size:15px;padding:4px 6px}
