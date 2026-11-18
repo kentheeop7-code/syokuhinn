@@ -101,8 +101,15 @@ export default function ExpertSection({ e, compact, title1, title2, title3 }: { 
         </section>
       )}
 
+      <AddFoods e={e} compact={compact} title={title3} />
+    </>
+  );
+}
+
+export function AddFoods({ e, compact, title }: { e: Expert; compact: boolean; title: string }) {
+  return (
       <section className="rxadd">
-        <h2>{title3}</h2>
+        <h2>{title}</h2>
         <p className="rnote rxkey">
           <b>減らす</b>のではなく、<b>足す</b>。まず、足りない栄養を、食事に<b>1つずつ足して</b>いきます。足すほど、満足感が上がり、食べすぎや間食が、自然に整います。
         </p>
@@ -132,6 +139,5 @@ export default function ExpertSection({ e, compact, title1, title2, title3 }: { 
           </p>
         )}
       </section>
-    </>
   );
 }

@@ -9,6 +9,10 @@ import { analyzeTrend } from "../lib/trend";
 import { TROUBLES } from "../lib/troubles";
 import { HBars, LineChart, Pie } from "./Charts";
 import ShareButtons from "./ShareButtons";
+import { AddFoods } from "./ExpertSection";
+import { expertAssess } from "../lib/expert";
+import { computeGoal } from "../lib/goal";
+import { goalOf } from "../lib/meals";
 
 // トレーナー専用：定期的にお客様へ送る「経過報告・調整・プログラム表・対策表」を作り、PDFで共有する。
 // ダイエット開始時の総合まとめは「/trainer」。こちらは、2回目以降の、フォロー用。
@@ -200,6 +204,9 @@ export default function FollowUpApp() {
   const trainRate = num(s.trainPlan) > 0 ? Math.round((num(s.trainDone) / num(s.trainPlan)) * 100) : 0;
   const logRate = s.logDays !== "" ? Math.round((num(s.logDays) / 7) * 100) : 0;
   const delta = kcal && num(s.prevKcal) ? kcal - num(s.prevKcal) : 0;
+  const gpF = nowW > 0 && tW > 0 ? computeGoal(nowW, tW, s.days, s.conds ? "slow" : s.pace) : null;
+  const glF = goalOf(s.sex, band);
+  const expert = expertAssess({ sex: s.sex, age, band, height: num(s.height), weight: nowW, targetWeight: tW, goal: "diet", body: null, energy, gp: gpF, bmrInput: 0, strengthDays: s.days, otherMin: 0, guideMin: 150, water: 0, conds: s.conds ? ["cond"] : [], cur: null, goalP: energy?.protein ?? parseFloat(glF.p || "0"), goalFi: parseFloat(glF.fi || "0"), want: kcal });
 
   const autoMeasures = () => {
     if (!res) return setMsg("先に、体重（最新）を入れてください。");
@@ -438,6 +445,8 @@ export default function FollowUpApp() {
             </div>
           </section>
         )}
+
+        {nowW > 0 && <AddFoods e={expert} compact title={H("増やす食事で、変えていく")} />}
 
         <section>
           <h2>{H("食べ物の例（10gぶん）")}</h2>
