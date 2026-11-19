@@ -34,6 +34,7 @@ const METHOD_TERM: Record<MethodId, string> = {
   lowfat: '("low-fat"[ti] AND ("weight loss"[ti] OR diet[ti]))',
   lowcarb: '("low-carbohydrate"[ti] AND ("weight loss"[ti] OR diet[ti]))',
   highpro: '("high-protein"[ti] AND ("weight loss"[ti] OR "body composition"[ti]))',
+  fast16: '(("time-restricted eating"[ti] OR "intermittent fasting"[ti]) AND ("weight loss"[ti] OR obesity[ti]))',
   keto: '(ketogenic[ti] AND ("weight loss"[ti] OR safety[ti]))',
 };
 const num = (s: string) => parseFloat(s) || 0;

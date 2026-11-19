@@ -7,7 +7,7 @@ export type Fit = "おすすめ" | "可" | "注意" | "不可";
 export type Rec = { top: MethodId; fits: Record<MethodId, { fit: Fit; why: string[] }>; basis: string; accurate: boolean };
 export type RecIn = { sex: "f" | "m"; age: number; band: number; weight: number; height: number; conds: string[]; goal: "diet" | "muscle" | "both"; hasBody: boolean };
 
-const IDS: MethodId[] = ["balance", "lowfat", "lowcarb", "highpro", "keto"];
+const IDS: MethodId[] = ["balance", "lowfat", "lowcarb", "highpro", "fast16", "keto"];
 const RANK: Record<Fit, number> = { おすすめ: 3, 可: 2, 注意: 1, 不可: 0 };
 
 export function recommend(i: RecIn): Rec {
@@ -26,6 +26,7 @@ export function recommend(i: RecIn): Rec {
 
   // ケトジェニックは、どの場合も、おすすめしない（医師の管理が前提）
   set("keto", "注意", "医師の管理が前提の方法です。トレーナーだけの判断では、すすめません");
+  set("fast16", "可", "食べる時間を決めて、食べすぎを防ぐ方法です。カロリー制限と同じ程度の効果で、上乗せの効果は、確認されていません（Liu 2022・Lowe 2020）");
 
   if (youth) {
     IDS.forEach((id) => set(id, id === "balance" ? "おすすめ" : "不可", id === "balance" ? "成長期は、食事の割合を、制限せず、3食を、しっかり" : "成長期には、食事の割合を、制限する方法は、使いません"));
@@ -36,12 +37,14 @@ export function recommend(i: RecIn): Rec {
       set("highpro", "可", "たんぱく質を保つのに、向いています（腎臓の機能は、確認）");
       set("balance", "おすすめ", "65歳以上は、たんぱく質を、減らさない、バランス型が、土台です");
       set("keto", "不可", "65歳以上は、筋肉・骨が落ちやすいため、行いません");
+      set("fast16", "注意", "65歳以上は、食べる量が減ると、筋肉が落ちやすいため、たんぱく質を3回に分けて、とる");
     }
     if (has("t2d")) {
       set("balance", "おすすめ", "糖尿病の食事の配分（炭水化物40〜60%・たんぱく質20%まで・脂質20〜30%）に、近い方法です");
       set("lowcarb", "注意", "薬（インスリンなど）を使っていると、低血糖に注意。主治医の調整が必要です");
       set("highpro", "注意", "腎臓の合併症があるときは、たんぱく質の量を、主治医に確認");
       set("keto", "不可", "糖尿病の薬・1型糖尿病では、ケトアシドーシスなどの危険があり、行いません");
+      set("fast16", "注意", "糖尿病の薬（インスリン・SU薬など）を使っていると、低血糖に注意。主治医の調整が必要です");
     }
     if (has("htn")) {
       set("balance", "おすすめ", "減塩（1日6g未満）を、しやすい方法です");
@@ -67,6 +70,7 @@ export function recommend(i: RecIn): Rec {
       set("balance", "おすすめ", "鉄・たんぱく質を、減らさない、基本の方法です");
       set("lowcarb", "注意", "食事量が減ると、鉄が不足しやすい");
       set("keto", "不可", "貧血があるため、行いません");
+      set("fast16", "注意", "食べる量が減ると、鉄が不足しやすい。食べる時間の中で、鉄・たんぱく質を、しっかり");
     }
     if (i.conds.length > 0) {
       IDS.forEach((id) => {

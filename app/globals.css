@@ -5350,3 +5350,16 @@ html{scroll-behavior:smooth}
 .report.pdfmode .rfoodc .rinct th small{font-size:12px}
 .fureport.pdfmode .fufoods{grid-template-columns:1fr 1fr}
 .fureport.pdfmode .rinct th,.fureport.pdfmode .rinct td{font-size:15px;padding:4px 6px}
+
+/* ===== 断食プランナー ===== */
+.fastplan{padding:14px 16px;scroll-margin-top:64px}
+.fpsel{display:flex;align-items:center;gap:10px;margin:10px 0;font-weight:700}
+.fpsel select{font:inherit;font-size:1.1rem;padding:8px 12px;border:2px solid #b9d9c8;border-radius:12px;background:#fff;min-height:44px}
+.fpbar{display:flex;height:38px;border-radius:12px;overflow:hidden;margin:8px 0;font-size:.85rem;font-weight:800;color:#fff}
+.fpbar span{display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.fpbar .eat{background:#2f9e75}.fpbar .fast{background:#5b6b8a}
+.fpwin{margin:6px 0;font-size:1.05rem}
+.fpmeals{list-style:none;margin:6px 0;padding:0;display:grid;gap:8px}
+.fpmeals li{display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:center;padding:8px 10px;border:1px solid #d5e8dd;border-radius:12px;background:#fbfdfc}
+.fpmeals em{font-style:normal;font-weight:800;background:#0f3d2e;color:#fff;border-radius:8px;padding:3px 10px}
+.fpmeals span{font-size:.92rem;color:#345}
