@@ -10,6 +10,7 @@ import { CONDS } from "../lib/trainerData";
 import { PACES, type Pace } from "../lib/goal";
 import { BANDS } from "./me";
 import { StallTab, CondTab, LatestTab, LivePapers } from "./GuideMore";
+import { COMMON_NOTES } from "../lib/methods";
 
 // トレーナー向け資料：①お客様タイプ別のおすすめ ②食品PFC表＋献立づくり ③食事法とバランス ④計算方法と根拠
 type Tab = "client" | "food" | "method" | "stall" | "cond" | "latest" | "calc";
@@ -354,6 +355,18 @@ function CalcTab() {
           <li>体重1kg ≒ 約7,200kcal は近似で、個人差があります。</li>
           <li>中学生・高校生は大人の式を使わず、減量はすすめません。</li>
         </ol>
+      </div>
+      <div style={box}>
+        <h3 style={{ margin: "0 0 6px" }}>指導方針の根拠（断食・夜の糖質）</h3>
+        {COMMON_NOTES.map((n) => (
+          <div key={n.id} style={{ margin: "8px 0" }}>
+            <b>{n.icon} {n.title}</b>
+            <p style={{ margin: "4px 0", fontSize: 14 }}>{n.verdict}</p>
+            <ul style={{ margin: "0 0 0 18px", fontSize: 13 }}>
+              {n.evidence.map((e) => <li key={e.pmid}>{e.label}：{e.note}　<a href={`https://pubmed.ncbi.nlm.nih.gov/${e.pmid}/`} target="_blank" rel="noreferrer">PubMed</a></li>)}
+            </ul>
+          </div>
+        ))}
       </div>
       <div style={box}>
         <h3 style={{ margin: "0 0 6px" }}>この資料の限界（正直に）</h3>

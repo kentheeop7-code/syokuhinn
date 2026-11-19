@@ -1066,6 +1066,14 @@ export default function TrainerApp() {
                     <li key={x}>{x}</li>
                   ))}
                 </ul>
+                <p className="trverdict">{n.verdict}</p>
+                <ul className="trevl">
+                  {n.evidence.map((e) => (
+                    <li key={e.pmid}>
+                      <a href={`https://pubmed.ncbi.nlm.nih.gov/${e.pmid}/`} target="_blank" rel="noopener noreferrer">{e.label}</a>：{e.note}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
             <ul className="trcaution">
@@ -1073,7 +1081,7 @@ export default function TrainerApp() {
                 <li key={x}>{x}</li>
               ))}
             </ul>
-            <p className="agnote small">現場の指導方針です。このアプリでは、効果を示す論文は確認できていません（時間を決めて食べる方法の研究は、結果が分かれています）。</p>
+            <p className="agnote small">上の「根拠の強さ」と、論文の結果（PubMed）を、お客様への説明に使ってください。論文の結果と、指導方針が、ちがう部分も、そのまま書いています。</p>
           </div>
           <p className="tre">
             <small>向いている人</small>

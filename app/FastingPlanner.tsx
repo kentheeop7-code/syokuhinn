@@ -76,6 +76,9 @@ export default function FastingPlanner() {
         <ul>
           <li>Liu 2022 NEJM（肥満の139人・12か月）：8時間だけ食べる群は、カロリー制限だけの群と、体重の減りに、差がなかった（−8.0kgと−6.3kg、P=0.11）。<a href="https://pubmed.ncbi.nlm.nih.gov/35443107/" target="_blank" rel="noreferrer">PubMed</a></li>
           <li>Lowe 2020 JAMA Intern Med（116人・12週間）：16:8は、3食を決めて食べる群と、体重の減りに、差がなかった。<a href="https://pubmed.ncbi.nlm.nih.gov/32986097/" target="_blank" rel="noreferrer">PubMed</a></li>
+          <li>メタ分析（13試験・859人、2024）：朝に食べる時間制限食は、制限なしより、体重が約1.8kg、体脂肪が約1.1kg、多く減りました。<a href="https://pubmed.ncbi.nlm.nih.gov/38335858/" target="_blank" rel="noreferrer">PubMed</a></li>
+          <li>メタ分析（30研究・1,341人、2026）：カロリーをそろえた比較でも、体重が約1.5kg多く減りましたが、除脂肪量も約0.4kg減りました。<a href="https://pubmed.ncbi.nlm.nih.gov/40298934/" target="_blank" rel="noreferrer">PubMed</a></li>
+          <li>食べる時間が、遅い（昼の主な食事が15時より後）人は、減量が小さかった報告があります（Garaulet 2013）。<a href="https://pubmed.ncbi.nlm.nih.gov/23357955/" target="_blank" rel="noreferrer">PubMed</a></li>
           <li>つまり、断食そのものの上乗せ効果は、確認されていません。「食べる時間を決めると、食べすぎを防げる人」に向く方法です。</li>
         </ul>
         <p className="dcwarn">糖尿病の薬を使っている方、妊娠中・授乳中の方、未成年、摂食障害の心配がある方、低体重の方は、行わないか、必ず主治医に相談してください。めまい・強い空腹・強い疲れ・睡眠の悪化が出たら、やめて、もとに戻してください。</p>

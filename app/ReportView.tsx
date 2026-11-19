@@ -831,6 +831,12 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                       <li key={x}>{x}</li>
                     ))}
                   </ul>
+                  <p className="rverdict">{n.verdict}</p>
+                  <ul className="rev2">
+                    {n.evidence.slice(0, compact ? 3 : 5).map((e) => (
+                      <li key={e.pmid}>{e.label}：{e.note}</li>
+                    ))}
+                  </ul>
                 </div>
               ))}
               <ul className="rcaut">
