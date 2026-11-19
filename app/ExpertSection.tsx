@@ -130,6 +130,7 @@ export function AddFoods({ e, compact, title }: { e: Expert; compact: boolean; t
                 .map((x) => ({ label: `${x.label}`, value: x[g.metric === "kcal" ? "kcal" : g.metric] as number }))}
             />
             <p className="rnote">1回あたりの「{METRIC_LABEL[g.metric]}」の量です（日本食品標準成分表をもとにした目安）。</p>
+            <p className="rxr">根拠：{g.basis}</p>
           </div>
         ))}
         {e.refs.length > 0 && (

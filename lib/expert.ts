@@ -10,7 +10,7 @@ export type Ref = { label: string; pmid?: string };
 export type Rate = "良好" | "注意" | "要対策" | "情報";
 export type Eval = { id: string; icon: string; item: string; value: string; criteria: string; rate: Rate; comment: string; ref: Ref | null };
 export type Milestone = { label: string; kg: number; diff: number; note: string };
-export type AddGroup = { id: string; icon: string; title: string; why: string; now: string; when: string; metric: "p" | "fi" | "ca" | "fe" | "kcal"; unit: string; items: IncItem[]; priority: number };
+export type AddGroup = { id: string; icon: string; title: string; why: string; now: string; when: string; metric: "p" | "fi" | "ca" | "fe" | "kcal"; unit: string; items: IncItem[]; priority: number; basis: string };
 export type NextAct = { when: string; who: "本人" | "トレーナー"; what: string };
 export type Expert = { nextActions: NextAct[]; score: number; headline: string; tone: "ok" | "warn" | "bad"; evals: Eval[]; nowPoints: string[]; milestones: Milestone[]; adds: AddGroup[]; refs: Ref[] };
 
@@ -191,10 +191,10 @@ export function expertAssess(i: ExpertIn): Expert {
   const lowFi = !!i.cur && i.cur.any && i.cur.fi < i.goalFi * 0.9;
   const gentle = i.sex === "f" || i.band >= 5 || i.conds.includes("anemia") || i.conds.includes("bone");
   const adds: AddGroup[] = [
-    { id: "p", icon: "🍗", title: "たんぱく質を、足す", why: "筋肉・満腹感・代謝のために。毎食に、手のひら1枚ぶんを、そろえる（まず、朝食に1品）", now: i.cur?.any ? `いま 約${Math.round(i.cur.p)}g → 目安 ${i.goalP}g以上` : `目安 ${i.goalP}g以上／日`, when: "朝：卵・納豆・ヨーグルトを足す／昼・夜：肉か魚か大豆を、手のひら1枚", metric: "p", unit: "g", items: INCREASE[0].items, priority: lowP ? 0 : 2 },
-    { id: "fi", icon: "🥦", title: "野菜・食物繊維を、足す", why: "おなかの調子・満腹感のために。毎食に、野菜の小鉢を1つ足す。主食は、玄米・麦・全粒粉をまぜる", now: i.cur?.any ? `いま 約${r1(i.cur.fi)}g → 目安 ${i.goalFi}g以上` : `目安 ${i.goalFi}g以上／日`, when: "毎食：野菜の小鉢を1つ／昼・夜：きのこ・海藻を足す", metric: "fi", unit: "g", items: INCREASE[1].items, priority: lowFi ? 0 : 3 },
-    { id: "ca", icon: "🥛", title: "カルシウム・鉄を、足す", why: "骨・貧血・疲れのために。乳製品・小松菜・魚・赤身肉・レバーを、週に何回か", now: gentle ? "女性・年齢・体質によって、不足しやすい栄養です" : "週に何回か、意識して足します", when: "間食・朝：牛乳やヨーグルト／夜：小松菜・魚・赤身肉", metric: "ca", unit: "mg", items: INCREASE[2].items, priority: gentle ? 1 : 4 },
-    { id: "snack", icon: "🍎", title: "間食を、栄養のあるものに", why: "お菓子を禁止せず、足りない栄養をとれるものを、先に1つ足す", now: "ナッツ・果物・ヨーグルトなどを、1日1回", when: "おやつ：ナッツひとつかみ／果物／ヨーグルト", metric: "p", unit: "g", items: INCREASE[3].items, priority: 5 },
+    { id: "p", icon: "🍗", title: "たんぱく質を、足す", why: "筋肉・満腹感・代謝のために。毎食に、手のひら1枚ぶんを、そろえる（まず、朝食に1品）", now: i.cur?.any ? `いま 約${Math.round(i.cur.p)}g → 目安 ${i.goalP}g以上` : `目安 ${i.goalP}g以上／日`, when: "朝：卵・納豆・ヨーグルトを足す／昼・夜：肉か魚か大豆を、手のひら1枚", metric: "p", unit: "g", items: INCREASE[0].items, priority: lowP ? 0 : 2, basis: "筋トレ中の筋力・筋量の増加は、体重1kgあたり約1.6g/日で頭打ちになる傾向（Morton 2018 Br J Sports Med・メタ分析、PMID 28698222）。減量中の筋肉を守るには、ゆっくりした減量とたんぱく質（Helms 2014、PMID 24864135）。" },
+    { id: "fi", icon: "🥦", title: "野菜・食物繊維を、足す", why: "おなかの調子・満腹感のために。毎食に、野菜の小鉢を1つ足す。主食は、玄米・麦・全粒粉をまぜる", now: i.cur?.any ? `いま 約${r1(i.cur.fi)}g → 目安 ${i.goalFi}g以上` : `目安 ${i.goalFi}g以上／日`, when: "毎食：野菜の小鉢を1つ／昼・夜：きのこ・海藻を足す", metric: "fi", unit: "g", items: INCREASE[1].items, priority: lowFi ? 0 : 3, basis: "食物繊維の目標量は、日本人の食事摂取基準（2025年版）による（男性20〜22g以上・女性17〜18g以上）。便秘には、緑キウイ2個/日を4週間で、排便の回数が増えた（Gearry 2023 Am J Gastroenterol、PMID 36537785）。" },
+    { id: "ca", icon: "🥛", title: "カルシウム・鉄を、足す", why: "骨・貧血・疲れのために。乳製品・小松菜・魚・赤身肉・レバーを、週に何回か", now: gentle ? "女性・年齢・体質によって、不足しやすい栄養です" : "週に何回か、意識して足します", when: "間食・朝：牛乳やヨーグルト／夜：小松菜・魚・赤身肉", metric: "ca", unit: "mg", items: INCREASE[2].items, priority: gentle ? 1 : 4, basis: "カルシウム・鉄の推奨量は、日本人の食事摂取基準（2025年版）による。月経のある女性は、鉄が不足しやすい。" },
+    { id: "snack", icon: "🍎", title: "間食を、栄養のあるものに", why: "お菓子を禁止せず、足りない栄養をとれるものを、先に1つ足す", now: "ナッツ・果物・ヨーグルトなどを、1日1回", when: "おやつ：ナッツひとつかみ／果物／ヨーグルト", metric: "p", unit: "g", items: INCREASE[3].items, priority: 5, basis: "「お菓子を禁止せず、足りない栄養を先に足す」は、現場の指導方針です。論文での確認は、できていません。ナッツ・果物・ヨーグルトの栄養は、日本食品標準成分表による。" },
   ];
   adds.sort((a, b) => a.priority - b.priority);
 
