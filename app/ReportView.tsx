@@ -24,7 +24,7 @@ import { analyzeClient, ageNote } from "../lib/analysis";
 import { TROUBLES } from "../lib/troubles";
 import { energyPhases } from "../lib/energy";
 import { personalDays } from "../lib/dayfit";
-import { NUTS, foodsFor, unitLabel } from "../lib/foodlist";
+import { NUTS, NUT_BASIS, foodsFor, unitLabel } from "../lib/foodlist";
 import NutrientBars, { stateOf, type NRow } from "./NutrientBars";
 import { lineUrl } from "./LineShare";
 import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
@@ -1097,6 +1097,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                       ))}
                     </tbody>
                   </table>
+                  <p className="rxr">根拠：{NUT_BASIS[n.key]}</p>
                 </div>
               ))}
             </div>
@@ -1131,6 +1132,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
                       ))}
                     </tbody>
                   </table>
+                  <p className="rxr">根拠：{NUT_BASIS[n.key]}</p>
                 </div>
               );
             })}

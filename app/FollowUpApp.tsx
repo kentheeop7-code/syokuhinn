@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { calcEnergy } from "../lib/energy";
 import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
 import { effectivePct, getMethod, macrosFor } from "../lib/methods";
-import { NUTS, foodsFor, unitLabel } from "../lib/foodlist";
+import { NUTS, NUT_BASIS, foodsFor, unitLabel } from "../lib/foodlist";
 import { analyzeTrend } from "../lib/trend";
 import { TROUBLES } from "../lib/troubles";
 import { HBars, LineChart, Pie } from "./Charts";
@@ -473,6 +473,7 @@ export default function FollowUpApp() {
                       ))}
                     </tbody>
                   </table>
+                  <p className="rxr">根拠：{NUT_BASIS[k]}</p>
                 </div>
               );
             })}

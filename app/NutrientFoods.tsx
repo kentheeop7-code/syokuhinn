@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { averageIntake, readLog } from "../lib/daylog";
-import { NUTS, foodsFor, unitLabel, type NutKey } from "../lib/foodlist";
+import { NUTS, NUT_BASIS, foodsFor, unitLabel, type NutKey } from "../lib/foodlist";
 import { goalOf } from "../lib/meals";
 import { readTarget } from "../lib/target";
 
@@ -97,6 +97,7 @@ export default function NutrientFoods() {
         ))}
         {rows.length === 0 && <li className="agnote">この量では、見つかりませんでした。量を、少なくしてみてください。</li>}
       </ul>
+      <p className="ffbasis">根拠：{NUT_BASIS[key]}</p>
       <p className="agnote">日本食品標準成分表をもとにした目安です（調理法・商品で変わります）。</p>
     </section>
   );
