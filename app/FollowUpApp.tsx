@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { calcEnergy } from "../lib/energy";
 import { downloadFile, pagesToJpegFiles, pagesToPdf, renderReportPages, shareFiles } from "../lib/pdfExport";
-import { effectivePct, getMethod, macrosFor } from "../lib/methods";
+import { METHODS, effectivePct, getMethod, macrosFor } from "../lib/methods";
 import { NUTS, NUT_BASIS, foodsFor, unitLabel } from "../lib/foodlist";
 import { analyzeTrend } from "../lib/trend";
 import { TROUBLES } from "../lib/troubles";
@@ -33,6 +33,8 @@ type S = {
   pace: "slow" | "mid";
   pal: number;
   pfcMethod: string;
+  foodAmt: string;
+  fastStart: string;
   conds: boolean;
   rows: Row[];
   trainDone: string;
@@ -92,6 +94,8 @@ const DEFAULT: S = {
   pace: "slow",
   pal: 1,
   pfcMethod: "balance",
+  foodAmt: "10",
+  fastStart: "12",
   conds: false,
   rows: [{ w: "0", kg: "", waist: "", fat: "" }, { w: "", kg: "", waist: "", fat: "" }],
   trainDone: "",
@@ -203,6 +207,12 @@ export default function FollowUpApp() {
   const pts = sorted.map((r) => ({ x: num(r.w), y: num(r.kg) }));
   const trainRate = num(s.trainPlan) > 0 ? Math.round((num(s.trainDone) / num(s.trainPlan)) * 100) : 0;
   const logRate = s.logDays !== "" ? Math.round((num(s.logDays) / 7) * 100) : 0;
+  const foodAmtN = num(s.foodAmt) > 0 ? num(s.foodAmt) : 10;
+  const fastStartN = num(s.fastStart) || 12;
+  const goalPct = first && last && tW && num(first.kg) !== tW ? Math.max(0, Math.min(100, Math.round(((num(first.kg) - nowW) / (num(first.kg) - tW)) * 100))) : 0;
+  const intervals = sorted.slice(1).map((r, i) => ({ label: `${sorted[i].w}→${r.w}週`, value: Math.round((num(r.kg) - num(sorted[i].kg)) * 10) / 10 }));
+  const waistPts = sorted.filter((r) => num(r.waist) > 0).map((r) => ({ x: num(r.w), y: num(r.waist) }));
+  const fatPts = sorted.filter((r) => num(r.fat) > 0).map((r) => ({ x: num(r.w), y: num(r.fat) }));
   const delta = kcal && num(s.prevKcal) ? kcal - num(s.prevKcal) : 0;
   const gpF = nowW > 0 && tW > 0 ? computeGoal(nowW, tW, s.days, s.conds ? "slow" : s.pace) : null;
   const glF = goalOf(s.sex, band);
@@ -340,6 +350,29 @@ export default function FollowUpApp() {
         <summary style={sum}>③ 調整（カロリー・PFC）</summary>
         <p className="agnote">最新の体重から、目標カロリーを出し直します。変えたいときは、数字を入れます。</p>
         <label style={lab}>目標kcalを、直接、決める（空欄＝自動：{energy ? energy.target.toLocaleString() : "—"}kcal）<input style={inp} inputMode="numeric" value={s.kcalOverride} onChange={(e) => up({ kcalOverride: e.target.value })} /></label>
+        <p style={{ ...lab, marginTop: 12 }}>ダイエットの方法（お客様に合わせて選ぶ）</p>
+        <div style={{ display: "grid", gap: 8 }}>
+          {METHODS.map((x) => (
+            <button key={x.id} type="button" aria-pressed={s.pfcMethod === x.id} onClick={() => up({ pfcMethod: x.id })} style={{ ...inp, textAlign: "left", cursor: "pointer", borderColor: s.pfcMethod === x.id ? "#2f9e75" : "#b9d9c8", background: s.pfcMethod === x.id ? "#e6f5ec" : "#fff" }}>
+              <b>{x.icon} {x.name}</b>
+              <span style={{ display: "block", fontSize: 13, color: "#567" }}>{x.tag}・P{x.pct.p}／F{x.pct.f}／C{x.pct.c}%・根拠：{x.level}{x.risky ? "・⚠医師の確認が必要" : ""}</span>
+            </button>
+          ))}
+        </div>
+        {s.pfcMethod === "fast16" && (
+          <label style={{ ...lab, marginTop: 8 }}>16時間断食：最初の食事の時刻
+            <select style={inp} value={s.fastStart} onChange={(e) => up({ fastStart: e.target.value })}>
+              {Array.from({ length: 9 }, (_, i) => 6 + i).map((h) => <option key={h} value={String(h)}>{h}:00（食べる時間 {h}:00〜{(h + 8) % 24}:00）</option>)}
+            </select>
+          </label>
+        )}
+        <p style={{ ...lab, marginTop: 12 }}>食べ物の例の「量」（たんぱく質・炭水化物・脂質）</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          {["5", "10", "20", "30"].map((v) => (
+            <button key={v} type="button" className={s.foodAmt === v ? "trchip on" : "trchip"} onClick={() => up({ foodAmt: v })}>{v}g</button>
+          ))}
+          <input style={{ ...inp, width: 110 }} inputMode="decimal" value={s.foodAmt} onChange={(e) => up({ foodAmt: e.target.value })} aria-label="食べ物の例の量（g）" />
+        </div>
       </details>
 
       <details style={box} open>
@@ -407,7 +440,24 @@ export default function FollowUpApp() {
             <div><small>増減（{weeks}週）</small><b style={{ color: total <= 0 ? "#1f8a5b" : "#d23f2b" }}>{last && first ? `${total > 0 ? "+" : ""}${total}kg` : "—"}</b></div>
             <div><small>目標まで</small><b>{tW && nowW ? `あと${Math.max(0, toGo)}kg` : "—"}</b></div>
           </div>
+          {tW > 0 && first && last && num(first.kg) !== tW && (
+            <div className="fuprog" aria-label="ゴールまでの進み具合">
+              <div className="fupt"><b>ゴールまでの進み具合</b><span>{goalPct}%</span></div>
+              <div className="fupbar"><i style={{ width: `${goalPct}%` }} /></div>
+              <div className="fupl"><small>開始 {num(first.kg)}kg</small><small>いま {nowW}kg</small><small>目標 {tW}kg</small></div>
+            </div>
+          )}
+          {pts.length >= 2 && <h3 className="fuh3">体重の推移</h3>}
           {pts.length >= 2 && <LineChart pts={pts} target={tW || undefined} />}
+          {intervals.length > 0 && (
+            <>
+              <h3 className="fuh3">期間ごとの増減（kg）</h3>
+              <HBars unit="kg" items={intervals.map((x) => ({ label: x.label, value: Math.abs(x.value), color: x.value <= 0 ? "#2f9e75" : "#e0694f" }))} />
+              <p className="rnote">緑＝減った、赤＝増えた（長さは、変化の大きさ）。{intervals.map((x) => `${x.label} ${x.value > 0 ? "+" : ""}${x.value}kg`).join("／")}</p>
+            </>
+          )}
+          {waistPts.length >= 2 && (<><h3 className="fuh3">ウエストの推移（cm）</h3><LineChart pts={waistPts} unit="cm" /></>)}
+          {fatPts.length >= 2 && (<><h3 className="fuh3">体脂肪率の推移（%）</h3><LineChart pts={fatPts} unit="%" /></>)}
           {weeks > 0 && <p className="rnote">1週間あたり {r1(rate) > 0 ? "+" : ""}{r1(rate * 100) / 100}kg（体重の {ratePct > 0 ? "+" : ""}{r1(ratePct * 10) / 10}%）。目安は、体重の0.5〜1%を減らすペースです。</p>}
           {(sorted.some((r) => num(r.waist) > 0) || sorted.some((r) => num(r.fat) > 0)) && (
             <table className="rtable">
@@ -444,21 +494,37 @@ export default function FollowUpApp() {
                 <p className="rnote">{m.name}（P{pct.p}%・F{pct.f}%・C{pct.c}%）。最新の体重で、計算し直しました。</p>
               </div>
             </div>
+            <div className="fumeth">
+              <p className="fumh">{m.icon} 選んだダイエット方法：{m.name}<small>根拠の強さ：{m.level}</small></p>
+              <p>{m.summary}</p>
+              {m.id === "fast16" && (
+                <div className="fufast">
+                  <div className="fpbar" aria-label="1日の時間割"><span className="eat" style={{ width: "33.3%" }}>食べる 8時間</span><span className="fast" style={{ width: "66.7%" }}>食べない 16時間</span></div>
+                  <p>食べる時間：<b>{fastStartN}:00〜{(fastStartN + 8) % 24}:00</b>　／　食べない時間：{(fastStartN + 8) % 24}:00〜{fastStartN}:00（翌日）。水・お茶・無糖のコーヒーは、とってOK。</p>
+                </div>
+              )}
+              <div className="furow2">
+                <div><b>選ぶもの</b><ul>{m.choose.slice(0, 4).map((x) => <li key={x}>{x}</li>)}</ul></div>
+                <div><b>控えること・気をつけること</b><ul>{m.avoid.map((x) => <li key={x}>{x}</li>)}</ul></div>
+              </div>
+              <ul className="fuev">{m.evidence.slice(0, 3).map((e) => <li key={e.pmid}>{e.label}：{e.note}</li>)}</ul>
+              {m.caution.length > 0 && <p className="fucaut">⚠ {m.caution[0]}</p>}
+            </div>
           </section>
         )}
 
         {nowW > 0 && <AddFoods e={expert} compact title={H("増やす食事で、変えていく")} />}
 
         <section>
-          <h2>{H("食べ物の例（10gぶん）")}</h2>
-          <p className="rnote">「たんぱく質10g」「炭水化物10g」「脂質10g」を、それぞれ、とれる食品の例です。量が少なくて済む食品が、上に出ます（日本食品標準成分表をもとにした目安）。</p>
+          <h2>{H(`食べ物の例（${foodAmtN}gぶん）`)}</h2>
+          <p className="rnote">「たんぱく質{foodAmtN}g」「炭水化物{foodAmtN}g」「脂質{foodAmtN}g」を、それぞれ、とれる食品の例です。量が少なくて済む食品が、上に出ます（日本食品標準成分表をもとにした目安）。</p>
           <div className="fufoods">
             {(["p", "c", "f"] as const).map((k) => {
               const n = NUTS.find((x) => x.key === k)!;
-              const rows = foodsFor(k, 10).slice(0, 40);
+              const rows = foodsFor(k, foodAmtN).slice(0, 40);
               return (
                 <div key={k} className="fufood">
-                  <p className="fufh">{n.label} 10g<small>{n.hint}</small></p>
+                  <p className="fufh">{n.label} {foodAmtN}g<small>{n.hint}</small></p>
                   <table className="rtable rinct">
                     <tbody>
                       {rows.map((r) => (

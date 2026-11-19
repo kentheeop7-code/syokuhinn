@@ -5372,3 +5372,21 @@ html{scroll-behavior:smooth}
 .report .rev2{margin:4px 0 6px 20px;padding:0;font-size:13px;color:#445}
 
 .ffbasis{margin:8px 0;padding:8px 10px;border-radius:10px;background:#f1f8f3;color:#345;font-size:.88rem;line-height:1.6}
+
+/* ===== 定期フォロー：途中結果の図表・ダイエット方法 ===== */
+.fureport .fuprog{margin:8px 0 12px;padding:10px 12px;border:2px solid #d5e8dd;border-radius:14px;background:#fbfdfc}
+.fureport .fupt{display:flex;justify-content:space-between;align-items:baseline}
+.fureport .fupt b{font-size:17px}
+.fureport .fupt span{font-size:30px;font-weight:800;color:#1f5f41}
+.fureport .fupbar{height:18px;border-radius:10px;background:#e9efe9;overflow:hidden;margin:6px 0}
+.fureport .fupbar i{display:block;height:100%;background:linear-gradient(90deg,#2f9e75,#1f6f54);border-radius:10px}
+.fureport .fupl{display:flex;justify-content:space-between;font-size:14px;color:#456}
+.fureport .fumeth{margin-top:12px;padding:10px 12px;border:2px solid #cfe6d8;border-radius:14px;background:#fff}
+.fureport .fumh{margin:0 0 4px;font-size:18px;font-weight:800;color:#0f3d2e}
+.fureport .fumh small{margin-left:8px;font-size:13px;font-weight:700;color:#7a4b00}
+.fureport .fufast{margin:8px 0;padding:8px 10px;border-radius:12px;background:#eaf6ef}
+.fureport .furow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fureport .furow2 b{font-size:15px}
+.fureport .furow2 ul{margin:2px 0 0 18px;padding:0;font-size:14px}
+.fureport .fucaut{margin:8px 0 0;color:#a33;font-weight:700;font-size:14px}
+@media (max-width:520px){.fureport:not(.pdfmode) .furow2{grid-template-columns:1fr}}
