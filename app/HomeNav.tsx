@@ -7,6 +7,7 @@ const ITEMS = [
   { href: "#qm", t: "④ 今の食事" },
   { href: "#food", t: "⑥ 栄養→食品" },
   { href: "#fasting", t: "断食" },
+  { href: "#shortplan", t: "短期プログラム" },
   { href: "#trend", t: "⑦ 体重" },
   { href: "#shareall", t: "⑧ 共有" },
 ];

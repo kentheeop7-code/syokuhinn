@@ -10,6 +10,8 @@ import { TROUBLES } from "../lib/troubles";
 import { HBars, LineChart, Pie } from "./Charts";
 import ShareButtons from "./ShareButtons";
 import { AddFoods, NextActions } from "./ExpertSection";
+import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
+import ShortPlanView from "./ShortPlanView";
 import { expertAssess } from "../lib/expert";
 import { computeGoal } from "../lib/goal";
 import { goalOf } from "../lib/meals";
@@ -33,6 +35,7 @@ type S = {
   pace: "slow" | "mid";
   pal: number;
   pfcMethod: string;
+  shortPlan: string;
   foodAmt: string;
   fastStart: string;
   conds: boolean;
@@ -94,6 +97,7 @@ const DEFAULT: S = {
   pace: "slow",
   pal: 1,
   pfcMethod: "balance",
+  shortPlan: "",
   foodAmt: "10",
   fastStart: "12",
   conds: false,
@@ -207,6 +211,7 @@ export default function FollowUpApp() {
   const pts = sorted.map((r) => ({ x: num(r.w), y: num(r.kg) }));
   const trainRate = num(s.trainPlan) > 0 ? Math.round((num(s.trainDone) / num(s.trainPlan)) * 100) : 0;
   const logRate = s.logDays !== "" ? Math.round((num(s.logDays) / 7) * 100) : 0;
+  const sp = getShortPlan(s.shortPlan);
   const foodAmtN = num(s.foodAmt) > 0 ? num(s.foodAmt) : 10;
   const fastStartN = num(s.fastStart) || 12;
   const goalPct = first && last && tW && num(first.kg) !== tW ? Math.max(0, Math.min(100, Math.round(((num(first.kg) - nowW) / (num(first.kg) - tW)) * 100))) : 0;
@@ -373,6 +378,13 @@ export default function FollowUpApp() {
           ))}
           <input style={{ ...inp, width: 110 }} inputMode="decimal" value={s.foodAmt} onChange={(e) => up({ foodAmt: e.target.value })} aria-label="食べ物の例の量（g）" />
         </div>
+        <p style={{ ...lab, marginTop: 12 }}>短期プログラム（任意：ファスティング・腸活など）</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button type="button" className={s.shortPlan === "" ? "trchip on" : "trchip"} onClick={() => up({ shortPlan: "" })}>なし</button>
+          {SHORT_PLANS.map((p) => (
+            <button key={p.id} type="button" className={s.shortPlan === p.id ? "trchip on" : "trchip"} onClick={() => up({ shortPlan: p.id })}>{p.icon} {p.name.replace(/（.*$/, "")}</button>
+          ))}
+        </div>
       </details>
 
       <details style={box} open>
@@ -514,6 +526,13 @@ export default function FollowUpApp() {
         )}
 
         {nowW > 0 && <AddFoods e={expert} compact title={H("増やす食事で、変えていく")} />}
+
+        {sp && (
+          <section>
+            <h2>{H(`短期プログラム：${sp.name.replace(/（.*$/, "")}`)}</h2>
+            <ShortPlanView plan={sp} evLimit={4} />
+          </section>
+        )}
 
         <section>
           <h2>{H(`食べ物の例（${foodAmtN}gぶん）`)}</h2>

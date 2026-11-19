@@ -10,14 +10,17 @@ import { CONDS } from "../lib/trainerData";
 import { PACES, type Pace } from "../lib/goal";
 import { BANDS } from "./me";
 import { StallTab, CondTab, LatestTab, LivePapers } from "./GuideMore";
+import { SHORT_PLANS } from "../lib/shortplans";
+import ShortPlanView from "./ShortPlanView";
 import { COMMON_NOTES } from "../lib/methods";
 
 // トレーナー向け資料：①お客様タイプ別のおすすめ ②食品PFC表＋献立づくり ③食事法とバランス ④計算方法と根拠
-type Tab = "client" | "food" | "method" | "stall" | "cond" | "latest" | "calc";
+type Tab = "client" | "food" | "method" | "short" | "stall" | "cond" | "latest" | "calc";
 const TABS: { id: Tab; t: string }[] = [
   { id: "client", t: "① お客様に合わせる" },
   { id: "food", t: "② 食品PFC・献立づくり" },
   { id: "method", t: "③ 食事法とバランス" },
+  { id: "short", t: "短期プログラム（断食・腸活）" },
   { id: "stall", t: "④ 停滞・代謝・不調" },
   { id: "cond", t: "⑤ 持病向けの身体づくり" },
   { id: "latest", t: "⑥ 最新の論文（自動取得）" },
@@ -59,6 +62,7 @@ export default function GuideApp() {
       {tab === "client" && <ClientTab />}
       {tab === "food" && <FoodTab />}
       {tab === "method" && <MethodTab />}
+      {tab === "short" && <ShortTab />}
       {tab === "stall" && <StallTab />}
       {tab === "cond" && <CondTab />}
       {tab === "latest" && <LatestTab />}
@@ -295,6 +299,26 @@ function FoodTab() {
 }
 const th: React.CSSProperties = { padding: "6px 8px", textAlign: "left", whiteSpace: "nowrap" };
 const td: React.CSSProperties = { padding: "6px 8px", verticalAlign: "top" };
+
+/* ---------- 短期プログラム（断食・腸活・短期ダイエット） ---------- */
+function ShortTab() {
+  const [id, setId] = useState(SHORT_PLANS[0].id);
+  const plan = SHORT_PLANS.find((p) => p.id === id) ?? SHORT_PLANS[0];
+  return (
+    <section>
+      <p style={{ margin: "0 0 8px" }}>ダイエット方法（食事の割合）とは別に、<b>期間を決めて行う</b>、ファスティング・16時間断食・腸活・短期ダイエットです。各プログラムに、根拠（PubMed）と、向かない人を載せています。</p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {SHORT_PLANS.map((p) => (
+          <button key={p.id} type="button" aria-pressed={id === p.id} className={id === p.id ? "trchip on" : "trchip"} onClick={() => setId(p.id)}>{p.icon} {p.name.replace(/（.*$/, "")}</button>
+        ))}
+      </div>
+      <div style={box}>
+        <ShortPlanView plan={plan} />
+      </div>
+      <p className="agnote">指導メモ・定期フォロー資料で、このプログラムを選ぶと、お客様向けのPDFに入ります。お客様は、ホームの「短期プログラム」でも、見られます。</p>
+    </section>
+  );
+}
 
 /* ---------- ③ 食事法とバランス ---------- */
 function MethodTab() {
