@@ -4,6 +4,7 @@ import CauseMini from "../CauseMini";
 import GuideTabs from "../GuideTabs";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
+import ShortPrograms from "../ShortPrograms";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondHub from "../CondHub";
@@ -141,6 +142,9 @@ export default function Tips() {
       ))}
       </MoreFolds>
       <Fold id="mynut" title="🥗 あなたの食事の、栄養バランス" sub="ホームで選んだ食事から、図で"><MyNutrition /></Fold>
+      <Fold id="short" title="🗓 短期プログラム（ファスティング・16時間断食・短期ダイエット）" sub="期間を決めて行う取り組み（根拠つき）">
+        <ShortPrograms />
+      </Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">
         <CondHub />

@@ -8,6 +8,8 @@ import CondHub from "../CondHub";
 import DietForAnyone from "../DietForAnyone";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
+import ShortPlanView from "../ShortPlanView";
+import { getShortPlan } from "../../lib/shortplans";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FOODS } from "../../lib/foods";
@@ -401,6 +403,10 @@ export default function Gut() {
       </ul>
       </Fold>
       </MoreFolds>
+      <Fold id="gut7" title="🗓 短期の腸活 7日間（3日だけでもOK）" sub="日程表・注意・根拠つき">
+        <ShortPlanView plan={getShortPlan("gut7")!} />
+        <p className="agnote">ホームの「短期プログラム」では、ファスティング・16時間断食・短期ダイエットも、選べます。</p>
+      </Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">
         <CondHub />
