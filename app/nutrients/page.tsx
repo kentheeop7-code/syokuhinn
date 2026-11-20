@@ -12,6 +12,7 @@ import CondHub from "../CondHub";
 import MyNutrition from "../MyNutrition";
 import DietForAnyone from "../DietForAnyone";
 import MyKcal from "../MyKcal";
+import ShortPrograms from "../ShortPrograms";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ITEMS_MORE } from "./itemsMore";
@@ -572,6 +573,9 @@ export default function Nutrients() {
       <Fold id="diet-nutrients" title="ダイエットに必要な栄養素" sub="食物繊維・たんぱく質・鉄など"><DietNutrients bare /></Fold>
       <Fold id="micro" title="ビタミン・ミネラルの1日の目安" sub="18項目：量と、とりやすい食品"><Micronutrients /></Fold>
       <Fold id="mynut" title="🥗 あなたの食事の、栄養バランス" sub="ホームで選んだ食事から、図で"><MyNutrition /></Fold>
+      <Fold id="short" title="🗓 短期プログラム（ファスティング・16時間断食・腸活・短期ダイエット）" sub="期間を決めて行う取り組み（根拠つき）">
+        <ShortPrograms />
+      </Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="n-cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）"><CondHub /></Fold>
       <Fold id="h-guide" title="国の指針でみる1日の目安" sub="食事・睡眠・運動（厚生労働省）"><NationalGuide bare /></Fold>
