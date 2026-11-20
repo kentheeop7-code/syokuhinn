@@ -15,6 +15,8 @@ import { analyzeBody } from "../lib/body";
 import { PAL_TEXT } from "./me";
 import { Bars, Pie } from "./Charts";
 import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
+import { BREAKERS, suggestBreakers } from "../lib/breakers";
+import BreakerView from "./BreakerView";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
 import { recommend } from "../lib/recommend";
@@ -57,6 +59,7 @@ export default function TrainerApp() {
   const [foodAmts, setFoodAmts] = useState<Record<string, string>>({});
   const [foodNut, setFoodNut] = useState<NutKey>("p");
   const [shortPlan, setShortPlan] = useState("");
+  const [breakers, setBreakers] = useState<string[]>([]);
   const [pfc, setPfc] = useState<{ p: string; f: string; c: string } | null>(null);
   const [actOff, setActOff] = useState<string[]>([]);
   const [link, setLink] = useState("");
@@ -104,6 +107,7 @@ export default function TrainerApp() {
         setTroubles(Array.isArray(s.troubles) ? s.troubles : []);
         setFoodAmts(s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {});
         setShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
+        setBreakers(Array.isArray(s.breakers) ? s.breakers : []);
         setPfc(s.pfc && typeof s.pfc === "object" ? s.pfc : null);
         setActOff(Array.isArray(s.actOff) ? s.actOff : []);
         setNote(s.note ?? "");
@@ -130,9 +134,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers]);
 
   const w = num(now);
   const wt = num(target);
@@ -174,11 +178,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -969,6 +973,20 @@ export default function TrainerApp() {
           ))}
         </div>
         {getShortPlan(shortPlan) && <ShortPlanView plan={getShortPlan(shortPlan)!} />}
+      </section>
+      <section className="card" id="s3k">
+        <p className="balh">停滞期を抜ける・腸内環境を整える：打開策の候補（選んで提案）</p>
+        <p className="agnote">リフィード・チートデイ・ダイエットブレイク・16時間断食・腸活など、候補を、いくつか選んで、お客様に提案できます。選ぶと、お客様向けのまとめ（PDF・リンク）に、やり方・注意・根拠が入ります。「自動で候補を出す」は、いまの状況（困りごと・持病・年齢）から、選びます。</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
+          <button type="button" className="trchip on" onClick={() => setBreakers(suggestBreakers({ stall: troubles.includes("plateau"), weeksStalled: troubles.includes("plateau") ? 4 : 0, gut: troubles.includes("constipation"), youth: youthNow, cond: conds.length > 0, noReduce: false }))}>🔄 自動で候補を出す</button>
+          <button type="button" className="trchip" onClick={() => setBreakers([])}>全部はずす</button>
+        </div>
+        <div className="mechips" role="group" aria-label="打開策の候補" style={{ flexWrap: "wrap" }}>
+          {BREAKERS.map((b) => (
+            <button key={b.id} type="button" aria-pressed={breakers.includes(b.id)} className={breakers.includes(b.id) ? "on" : ""} onClick={() => setBreakers((x) => (x.includes(b.id) ? x.filter((y) => y !== b.id) : [...x, b.id]))}>{b.icon} {b.name.replace(/（.*$/, "")}</button>
+          ))}
+        </div>
+        {breakers.length > 0 && <BreakerView ids={breakers} evLimit={4} />}
       </section>
       <section className="card" id="s3m">
         <p className="balh">食事の方法（5つの提案）：カロリーとPFCバランス</p>

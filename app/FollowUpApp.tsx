@@ -12,6 +12,8 @@ import ShareButtons from "./ShareButtons";
 import { AddFoods, NextActions } from "./ExpertSection";
 import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import ShortPlanView from "./ShortPlanView";
+import { BREAKERS, suggestBreakers } from "../lib/breakers";
+import BreakerView from "./BreakerView";
 import { expertAssess } from "../lib/expert";
 import { computeGoal } from "../lib/goal";
 import { goalOf } from "../lib/meals";
@@ -36,6 +38,7 @@ type S = {
   pal: number;
   pfcMethod: string;
   shortPlan: string;
+  breakers: string[];
   foodAmt: string;
   fastStart: string;
   conds: boolean;
@@ -98,6 +101,7 @@ const DEFAULT: S = {
   pal: 1,
   pfcMethod: "balance",
   shortPlan: "",
+  breakers: [],
   foodAmt: "10",
   fastStart: "12",
   conds: false,
@@ -378,6 +382,16 @@ export default function FollowUpApp() {
           ))}
           <input style={{ ...inp, width: 110 }} inputMode="decimal" value={s.foodAmt} onChange={(e) => up({ foodAmt: e.target.value })} aria-label="食べ物の例の量（g）" />
         </div>
+        <p style={{ ...lab, marginTop: 12 }}>停滞期を抜ける・腸内環境を整える：打開策の候補（選んで提案）</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button type="button" className="trchip on" onClick={() => up({ breakers: suggestBreakers({ stall: (!!res?.judge && ["stall", "up", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15), weeksStalled: (res?.judge && ["stall", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15) ? Math.max(weeks, 4) : 0, gut: s.status.includes("constipation"), youth: band <= 1 || (age > 0 && age < 18), cond: s.conds, noReduce: false }) })}>🔄 判定から、自動で候補を出す</button>
+          <button type="button" className="trchip" onClick={() => up({ breakers: [] })}>全部はずす</button>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+          {BREAKERS.map((b) => (
+            <button key={b.id} type="button" aria-pressed={s.breakers.includes(b.id)} className={s.breakers.includes(b.id) ? "trchip on" : "trchip"} onClick={() => up({ breakers: s.breakers.includes(b.id) ? s.breakers.filter((x) => x !== b.id) : [...s.breakers, b.id] })}>{b.icon} {b.name.replace(/（.*$/, "")}</button>
+          ))}
+        </div>
         <p style={{ ...lab, marginTop: 12 }}>短期プログラム（任意：ファスティング・腸活など）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button type="button" className={s.shortPlan === "" ? "trchip on" : "trchip"} onClick={() => up({ shortPlan: "" })}>なし</button>
@@ -491,6 +505,13 @@ export default function FollowUpApp() {
             <h2>{H("いまの判定と、原因")}</h2>
             <div className="fujudge"><b>{res.judge.label}</b><span>{res.slopeText}</span></div>
             {res.causes.length > 0 && <ul className="fucauses">{res.causes.map((c, i) => <li key={i}><b>{c.t}</b><small>{c.d}</small></li>)}</ul>}
+          </section>
+        )}
+
+        {s.breakers.length > 0 && (
+          <section>
+            <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
+            <BreakerView ids={s.breakers} evLimit={3} />
           </section>
         )}
 

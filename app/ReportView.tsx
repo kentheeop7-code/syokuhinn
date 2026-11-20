@@ -11,6 +11,7 @@ import { buildActions, WEEK_DAYS } from "../lib/actions";
 import { EXAMPLES, GENERIC_SWAPS, INCREASE, swapsFor } from "../lib/swaps";
 import { expertAssess } from "../lib/expert";
 import { getShortPlan } from "../lib/shortplans";
+import BreakerView from "./BreakerView";
 import ShortPlanView from "./ShortPlanView";
 import ExpertSection, { NextActions } from "./ExpertSection";
 import { microStatus } from "../lib/micro";
@@ -132,6 +133,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const expert = expertAssess({ sex, age: num(s.age), band, height: num(s.height), weight: w, targetWeight: wt, goal: goalK, body: bodyA, energy, gp, bmrInput: num(s.bmr), strengthDays: days, otherMin: weeklyMin(others), guideMin: guideMin(band), water, conds: s.conds || [], cur: ct.any ? ct : null, goalP: parseFloat(g.p || "0"), goalFi: parseFloat(g.fi || "0"), want, nextDate: typeof s.nextDate === "string" ? s.nextDate : "" });
   const phases = energy && gp ? energyPhases({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace }, gp.pts, gp.weeks) : [];
   const sp = getShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
+  const bk: string[] = Array.isArray(s.breakers) ? s.breakers : [];
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
   const muscleKg = num(s.muscle);
@@ -164,7 +166,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     return true;
   };
   let secNo = 0;
-  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["次回までの", "📌"], ["短期プログラム", "🗓"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
+  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["次回までの", "📌"], ["打開策の候補", "🧗"], ["短期プログラム", "🗓"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
   const H = (t: string) => `${ICONS.find(([k]) => t.includes(k))?.[1] ?? "▪"} ${++secNo}. ${t}`;
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
@@ -1143,6 +1145,12 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         </section>
         )}
 
+        {bk.length > 0 && (
+          <section>
+            <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
+            <BreakerView ids={bk} evLimit={compact ? 2 : 3} />
+          </section>
+        )}
         {sp && (
           <section>
             <h2>{H("短期プログラム")}</h2>
