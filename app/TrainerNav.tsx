@@ -8,6 +8,7 @@ export const TRAINER_LINKS = [
   { href: "/trainer/hub", icon: "🏠", t: "ハブ", d: "トレーナー用の入口（すべてのリンク）" },
   { href: "/trainer", icon: "📝", t: "指導メモ", d: "ダイエット開始時の総合まとめを作る" },
   { href: "/trainer/followup", icon: "🔄", t: "定期フォロー", d: "経過報告・プログラム表・対策表をPDFで送る" },
+  { href: "/trainer/advisor", icon: "🧭", t: "相談", d: "お客様の状態から、原因・対策・今後の流れ・根拠を出す" },
   { href: "/trainer/guide", icon: "📚", t: "資料集", d: "食事法・食品PFC・最新論文・お客様別レコメンド" },
   { href: "/trainer/report", icon: "📄", t: "レポート", d: "開始時のまとめ（PDF・リンク・LINE）" },
 ];
