@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { searchPapers, type Paper } from "../lib/pubmed";
+import { loadSiteLatest, type SiteLatest } from "../lib/content";
 
 // ページのテーマに合わせて、最新の論文（メタ分析・系統的レビュー）を、PubMedから、そのつど取得する。
 // タイトルの一覧で、内容の評価はしていない。使う前に、トレーナー・専門家が、確認すること。

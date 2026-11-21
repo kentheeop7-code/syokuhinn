@@ -1,0 +1,1680 @@
+{
+ "fetchedAt": "2026-11-18T09:19:58.368Z",
+ "fetchedDate": "2026年11月18日",
+ "source": "PubMed（米国国立医学図書館）",
+ "topics": {
+  "plan/ob": {
+   "label": "減量・肥満",
+   "list": [
+    {
+     "id": "42670242",
+     "title": "Comparative Efficacy of Tirzepatide Versus Semaglutide for Weight Loss in Adults With Overweight or Obesity: A Systematic Review and Meta-Analysis of Head-to-Head Studies.",
+     "journal": "Clin Obes",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42426361",
+     "title": "Efficacy and Safety of Anti-Obesity Medications for Weight Loss Maintenance in Adults With Overweight or Obesity: A Systematic Review and Meta-Analysis of Randomised Controlled Trials.",
+     "journal": "Diabetes Obes Metab",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42432828",
+     "title": "Effective Behavior Change Techniques for Successful Weight Loss and Weight Loss Maintenance Among Adults With Overweight and Obesity: A Systematic Review and Meta-Analysis.",
+     "journal": "Obes Rev",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42331714",
+     "title": "Effects of Weight-Loss Interventions on Kidney, Cardiometabolic and Anthropometric Outcomes in Adults With CKD and Overweight or Obesity: A Systematic Review and Meta-Analysis.",
+     "journal": "Diabetes Obes Metab",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "41859876",
+     "title": "Patient and public involvement in randomized trials of lifestyle intervention among pregnant women with obesity: An umbrella review.",
+     "journal": "Int J Gynaecol Obstet",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "41189318",
+     "title": "Weight Loss, Obesity Medication, and Risk of Obesity-Associated Cancer: A Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Obesity (Silver Spring)",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42420603",
+     "title": "Effect of weight loss interventions on liver-related health in children and adolescents with obesity: a systematic review and meta-analyses.",
+     "journal": "Int J Obes (Lond)",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "42203565",
+     "title": "Effects of weight loss programs with physical exercise on the mood state of people with obesity: A systematic review.",
+     "journal": "Obes Res Clin Pract",
+     "date": "2026 Jul-Aug",
+     "isNew": false
+    }
+   ]
+  },
+  "plan/dm": {
+   "label": "糖尿病と食事",
+   "list": [
+    {
+     "id": "41456116",
+     "title": "The Role of Diet and Physical Activity in Gut Microbiota Modulation in Type 2 Diabetes Management: A Systematic Review of Clinical Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Dec 1",
+     "isNew": false
+    },
+    {
+     "id": "42959033",
+     "title": "Influencing factors of type 2 diabetes remission: a systematic review and meta-analysis.",
+     "journal": "Front Endocrinol (Lausanne)",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42995572",
+     "title": "Facilitators and barriers influencing the implementation of type 2 diabetes remission programmes: a qualitative meta-synthesis from a multi-stakeholder perspective.",
+     "journal": "BMC Public Health",
+     "date": "2026 Sep 16",
+     "isNew": false
+    },
+    {
+     "id": "42588062",
+     "title": "Gene-Diet Interactions in Type 2 Diabetes: A Systematic Review of Observational Studies and Clinical Trials.",
+     "journal": "Nutrients",
+     "date": "2026 Jul 26",
+     "isNew": false
+    },
+    {
+     "id": "41381307",
+     "title": "Mediterranean diet, gut microbiota, and type 2 diabetes: A systematic review and meta-analysis of intervention trials.",
+     "journal": "Nutr Metab Cardiovasc Dis",
+     "date": "2026 May",
+     "isNew": false
+    },
+    {
+     "id": "41417571",
+     "title": "Efficacy of a low-carbohydrate diet combined with exercise on glycemic control and metabolic health in type 2 diabetes mellitus: A systematic review and meta-analysis.",
+     "journal": "Diabetes Obes Metab",
+     "date": "2026 Mar",
+     "isNew": false
+    },
+    {
+     "id": "41664973",
+     "title": "Effectiveness of diet-combined exercise interventions for glycemic control in patients with type 2 diabetes: a meta-analysis of randomized controlled trials.",
+     "journal": "J Sports Med Phys Fitness",
+     "date": "2026 Feb",
+     "isNew": false
+    },
+    {
+     "id": "41247811",
+     "title": "Sleeve gastrectomy versus roux-en-Y gastric bypass for remission of type 2 diabetes mellitus and obesity: systematic review and meta-analysis of randomized controlled trials.",
+     "journal": "Int J Surg",
+     "date": "2026 Feb 1",
+     "isNew": false
+    }
+   ]
+  },
+  "plan/th": {
+   "label": "甲状腺と体重",
+   "list": [
+    {
+     "id": "41966455",
+     "title": "Thyroid Function and Non-alcoholic Fatty Liver Disease in Children and Adolescent With Obesity: A Systematic Review and Meta-Analysis.",
+     "journal": "Endocr Pract",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "39460502",
+     "title": "Associations Between Obesity and Risk of Thyroid Cancer: A Meta-Analysis of Cohort Studies.",
+     "journal": "Nutr Cancer",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "38673931",
+     "title": "Assessment of Thyroid Carcinogenic Risk and Safety Profile of GLP1-RA Semaglutide (Ozempic) Therapy for Diabetes Mellitus and Obesity: A Systematic Literature Review.",
+     "journal": "Int J Mol Sci",
+     "date": "2024 Apr 15",
+     "isNew": false
+    },
+    {
+     "id": "35532055",
+     "title": "The Effects of Zinc and Selenium Supplementation on Body Composition and Thyroid Function in Individuals with Overweight or Obesity: A Systematic Review.",
+     "journal": "J Diet Suppl",
+     "date": "2023",
+     "isNew": false
+    },
+    {
+     "id": "33171329",
+     "title": "Obesity and the prevention of thyroid cancer: Impact of body mass index and weight change on developing thyroid cancer - Pooled results of 24 million cohorts.",
+     "journal": "Oral Oncol",
+     "date": "2021 Jan",
+     "isNew": false
+    },
+    {
+     "id": "31681268",
+     "title": "The Impact of Obesity on Thyroid Autoimmunity and Dysfunction: A Systematic Review and Meta-Analysis.",
+     "journal": "Front Immunol",
+     "date": "2019",
+     "isNew": false
+    },
+    {
+     "id": "31133216",
+     "title": "The impact of obesity and insulin resistance on thyroid cancer: A systematic review.",
+     "journal": "Maturitas",
+     "date": "2019 Jul",
+     "isNew": false
+    },
+    {
+     "id": "29631475",
+     "title": "Weight Changes After Thyroid Surgery for Patients with Benign Thyroid Nodules and Thyroid Cancer: Population-Based Study and Systematic Review and Meta-Analysis.",
+     "journal": "Thyroid",
+     "date": "2018 May",
+     "isNew": false
+    }
+   ]
+  },
+  "gut/mb": {
+   "label": "腸内細菌と食事",
+   "list": [
+    {
+     "id": "41456116",
+     "title": "The Role of Diet and Physical Activity in Gut Microbiota Modulation in Type 2 Diabetes Management: A Systematic Review of Clinical Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Dec 1",
+     "isNew": false
+    },
+    {
+     "id": "41381307",
+     "title": "Mediterranean diet, gut microbiota, and type 2 diabetes: A systematic review and meta-analysis of intervention trials.",
+     "journal": "Nutr Metab Cardiovasc Dis",
+     "date": "2026 May",
+     "isNew": false
+    },
+    {
+     "id": "40035292",
+     "title": "The effects of low FODMAP diet on gut microbiota regulation: A systematic review and meta-analysis.",
+     "journal": "J Food Sci",
+     "date": "2025 Mar",
+     "isNew": false
+    },
+    {
+     "id": "39408238",
+     "title": "Effectiveness of Prebiotics and Mediterranean and Plant-Based Diet on Gut Microbiota and Glycemic Control in Patients with Prediabetes or Type 2 Diabetes: A Systematic Review and Meta-Analysis.",
+     "journal": "Nutrients",
+     "date": "2024 Sep 27",
+     "isNew": false
+    },
+    {
+     "id": "38788974",
+     "title": "The impact of a western diet on gut microbiota and circadian rhythm: A comprehensive systematic review of in vivo preclinical evidence.",
+     "journal": "Life Sci",
+     "date": "2024 Jul 15",
+     "isNew": false
+    },
+    {
+     "id": "39064625",
+     "title": "Mediterranean Diet Adherence, Gut Microbiota and Parkinson's Disease: A Systematic Review.",
+     "journal": "Nutrients",
+     "date": "2024 Jul 9",
+     "isNew": false
+    },
+    {
+     "id": "38632620",
+     "title": "Adherence to the Mediterranean diet can beneficially affect the gut microbiota composition: a systematic review.",
+     "journal": "BMC Med Genomics",
+     "date": "2024 Apr 17",
+     "isNew": false
+    },
+    {
+     "id": "37981693",
+     "title": "Does the ketogenic diet improve neurological disorders by influencing gut microbiota? A systematic review.",
+     "journal": "Nutr J",
+     "date": "2023 Nov 20",
+     "isNew": false
+    }
+   ]
+  },
+  "gut/co": {
+   "label": "便秘と食事",
+   "list": [
+    {
+     "id": "42317046",
+     "title": "Efficacy of different dietary fibers for chronic idiopathic constipation: a systematic review and network meta-analysis.",
+     "journal": "Food Funct",
+     "date": "2026 Jul 20",
+     "isNew": false
+    },
+    {
+     "id": "41850487",
+     "title": "Efficacy of dietary interventions for functional constipation: a systematic review and network meta-analysis.",
+     "journal": "Am J Clin Nutr",
+     "date": "2026 May",
+     "isNew": false
+    },
+    {
+     "id": "39784686",
+     "title": "Novel insights into carbohydrate-to-fiber ratio and constipation: NHANES findings suggest a turning point.",
+     "journal": "Rev Esp Enferm Dig",
+     "date": "2026 Jan",
+     "isNew": false
+    },
+    {
+     "id": "38829940",
+     "title": "Clinical effects of chemical drugs, fecal microbiota transplantation, probiotics, dietary fiber, and acupuncture in the treatment of chronic functional constipation: a systematic review and network meta-analysis.",
+     "journal": "Eur J Gastroenterol Hepatol",
+     "date": "2024 Jul 1",
+     "isNew": false
+    },
+    {
+     "id": "35816465",
+     "title": "The Effect of Fiber Supplementation on Chronic Constipation in Adults: An Updated Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Am J Clin Nutr",
+     "date": "2022 Oct 6",
+     "isNew": false
+    },
+    {
+     "id": "25903636",
+     "title": "Systematic review: dietary fibre and FODMAP-restricted diet in the management of constipation and irritable bowel syndrome.",
+     "journal": "Aliment Pharmacol Ther",
+     "date": "2015 Jun",
+     "isNew": false
+    },
+    {
+     "id": "23326148",
+     "title": "Effect of dietary fiber on constipation: a meta analysis.",
+     "journal": "World J Gastroenterol",
+     "date": "2012 Dec 28",
+     "isNew": false
+    },
+    {
+     "id": "18713795",
+     "title": "Currently recommended treatments of childhood constipation are not evidence based: a systematic literature review on the effect of laxative treatment and dietary measures.",
+     "journal": "Arch Dis Child",
+     "date": "2009 Feb",
+     "isNew": false
+    }
+   ]
+  },
+  "gut/pb": {
+   "label": "プロバイオティクス",
+   "list": [
+    {
+     "id": "42235902",
+     "title": "Gut microbiome dysbiosis and cancer: A systematic review on the emerging role of probiotics in oncology.",
+     "journal": "Crit Rev Oncol Hematol",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "41739423",
+     "title": "Efficacy and Safety of Probiotics, Prebiotics and Synbiotics for the Treatment of Functional Constipation in Children: Systematic Review and Network Meta-analysis.",
+     "journal": "Probiotics Antimicrob Proteins",
+     "date": "2026 Jun",
+     "isNew": false
+    },
+    {
+     "id": "41820241",
+     "title": "Probiotics for Irritable Bowel Syndrome: An Updated Systematic Review and Meta-Analysis With Trial Sequential Analysis.",
+     "journal": "J Gastroenterol Hepatol",
+     "date": "2026 Apr",
+     "isNew": false
+    },
+    {
+     "id": "41433106",
+     "title": "Effect of multistrain probiotics on symptom severity in irritable bowel syndrome: a systematic review and meta-analysis of irritable bowel syndrome-symptom severity score outcomes.",
+     "journal": "Eur J Gastroenterol Hepatol",
+     "date": "2026 Apr 1",
+     "isNew": false
+    },
+    {
+     "id": "41606514",
+     "title": "Modulating the gut microbiome to enhance cancer immunotherapy: a systematic review and Meta-Analysis of probiotics and FMT as adjuncts.",
+     "journal": "BMC Cancer",
+     "date": "2026 Jan 28",
+     "isNew": false
+    },
+    {
+     "id": "40929652",
+     "title": "Comparative effectiveness and safety of probiotics with psychotropic potential in mental health benefits in irritable bowel syndrome: a systematic review and network meta-analysis.",
+     "journal": "Eur J Gastroenterol Hepatol",
+     "date": "2026 Jan 1",
+     "isNew": false
+    },
+    {
+     "id": "40356343",
+     "title": "Technical review by the ESPGHAN Special Interest Group on Gut Microbiota and Modifications on the health outcomes of infant formula supplemented with probiotics.",
+     "journal": "J Pediatr Gastroenterol Nutr",
+     "date": "2026 Jan",
+     "isNew": false
+    },
+    {
+     "id": "41039263",
+     "title": "Probiotics for pediatric diarrhea and constipation: an umbrella meta-analysis.",
+     "journal": "BMC Pediatr",
+     "date": "2025 Oct 2",
+     "isNew": false
+    }
+   ]
+  },
+  "nut/pro": {
+   "label": "たんぱく質",
+   "list": [
+    {
+     "id": "42105861",
+     "title": "Evidence on protein intake on lean body mass and function in community-dwelling adults aged 50 years and over living with multiple long-term conditions: Systematic review.",
+     "journal": "Clin Nutr ESPEN",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "41413370",
+     "title": "The impact of protein intake on kidney adverse events in critically Ill patients: a systematic review and meta-analysis.",
+     "journal": "Int Urol Nephrol",
+     "date": "2026 Jul",
+     "isNew": false
+    },
+    {
+     "id": "41750266",
+     "title": "Synergistic Effects of Protein Intake and Exercise on Biomarkers of Sarcopenia: A Systematic Review.",
+     "journal": "Biomolecules",
+     "date": "2026 Jan 27",
+     "isNew": false
+    },
+    {
+     "id": "41992867",
+     "title": "Metabolomic patterns of dietary protein intake and their link to cardiometabolic risk: systematic review and meta-analysis.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41109033",
+     "title": "The effectiveness of high versus lower enteral protein intake, considering energy intake, on clinical outcomes in critically ill children: A systematic review and meta-analysis.",
+     "journal": "Clin Nutr",
+     "date": "2025 Nov",
+     "isNew": false
+    },
+    {
+     "id": "40473805",
+     "title": "Systematic review and meta-analysis of enteral protein intake effects on growth in preterm infants.",
+     "journal": "Pediatr Res",
+     "date": "2025 Nov",
+     "isNew": false
+    },
+    {
+     "id": "40802072",
+     "title": "Protein intake and cardiovascular diseases: an umbrella review of systematic reviews for the evidence-based guideline on protein intake of the German Nutrition Society.",
+     "journal": "Eur J Nutr",
+     "date": "2025 Aug 13",
+     "isNew": false
+    },
+    {
+     "id": "40210498",
+     "title": "Association between animal protein intake and overweight/obesity: A systematic review and meta-analysis of observational studies.",
+     "journal": "Nutr Metab Cardiovasc Dis",
+     "date": "2025 Aug",
+     "isNew": false
+    }
+   ]
+  },
+  "nut/fib": {
+   "label": "食物繊維",
+   "list": [
+    {
+     "id": "42157295",
+     "title": "The association between dietary fiber intake and risk of lung cancer: a GRADE-assessed systematic review and dose response meta-analysis of prospective cohort studies.",
+     "journal": "Nutr J",
+     "date": "2026 May 19",
+     "isNew": false
+    },
+    {
+     "id": "41739242",
+     "title": "Association between dietary fiber intake and bone mineral density: a systematic review and meta-analysis of observational studies.",
+     "journal": "Eur J Nutr",
+     "date": "2026 Feb 25",
+     "isNew": false
+    },
+    {
+     "id": "40911389",
+     "title": "Preclinical evidence on the impact of sorghum (Sorghum bicolor) genotypes, fractions, and processing methods on intestinal health: a review of an ancient grain rich in phenolic and dietary fiber.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "40651334",
+     "title": "The impact of dietary fiber consumption on human health: An umbrella review of evidence from 17,155,277 individuals.",
+     "journal": "Clin Nutr",
+     "date": "2025 Aug",
+     "isNew": false
+    },
+    {
+     "id": "39821284",
+     "title": "Effects of Supplementation With Different Specificities of Dietary Fiber on Health-Related Indicators in Adults With Overweight or Obesity: A Systematic Review and Meta-analysis of Randomized Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2025 Jul 1",
+     "isNew": false
+    },
+    {
+     "id": "39998074",
+     "title": "Effects of Dietary Fiber Supplementation on Modulating Uremic Toxins and Inflammation in Chronic Kidney Disease Patients: A Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Toxins (Basel)",
+     "date": "2025 Jan 26",
+     "isNew": false
+    },
+    {
+     "id": "41181899",
+     "title": "Sex differences in the effects of dietary fiber on chronic disease risk: a meta-analysis of prospective cohort studies.",
+     "journal": "Epidemiol Rev",
+     "date": "2025 Jan 10",
+     "isNew": false
+    },
+    {
+     "id": "38153313",
+     "title": "High and low dietary fiber consumption and cancer risk: a comprehensive umbrella review with meta-meta-analysis involving meta-analyses of observational epidemiological studies.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2025",
+     "isNew": false
+    }
+   ]
+  },
+  "nut/vd": {
+   "label": "ビタミンD",
+   "list": [
+    {
+     "id": "41475020",
+     "title": "Effects of Vitamin D Supplementation in Combination With Exercise Training on Body Composition and Muscular Strength in Adults: A Systematic Review and Dose-Response Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Dec 1",
+     "isNew": false
+    },
+    {
+     "id": "43012372",
+     "title": "Regimens of vitamin D supplementation for women during pregnancy.",
+     "journal": "Cochrane Database Syst Rev",
+     "date": "2026 Nov 11",
+     "isNew": false
+    },
+    {
+     "id": "42993750",
+     "title": "Effects of vitamin D supplementation on vitamin D status and physical performance in football players: A systematic review and meta-analysis.",
+     "journal": "PLoS One",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42823826",
+     "title": "Vitamin D Supplementation and Mortality in the Elderly: A Review of a Meta-Analysis of Randomized Controlled Trials Using the REB Method.",
+     "journal": "Fundam Clin Pharmacol",
+     "date": "2026 Nov",
+     "isNew": false
+    },
+    {
+     "id": "43030176",
+     "title": "Effects of Oral Vitamin D Supplementation on Physical Performance in Combat-Sport Athletes: A Systematic Review of Randomized Placebo-Controlled Trials.",
+     "journal": "Nutrients",
+     "date": "2026 Oct 28",
+     "isNew": false
+    },
+    {
+     "id": "42226400",
+     "title": "Impact of vitamin D supplementation and status on seizure frequency and quality of life in drug-resistant epilepsy: A systematic review and meta-analysis.",
+     "journal": "Epileptic Disord",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42746921",
+     "title": "Vitamin D supplementation for prevention of vitamin D deficiency in preterm and low birth weight infants.",
+     "journal": "Cochrane Database Syst Rev",
+     "date": "2026 Sep 16",
+     "isNew": false
+    },
+    {
+     "id": "42675950",
+     "title": "Vitamin D Status and Supplementation in Lumbar Spinal Fusion: A Systematic Review and Meta-Analysis of Radiographic and Clinical Outcomes.",
+     "journal": "J Musculoskelet Neuronal Interact",
+     "date": "2026 Sep 1",
+     "isNew": false
+    }
+   ]
+  },
+  "nut/na": {
+   "label": "塩分・血圧",
+   "list": [
+    {
+     "id": "41275512",
+     "title": "Association Between Changes in Salt Intake and Blood Pressure: A Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Sep 1",
+     "isNew": false
+    },
+    {
+     "id": "41683250",
+     "title": "Comparative Effectiveness of Behavioural Sodium-Reduction Interventions for Intensive Systolic Blood Pressure Control in Populations with Elevated Blood Pressure: A Systematic Review and Network Meta-Analysis.",
+     "journal": "Nutrients",
+     "date": "2026 Jan 28",
+     "isNew": false
+    },
+    {
+     "id": "40055494",
+     "title": "Effect of population-based sodium reduction interventions on blood pressure: a systematic review and meta-analysis of randomized trials.",
+     "journal": "Hypertens Res",
+     "date": "2025 Jun",
+     "isNew": false
+    },
+    {
+     "id": "39624982",
+     "title": "Impact of sodium intake on blood pressure, mortality and major cardiovascular events: an umbrella review of systematic reviews and meta-analyses.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "39236753",
+     "title": "Blood Pressure-Lowering Medications, Sodium Reduction, and Blood Pressure.",
+     "journal": "Hypertension",
+     "date": "2024 Nov",
+     "isNew": false
+    },
+    {
+     "id": "38143483",
+     "title": "Effects of Behavioral Interventions for Salt Reduction on Blood Pressure and Urinary Sodium Excretion: A Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Glob Heart",
+     "date": "2023",
+     "isNew": false
+    },
+    {
+     "id": "36477548",
+     "title": "Effect of salt reduction interventions in lowering blood pressure: A comprehensive systematic review and meta-analysis of controlled clinical trials.",
+     "journal": "PLoS One",
+     "date": "2022",
+     "isNew": false
+    },
+    {
+     "id": "35986189",
+     "title": "Impact of different dietary sodium reduction strategies on blood pressure: a systematic review.",
+     "journal": "Hypertens Res",
+     "date": "2022 Nov",
+     "isNew": false
+    }
+   ]
+  },
+  "tips/wl": {
+   "label": "減量",
+   "list": [
+    {
+     "id": "42043636",
+     "title": "Effects of Low-Fat Diet Combined with Different Exercise Interventions on Weight Loss Maintenance in Adults: A Network Meta-Analysis.",
+     "journal": "Endocrine",
+     "date": "2026 Apr 27",
+     "isNew": false
+    },
+    {
+     "id": "41113714",
+     "title": "What should the doctor prescribe-formula diet or antidiabetics? Effectiveness of formula diet-based lifestyle intervention vs. pharmacological antiglycemic therapy on weight loss and HbA1c reduction in type 2 diabetes patients-a systematic review.",
+     "journal": "Front Endocrinol (Lausanne)",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "41093698",
+     "title": "The impact of exercise on fat free mass reduction during very low energy diet-induced weight loss in adults with overweight or obesity: A systematic review and meta-analysis.",
+     "journal": "Obes Res Clin Pract",
+     "date": "2025 Sep-Oct",
+     "isNew": false
+    },
+    {
+     "id": "40090867",
+     "title": "The effect of dietary weight-loss interventions on the inflammatory markers interleukin-6 and TNF-alpha in adults with obesity: A systematic review and meta-analysis of randomized controlled clinical trials.",
+     "journal": "Obes Rev",
+     "date": "2025 Jul",
+     "isNew": false
+    },
+    {
+     "id": "39843989",
+     "title": "Behavior change techniques in low-calorie and very low-calorie diet interventions for weight loss: A systematic review with meta-analysis.",
+     "journal": "Obes Rev",
+     "date": "2025 May",
+     "isNew": false
+    },
+    {
+     "id": "39054902",
+     "title": "Effect of FTO genotype on exercise training and diet-indued weight loss in overweight and obese adults: a systematic review and meta-analysis.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "39555961",
+     "title": "A network meta-analysis of the comparative efficacy of different dietary approaches on glycaemic control and weight loss in patients with type 2 diabetes mellitus and overweight or obesity.",
+     "journal": "Food Funct",
+     "date": "2024 Dec 9",
+     "isNew": false
+    },
+    {
+     "id": "39228092",
+     "title": "Gender differences in adherence and retention in Mediterranean diet interventions with a weight-loss outcome: A systematic review and meta-analysis.",
+     "journal": "Obes Rev",
+     "date": "2024 Dec",
+     "isNew": false
+    }
+   ]
+  },
+  "tips/rt": {
+   "label": "筋トレ",
+   "list": [
+    {
+     "id": "42862730",
+     "title": "Impact of different protein sources on acute muscle protein synthesis following resistance training: a systematic review with standard and dose-response network meta-analyses.",
+     "journal": "J Int Soc Sports Nutr",
+     "date": "2026 Dec 30",
+     "isNew": false
+    },
+    {
+     "id": "42879592",
+     "title": "Time-restricted feeding with resistance training is not superior to conventional feeding for body composition and muscle strength: a systematic review and meta-analysis.",
+     "journal": "An Acad Bras Cienc",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42698552",
+     "title": "Effects of elastic-band resistance training on glycemic control, muscle strength, and functional outcomes in patients with type 2 diabetes mellitus: a systematic review and meta-analysis of randomized controlled trials.",
+     "journal": "Front Public Health",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41995957",
+     "title": "The Influence of Individual Resistance Training Variables on Muscle Strength: A Systematic Review and Meta-analysis.",
+     "journal": "Sports Med",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "41951916",
+     "title": "The Effects of Advanced Resistance Training Prescription Methods on Strength, Power, Hypertrophy, and Performance Adaptations in Healthy Adults: A Systematic Review and Bayesian Network Meta-analysis.",
+     "journal": "Sports Med",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "42366614",
+     "title": "Effectiveness of High-Intensity Versus Low-To-Moderate-Intensity Resistance Training in Improving Muscle Strength and Bone Mineral Density in Older Adults: A Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Geriatr Gerontol Int",
+     "date": "2026 Jul",
+     "isNew": false
+    },
+    {
+     "id": "41248260",
+     "title": "Synergistic Effects of Vitamin D Supplementation and Resistance Training on Insulin-Like Growth Factor 1 and Muscle Health: A Systematic Review.",
+     "journal": "Am J Phys Med Rehabil",
+     "date": "2026 May 1",
+     "isNew": false
+    },
+    {
+     "id": "41343037",
+     "title": "The Resistance Training Dose Response: Meta-Regressions Exploring the Effects of Weekly Volume and Frequency on Muscle Hypertrophy and Strength Gains.",
+     "journal": "Sports Med",
+     "date": "2026 Feb",
+     "isNew": false
+    }
+   ]
+  },
+  "tips/pr": {
+   "label": "たんぱく質",
+   "list": [
+    {
+     "id": "42954267",
+     "title": "Is plant-based protein supplementation as effective as whey protein? A systematic review and meta-analysis in untrained adults undergoing resistance training.",
+     "journal": "J Int Soc Sports Nutr",
+     "date": "2026 Dec 30",
+     "isNew": false
+    },
+    {
+     "id": "42862730",
+     "title": "Impact of different protein sources on acute muscle protein synthesis following resistance training: a systematic review with standard and dose-response network meta-analyses.",
+     "journal": "J Int Soc Sports Nutr",
+     "date": "2026 Dec 30",
+     "isNew": false
+    },
+    {
+     "id": "42565658",
+     "title": "Rethinking Muscle Wasting in Critical Illness: A Systematic Review and Meta-Analysis of Myofiber Size and Protein Turnover.",
+     "journal": "Crit Care Med",
+     "date": "2026 Oct 1",
+     "isNew": false
+    },
+    {
+     "id": "42055214",
+     "title": "Effects of Plant- vs Animal-Based Proteins on Muscle Protein Synthesis: A Systematic Review With Meta-Analysis.",
+     "journal": "J Acad Nutr Diet",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "41901084",
+     "title": "Comparative Effects of Dietary Protein, Creatine, and Omega-3 Supplementation on Muscle Strength, Endurance, and Recovery in Trained Athletes: A Systematic Review and Network Meta-Analysis.",
+     "journal": "Nutrients",
+     "date": "2026 Mar 13",
+     "isNew": false
+    },
+    {
+     "id": "40511744",
+     "title": "Insect Protein to Support Human Skeletal Muscle Anabolism: A Systematic Review of Randomised Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Feb 1",
+     "isNew": false
+    },
+    {
+     "id": "41454445",
+     "title": "The Impact of Whey and Soy Protein Supplementation on Resistance Training in Young Adults: A Systematic Review and Meta-Analysis.",
+     "journal": "J Diet Suppl",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41205420",
+     "title": "Comparative Effectiveness of Exercise and Protein-Based Interventions on Muscle Strength, Mass, and Function in Sarcopenia: A Systematic Review and Network Meta-Analysis.",
+     "journal": "J Nutr Health Aging",
+     "date": "2025 Dec",
+     "isNew": false
+    }
+   ]
+  },
+  "add/em": {
+   "label": "乳化剤・増粘剤",
+   "list": [
+    {
+     "id": "39532062",
+     "title": "Food additives as photosensitizers: A systematic review and narrative synthesis.",
+     "journal": "Food Chem",
+     "date": "2025 Feb 1",
+     "isNew": false
+    },
+    {
+     "id": "38280090",
+     "title": "Modified medication use in dysphagia: the effect of thickener on drug bioavailability-a systematic review.",
+     "journal": "Eur Geriatr Med",
+     "date": "2024 Feb",
+     "isNew": false
+    },
+    {
+     "id": "36454059",
+     "title": "Metabolomics insights into the potential of encapsulated essential oils as multifunctional food additives.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2024",
+     "isNew": false
+    },
+    {
+     "id": "35106984",
+     "title": "Association between food additives and prevalence of allergic reactions in children: a systematic review.",
+     "journal": "Rev Environ Health",
+     "date": "2023 Mar 28",
+     "isNew": false
+    },
+    {
+     "id": "34710536",
+     "title": "Chronic consumption of food-additives lead to changes via microbiota gut-brain axis.",
+     "journal": "Toxicology",
+     "date": "2021 Dec",
+     "isNew": false
+    },
+    {
+     "id": "31581570",
+     "title": "Impact of Food Additives on Gut Homeostasis.",
+     "journal": "Nutrients",
+     "date": "2019 Oct 1",
+     "isNew": false
+    },
+    {
+     "id": "29207214",
+     "title": "Feed thickener for infants up to six months of age with gastro-oesophageal reflux.",
+     "journal": "Cochrane Database Syst Rev",
+     "date": "2017 Dec 5",
+     "isNew": false
+    },
+    {
+     "id": "28538366",
+     "title": "Preventing necrotizing enterocolitis by food additives in neonates: A network meta-analysis revealing the efficacy and safety.",
+     "journal": "Medicine (Baltimore)",
+     "date": "2017 May",
+     "isNew": false
+    }
+   ]
+  },
+  "add/sw": {
+   "label": "人工甘味料",
+   "list": [
+    {
+     "id": "40668953",
+     "title": "Effects of Non-Nutritive Sweeteners on Weight Loss and Maintenance, Metabolic Improvement, and Appetite Regulation in Weight Management Programs: A Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Feb 1",
+     "isNew": false
+    },
+    {
+     "id": "42630025",
+     "title": "The effects of non-nutritive sweeteners on blood pressure, heart rate and pulse rate in adults: a systematic review and meta-analysis of randomized controlled clinical trials.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41365395",
+     "title": "Effects of nutritive and non-nutritive sweeteners on acne vulgaris: A systematic review.",
+     "journal": "Fitoterapia",
+     "date": "2026 Jan",
+     "isNew": false
+    },
+    {
+     "id": "40913681",
+     "title": "Effects of non-nutritive sweeteners on body weight: a systematic review and meta-analysis of randomized controlled trial (RCT) studies.",
+     "journal": "J Endocrinol Invest",
+     "date": "2026 Jan",
+     "isNew": false
+    },
+    {
+     "id": "40595722",
+     "title": "The effects of non-nutritive sweeteners on lipid profile in adults: a systematic review and meta-analysis of randomized controlled clinical trials.",
+     "journal": "Sci Rep",
+     "date": "2025 Jul 1",
+     "isNew": false
+    },
+    {
+     "id": "37440689",
+     "title": "Assessing the impact of non-nutritive sweeteners on anthropometric indices and leptin levels in adults: A GRADE-assessed systematic review, meta-analysis, and meta-regression of randomized clinical trials.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2024",
+     "isNew": false
+    },
+    {
+     "id": "36866485",
+     "title": "Effects of non-nutritive sweeteners on the BMI of children and adolescents: a systematic review and meta-analysis of randomised controlled trials and prospective cohort studies.",
+     "journal": "Lancet Glob Health",
+     "date": "2023 Mar",
+     "isNew": false
+    },
+    {
+     "id": "33007961",
+     "title": "How Does Our Brain Process Sugars and Non-Nutritive Sweeteners Differently: A Systematic Review on Functional Magnetic Resonance Imaging Studies.",
+     "journal": "Nutrients",
+     "date": "2020 Sep 30",
+     "isNew": false
+    }
+   ]
+  },
+  "add/up": {
+   "label": "超加工食品",
+   "list": [
+    {
+     "id": "42048517",
+     "title": "Associations Between Ultra-Processed Food (UPF) Consumption and Weight Change and Obesity Risk Among Consumers of Plant-Based Diets: A Systematic Review.",
+     "journal": "J Am Nutr Assoc",
+     "date": "2026 Sep-Oct",
+     "isNew": false
+    },
+    {
+     "id": "42363199",
+     "title": "A systematic review of ultra-processed food subtypes and risk of type 2 diabetes, combined with a cohort analysis, question the utility of broad food classifications for public health policy.",
+     "journal": "BMC Med",
+     "date": "2026 Jun 26",
+     "isNew": false
+    },
+    {
+     "id": "41984760",
+     "title": "Ultra-processed food consumption and the risk of overweight and obesity in adolescents: A systematic review and meta-analysis.",
+     "journal": "PLoS One",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42074999",
+     "title": "The Influence of Ultra-Processed Foods on Inflammation and Metabolic Health in Pediatric Obesity: A Systematic Review with a Narrative Synthesis.",
+     "journal": "Nutrients",
+     "date": "2026 Apr 9",
+     "isNew": false
+    },
+    {
+     "id": "41901073",
+     "title": "Ultra-Processed Foods and Mental Health in Children and Adolescents: Evidence from a Systematic Review.",
+     "journal": "Nutrients",
+     "date": "2026 Mar 12",
+     "isNew": false
+    },
+    {
+     "id": "39890099",
+     "title": "Ultra-Processed Food Intakes and Health Outcomes in Adults Older Than 60 Years: A Systematic Review.",
+     "journal": "Nutr Rev",
+     "date": "2025 Sep 1",
+     "isNew": false
+    },
+    {
+     "id": "40121412",
+     "title": "Impact of ultra-processed foods consumption on the burden of obesity and type 2 diabetes in Belgium: a comparative risk assessment.",
+     "journal": "BMC Public Health",
+     "date": "2025 Mar 22",
+     "isNew": false
+    },
+    {
+     "id": "40033461",
+     "title": "Ultra-processed foods and risk of all-cause mortality: an updated systematic review and dose-response meta-analysis of prospective cohort studies.",
+     "journal": "Syst Rev",
+     "date": "2025 Mar 3",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/rt": {
+   "label": "筋トレ・筋肥大",
+   "list": [
+    {
+     "id": "42862730",
+     "title": "Impact of different protein sources on acute muscle protein synthesis following resistance training: a systematic review with standard and dose-response network meta-analyses.",
+     "journal": "J Int Soc Sports Nutr",
+     "date": "2026 Dec 30",
+     "isNew": false
+    },
+    {
+     "id": "42879592",
+     "title": "Time-restricted feeding with resistance training is not superior to conventional feeding for body composition and muscle strength: a systematic review and meta-analysis.",
+     "journal": "An Acad Bras Cienc",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42698552",
+     "title": "Effects of elastic-band resistance training on glycemic control, muscle strength, and functional outcomes in patients with type 2 diabetes mellitus: a systematic review and meta-analysis of randomized controlled trials.",
+     "journal": "Front Public Health",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41995957",
+     "title": "The Influence of Individual Resistance Training Variables on Muscle Strength: A Systematic Review and Meta-analysis.",
+     "journal": "Sports Med",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "41951916",
+     "title": "The Effects of Advanced Resistance Training Prescription Methods on Strength, Power, Hypertrophy, and Performance Adaptations in Healthy Adults: A Systematic Review and Bayesian Network Meta-analysis.",
+     "journal": "Sports Med",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "42366614",
+     "title": "Effectiveness of High-Intensity Versus Low-To-Moderate-Intensity Resistance Training in Improving Muscle Strength and Bone Mineral Density in Older Adults: A Systematic Review and Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Geriatr Gerontol Int",
+     "date": "2026 Jul",
+     "isNew": false
+    },
+    {
+     "id": "41248260",
+     "title": "Synergistic Effects of Vitamin D Supplementation and Resistance Training on Insulin-Like Growth Factor 1 and Muscle Health: A Systematic Review.",
+     "journal": "Am J Phys Med Rehabil",
+     "date": "2026 May 1",
+     "isNew": false
+    },
+    {
+     "id": "41343037",
+     "title": "The Resistance Training Dose Response: Meta-Regressions Exploring the Effects of Weekly Volume and Frequency on Muscle Hypertrophy and Strength Gains.",
+     "journal": "Sports Med",
+     "date": "2026 Feb",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/prot": {
+   "label": "たんぱく質",
+   "list": [
+    {
+     "id": "42954267",
+     "title": "Is plant-based protein supplementation as effective as whey protein? A systematic review and meta-analysis in untrained adults undergoing resistance training.",
+     "journal": "J Int Soc Sports Nutr",
+     "date": "2026 Dec 30",
+     "isNew": false
+    },
+    {
+     "id": "42862730",
+     "title": "Impact of different protein sources on acute muscle protein synthesis following resistance training: a systematic review with standard and dose-response network meta-analyses.",
+     "journal": "J Int Soc Sports Nutr",
+     "date": "2026 Dec 30",
+     "isNew": false
+    },
+    {
+     "id": "42565658",
+     "title": "Rethinking Muscle Wasting in Critical Illness: A Systematic Review and Meta-Analysis of Myofiber Size and Protein Turnover.",
+     "journal": "Crit Care Med",
+     "date": "2026 Oct 1",
+     "isNew": false
+    },
+    {
+     "id": "42055214",
+     "title": "Effects of Plant- vs Animal-Based Proteins on Muscle Protein Synthesis: A Systematic Review With Meta-Analysis.",
+     "journal": "J Acad Nutr Diet",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "41901084",
+     "title": "Comparative Effects of Dietary Protein, Creatine, and Omega-3 Supplementation on Muscle Strength, Endurance, and Recovery in Trained Athletes: A Systematic Review and Network Meta-Analysis.",
+     "journal": "Nutrients",
+     "date": "2026 Mar 13",
+     "isNew": false
+    },
+    {
+     "id": "40511744",
+     "title": "Insect Protein to Support Human Skeletal Muscle Anabolism: A Systematic Review of Randomised Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Feb 1",
+     "isNew": false
+    },
+    {
+     "id": "41454445",
+     "title": "The Impact of Whey and Soy Protein Supplementation on Resistance Training in Young Adults: A Systematic Review and Meta-Analysis.",
+     "journal": "J Diet Suppl",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41205420",
+     "title": "Comparative Effectiveness of Exercise and Protein-Based Interventions on Muscle Strength, Mass, and Function in Sarcopenia: A Systematic Review and Network Meta-Analysis.",
+     "journal": "J Nutr Health Aging",
+     "date": "2025 Dec",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/loss": {
+   "label": "減量・ダイエット",
+   "list": [
+    {
+     "id": "42043636",
+     "title": "Effects of Low-Fat Diet Combined with Different Exercise Interventions on Weight Loss Maintenance in Adults: A Network Meta-Analysis.",
+     "journal": "Endocrine",
+     "date": "2026 Apr 27",
+     "isNew": false
+    },
+    {
+     "id": "41113714",
+     "title": "What should the doctor prescribe-formula diet or antidiabetics? Effectiveness of formula diet-based lifestyle intervention vs. pharmacological antiglycemic therapy on weight loss and HbA1c reduction in type 2 diabetes patients-a systematic review.",
+     "journal": "Front Endocrinol (Lausanne)",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "41093698",
+     "title": "The impact of exercise on fat free mass reduction during very low energy diet-induced weight loss in adults with overweight or obesity: A systematic review and meta-analysis.",
+     "journal": "Obes Res Clin Pract",
+     "date": "2025 Sep-Oct",
+     "isNew": false
+    },
+    {
+     "id": "40090867",
+     "title": "The effect of dietary weight-loss interventions on the inflammatory markers interleukin-6 and TNF-alpha in adults with obesity: A systematic review and meta-analysis of randomized controlled clinical trials.",
+     "journal": "Obes Rev",
+     "date": "2025 Jul",
+     "isNew": false
+    },
+    {
+     "id": "39843989",
+     "title": "Behavior change techniques in low-calorie and very low-calorie diet interventions for weight loss: A systematic review with meta-analysis.",
+     "journal": "Obes Rev",
+     "date": "2025 May",
+     "isNew": false
+    },
+    {
+     "id": "39054902",
+     "title": "Effect of FTO genotype on exercise training and diet-indued weight loss in overweight and obese adults: a systematic review and meta-analysis.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "39555961",
+     "title": "A network meta-analysis of the comparative efficacy of different dietary approaches on glycaemic control and weight loss in patients with type 2 diabetes mellitus and overweight or obesity.",
+     "journal": "Food Funct",
+     "date": "2024 Dec 9",
+     "isNew": false
+    },
+    {
+     "id": "39228092",
+     "title": "Gender differences in adherence and retention in Mediterranean diet interventions with a weight-loss outcome: A systematic review and meta-analysis.",
+     "journal": "Obes Rev",
+     "date": "2024 Dec",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/diet": {
+   "label": "食事法",
+   "list": [
+    {
+     "id": "42043636",
+     "title": "Effects of Low-Fat Diet Combined with Different Exercise Interventions on Weight Loss Maintenance in Adults: A Network Meta-Analysis.",
+     "journal": "Endocrine",
+     "date": "2026 Apr 27",
+     "isNew": false
+    },
+    {
+     "id": "40367516",
+     "title": "Comparison of Different Intermittent Fasting Patterns or Different Extents of Calorie Restriction for Weight Loss and Metabolic Improvement in Adults: A Systematic Review and Network Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Mar 1",
+     "isNew": false
+    },
+    {
+     "id": "41113714",
+     "title": "What should the doctor prescribe-formula diet or antidiabetics? Effectiveness of formula diet-based lifestyle intervention vs. pharmacological antiglycemic therapy on weight loss and HbA1c reduction in type 2 diabetes patients-a systematic review.",
+     "journal": "Front Endocrinol (Lausanne)",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "41093698",
+     "title": "The impact of exercise on fat free mass reduction during very low energy diet-induced weight loss in adults with overweight or obesity: A systematic review and meta-analysis.",
+     "journal": "Obes Res Clin Pract",
+     "date": "2025 Sep-Oct",
+     "isNew": false
+    },
+    {
+     "id": "40000314",
+     "title": "Intermittent fasting versus continuous caloric restriction for glycemic control and weight loss in type 2 diabetes: A traditional review.",
+     "journal": "Prim Care Diabetes",
+     "date": "2025 Jun",
+     "isNew": false
+    },
+    {
+     "id": "39843989",
+     "title": "Behavior change techniques in low-calorie and very low-calorie diet interventions for weight loss: A systematic review with meta-analysis.",
+     "journal": "Obes Rev",
+     "date": "2025 May",
+     "isNew": false
+    },
+    {
+     "id": "39054902",
+     "title": "Effect of FTO genotype on exercise training and diet-indued weight loss in overweight and obese adults: a systematic review and meta-analysis.",
+     "journal": "Crit Rev Food Sci Nutr",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "39275892",
+     "title": "Evaluating the efficacy of intermittent fasting and exercise combinations for weight loss: A network meta-analysis.",
+     "journal": "Obes Rev",
+     "date": "2024 Dec",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/sleep": {
+   "label": "睡眠・活動",
+   "list": [
+    {
+     "id": "42044907",
+     "title": "The Effect of Behavioral Sleep Interventions on Measures of Obesity, Dietary Intake and Physical Activity in Adults With Poor Sleep Health: A Systematic Review, Meta-Analysis and Meta-Regression Analysis.",
+     "journal": "Obes Rev",
+     "date": "2026 Nov",
+     "isNew": false
+    },
+    {
+     "id": "42159675",
+     "title": "Efficacy of BiPAP/CPAP versus COT in patients with obstructive sleep apnea or obesity undergoing sedated gastroenteroscopy: a meta-analysis.",
+     "journal": "J Anesth",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42478101",
+     "title": "Sleep and Its Impact on the Success of Weight Loss Interventions in Adults With Excess Weight: A Systematic Review.",
+     "journal": "Obes Rev",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42659532",
+     "title": "Relationship Between Sleep Duration and Obesity in Children Aged 6-12 Years and Adolescents Aged 13-18 Years: A Meta-Analysis.",
+     "journal": "An Acad Bras Cienc",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41762860",
+     "title": "Effectiveness of non-surgical weight loss interventions on obstructive sleep apnoea severity and cardiometabolic outcomes: A systematic review and meta-analysis.",
+     "journal": "Sleep Med",
+     "date": "2026 Jun",
+     "isNew": false
+    },
+    {
+     "id": "42033503",
+     "title": "Effects of inspiratory muscle training in adults with obesity and obstructive sleep apnea: a systematic review.",
+     "journal": "Sleep Breath",
+     "date": "2026 Apr 25",
+     "isNew": false
+    },
+    {
+     "id": "41309270",
+     "title": "Impact of positive airway pressure therapy on pulmonary arterial pressures in obstructive sleep apnoea or obesity hypoventilation syndrome: a systematic review and meta-analysis.",
+     "journal": "Eur Respir J",
+     "date": "2026 Apr",
+     "isNew": false
+    },
+    {
+     "id": "41671644",
+     "title": "Diagnostic accuracy of the neck circumference, obesity, snoring, age, and sex score in screening obstructive sleep apnea: A systematic review and meta-analysis.",
+     "journal": "Sleep Med Rev",
+     "date": "2026 Apr",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/tre": {
+   "label": "時間制限食・断食",
+   "list": [
+    {
+     "id": "42429418",
+     "title": "Impact of time-restricted eating on reproductive hormones and androgen markers in adult females: A systematic review.",
+     "journal": "Nutr Health",
+     "date": "2026 Nov",
+     "isNew": false
+    },
+    {
+     "id": "42879592",
+     "title": "Time-restricted feeding with resistance training is not superior to conventional feeding for body composition and muscle strength: a systematic review and meta-analysis.",
+     "journal": "An Acad Bras Cienc",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42507108",
+     "title": "Effects of time-restricted eating on markers of glucose metabolism and regulation in individuals with prediabetes or type 2 diabetes: a systematic review and meta-analysis of randomised controlled trials.",
+     "journal": "Diabetologia",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42342126",
+     "title": "Intermittent fasting strategies for metabolic dysfunction-associated steatotic liver disease: A systematic review and frequentist network meta-analysis of randomized controlled trials.",
+     "journal": "Clin Nutr ESPEN",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42654261",
+     "title": "Effects of the Mediterranean Diet, Ketogenic Diet, and Intermittent Fasting on Iron Metabolism and Iron Deficiency Risk in Adults with Obesity: A Systematic Literature Review.",
+     "journal": "Nutrients",
+     "date": "2026 Aug 17",
+     "isNew": false
+    },
+    {
+     "id": "42373041",
+     "title": "Effect of intermittent fasting on hepatic steatosis in metabolic dysfunction-associated steatotic liver disease.",
+     "journal": "Clin Res Hepatol Gastroenterol",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "42177340",
+     "title": "The cross-sectional and prospective associations between time-restricted eating and cardiometabolic health in community-dwelling adults: A systematic review and meta-analysis of observational studies.",
+     "journal": "Eur J Clin Nutr",
+     "date": "2026 Aug",
+     "isNew": false
+    },
+    {
+     "id": "42097900",
+     "title": "The effects of low carbohydrate diets including intermittent fasting on body weight, glycaemia, and quality of life measures in adults with type 1 diabetes and overweight/obesity: a systematic review.",
+     "journal": "Nutr Metab Cardiovasc Dis",
+     "date": "2026 Aug",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/stall": {
+   "label": "停滞・代謝適応",
+   "list": [
+    {
+     "id": "42186269",
+     "title": "Attenuation of Adaptive Thermogenesis by a Culinary Dose of Red Pepper During 24-Hour Negative Energy Balance.",
+     "journal": "Nutr Rev",
+     "date": "2026 Jun 1",
+     "isNew": false
+    },
+    {
+     "id": "38193357",
+     "title": "Effects of intermittent dieting with break periods on body composition and metabolic adaptation: a systematic review and meta-analysis.",
+     "journal": "Nutr Rev",
+     "date": "2025 Jan 1",
+     "isNew": false
+    },
+    {
+     "id": "33762040",
+     "title": "Does adaptive thermogenesis occur after weight loss in adults? A systematic review.",
+     "journal": "Br J Nutr",
+     "date": "2022 Feb 14",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/lowcarb": {
+   "label": "低糖質・低脂質",
+   "list": [
+    {
+     "id": "42043636",
+     "title": "Effects of Low-Fat Diet Combined with Different Exercise Interventions on Weight Loss Maintenance in Adults: A Network Meta-Analysis.",
+     "journal": "Endocrine",
+     "date": "2026 Apr 27",
+     "isNew": false
+    },
+    {
+     "id": "39255914",
+     "title": "Comparison of weight loss effects among overweight/obese adults: A network meta-analysis of mediterranean, low carbohydrate, and low-fat diets.",
+     "journal": "Clin Nutr ESPEN",
+     "date": "2024 Dec",
+     "isNew": false
+    },
+    {
+     "id": "36244957",
+     "title": "Differences in weight loss outcomes for males and females on a low-carbohydrate diet: A systematic review.",
+     "journal": "Obes Res Clin Pract",
+     "date": "2022 Nov-Dec",
+     "isNew": false
+    },
+    {
+     "id": "35373905",
+     "title": "Effectiveness of low-carbohydrate diets for long-term weight loss in obese individuals: A meta-analysis of randomized controlled trials.",
+     "journal": "Diabetes Obes Metab",
+     "date": "2022 Aug",
+     "isNew": false
+    },
+    {
+     "id": "33283417",
+     "title": "Exploring the highs and lows of very low carbohydrate high fat diets on weight loss and diabetes- and cardiovascular disease-related risk markers: A systematic review.",
+     "journal": "Nutr Diet",
+     "date": "2021 Feb",
+     "isNew": false
+    },
+    {
+     "id": "33317019",
+     "title": "The Effect of Low-Fat and Low-Carbohydrate Diets on Weight Loss and Lipid Levels: A Systematic Review and Meta-Analysis.",
+     "journal": "Nutrients",
+     "date": "2020 Dec 9",
+     "isNew": false
+    },
+    {
+     "id": "26545649",
+     "title": "[EFFECT OF LOW CARBOHYDRATE DIETS ON WEIGHT LOSS AND GLYCOSILATED HEMOGLOBIN IN PEOPLE WITH TYPE 2 DIABETES: SYSTEMATIC REVIEW].",
+     "journal": "Nutr Hosp",
+     "date": "2015 Nov 1",
+     "isNew": false
+    },
+    {
+     "id": "23651522",
+     "title": "Very-low-carbohydrate ketogenic diet v. low-fat diet for long-term weight loss: a meta-analysis of randomised controlled trials.",
+     "journal": "Br J Nutr",
+     "date": "2013 Oct",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/t2d": {
+   "label": "2型糖尿病の食事・運動",
+   "list": [
+    {
+     "id": "41456116",
+     "title": "The Role of Diet and Physical Activity in Gut Microbiota Modulation in Type 2 Diabetes Management: A Systematic Review of Clinical Trials.",
+     "journal": "Nutr Rev",
+     "date": "2026 Dec 1",
+     "isNew": false
+    },
+    {
+     "id": "42973264",
+     "title": "Effect of Exercise Interventions on Sarcopenia-Related Outcomes in Older Adults With Type 2 Diabetes: A Systematic Review and Meta-Analysis.",
+     "journal": "Geriatr Gerontol Int",
+     "date": "2026 Nov",
+     "isNew": false
+    },
+    {
+     "id": "42908643",
+     "title": "Comparative effects of different exercise modalities and doses on lipid metabolism in patients with type 2 diabetes mellitus: a systematic review with Bayesian dose-response network meta-analysis.",
+     "journal": "Front Endocrinol (Lausanne)",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42628655",
+     "title": "Optimal dose and exercise modality to improve HbA1c in older adults with type 2 diabetes mellitus: a systematic review with pairwise, network, and dose-response meta-analyses.",
+     "journal": "Diabetes Res Clin Pract",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42425327",
+     "title": "Exercise training for executive function in type 2 diabetes: A systematic review and practice implications.",
+     "journal": "Diabetes Res Clin Pract",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42712444",
+     "title": "Exercise modalities for adults with type 2 diabetes mellitus and obesity: comparative effects on visceral fat, metabolism, and inflammatory markers from a network meta-analysis.",
+     "journal": "Front Immunol",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42989252",
+     "title": "Optimal time window of postprandial exercise in middle-aged and older adults with type 2 diabetes mellitus: a systematic review and meta-analysis.",
+     "journal": "BMC Endocr Disord",
+     "date": "2026 Aug 7",
+     "isNew": false
+    },
+    {
+     "id": "42341882",
+     "title": "Effects of different exercise modalities and doses on glycated hemoglobin in patients with type 2 diabetes mellitus and overweight or obesity: a systematic review and Bayesian multilevel network meta-analysis.",
+     "journal": "Diabetes Res Clin Pract",
+     "date": "2026 Aug",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/htn": {
+   "label": "高血圧の食事・運動",
+   "list": [
+    {
+     "id": "42887271",
+     "title": "Optimal exercise modalities and doses for blood pressure management in adults with prehypertension and hypertension: A systematic review and Bayesian network meta-analysis.",
+     "journal": "Maturitas",
+     "date": "2026 Nov",
+     "isNew": false
+    },
+    {
+     "id": "42492868",
+     "title": "Effectiveness of the DASH diet versus alternative dietary interventions for hypertension management: A systematic review and meta-analysis.",
+     "journal": "Curr Probl Cardiol",
+     "date": "2026 Nov",
+     "isNew": false
+    },
+    {
+     "id": "42554266",
+     "title": "Effects of exercise on aerobic capacity in people with prehypertension or hypertension: a systematic review and meta-analysis of randomized controlled trials.",
+     "journal": "J Hypertens",
+     "date": "2026 Oct 1",
+     "isNew": false
+    },
+    {
+     "id": "42757615",
+     "title": "Comparative Efficacy of Aldosterone-Related Sodium-Retention Pathway Therapies for Resistant Hypertension: A Drug-Level Network Meta-Analysis of Randomized Controlled Trials.",
+     "journal": "J Clin Hypertens (Greenwich)",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42120187",
+     "title": "Effects of different exercise training modalities on 24-hour ambulatory blood pressure in adults with hypertension: a network meta-analysis of randomised controlled trials.",
+     "journal": "Br J Sports Med",
+     "date": "2026 Jul 6",
+     "isNew": false
+    },
+    {
+     "id": "41832125",
+     "title": "Exercise testing in chronic thromboembolic pulmonary hypertension and chronic thromboembolic pulmonary disease without pulmonary hypertension: a comprehensive systematic review and meta-analysis.",
+     "journal": "Eur J Intern Med",
+     "date": "2026 Jul",
+     "isNew": false
+    },
+    {
+     "id": "42132182",
+     "title": "Optimal Exercise Modalities and Dosages for Blood Pressure Reduction in Adults With Prehypertension and Established Hypertension: A Network Meta-Analysis and Dose-Response Relationship Study.",
+     "journal": "J Am Heart Assoc",
+     "date": "2026 May 19",
+     "isNew": false
+    },
+    {
+     "id": "42465835",
+     "title": "Effectiveness of combined exercise training for hypertension management: a systematic review and meta-analysis of randomized controlled trials.",
+     "journal": "Pan Afr Med J",
+     "date": "2026",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/pcos": {
+   "label": "PCOSの食事・運動",
+   "list": [
+    {
+     "id": "42679860",
+     "title": "The Effect of Exercise on Reproductive and Metabolic Outcomes in Women With Polycystic Ovary Syndrome: A Systematic Review and Meta-Analysis.",
+     "journal": "J Obstet Gynaecol Res",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42542806",
+     "title": "Effects of exercise on reproductive endocrine hormones in adult patients with polycystic ovary syndrome: a systematic review and three-level meta-analysis.",
+     "journal": "PeerJ",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42050523",
+     "title": "Ranking exercise interventions by their effectiveness in the management of polycystic ovary syndrome: a systematic review and network meta-analysis.",
+     "journal": "Reprod Biol Endocrinol",
+     "date": "2026 Apr 29",
+     "isNew": false
+    },
+    {
+     "id": "42052038",
+     "title": "Exercise-based interventions for depression in women with polycystic ovary syndrome: a systematic review and meta-analysis.",
+     "journal": "Front Public Health",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41668109",
+     "title": "Comparative cardiometabolic effects of high, moderate, and low intensity exercise in polycystic ovary syndrome: a systematic review and network meta-analysis of randomized controlled trials.",
+     "journal": "BMC Womens Health",
+     "date": "2026 Feb 10",
+     "isNew": false
+    },
+    {
+     "id": "41249157",
+     "title": "Effects of the very low-carbohydrate ketogenic diet in women with polycystic ovary syndrome: a systematic review with meta-analysis of clinical trials.",
+     "journal": "Br J Nutr",
+     "date": "2026 Jan 28",
+     "isNew": false
+    },
+    {
+     "id": "41484603",
+     "title": "Comparative efficacy of exercise modes on cardiometabolic health in women with polycystic ovary syndrome: a systematic review with pairwise and network meta-analyses.",
+     "journal": "BMC Womens Health",
+     "date": "2026 Jan 3",
+     "isNew": false
+    },
+    {
+     "id": "41483483",
+     "title": "The effects of ketogenic diet on polycystic ovary syndrome: A systematic review and meta-analysis.",
+     "journal": "Clin Nutr",
+     "date": "2026 Jan",
+     "isNew": false
+    }
+   ]
+  },
+  "trainer/bone": {
+   "label": "骨粗鬆症の運動・栄養",
+   "list": [
+    {
+     "id": "42607637",
+     "title": "Effects of exercise on balance function in people with osteoporosis: A systematic review and meta-analysis of randomized controlled trials.",
+     "journal": "Public Health",
+     "date": "2026 Oct",
+     "isNew": false
+    },
+    {
+     "id": "42318219",
+     "title": "A network meta-analysis of the effects of different aerobic exercise prescriptions on bone density in osteoporosis patients.",
+     "journal": "Front Endocrinol (Lausanne)",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41718839",
+     "title": "Exercise improves quality of life, mental health and pain in people living with osteoporosis: a systematic review and meta-analysis.",
+     "journal": "Osteoporos Int",
+     "date": "2026 Jun",
+     "isNew": false
+    },
+    {
+     "id": "41940382",
+     "title": "Effects of exercise interventions on health-related quality of life in older adults with osteoporosis: a systematic review and meta-analysis.",
+     "journal": "PeerJ",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "40260904",
+     "title": "A Systematic Review and Meta-Analysis to Examine the Effectiveness of Exercise Training in People With Osteoporosis or Osteopenia Compared to Other Rehabilitation Interventions on Fear of Falling and the Number of Falls.",
+     "journal": "J Geriatr Phys Ther",
+     "date": "2026 Jan-Mar 01",
+     "isNew": false
+    },
+    {
+     "id": "40494032",
+     "title": "Plant-based diet and risk of osteoporosis: A systematic review and meta-analysis.",
+     "journal": "Clin Nutr",
+     "date": "2025 Jul",
+     "isNew": false
+    },
+    {
+     "id": "39902318",
+     "title": "Effect of exercise intervention on health-related quality of life in middle-aged and older people with osteoporosis: a systematic review and meta-analysis.",
+     "journal": "PeerJ",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "39578911",
+     "title": "Efficacy of traditional Chinese exercise on postmenopausal osteoporosis: a systematic review and meta-analysis.",
+     "journal": "J Orthop Surg Res",
+     "date": "2024 Nov 22",
+     "isNew": false
+    }
+   ]
+  }
+ }
+}
