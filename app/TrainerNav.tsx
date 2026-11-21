@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ClientSaves from "./ClientSaves";
 
 // トレーナー専用ページ共通の、上のメニュー（どのページからでも、ほかのページへ行ける）
 export const TRAINER_LINKS = [
@@ -16,6 +17,7 @@ export const TRAINER_LINKS = [
 export default function TrainerNav() {
   const path = usePathname() || "";
   return (
+    <>
     <nav className="trnav noprint" aria-label="トレーナー用メニュー">
       {TRAINER_LINKS.map((l) => {
         const on = l.href === "/trainer" ? path === "/trainer" : path.startsWith(l.href);
@@ -27,5 +29,7 @@ export default function TrainerNav() {
         );
       })}
     </nav>
+    <ClientSaves />
+    </>
   );
 }
