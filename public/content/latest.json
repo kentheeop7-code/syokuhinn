@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-21T07:25:10.989Z",
+ "fetchedAt": "2026-11-21T07:28:35.725Z",
  "fetchedDate": "2026年11月21日",
  "source": "PubMed（米国国立医学図書館）",
  "topics": {
@@ -975,6 +975,222 @@
      "title": "Ultra-processed foods and risk of all-cause mortality: an updated systematic review and dose-response meta-analysis of prospective cohort studies.",
      "journal": "Syst Rev",
      "date": "2025 Mar 3",
+     "isNew": false
+    }
+   ]
+  },
+  "women/me": {
+   "label": "更年期と食事・体重",
+   "list": [
+    {
+     "id": "40694785",
+     "title": "Menopause and movement: exercise for better sleep and psychological well-being-a systematic review.",
+     "journal": "Menopause",
+     "date": "2025 Nov 1",
+     "isNew": false
+    },
+    {
+     "id": "36696648",
+     "title": "An umbrella systematic review of the effect of physical exercise on mental health of women in menopause.",
+     "journal": "Menopause",
+     "date": "2023 Feb 1",
+     "isNew": false
+    },
+    {
+     "id": "34108092",
+     "title": "The effect of exercise training on blood pressure in menopause and postmenopausal women: A systematic review of randomized controlled trials.",
+     "journal": "Maturitas",
+     "date": "2021 Jul",
+     "isNew": false
+    },
+    {
+     "id": "24971172",
+     "title": "Lifestyle interventions targeting body weight changes during the menopause transition: a systematic review.",
+     "journal": "J Obes",
+     "date": "2014",
+     "isNew": false
+    }
+   ]
+  },
+  "women/pc": {
+   "label": "PCOSと生活習慣",
+   "list": [
+    {
+     "id": "42679860",
+     "title": "The Effect of Exercise on Reproductive and Metabolic Outcomes in Women With Polycystic Ovary Syndrome: A Systematic Review and Meta-Analysis.",
+     "journal": "J Obstet Gynaecol Res",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "42542806",
+     "title": "Effects of exercise on reproductive endocrine hormones in adult patients with polycystic ovary syndrome: a systematic review and three-level meta-analysis.",
+     "journal": "PeerJ",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "42050523",
+     "title": "Ranking exercise interventions by their effectiveness in the management of polycystic ovary syndrome: a systematic review and network meta-analysis.",
+     "journal": "Reprod Biol Endocrinol",
+     "date": "2026 Apr 29",
+     "isNew": false
+    },
+    {
+     "id": "42052038",
+     "title": "Exercise-based interventions for depression in women with polycystic ovary syndrome: a systematic review and meta-analysis.",
+     "journal": "Front Public Health",
+     "date": "2026",
+     "isNew": false
+    },
+    {
+     "id": "41668109",
+     "title": "Comparative cardiometabolic effects of high, moderate, and low intensity exercise in polycystic ovary syndrome: a systematic review and network meta-analysis of randomized controlled trials.",
+     "journal": "BMC Womens Health",
+     "date": "2026 Feb 10",
+     "isNew": false
+    },
+    {
+     "id": "41249157",
+     "title": "Effects of the very low-carbohydrate ketogenic diet in women with polycystic ovary syndrome: a systematic review with meta-analysis of clinical trials.",
+     "journal": "Br J Nutr",
+     "date": "2026 Jan 28",
+     "isNew": false
+    },
+    {
+     "id": "41484603",
+     "title": "Comparative efficacy of exercise modes on cardiometabolic health in women with polycystic ovary syndrome: a systematic review with pairwise and network meta-analyses.",
+     "journal": "BMC Womens Health",
+     "date": "2026 Jan 3",
+     "isNew": false
+    },
+    {
+     "id": "41483483",
+     "title": "The effects of ketogenic diet on polycystic ovary syndrome: A systematic review and meta-analysis.",
+     "journal": "Clin Nutr",
+     "date": "2026 Jan",
+     "isNew": false
+    }
+   ]
+  },
+  "women/th": {
+   "label": "甲状腺と体重",
+   "list": [
+    {
+     "id": "41966455",
+     "title": "Thyroid Function and Non-alcoholic Fatty Liver Disease in Children and Adolescent With Obesity: A Systematic Review and Meta-Analysis.",
+     "journal": "Endocr Pract",
+     "date": "2026 Sep",
+     "isNew": false
+    },
+    {
+     "id": "39460502",
+     "title": "Associations Between Obesity and Risk of Thyroid Cancer: A Meta-Analysis of Cohort Studies.",
+     "journal": "Nutr Cancer",
+     "date": "2025",
+     "isNew": false
+    },
+    {
+     "id": "38673931",
+     "title": "Assessment of Thyroid Carcinogenic Risk and Safety Profile of GLP1-RA Semaglutide (Ozempic) Therapy for Diabetes Mellitus and Obesity: A Systematic Literature Review.",
+     "journal": "Int J Mol Sci",
+     "date": "2024 Apr 15",
+     "isNew": false
+    },
+    {
+     "id": "35532055",
+     "title": "The Effects of Zinc and Selenium Supplementation on Body Composition and Thyroid Function in Individuals with Overweight or Obesity: A Systematic Review.",
+     "journal": "J Diet Suppl",
+     "date": "2023",
+     "isNew": false
+    },
+    {
+     "id": "33171329",
+     "title": "Obesity and the prevention of thyroid cancer: Impact of body mass index and weight change on developing thyroid cancer - Pooled results of 24 million cohorts.",
+     "journal": "Oral Oncol",
+     "date": "2021 Jan",
+     "isNew": false
+    },
+    {
+     "id": "31681268",
+     "title": "The Impact of Obesity on Thyroid Autoimmunity and Dysfunction: A Systematic Review and Meta-Analysis.",
+     "journal": "Front Immunol",
+     "date": "2019",
+     "isNew": false
+    },
+    {
+     "id": "31133216",
+     "title": "The impact of obesity and insulin resistance on thyroid cancer: A systematic review.",
+     "journal": "Maturitas",
+     "date": "2019 Jul",
+     "isNew": false
+    },
+    {
+     "id": "29631475",
+     "title": "Weight Changes After Thyroid Surgery for Patients with Benign Thyroid Nodules and Thyroid Cancer: Population-Based Study and Systematic Review and Meta-Analysis.",
+     "journal": "Thyroid",
+     "date": "2018 May",
+     "isNew": false
+    }
+   ]
+  },
+  "women/fe": {
+   "label": "鉄不足",
+   "list": [
+    {
+     "id": "39536912",
+     "title": "Iron deficiency, supplementation, and sports performance in female athletes: A systematic review.",
+     "journal": "J Sport Health Sci",
+     "date": "2025 Dec",
+     "isNew": false
+    },
+    {
+     "id": "39670550",
+     "title": "Treatment for women with postpartum iron deficiency anaemia.",
+     "journal": "Cochrane Database Syst Rev",
+     "date": "2024 Dec 13",
+     "isNew": false
+    },
+    {
+     "id": "39324337",
+     "title": "Association between overweight/obesity and iron deficiency anaemia among women of reproductive age: a systematic review.",
+     "journal": "Public Health Nutr",
+     "date": "2024 Sep 26",
+     "isNew": false
+    },
+    {
+     "id": "39289759",
+     "title": "Uncovering the hidden health burden: a systematic review and meta-analysis of iron deficiency anemia among adolescents, and pregnant women in Pakistan.",
+     "journal": "J Health Popul Nutr",
+     "date": "2024 Sep 17",
+     "isNew": false
+    },
+    {
+     "id": "38778245",
+     "title": "Iron deficiency anemia status in Iranian pregnant women and children: an umbrella systematic review and meta-analysis.",
+     "journal": "BMC Pregnancy Childbirth",
+     "date": "2024 May 22",
+     "isNew": false
+    },
+    {
+     "id": "35893877",
+     "title": "Effectiveness of Dietary Interventions in Prevention and Treatment of Iron-Deficiency Anemia in Pregnant Women: A Systematic Review of Randomized Controlled Trials.",
+     "journal": "Nutrients",
+     "date": "2022 Jul 23",
+     "isNew": false
+    },
+    {
+     "id": "35807904",
+     "title": "Effectiveness of Dietary Interventions to Treat Iron-Deficiency Anemia in Women: A Systematic Review of Randomized Controlled Trials.",
+     "journal": "Nutrients",
+     "date": "2022 Jun 30",
+     "isNew": false
+    },
+    {
+     "id": "35194530",
+     "title": "Prevalence of iron deficiency anemia in Brazilian women of childbearing age: a systematic review with meta-analysis.",
+     "journal": "PeerJ",
+     "date": "2022",
      "isNew": false
     }
    ]

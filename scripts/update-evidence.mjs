@@ -25,6 +25,10 @@ const TOPICS = [
   ["add", "em", "乳化剤・増粘剤", '(emulsifier*[ti] OR "food additives"[ti] OR thickener*[ti])'],
   ["add", "sw", "人工甘味料", '"non-nutritive sweeteners"[ti]'],
   ["add", "up", "超加工食品", '("ultra-processed"[ti] AND (health[ti] OR mortality[ti] OR obesity[ti]))'],
+  ["women", "me", "更年期と食事・体重", '(menopause[ti] AND (diet[ti] OR "body weight"[ti] OR exercise[ti]))'],
+  ["women", "pc", "PCOSと生活習慣", '("polycystic ovary syndrome"[ti] AND (lifestyle[ti] OR diet[ti] OR exercise[ti]))'],
+  ["women", "th", "甲状腺と体重", '((hypothyroidism[ti] OR thyroid[ti]) AND ("body weight"[ti] OR obesity[ti] OR weight[ti]))'],
+  ["women", "fe", "鉄不足", '("iron deficiency"[ti] AND (women[ti] OR menstruating[ti] OR female[ti]))'],
   // トレーナー用
   ["trainer", "rt", "筋トレ・筋肥大", '("resistance training"[ti] AND (hypertrophy[ti] OR muscle[ti]))'],
   ["trainer", "prot", "たんぱく質", '(protein[ti] AND (muscle[ti] OR "resistance training"[ti]))'],

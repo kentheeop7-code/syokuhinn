@@ -4,16 +4,25 @@ import { useEffect, useState } from "react";
 import { TROUBLES } from "../lib/troubles";
 import { CONDS, TOPICS } from "../lib/trainerData";
 import { searchPapers, type Paper } from "../lib/pubmed";
+import { loadSiteLatest, type SitePaper } from "../lib/content";
 
 const box: React.CSSProperties = { border: "1px solid #ddd", borderRadius: 12, padding: 12, margin: "10px 0", background: "#fff" };
 const inp: React.CSSProperties = { font: "inherit", padding: "8px 10px", border: "1px solid #bbb", borderRadius: 8, width: "100%", boxSizing: "border-box" };
 const lvColor = { 強い: "#2e7d32", 中くらい: "#b26a00", 弱い: "#c62828" } as const;
 
 /* ---- 最新の論文：PubMedから、その場で取得（新しい順）---- */
-export function LivePapers({ term, n = 5, auto = false }: { term: string; n?: number; auto?: boolean }) {
+export function LivePapers({ term, n = 5, auto = false, siteKey }: { term: string; n?: number; auto?: boolean; siteKey?: string }) {
   const [state, setState] = useState<"idle" | "load" | "ok" | "none" | "err">("idle");
   const [list, setList] = useState<Paper[]>([]);
   const [at, setAt] = useState("");
+  const [site, setSite] = useState<{ date: string; list: SitePaper[] } | null>(null);
+  useEffect(() => {
+    if (!siteKey) return;
+    loadSiteLatest().then((d) => {
+      const l = d?.topics[siteKey]?.list;
+      if (d && l?.length) setSite({ date: d.fetchedDate, list: l });
+    });
+  }, [siteKey]);
   const go = async () => {
     setState("load");
     try {
@@ -34,6 +43,20 @@ export function LivePapers({ term, n = 5, auto = false }: { term: string; n?: nu
       <button type="button" className="trchip on" onClick={go} disabled={state === "load"}>
         {state === "load" ? "取得中…" : state === "idle" ? "🔄 最新の論文を取得（PubMed）" : "🔄 もう一度、最新を取得"}
       </button>
+      {state !== "ok" && site && (
+        <>
+          <div style={{ fontSize: 12, color: "#2f7d5b", fontWeight: 600, margin: "4px 0" }}>毎週の自動更新：{site.date}（PubMed）</div>
+          <ul style={{ margin: "0 0 0 18px", fontSize: 14 }}>
+            {site.list.slice(0, n).map((p) => (
+              <li key={p.id} style={{ margin: "4px 0" }}>
+                {p.isNew && <span className="newbadge">NEW</span>}
+                <a href={`https://pubmed.ncbi.nlm.nih.gov/${p.id}/`} target="_blank" rel="noreferrer">{p.title}</a>
+                <div style={{ fontSize: 12, color: "#555" }}>{p.journal}・{p.date}</div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
       {state === "none" && <div style={{ fontSize: 13, color: "#555" }}>該当する論文が見つかりませんでした。</div>}
       {state === "err" && <div style={{ fontSize: 13, color: "#c62828" }}>取得できませんでした。通信を確認して、もう一度おためしください。</div>}
       {state === "ok" && (
@@ -197,7 +220,7 @@ export function LatestTab() {
       </div>
       <div style={box}>
         <b>{t.label}</b>
-        <LivePapers key={t.key} term={t.term} n={8} auto />
+        <LivePapers key={t.key} term={t.term} n={8} auto siteKey={`trainer/${t.key}`} />
       </div>
       <div style={{ fontSize: 13, color: "#555" }}>※ 論文の内容は自動では評価していません。指導に使う前に、原文（要旨）の対象者・結論・限界を確認してください。</div>
     </section>
