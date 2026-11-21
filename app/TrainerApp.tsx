@@ -17,6 +17,7 @@ import { Bars, Pie } from "./Charts";
 import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
+import { advise, type Advice } from "../lib/advisor";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
 import { recommend } from "../lib/recommend";
@@ -60,6 +61,10 @@ export default function TrainerApp() {
   const [foodNut, setFoodNut] = useState<NutKey>("p");
   const [shortPlan, setShortPlan] = useState("");
   const [breakers, setBreakers] = useState<string[]>([]);
+  const [bkNotes, setBkNotes] = useState<Record<string, string>>({});
+  const [advice, setAdvice] = useState("");
+  const [situation, setSituation] = useState("");
+  const [asked, setAsked] = useState("");
   const [pfc, setPfc] = useState<{ p: string; f: string; c: string } | null>(null);
   const [actOff, setActOff] = useState<string[]>([]);
   const [link, setLink] = useState("");
@@ -108,6 +113,9 @@ export default function TrainerApp() {
         setFoodAmts(s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {});
         setShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
         setBreakers(Array.isArray(s.breakers) ? s.breakers : []);
+        setBkNotes(s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {});
+        setAdvice(typeof s.advice === "string" ? s.advice : "");
+        setSituation(typeof s.situation === "string" ? s.situation : "");
         setPfc(s.pfc && typeof s.pfc === "object" ? s.pfc : null);
         setActOff(Array.isArray(s.actOff) ? s.actOff : []);
         setNote(s.note ?? "");
@@ -134,9 +142,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation]);
 
   const w = num(now);
   const wt = num(target);
@@ -178,11 +186,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -986,7 +994,49 @@ export default function TrainerApp() {
             <button key={b.id} type="button" aria-pressed={breakers.includes(b.id)} className={breakers.includes(b.id) ? "on" : ""} onClick={() => setBreakers((x) => (x.includes(b.id) ? x.filter((y) => y !== b.id) : [...x, b.id]))}>{b.icon} {b.name.replace(/（.*$/, "")}</button>
           ))}
         </div>
-        {breakers.length > 0 && <BreakerView ids={breakers} evLimit={4} />}
+        {breakers.map((id) => {
+          const b = BREAKERS.find((x) => x.id === id);
+          if (!b) return null;
+          return (
+            <label key={id} className="advl" style={{ marginTop: 8 }}>
+              {b.icon} {b.name.replace(/（.*$/, "")}：このお客様への、具体的な指示（開始日・量・回数・注意など。まとめに載ります）
+              <textarea value={bkNotes[id] ?? ""} rows={3} placeholder="例：来週月曜から2週間。体重は毎朝測り、週平均で見る。" onChange={(e) => setBkNotes((x) => ({ ...x, [id]: e.target.value }))} />
+            </label>
+          );
+        })}
+        <label className="advl" style={{ marginTop: 8 }}>
+          自分で足す打開策（上にない方法：例 ファスティング〇日、チートデイの回数 など）
+          <textarea value={bkNotes._free ?? ""} rows={3} placeholder="ここに書いた内容が、打開策の欄の最後に載ります。" onChange={(e) => setBkNotes((x) => ({ ...x, _free: e.target.value }))} />
+        </label>
+        {breakers.length > 0 && <BreakerView ids={breakers} evLimit={4} notes={bkNotes} />}
+        <p className="balh" style={{ marginTop: 14 }}>お客様の最新の状況を書くと、アドバイスを出します</p>
+        <textarea className="advta" style={{ width: "100%", boxSizing: "border-box", font: "inherit", padding: 10, border: "1px solid #bbb", borderRadius: 10 }} rows={4} value={situation} placeholder="例：2ヶ月体重が減っていない。食事もそこまで減らしていない。最近よく眠れず、歩数も落ちている。" onChange={(e) => setSituation(e.target.value)} />
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "6px 0" }}>
+          <button type="button" className="trchip on" onClick={() => setAsked(situation)}>🧭 アドバイスを出す</button>
+          <button type="button" className="trchip" onClick={() => setBreakers(suggestBreakers({ stall: /停滞|減らない|減って(い)?ない|落ちない|変わらない/.test(situation) || troubles.includes("plateau"), weeksStalled: /ヶ月|か月|カ月|週間/.test(situation) ? 6 : troubles.includes("plateau") ? 4 : 0, gut: /便秘|お腹|腸/.test(situation) || troubles.includes("constipation"), youth: youthNow, cond: conds.length > 0, noReduce: /そこまで(へら|減ら)していない/.test(situation) }))}>状況から、打開策の候補を選ぶ</button>
+        </div>
+        {asked.trim() && (() => {
+          const a: Advice = advise({ text: asked, age: num(age), sex });
+          return (
+            <div className="advcard" style={{ margin: "8px 0" }}>
+              <p style={{ margin: "0 0 4px" }}><b>読み取った状況：</b>{a.matched.join("・") || "（典型的なパターンを、読み取れませんでした）"}</p>
+              {a.causes.length > 0 && (<><b>考えられる原因</b><ul style={{ margin: "2px 0 6px 18px" }}>{a.causes.map((c) => <li key={c.title}>［{c.likelihood}］{c.title}：{c.why}</li>)}</ul></>)}
+              {a.questions.length > 0 && (<><b>確認すること</b><ul style={{ margin: "2px 0 6px 18px" }}>{a.questions.slice(0, 5).map((q) => <li key={q}>{q}</li>)}</ul></>)}
+              {a.actions.length > 0 && (<><b>対策</b><ol style={{ margin: "2px 0 6px 18px" }}>{a.actions.map((x, i) => <li key={i}>［{x.when}］{x.what}</li>)}</ol></>)}
+              {a.flow.length > 0 && (<><b>今後の流れ</b><ol style={{ margin: "2px 0 6px 18px" }}>{a.flow.map((x, i) => <li key={i}>［{x.when}］{x.what}</li>)}</ol></>)}
+              {a.refer.length > 0 && <p style={{ margin: "4px 0", color: "#8a4b00" }}>⚠ {a.refer.join(" ／ ")}</p>}
+              <p style={{ margin: "4px 0", fontSize: 13, color: "#555" }}>根拠：{a.evidence.slice(0, 4).map((e) => e.label).join("／") || "—"}（くわしくは「相談」ページ）</p>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button type="button" className="trchip on" onClick={() => setAdvice((x) => (x ? x + "\n\n" : "") + a.say)}>お客様向けの文を、「詳しいアドバイス」に入れる</button>
+                <button type="button" className="trchip" onClick={() => setAdvice((x) => (x ? x + "\n\n" : "") + a.actions.map((y, i) => (i + 1) + ". " + y.what).join("\n"))}>対策を、「詳しいアドバイス」に入れる</button>
+              </div>
+            </div>
+          );
+        })()}
+        <label className="advl" style={{ marginTop: 8 }}>
+          詳しいアドバイス（お客様に送る文章。自由に書けます）
+          <textarea value={advice} rows={6} placeholder="例：停滞の原因は…／まず1週間、〇〇を試す／うまくいかないときは…" onChange={(e) => setAdvice(e.target.value)} />
+        </label>
       </section>
       <section className="card" id="s3m">
         <p className="balh">食事の方法（5つの提案）：カロリーとPFCバランス</p>

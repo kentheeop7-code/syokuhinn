@@ -134,6 +134,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const phases = energy && gp ? energyPhases({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace }, gp.pts, gp.weeks) : [];
   const sp = getShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
   const bk: string[] = Array.isArray(s.breakers) ? s.breakers : [];
+  const bkNotes: Record<string, string> = s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {};
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
   const muscleKg = num(s.muscle);
@@ -1148,7 +1149,19 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         {bk.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={bk} evLimit={compact ? 2 : 3} />
+            <BreakerView ids={bk} evLimit={compact ? 2 : 3} notes={bkNotes} />
+          </section>
+        )}
+        {bk.length === 0 && bkNotes._free?.trim() && (
+          <section>
+            <h2>{H("停滞期を抜ける 打開策")}</h2>
+            <p className="fuadv">{bkNotes._free}</p>
+          </section>
+        )}
+        {typeof s.advice === "string" && s.advice.trim() && (
+          <section>
+            <h2>{H("トレーナーからの、詳しいアドバイス")}</h2>
+            <p className="fuadv">{s.advice}</p>
           </section>
         )}
         {sp && (
