@@ -3,7 +3,7 @@ import { getBreaker } from "../lib/breakers";
 // 停滞期・腸内環境・食べ方の「打開策の候補」を、お客様向けに、並べて見せる（レポート・PDF・定期フォロー用）。
 const KIND_COLOR = { 停滞期: "#e0694f", 腸内環境: "#2f9e75", 食べ方: "#3b82c4", 生活: "#7a5bd0" } as const;
 
-export default function BreakerView({ ids, evLimit = 3 }: { ids: string[]; evLimit?: number }) {
+export default function BreakerView({ ids, evLimit = 3, notes }: { ids: string[]; evLimit?: number; notes?: Record<string, string> }) {
   const list = ids.map((i) => getBreaker(i)).filter((x): x is NonNullable<ReturnType<typeof getBreaker>> => !!x);
   if (!list.length) return null;
   return (
@@ -20,6 +20,7 @@ export default function BreakerView({ ids, evLimit = 3 }: { ids: string[]; evLim
           <ol>{b.steps.map((s) => <li key={s}>{s}</li>)}</ol>
           <p className="bkx"><b>期待できること（正直に）：</b>{b.effect}</p>
           <p className="bkw">⚠ {b.caution.join(" ／ ")}</p>
+          {notes?.[b.id]?.trim() && <p className="bkmine"><b>あなたへの具体的な進め方：</b>{notes[b.id]}</p>}
           <ul className="bke">
             {b.evidence.slice(0, evLimit).map((e) => (
               <li key={e.pmid}>{e.label}：{e.note}</li>
@@ -27,6 +28,7 @@ export default function BreakerView({ ids, evLimit = 3 }: { ids: string[]; evLim
           </ul>
         </div>
       ))}
+      {notes?._free?.trim() && <p className="bkmine"><b>そのほかの打開策：</b>{notes._free}</p>}
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import ShortPlanView from "./ShortPlanView";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
+import { advise, type Advice } from "../lib/advisor";
 import { expertAssess } from "../lib/expert";
 import { computeGoal } from "../lib/goal";
 import { goalOf } from "../lib/meals";
@@ -39,6 +40,9 @@ type S = {
   pfcMethod: string;
   shortPlan: string;
   breakers: string[];
+  bkNotes: Record<string, string>;
+  situation: string;
+  advice: string;
   foodAmt: string;
   fastStart: string;
   conds: boolean;
@@ -102,6 +106,9 @@ const DEFAULT: S = {
   pfcMethod: "balance",
   shortPlan: "",
   breakers: [],
+  bkNotes: {},
+  situation: "",
+  advice: "",
   foodAmt: "10",
   fastStart: "12",
   conds: false,
@@ -150,6 +157,7 @@ export default function FollowUpApp() {
   }, [s, ready]);
 
   const up = (p: Partial<S>) => setS((x) => ({ ...x, ...p }));
+  const [asked, setAsked] = useState("");
   const loadFromMemo = () => {
     try {
       const t = JSON.parse(localStorage.getItem("lg-trainer") || "null");
@@ -277,6 +285,7 @@ export default function FollowUpApp() {
     kcal && mac ? `これからの目安：約${r10(kcal).toLocaleString()}kcal（P${mac.p}g・F${mac.f}g・C${mac.c}g）${delta ? `　前回より ${delta > 0 ? "+" : ""}${r10(delta)}kcal` : ""}` : "",
     s.homework.filter(Boolean).length ? `\n今週の宿題：\n${s.homework.filter(Boolean).map((h, i) => `${i + 1}. ${h}`).join("\n")}` : "",
     s.nextDate ? `\n次回：${s.nextDate}` : "",
+    s.advice.trim() ? `\n【くわしいアドバイス】\n${s.advice.trim()}` : "",
     s.comment ? `\nトレーナーから：${s.comment}` : "",
     "\n※ 目安です。持病・服薬のある方は、主治医にご確認ください。",
   ]
@@ -392,6 +401,50 @@ export default function FollowUpApp() {
             <button key={b.id} type="button" aria-pressed={s.breakers.includes(b.id)} className={s.breakers.includes(b.id) ? "trchip on" : "trchip"} onClick={() => up({ breakers: s.breakers.includes(b.id) ? s.breakers.filter((x) => x !== b.id) : [...s.breakers, b.id] })}>{b.icon} {b.name.replace(/（.*$/, "")}</button>
           ))}
         </div>
+        {s.breakers.map((id) => {
+          const b = BREAKERS.find((x) => x.id === id);
+          if (!b) return null;
+          return (
+            <label key={id} style={{ ...lab, marginTop: 8 }}>
+              {b.icon} {b.name.replace(/（.*$/, "")}：このお客様への、具体的な指示（開始日・量・回数・注意など。レポートに載ります）
+              <textarea style={{ ...inp, minHeight: 64, resize: "vertical" }} value={s.bkNotes[id] ?? ""} placeholder="例：来週月曜から2週間。体重は毎朝測り、週平均で見る。" onChange={(e) => up({ bkNotes: { ...s.bkNotes, [id]: e.target.value } })} />
+            </label>
+          );
+        })}
+        <label style={{ ...lab, marginTop: 8 }}>
+          自分で足す打開策（上にない方法：例 ファスティング〇日、チートデイの回数 など）
+          <textarea style={{ ...inp, minHeight: 64, resize: "vertical" }} value={s.bkNotes["_free"] ?? ""} placeholder="ここに書いた内容が、打開策の欄の最後に載ります。" onChange={(e) => up({ bkNotes: { ...s.bkNotes, _free: e.target.value } })} />
+        </label>
+        <p style={{ ...lab, marginTop: 12 }}>停滞期・お客様の最新の状況を書くと、アドバイスを出します</p>
+        <textarea style={{ ...inp, minHeight: 90, resize: "vertical" }} value={s.situation} placeholder="例：2ヶ月体重が減っていない。食事もそこまで減らしていない。最近よく眠れず、歩数も落ちている。" onChange={(e) => up({ situation: e.target.value })} />
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 }}>
+          <button type="button" className="trchip on" onClick={() => setAsked(s.situation)}>🧭 アドバイスを出す</button>
+          <button type="button" className="trchip" onClick={() => { const bits = [res?.judge ? "判定：" + res.judge.label : "", res?.slopeText ?? "", weeks >= 1 ? weeks + "週の記録" : "", s.sleepLow ? "睡眠が少ない" : "", s.noLog ? "食事を記録していない" : "", s.status.length ? "状態：" + s.status.join("・") : ""].filter(Boolean).join("。"); up({ situation: s.situation ? s.situation + "\n" + bits : bits }); }}>この画面の記録から、状況を入れる</button>
+        </div>
+        {asked.trim() && (() => {
+          const a: Advice = advise({ text: asked, age, sex: s.sex });
+          return (
+            <div style={{ ...card, marginTop: 8 }}>
+              <p style={{ margin: "0 0 4px" }}><b>読み取った状況：</b>{a.matched.join("・") || "（典型的なパターンを、読み取れませんでした）"}</p>
+              {a.causes.length > 0 && (<><b>考えられる原因</b><ul style={{ margin: "2px 0 6px 18px" }}>{a.causes.map((c) => <li key={c.title}>［{c.likelihood}］{c.title}：{c.why}</li>)}</ul></>)}
+              {a.questions.length > 0 && (<><b>確認すること</b><ul style={{ margin: "2px 0 6px 18px" }}>{a.questions.slice(0, 5).map((q) => <li key={q}>{q}</li>)}</ul></>)}
+              {a.actions.length > 0 && (<><b>対策</b><ol style={{ margin: "2px 0 6px 18px" }}>{a.actions.map((x, i) => <li key={i}>［{x.when}］{x.what}</li>)}</ol></>)}
+              {a.flow.length > 0 && (<><b>今後の流れ</b><ol style={{ margin: "2px 0 6px 18px" }}>{a.flow.map((x, i) => <li key={i}>［{x.when}］{x.what}</li>)}</ol></>)}
+              {a.refer.length > 0 && <p style={{ margin: "4px 0", color: "#8a4b00" }}>⚠ {a.refer.join(" ／ ")}</p>}
+              <p style={{ margin: "4px 0", fontSize: 13, color: "#555" }}>根拠：{a.evidence.slice(0, 4).map((e) => e.label).join("／") || "—"}（くわしくは「相談」ページ）</p>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button type="button" className="trchip on" onClick={() => up({ advice: (s.advice ? s.advice + "\n\n" : "") + a.say })}>お客様向けの文を、「詳しいアドバイス」に入れる</button>
+                <button type="button" className="trchip" onClick={() => up({ advice: (s.advice ? s.advice + "\n\n" : "") + a.actions.map((x, i) => (i + 1) + ". " + x.what).join("\n") })}>対策を、「詳しいアドバイス」に入れる</button>
+                <button type="button" className="trchip" onClick={() => up({ meas: [...s.meas, ...a.causes.slice(0, 3).map((c, i) => ({ issue: c.title, cause: c.why, action: a.actions[i]?.what ?? "", due: "次回まで", who: "本人＋トレーナー" }))] })}>原因を、対策表に入れる</button>
+                <button type="button" className="trchip" onClick={() => up({ breakers: suggestBreakers({ stall: /停滞|減らない|減って(い)?ない|落ちない|変わらない/.test(asked), weeksStalled: /ヶ月|か月|カ月|週間/.test(asked) ? 6 : 0, gut: /便秘|お腹|腸/.test(asked), youth: age > 0 && age < 18, cond: s.conds, noReduce: /そこまで(へら|減ら)していない/.test(asked) }) })}>状況から、打開策の候補を選ぶ</button>
+              </div>
+            </div>
+          );
+        })()}
+        <label style={{ ...lab, marginTop: 12 }}>
+          詳しいアドバイス（お客様に送る文章。自由に書けます）
+          <textarea style={{ ...inp, minHeight: 130, resize: "vertical" }} value={s.advice} placeholder="例：停滞の原因は…／まず1週間、〇〇を試す／うまくいかないときは…" onChange={(e) => up({ advice: e.target.value })} />
+        </label>
         <p style={{ ...lab, marginTop: 12 }}>短期プログラム（任意：ファスティング・腸活など）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button type="button" className={s.shortPlan === "" ? "trchip on" : "trchip"} onClick={() => up({ shortPlan: "" })}>なし</button>
@@ -511,7 +564,19 @@ export default function FollowUpApp() {
         {s.breakers.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={s.breakers} evLimit={3} />
+            <BreakerView ids={s.breakers} evLimit={3} notes={s.bkNotes} />
+          </section>
+        )}
+        {s.breakers.length === 0 && s.bkNotes._free?.trim() && (
+          <section>
+            <h2>{H("停滞期を抜ける 打開策")}</h2>
+            <p className="fuadv">{s.bkNotes._free}</p>
+          </section>
+        )}
+        {s.advice.trim() && (
+          <section>
+            <h2>{H("トレーナーからの、詳しいアドバイス")}</h2>
+            <p className="fuadv">{s.advice}</p>
           </section>
         )}
 
