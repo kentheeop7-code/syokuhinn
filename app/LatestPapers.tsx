@@ -12,6 +12,12 @@ export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; st
   const [data, setData] = useState<Record<string, { at: string; ts?: number; list: Paper[] }>>({});
   const [busy, setBusy] = useState("");
   const [err, setErr] = useState("");
+  const [site, setSite] = useState<SiteLatest | null>(null);
+
+  // 毎週、自動で更新される、サイト共通の一覧（通信できないときも、これを表示する）
+  useEffect(() => {
+    loadSiteLatest().then(setSite);
+  }, []);
 
   // 開いたときに、1日以上たった（または、まだ取得していない）テーマを、自動で最新にする
   useEffect(() => {
@@ -69,6 +75,24 @@ export default function LatestPapers({ topics, storeKey }: { topics: Topic[]; st
                 {busy === t.key ? "取得中…" : data[t.key] ? "更新する" : "最新を取得"}
               </button>
             </div>
+            {!data[t.key] && site?.topics[`${storeKey}/${t.key}`]?.list.length ? (
+              <>
+                <p className="trat latestsite">毎週の自動更新：{site.fetchedDate}（{site.source}）</p>
+                <ul className="trpapers">
+                  {site.topics[`${storeKey}/${t.key}`].list.slice(0, 5).map((p) => (
+                    <li key={p.id}>
+                      {p.isNew && <span className="newbadge">NEW</span>}
+                      <a href={`https://pubmed.ncbi.nlm.nih.gov/${p.id}/`} target="_blank" rel="noopener noreferrer">
+                        {p.title}
+                      </a>
+                      <small>
+                        {p.journal}・{p.date}
+                      </small>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
             {data[t.key] && (
               <>
                 <p className="trat">取得：{data[t.key].at}</p>
