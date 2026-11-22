@@ -9,6 +9,7 @@ import DietForAnyone from "../DietForAnyone";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import ShortPrograms from "../ShortPrograms";
+import { DietMethods, StallBreakers } from "../CustomerMethods";
 import type { Metadata } from "next";
 import Link from "next/link";
 import AdditiveTools from "./AdditiveTools";
@@ -210,6 +211,12 @@ export default function Additives() {
       </MoreFolds>
       <Fold id="short" title="🗓 短期プログラム（ファスティング・16時間断食・腸活・短期ダイエット）" sub="期間を決めて行う取り組み（根拠つき）">
         <ShortPrograms />
+      </Fold>
+      <Fold id="methods" title="📊 ダイエット方法を、図で比べる（低糖質・16時間断食・ケトジェニックなど）" sub="理想のPFC・注意事項・根拠">
+        <DietMethods />
+      </Fold>
+      <Fold id="stall" title="🧗 停滞期を抜ける方法（リフィード・チートデイなど）" sub="期待できること・注意・根拠">
+        <StallBreakers />
       </Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">

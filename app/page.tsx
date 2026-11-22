@@ -13,6 +13,7 @@ import ShareAll from "./ShareAll";
 import NutrientFoods from "./NutrientFoods";
 import FastingPlanner from "./FastingPlanner";
 import ShortPrograms from "./ShortPrograms";
+import { DietMethods, StallBreakers } from "./CustomerMethods";
 import HomeNav from "./HomeNav";
 import TrendCard from "./TrendCard";
 import MyNutrition from "./MyNutrition";
@@ -2141,6 +2142,8 @@ function HomeInner() {
           <NutrientFoods />
           <FastingPlanner />
           <ShortPrograms />
+          <DietMethods card />
+          <StallBreakers card />
           <TrendCard />
           <ShareAll />
           <Fold key="h-detail" id="h-detail" title="🍽 くわしい分析（栄養バランス・原因）" sub="いつもの1日の食事から、栄養のバランスを見る" cls="wfold">
