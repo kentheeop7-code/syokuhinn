@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { EXAMPLES, advise, type Advice } from "../lib/advisor";
+import PdfButton from "./PdfButton";
 import ShareButtons from "./ShareButtons";
 
 // トレーナーの相談アシスタント：お客様の状態を書く（または、例を押す）と、原因の候補・確認する質問・対策・今後の流れ・他の可能性・根拠が、出る。
@@ -82,7 +83,8 @@ export default function AdvisorApp() {
       </div>
 
       {res && (
-        <div className="advres">
+        <div className="advres" id="advres">
+          <PdfButton target="#advres" title="お客様の状況と、アドバイス" base="lifegym-advice" />
           <section className="advcard">
             <h2>1. 読み取った内容</h2>
             <div className="advtags">{res.matched.map((x) => <span key={x}>{x}</span>)}{res.matched.length === 0 && <span>（典型的なパターンを、読み取れませんでした）</span>}</div>

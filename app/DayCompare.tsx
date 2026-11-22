@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PdfButton from "./PdfButton";
 import { dateLabel, readLog, saveDay, stOfDay, averageIntake, type DayLog } from "../lib/daylog";
 import { goalOf, totals, type St } from "../lib/meals";
 import { EXAMPLES, swapsFor } from "../lib/swaps";
@@ -59,6 +60,7 @@ export default function DayCompare() {
 
   return (
     <section className="card daycmp" id="qm" aria-label="昨日・一昨日の食事と、目標との差">
+      <PdfButton target="#qm" title="昨日・一昨日の食事と、目標との差" base="lifegym-meals" />
       <p className="dch">④ 今の食事を入れる（昨日・一昨日）</p>
       {!target && <p className="dcwarn">先に、上の「① 基本情報」（年齢・身長・体重・目標体重・運動量）を入れると、1日の目標カロリーが決まります。</p>}
       {target && (

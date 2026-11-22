@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import PdfButton from "./PdfButton";
 import { FOODS, CATEGORIES, portionsOf } from "../lib/foods";
 import { METHODS, macrosFor, methodBlocked, type MethodId } from "../lib/methods";
 import { recommend, type Fit } from "../lib/recommend";
@@ -51,8 +52,9 @@ const inp: React.CSSProperties = { font: "inherit", padding: "8px 10px", border:
 export default function GuideApp() {
   const [tab, setTab] = useState<Tab>("client");
   return (
-    <div>
-      <div role="tablist" style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "0 0 10px" }}>
+    <div id="guideroot">
+      <PdfButton target="#guideroot" title="トレーナー資料集" base="lifegym-guide" label="📥 いま開いている資料を、PDFにする" />
+      <div role="tablist" data-pdf-skip style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "0 0 10px" }}>
         {TABS.map((x) => (
           <button key={x.id} role="tab" aria-selected={tab === x.id} onClick={() => setTab(x.id)} className={tab === x.id ? "trchip on" : "trchip"} type="button">
             {x.t}

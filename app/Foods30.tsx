@@ -1,14 +1,14 @@
 import { NUT_BASIS, foodsFor, unitLabel } from "../lib/foodlist";
 
-// たんぱく質10gをとれる食品15種と、脂質が多い食品15種（合わせて30種）。お客様向け資料用。
+// たんぱく質10gをとれる食品12種と、脂質が多い食品12種（合わせて24種）。お客様向け資料用。
 export default function Foods30() {
   const blocks = [
-    { k: "p" as const, t: "たんぱく質 10g をとれる食品（15種）", rows: foodsFor("p", 10).filter((r) => !/乾|粉|ソース|ふりかけ/.test(r.name)).slice(0, 15) },
-    { k: "f" as const, t: "脂質が多い食品（脂質10gをとれる量・15種）", rows: foodsFor("f", 10).filter((r) => !/油|ラード|ショートニング|マーガリン|ドレッシング|マヨ/.test(r.name)).slice(0, 15) },
+    { k: "p" as const, t: "たんぱく質 10g をとれる食品（12種）", rows: foodsFor("p", 10).filter((r) => !/乾|粉|ソース|ふりかけ/.test(r.name)).slice(0, 12) },
+    { k: "f" as const, t: "脂質が多い食品（脂質10gをとれる量・12種）", rows: foodsFor("f", 10).filter((r) => !/油|ラード|ショートニング|マーガリン|ドレッシング|マヨ/.test(r.name)).slice(0, 12) },
   ];
   return (
     <>
-      <p className="rnote">上の15種は「たんぱく質10gをとれる量」、下の15種は「脂質が多い食品（脂質10gをとれる量）」です。脂質は、とりすぎないよう、量の目安に、使ってください。</p>
+      <p className="rnote">上の12種は「たんぱく質10gをとれる量」、下の12種は「脂質が多い食品（脂質10gをとれる量）」です。脂質は、とりすぎないよう、量の目安に、使ってください。</p>
       <div className="fufoods">
         {blocks.map((b) => (
           <div key={b.k} className="fufood">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PdfButton from "./PdfButton";
 import { averageIntake, readLog } from "../lib/daylog";
 import { NUTS, NUT_BASIS, foodsFor, unitLabel, type NutKey } from "../lib/foodlist";
 import { goalOf } from "../lib/meals";
@@ -52,6 +53,7 @@ export default function NutrientFoods() {
 
   return (
     <section className="card foodfind" id="food" aria-label="栄養素から、食品をさがす">
+      <PdfButton target="#food" title="足りない栄養から、食品をさがす" base="lifegym-foods" />
       <p className="dch">⑥ 足りない栄養から、食品をさがす</p>
       <p className="agnote">必要な栄養素と、量を入れると、それをとれる食品が出ます。少ない量でとれる食品が、上に出ます。</p>
       <div className="ffchips" role="tablist" aria-label="栄養素">

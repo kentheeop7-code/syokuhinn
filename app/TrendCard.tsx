@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PdfButton from "./PdfButton";
 import { averageIntake, dateLabel, readLog } from "../lib/daylog";
 import { readTarget, type Target } from "../lib/target";
 import { TROUBLES } from "../lib/troubles";
@@ -106,6 +107,7 @@ export default function TrendCard() {
 
   return (
     <section className="card trendcard" id="trend" aria-label="体重の推移と、いまの状況">
+      <PdfButton target="#trend" title="体重の推移と、いまの状況" base="lifegym-trend" />
       <p className="dch">⑦ 体重の推移と、いまの状況</p>
       <p className="agnote">体重は、朝・トイレのあとに、同じ条件で測った値を入れます。1週間ごとの値が、わかる範囲で、大丈夫です。{at && `（保存：${at}）`}</p>
       <div className="trw">

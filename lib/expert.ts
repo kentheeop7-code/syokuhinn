@@ -214,7 +214,7 @@ export function expertAssess(i: ExpertIn): Expert {
   nextActions.push({ when: "毎日", who: "本人", what: "体重を、朝・トイレのあとに測る（週の平均で見る）。食事は、1日ぶんの写真でもOK" });
   if (bad.some((e) => e.id === "pace")) nextActions.push({ when: "今週", who: "トレーナー", what: "ペースが速いため、期間をのばして、週に体重の0.5〜1%に収める" });
   if (bad.some((e) => e.id === "bmi" || e.id === "goalbmi")) nextActions.push({ when: "今週", who: "トレーナー", what: "体格・目標が、低体重・高い範囲です。目標を見直し、必要なら医師に相談する" });
-  nextActions.push({ when: i.nextDate ? `次回（${i.nextDate}）` : "次回（2週間後ごろ）", who: "トレーナー", what: "体重（週の平均）・ウエスト・食事の写真・睡眠を確認。止まっていれば記録を見直し、目標（kcal・PFC）を調整する" });
+  nextActions.push({ when: i.nextDate ? `次回（${i.nextDate}）` : "次回（2週間後ごろ）", who: "トレーナー", what: "体重（週の平均）・体脂肪率・筋肉量・食事の写真・睡眠を確認。止まっていれば記録を見直し、目標（kcal・PFC）を調整する" });
   nextActions.push({ when: "4週間後", who: "トレーナー", what: "体重が変わったぶん、基本情報を更新して、目標カロリーを出し直す。ペース（体重の0.5〜1%／週）を確認" });
   return { nextActions, score, headline, tone, evals, nowPoints, milestones, adds, refs };
 }

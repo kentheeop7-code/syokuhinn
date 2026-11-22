@@ -23,7 +23,7 @@ import { goalOf } from "../lib/meals";
 
 // トレーナー専用：定期的にお客様へ送る「経過報告・調整・プログラム表・対策表」を作り、PDFで共有する。
 // ダイエット開始時の総合まとめは「/trainer」。こちらは、2回目以降の、フォロー用。
-type Row = { w: string; kg: string; waist: string; fat: string };
+type Row = { w: string; kg: string; fat: string; muscle: string; waist?: string };
 type Prog = { d: string; c: string; s: string };
 type Meas = { issue: string; cause: string; action: string; due: string; who: string };
 type S = {
@@ -116,7 +116,7 @@ const DEFAULT: S = {
   foodAmt: "10",
   fastStart: "12",
   conds: false,
-  rows: [{ w: "0", kg: "", waist: "", fat: "" }, { w: "", kg: "", waist: "", fat: "" }],
+  rows: [{ w: "0", kg: "", fat: "", muscle: "" }, { w: "", kg: "", fat: "", muscle: "" }],
   trainDone: "",
   trainPlan: "",
   logDays: "",
@@ -232,7 +232,7 @@ export default function FollowUpApp() {
   const fastStartN = num(s.fastStart) || 12;
   const goalPct = first && last && tW && num(first.kg) !== tW ? Math.max(0, Math.min(100, Math.round(((num(first.kg) - nowW) / (num(first.kg) - tW)) * 100))) : 0;
   const intervals = sorted.slice(1).map((r, i) => ({ label: `${sorted[i].w}→${r.w}週`, value: Math.round((num(r.kg) - num(sorted[i].kg)) * 10) / 10 }));
-  const waistPts = sorted.filter((r) => num(r.waist) > 0).map((r) => ({ x: num(r.w), y: num(r.waist) }));
+  const musclePts = sorted.filter((r) => num(r.muscle) > 0).map((r) => ({ x: num(r.w), y: num(r.muscle) }));
   const fatPts = sorted.filter((r) => num(r.fat) > 0).map((r) => ({ x: num(r.w), y: num(r.fat) }));
   const delta = kcal && num(s.prevKcal) ? kcal - num(s.prevKcal) : 0;
   const gpF = nowW > 0 && tW > 0 ? computeGoal(nowW, tW, s.days, s.conds ? "slow" : s.pace) : null;
@@ -341,19 +341,19 @@ export default function FollowUpApp() {
       </details>
 
       <details style={box} open>
-        <summary style={sum}>② 途中結果（体重・ウエスト・体脂肪）</summary>
+        <summary style={sum}>② 途中結果（体重・体脂肪率・筋肉量）</summary>
         <p className="agnote">「週」は、開始からの週数（開始＝0）です。朝・トイレのあとに、同じ条件で測った値を入れます。</p>
         {s.rows.map((r, i) => (
           <div key={i} style={{ ...card, gridTemplateColumns: "1fr 1fr" }}>
             <b style={{ gridColumn: "1 / 3", fontSize: 16, color: "#1f6f54" }}>{r.w === "0" ? "開始" : r.w ? `${r.w}週目` : "週を入れてください"}</b>
             <label style={lab}>週（開始＝0）<input style={inp} inputMode="numeric" value={r.w} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, w: e.target.value } : x)) })} /></label>
             <label style={lab}>体重（kg）<input style={inp} inputMode="decimal" value={r.kg} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, kg: e.target.value } : x)) })} /></label>
-            <label style={lab}>ウエスト（cm）<input style={inp} inputMode="decimal" value={r.waist} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, waist: e.target.value } : x)) })} /></label>
-            <label style={lab}>体脂肪率（%）<input style={inp} inputMode="decimal" value={r.fat} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, fat: e.target.value } : x)) })} /></label>
+            <label style={lab}>体脂肪率（%）<input style={inp} inputMode="decimal" value={r.fat ?? ""} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, fat: e.target.value } : x)) })} /></label>
+            <label style={lab}>筋肉量（kg）<input style={inp} inputMode="decimal" value={r.muscle ?? ""} onChange={(e) => up({ rows: s.rows.map((x, j) => (j === i ? { ...x, muscle: e.target.value } : x)) })} /></label>
             <button type="button" style={del} aria-label="この行を消す" onClick={() => up({ rows: s.rows.filter((_, j) => j !== i) })}>✕</button>
           </div>
         ))}
-        <button type="button" className="trchip" onClick={() => up({ rows: [...s.rows, { w: String(Math.max(0, ...s.rows.map((x) => num(x.w))) + 1), kg: "", waist: "", fat: "" }] })}>＋ 行を足す（次の週）</button>
+        <button type="button" className="trchip" onClick={() => up({ rows: [...s.rows, { w: String(Math.max(0, ...s.rows.map((x) => num(x.w))) + 1), kg: "", fat: "", muscle: "" }] })}>＋ 行を足す（次の週）</button>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 8, marginTop: 10 }}>
           <label style={lab}>筋トレ 実施（回）<input style={inp} inputMode="numeric" value={s.trainDone} onChange={(e) => up({ trainDone: e.target.value })} /></label>
           <label style={lab}>筋トレ 予定（回）<input style={inp} inputMode="numeric" value={s.trainPlan} onChange={(e) => up({ trainPlan: e.target.value })} /></label>
@@ -551,13 +551,13 @@ export default function FollowUpApp() {
               <p className="rnote">緑＝減った、赤＝増えた（長さは、変化の大きさ）。{intervals.map((x) => `${x.label} ${x.value > 0 ? "+" : ""}${x.value}kg`).join("／")}</p>
             </>
           )}
-          {waistPts.length >= 2 && (<><h3 className="fuh3">ウエストの推移（cm）</h3><LineChart pts={waistPts} unit="cm" /></>)}
           {fatPts.length >= 2 && (<><h3 className="fuh3">体脂肪率の推移（%）</h3><LineChart pts={fatPts} unit="%" /></>)}
+          {musclePts.length >= 2 && (<><h3 className="fuh3">筋肉量の推移（kg）</h3><LineChart pts={musclePts} unit="kg" /></>)}
           {weeks > 0 && <p className="rnote">1週間あたり {r1(rate) > 0 ? "+" : ""}{r1(rate * 100) / 100}kg（体重の {ratePct > 0 ? "+" : ""}{r1(ratePct * 10) / 10}%）。目安は、体重の0.5〜1%を減らすペースです。</p>}
-          {(sorted.some((r) => num(r.waist) > 0) || sorted.some((r) => num(r.fat) > 0)) && (
+          {(sorted.some((r) => num(r.muscle) > 0) || sorted.some((r) => num(r.fat) > 0)) && (
             <table className="rtable">
-              <thead><tr><th>週</th><th>体重</th><th>ウエスト</th><th>体脂肪率</th></tr></thead>
-              <tbody>{sorted.map((r, i) => <tr key={i}><td>{r.w}</td><td>{r.kg}kg</td><td>{r.waist ? `${r.waist}cm` : "—"}</td><td>{r.fat ? `${r.fat}%` : "—"}</td></tr>)}</tbody>
+              <thead><tr><th>週</th><th>体重</th><th>体脂肪率</th><th>筋肉量</th></tr></thead>
+              <tbody>{sorted.map((r, i) => <tr key={i}><td>{r.w}</td><td>{r.kg}kg</td><td>{r.fat ? `${r.fat}%` : "—"}</td><td>{r.muscle ? `${r.muscle}kg` : "—"}</td></tr>)}</tbody>
             </table>
           )}
           <h3 className="fuh3">がんばりの記録</h3>
@@ -644,7 +644,7 @@ export default function FollowUpApp() {
         )}
 
         <section>
-          <h2>{H("食べ物の例：たんぱく質10gの食品と、脂質が多い食品（30種）")}</h2>
+          <h2>{H("食べ物の例：たんぱく質10gの食品と、脂質が多い食品（24種）")}</h2>
           <Foods30 />
         </section>
 
@@ -654,7 +654,7 @@ export default function FollowUpApp() {
           <div className="fufoods">
             {(["p", "c", "f"] as const).map((k) => {
               const n = NUTS.find((x) => x.key === k)!;
-              const rows = foodsFor(k, foodAmtN).slice(0, 40);
+              const rows = foodsFor(k, foodAmtN).slice(0, 24);
               return (
                 <div key={k} className="fufood">
                   <p className="fufh">{n.label} {foodAmtN}g<small>{n.hint}</small></p>

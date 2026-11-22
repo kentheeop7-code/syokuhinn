@@ -17,6 +17,33 @@ function collect(el: HTMLElement, limit: number = LIMIT): HTMLElement[] {
   if (el.offsetHeight <= limit) return [el];
   const kids = Array.from(el.children) as HTMLElement[];
   if (kids.length === 0) return [el];
+  // 表の本体は、行を1つずつではなく、1ページに入る分ずつ、まとめる（速く、きれいに）
+  if (el.tagName === "TBODY" && el.parentElement && el.parentElement.parentElement) {
+    const table = el.parentElement as HTMLElement;
+    const holder = table.parentElement as HTMLElement;
+    const outT: HTMLElement[] = [];
+    let rows: HTMLElement[] = [];
+    let rh = 0;
+    const flushRows = () => {
+      if (!rows.length) return;
+      const t = table.cloneNode(false) as HTMLElement;
+      const tb = el.cloneNode(false) as HTMLElement;
+      t.appendChild(tb);
+      holder.insertBefore(t, table);
+      rows.forEach((r) => tb.appendChild(r));
+      outT.push(t);
+      rows = [];
+      rh = 0;
+    };
+    for (const k of kids) {
+      const h = k.offsetHeight;
+      if (rh + h > limit) flushRows();
+      rows.push(k);
+      rh += h;
+    }
+    flushRows();
+    return outT;
+  }
   if (BLOCK_STOP.has(el.tagName)) return kids.flatMap((k) => collect(k, limit));
   const out: HTMLElement[] = [];
   let group: HTMLElement[] = [];

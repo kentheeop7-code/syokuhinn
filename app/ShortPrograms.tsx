@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PdfButton from "./PdfButton";
 import { SHORT_PLANS } from "../lib/shortplans";
 import ShortPlanView from "./ShortPlanView";
 
@@ -10,6 +11,7 @@ export default function ShortPrograms() {
   const plan = SHORT_PLANS.find((p) => p.id === id) ?? SHORT_PLANS[0];
   return (
     <section className="card shortprog" id="shortplan" aria-label="短期プログラム">
+      <PdfButton target="#shortplan" title="短期プログラム（断食・腸活・短期ダイエット）" base="lifegym-short" />
       <p className="dch">🗓 短期プログラム（ファスティング・腸活・短期ダイエット）</p>
       <p className="agnote">期間を決めて行う、短い取り組みです。ダイエットの方法（食事の割合）とは、別に、選べます。<b>持病・服薬のある方、妊娠中の方、未成年の方は、先に主治医に相談してください。</b></p>
       <div className="spvchips" role="tablist" aria-label="短期プログラム">

@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
+import PdfButton from "./PdfButton";
 import { buildPlanText, planNumbers } from "../lib/plantext";
 import { readTarget, type Target } from "../lib/target";
 import ShareButtons from "./ShareButtons";
@@ -29,6 +30,7 @@ export default function PlanResult() {
   const badge = { 高: "#2f9e75", 中: "#e0a526", 標準: "#8a96a0" }[t.accuracy];
   return (
     <section className="card planres" id="plan" aria-label="1日の目安">
+      <PdfButton target="#plan" title="あなたの1日の目安" base="lifegym-mokuhyo" />
       <p className="dch">③ あなたの1日の目安</p>
       <div className="plbig">
         <small>1日の目標カロリー</small>
