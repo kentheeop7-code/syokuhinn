@@ -5547,3 +5547,14 @@ html{scroll-behavior:smooth}
 .bkhow{margin:6px 0;padding:6px 10px;border-radius:10px;background:#f1f7ff;border:1.5px solid #cfe0f5}
 .bkpfc{margin:6px 0}
 .bkpt{margin:0 0 2px}
+
+/* 豆知識（栄養素） */
+.tipv{margin:6px 0}
+.tip-hook{font-weight:800;font-size:1.08rem;margin:4px 0 8px;padding:8px 12px;border-radius:12px;background:#fff8e6;border:1.5px solid #f2dca0}
+.tip-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.tip-box{padding:8px 12px;border:1.5px solid #d5e8dd;border-radius:12px;background:#fff;break-inside:avoid}
+.tip-box p{margin:4px 0}
+.tip-box ul{margin:4px 0 4px 18px;padding:0}
+.tip-remember{margin:8px 0;padding:10px 14px;border-radius:12px;background:#eaf6ef;border:2px solid #2f9e75;break-inside:avoid}
+.tip-remember ol{margin:4px 0 4px 20px;padding:0}
+@media (max-width:640px){.tip-row{grid-template-columns:1fr}}

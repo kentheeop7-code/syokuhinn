@@ -15,6 +15,8 @@ import ShortPlanView from "./ShortPlanView";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
 import Foods30 from "./Foods30";
+import TipView from "./TipView";
+import { TIPS, getTip, suggestTip } from "../lib/knowledge";
 import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import { expertAssess } from "../lib/expert";
@@ -43,6 +45,7 @@ type S = {
   shortPlan: string;
   breakers: string[];
   pack: string[];
+  tip: string;
   seeded?: boolean;
   bkNotes: Record<string, string>;
   situation: string;
@@ -111,6 +114,7 @@ const DEFAULT: S = {
   shortPlan: "",
   breakers: ["dietbreak", "refeed", "cheat", "fast16"],
   pack: PACK_DEFAULT,
+  tip: "inulin",
   seeded: true,
   bkNotes: {},
   situation: "",
@@ -296,6 +300,7 @@ export default function FollowUpApp() {
     s.nextDate ? `\n次回：${s.nextDate}` : "",
     s.pack.length ? `\n${packText(s.pack, kcal)}` : "",
     s.breakers.length || s.bkNotes._free?.trim() ? `\n${breakerText(s.breakers, s.bkNotes)}` : "",
+    getTip(s.tip) ? `\n【今回の豆知識：${getTip(s.tip)!.name}】\n${getTip(s.tip)!.hook}\n覚えておくこと：\n${getTip(s.tip)!.remember.map((x, i) => `${i + 1}. ${x}`).join("\n")}` : "",
     s.advice.trim() ? `\n【くわしいアドバイス】\n${s.advice.trim()}` : "",
     s.comment ? `\nトレーナーから：${s.comment}` : "",
     "\n※ 目安です。持病・服薬のある方は、主治医にご確認ください。",
@@ -395,6 +400,16 @@ export default function FollowUpApp() {
             </select>
           </label>
         )}
+        <p style={{ ...lab, marginTop: 12 }}>おすすめの栄養素の豆知識（1つ選んで掲載。読むと、知識になります）</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button type="button" className="trchip on" onClick={() => up({ tip: suggestTip({ constipation: s.status.includes("constipation"), sleepLow: s.sleepLow, train: num(s.trainPlan) > 0 }) })}>🔄 状況から、おすすめを選ぶ</button>
+          <button type="button" className={s.tip === "" ? "trchip on" : "trchip"} onClick={() => up({ tip: "" })}>載せない</button>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+          {TIPS.map((t) => (
+            <button key={t.id} type="button" aria-pressed={s.tip === t.id} className={s.tip === t.id ? "trchip on" : "trchip"} onClick={() => up({ tip: t.id })}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
+          ))}
+        </div>
         <p style={{ ...lab, marginTop: 12 }}>新しいダイエット方法の施策（選んだ方法を、並べて、お客様に共有：理想のPFC・注意事項つき）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button type="button" className="trchip on" onClick={() => up({ pack: PACK_DEFAULT })}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
@@ -640,6 +655,13 @@ export default function FollowUpApp() {
         )}
 
         {nowW > 0 && <AddFoods e={expert} compact title={H("増やす食事で、変えていく")} />}
+
+        {getTip(s.tip) && (
+          <section>
+            <h2>{H(`今回の豆知識：${getTip(s.tip)!.name}`)}</h2>
+            <TipView id={s.tip} />
+          </section>
+        )}
 
         {sp && (
           <section>
