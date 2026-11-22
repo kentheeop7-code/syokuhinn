@@ -6,6 +6,8 @@ import BreakerView from "./BreakerView";
 import { BREAKERS } from "../lib/breakers";
 import { readTarget } from "../lib/target";
 import PdfButton from "./PdfButton";
+import TipView from "./TipView";
+import { TIPS } from "../lib/knowledge";
 
 // お客様向け：ダイエット方法を、図で、比べる（理想のPFC・注意事項・根拠）。
 export function DietMethods({ card = false }: { card?: boolean }) {
@@ -75,5 +77,32 @@ export function StallBreakers({ card = false }: { card?: boolean }) {
     </section>
   ) : (
     <div id="stallbreak">{body}</div>
+  );
+}
+
+// お客様向け：おすすめの栄養素の豆知識（選んで読む）。
+export function NutrientTips({ card = false }: { card?: boolean }) {
+  const [id, setId] = useState(TIPS[0].id);
+  const body = (
+    <>
+      <PdfButton target="#nutritips" title="栄養素の豆知識" base="lifegym-tips" />
+      <p className="agnote">気になる栄養素を選ぶと、「とは・からだのなかで・とれる食べ物・とり方・論文でわかっていること・注意」が読めます。<b>サプリは、持病・服薬のある方、妊娠中の方、未成年の方は、先に主治医に相談してください。</b></p>
+      <div className="spvchips" role="group" aria-label="栄養素の豆知識">
+        {TIPS.map((t) => (
+          <button key={t.id} type="button" aria-pressed={id === t.id} className={id === t.id ? "on" : ""} onClick={() => setId(t.id)}>
+            <span aria-hidden>{t.icon}</span> {t.name.replace(/（.*$/, "")}
+          </button>
+        ))}
+      </div>
+      <TipView id={id} />
+    </>
+  );
+  return card ? (
+    <section className="card shortprog" id="nutritips" aria-label="栄養素の豆知識">
+      <p className="dch">💡 おすすめの栄養素の豆知識（読むと、知識になる）</p>
+      {body}
+    </section>
+  ) : (
+    <div id="nutritips">{body}</div>
   );
 }

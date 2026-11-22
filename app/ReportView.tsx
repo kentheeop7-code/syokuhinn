@@ -14,6 +14,8 @@ import { getShortPlan } from "../lib/shortplans";
 import BreakerView from "./BreakerView";
 import MethodPlans from "./MethodPlans";
 import Foods30 from "./Foods30";
+import TipView from "./TipView";
+import { getTip } from "../lib/knowledge";
 import ShortPlanView from "./ShortPlanView";
 import ExpertSection, { NextActions } from "./ExpertSection";
 import { microStatus } from "../lib/micro";
@@ -137,6 +139,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const sp = getShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
   const bk: string[] = Array.isArray(s.breakers) ? s.breakers : [];
   const pack: string[] = Array.isArray(s.pack) ? s.pack : [];
+  const tipId: string = typeof s.tip === "string" ? s.tip : "";
   const bkNotes: Record<string, string> = s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {};
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
@@ -170,7 +173,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     return true;
   };
   let secNo = 0;
-  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["次回までの", "📌"], ["打開策の候補", "🧗"], ["短期プログラム", "🗓"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
+  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["豆知識", "💡"], ["次回までの", "📌"], ["打開策の候補", "🧗"], ["短期プログラム", "🗓"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
   const H = (t: string) => `${ICONS.find(([k]) => t.includes(k))?.[1] ?? "▪"} ${++secNo}. ${t}`;
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
@@ -1085,6 +1088,13 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           <section>
             <h2>{H("ダイエット方法の施策（比較・理想のPFC・注意事項）")}</h2>
             <MethodPlans ids={pack} kcal={want || kcalMain} evLimit={compact ? 1 : 2} />
+          </section>
+        )}
+
+        {getTip(tipId) && (
+          <section>
+            <h2>{H(`今回の豆知識：${getTip(tipId)!.name}`)}</h2>
+            <TipView id={tipId} />
           </section>
         )}
 

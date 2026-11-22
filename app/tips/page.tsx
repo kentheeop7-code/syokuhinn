@@ -5,7 +5,7 @@ import GuideTabs from "../GuideTabs";
 import MoreFolds from "../MoreFolds";
 import MyKcal from "../MyKcal";
 import ShortPrograms from "../ShortPrograms";
-import { DietMethods, StallBreakers } from "../CustomerMethods";
+import { DietMethods, NutrientTips, StallBreakers } from "../CustomerMethods";
 import Fold from "../Fold";
 import LatestPapers from "../LatestPapers";
 import CondHub from "../CondHub";
@@ -151,6 +151,9 @@ export default function Tips() {
       </Fold>
       <Fold id="stall" title="🧗 停滞期を抜ける方法（リフィード・チートデイなど）" sub="期待できること・注意・根拠">
         <StallBreakers />
+      </Fold>
+      <Fold id="nutritip" title="💡 おすすめの栄養素の豆知識（イヌリン・納豆・メラトニンなど）" sub="読むと、知識になる／論文でわかっていること">
+        <NutrientTips />
       </Fold>
       <Fold id="any" title="👥 あなたの状況から、始め方を選ぶ" sub="どんな方でも、ダイエットを始められるように"><DietForAnyone /></Fold>
       <Fold id="cond" title="🩺 持病・体質がある方" sub="食事と運動／栄養素の表（根拠つき）">
