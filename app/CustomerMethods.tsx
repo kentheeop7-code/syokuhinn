@@ -43,7 +43,17 @@ export function DietMethods({ card = false }: { card?: boolean }) {
 
 // お客様向け：停滞期を抜ける・腸内環境を整える方法（リフィード・チートデイなど）。
 export function StallBreakers({ card = false }: { card?: boolean }) {
-  const [ids, setIds] = useState<string[]>(["log", "dietbreak", "refeed", "cheat"]);
+  const [ids, setIds] = useState<string[]>(["dietbreak", "refeed", "cheat", "fast16"]);
+  const [t, setT] = useState({ kcal: 0, tdee: 0 });
+  useEffect(() => {
+    const read = () => {
+      const x = readTarget();
+      setT({ kcal: x?.kcal ?? 0, tdee: x?.tdee ?? 0 });
+    };
+    read();
+    window.addEventListener("storage", read);
+    return () => window.removeEventListener("storage", read);
+  }, []);
   const body = (
     <>
       <PdfButton target="#stallbreak" title="停滞期を抜ける・腸内環境を整える方法" base="lifegym-stall" />
@@ -55,7 +65,7 @@ export function StallBreakers({ card = false }: { card?: boolean }) {
           </button>
         ))}
       </div>
-      {ids.length === 0 ? <p className="agnote">見たい方法を、選んでください。</p> : <BreakerView ids={BREAKERS.map((b) => b.id).filter((i) => ids.includes(i))} evLimit={3} />}
+      {ids.length === 0 ? <p className="agnote">見たい方法を、選んでください。</p> : <BreakerView ids={BREAKERS.map((b) => b.id).filter((i) => ids.includes(i))} evLimit={3} kcal={t.kcal} maint={t.tdee} />}
     </>
   );
   return card ? (

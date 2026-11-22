@@ -5542,3 +5542,8 @@ html{scroll-behavior:smooth}
 .report.pdfmode h2{margin:12px 0 6px}
 .report.pdfmode .mpk-card,.report.pdfmode .bkc{padding:8px 12px;margin:6px 0}
 .report.pdfmode .mpk-chart{margin:6px 0 8px}
+
+/* 打開策：しくみ・PFC */
+.bkhow{margin:6px 0;padding:6px 10px;border-radius:10px;background:#f1f7ff;border:1.5px solid #cfe0f5}
+.bkpfc{margin:6px 0}
+.bkpt{margin:0 0 2px}

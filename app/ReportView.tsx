@@ -1164,7 +1164,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         {bk.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={bk} evLimit={compact ? 2 : 3} notes={bkNotes} />
+            <BreakerView ids={bk} evLimit={compact ? 2 : 3} notes={bkNotes} kcal={want || kcalMain} maint={energy?.tdee ?? 0} />
           </section>
         )}
         {bk.length === 0 && bkNotes._free?.trim() && (

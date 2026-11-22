@@ -43,6 +43,7 @@ type S = {
   shortPlan: string;
   breakers: string[];
   pack: string[];
+  seeded?: boolean;
   bkNotes: Record<string, string>;
   situation: string;
   advice: string;
@@ -108,8 +109,9 @@ const DEFAULT: S = {
   pal: 1,
   pfcMethod: "balance",
   shortPlan: "",
-  breakers: [],
-  pack: [],
+  breakers: ["dietbreak", "refeed", "cheat", "fast16"],
+  pack: PACK_DEFAULT,
+  seeded: true,
   bkNotes: {},
   situation: "",
   advice: "",
@@ -149,7 +151,10 @@ export default function FollowUpApp() {
   useEffect(() => {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (v) setS({ ...DEFAULT, ...v, date: v.date || ymd() });
+      if (v) {
+        const seed = !v.seeded && !(Array.isArray(v.pack) && v.pack.length) && !(Array.isArray(v.breakers) && v.breakers.length);
+        setS({ ...DEFAULT, ...v, ...(seed ? { pack: DEFAULT.pack, breakers: DEFAULT.breakers } : {}), seeded: true, date: v.date || ymd() });
+      }
     } catch {}
     setReady(true);
   }, []);
@@ -580,7 +585,7 @@ export default function FollowUpApp() {
         {s.breakers.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={s.breakers} evLimit={3} notes={s.bkNotes} />
+            <BreakerView ids={s.breakers} evLimit={3} notes={s.bkNotes} kcal={kcal} maint={energy?.tdee ?? 0} />
           </section>
         )}
         {s.breakers.length === 0 && s.bkNotes._free?.trim() && (

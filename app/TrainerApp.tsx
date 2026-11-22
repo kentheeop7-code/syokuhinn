@@ -1028,7 +1028,7 @@ export default function TrainerApp() {
           自分で足す打開策（上にない方法：例 ファスティング〇日、チートデイの回数 など）
           <textarea value={bkNotes._free ?? ""} rows={3} placeholder="ここに書いた内容が、打開策の欄の最後に載ります。" onChange={(e) => setBkNotes((x) => ({ ...x, _free: e.target.value }))} />
         </label>
-        {breakers.length > 0 && <BreakerView ids={breakers} evLimit={4} notes={bkNotes} />}
+        {breakers.length > 0 && <BreakerView ids={breakers} evLimit={4} notes={bkNotes} kcal={wantKcal} maint={energy?.tdee ?? 0} />}
         <p className="balh" style={{ marginTop: 14 }}>お客様の最新の状況を書くと、アドバイスを出します</p>
         <textarea className="advta" style={{ width: "100%", boxSizing: "border-box", font: "inherit", padding: 10, border: "1px solid #bbb", borderRadius: 10 }} rows={4} value={situation} placeholder="例：2ヶ月体重が減っていない。食事もそこまで減らしていない。最近よく眠れず、歩数も落ちている。" onChange={(e) => setSituation(e.target.value)} />
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "6px 0" }}>

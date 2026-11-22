@@ -1,9 +1,10 @@
 import { getBreaker } from "../lib/breakers";
+import { macrosFor } from "../lib/methods";
 
 // 停滞期・腸内環境・食べ方の「打開策の候補」を、お客様向けに、並べて見せる（レポート・PDF・定期フォロー用）。
 const KIND_COLOR = { 停滞期: "#e0694f", 腸内環境: "#2f9e75", 食べ方: "#3b82c4", 生活: "#7a5bd0" } as const;
 
-export default function BreakerView({ ids, evLimit = 3, notes }: { ids: string[]; evLimit?: number; notes?: Record<string, string> }) {
+export default function BreakerView({ ids, evLimit = 3, notes, kcal = 0, maint = 0 }: { ids: string[]; evLimit?: number; notes?: Record<string, string>; kcal?: number; maint?: number }) {
   const list = ids.map((i) => getBreaker(i)).filter((x): x is NonNullable<ReturnType<typeof getBreaker>> => !!x);
   if (!list.length) return null;
   return (
@@ -31,7 +32,23 @@ export default function BreakerView({ ids, evLimit = 3, notes }: { ids: string[]
             <b>{b.icon} {b.name}</b>
           </p>
           <p className="bkm">期間：{b.period}／根拠の強さ：{b.level}</p>
+          {b.how && <p className="bkhow"><b>しくみ：</b>{b.how}</p>}
           <p><b>向く状況：</b>{b.when}</p>
+          {b.pfc && (() => {
+            const base = b.pfc.base === "維持" ? maint : kcal;
+            const g = base > 0 ? macrosFor(base, b.pfc) : null;
+            return (
+              <div className="bkpfc">
+                <p className="bkpt"><b>理想のPFCバランス（その日）</b>{g ? `：約${Math.round(base / 10) * 10}kcal（${b.pfc.base === "維持" ? "維持のカロリー" : "目標のカロリー"}）` : ""}</p>
+                <div className="mpk-bar" aria-label="PFCバランス">
+                  <span className="p" style={{ width: `${b.pfc.p}%` }}>P {b.pfc.p}%{g ? `（${g.p}g）` : ""}</span>
+                  <span className="f" style={{ width: `${b.pfc.f}%` }}>F {b.pfc.f}%{g ? `（${g.f}g）` : ""}</span>
+                  <span className="c" style={{ width: `${b.pfc.c}%` }}>C {b.pfc.c}%{g ? `（${g.c}g）` : ""}</span>
+                </div>
+                <p className="rxr">{b.pfc.note}</p>
+              </div>
+            );
+          })()}
           <ol>{b.steps.map((s) => <li key={s}>{s}</li>)}</ol>
           <p className="bkx"><b>期待できること（正直に）：</b>{b.effect}</p>
           <p className="bkw">⚠ {b.caution.join(" ／ ")}</p>
