@@ -12,6 +12,8 @@ import { EXAMPLES, GENERIC_SWAPS, INCREASE, swapsFor } from "../lib/swaps";
 import { expertAssess } from "../lib/expert";
 import { getShortPlan } from "../lib/shortplans";
 import BreakerView from "./BreakerView";
+import MethodPlans from "./MethodPlans";
+import Foods30 from "./Foods30";
 import ShortPlanView from "./ShortPlanView";
 import ExpertSection, { NextActions } from "./ExpertSection";
 import { microStatus } from "../lib/micro";
@@ -134,6 +136,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const phases = energy && gp ? energyPhases({ sex, band, age: num(s.age), height: num(s.height), weight: w, bmr: num(s.bmr), bodyFat: num(s.bodyFat) || (num(s.fatMass) > 0 && w > 0 ? (num(s.fatMass) / w) * 100 : 0), muscle: num(s.muscle), pal: typeof s.pal === "number" ? s.pal : 1, targetWeight: wt, pace }, gp.pts, gp.weeks) : [];
   const sp = getShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
   const bk: string[] = Array.isArray(s.breakers) ? s.breakers : [];
+  const pack: string[] = Array.isArray(s.pack) ? s.pack : [];
   const bkNotes: Record<string, string> = s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {};
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
@@ -1077,6 +1080,18 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </div>
         </section>
         )}
+
+        {pack.length > 0 && (
+          <section>
+            <h2>{H("ダイエット方法の施策（比較・理想のPFC・注意事項）")}</h2>
+            <MethodPlans ids={pack} kcal={want || kcalMain} evLimit={compact ? 1 : 2} />
+          </section>
+        )}
+
+        <section>
+          <h2>{H("食べ物の例：たんぱく質10gの食品と、脂質が多い食品（30種）")}</h2>
+          <Foods30 />
+        </section>
 
         {compact && (
           <section>

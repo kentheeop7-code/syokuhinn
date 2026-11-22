@@ -17,6 +17,7 @@ import { Bars, Pie } from "./Charts";
 import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
+import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
@@ -61,6 +62,7 @@ export default function TrainerApp() {
   const [foodNut, setFoodNut] = useState<NutKey>("p");
   const [shortPlan, setShortPlan] = useState("");
   const [breakers, setBreakers] = useState<string[]>([]);
+  const [pack, setPack] = useState<string[]>([]);
   const [bkNotes, setBkNotes] = useState<Record<string, string>>({});
   const [advice, setAdvice] = useState("");
   const [situation, setSituation] = useState("");
@@ -113,6 +115,7 @@ export default function TrainerApp() {
         setFoodAmts(s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {});
         setShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
         setBreakers(Array.isArray(s.breakers) ? s.breakers : []);
+        setPack(Array.isArray(s.pack) ? s.pack : []);
         setBkNotes(s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {});
         setAdvice(typeof s.advice === "string" ? s.advice : "");
         setSituation(typeof s.situation === "string" ? s.situation : "");
@@ -142,9 +145,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, pack, bkNotes, advice, situation }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, pack, bkNotes, advice, situation]);
 
   const w = num(now);
   const wt = num(target);
@@ -186,11 +189,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, bkNotes, advice, situation }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, bkNotes, advice, situation]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, bkNotes, advice, situation]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -981,6 +984,20 @@ export default function TrainerApp() {
           ))}
         </div>
         {getShortPlan(shortPlan) && <ShortPlanView plan={getShortPlan(shortPlan)!} />}
+      </section>
+      <section className="card" id="s3p">
+        <p className="balh">新しいダイエット方法の施策（選んで提案：理想のPFC・注意事項つき）</p>
+        <p className="agnote">低糖質・16時間断食・ファスティング・ケトジェニック・脂質カットなどを、並べて、お客様に提案できます。選ぶと、お客様向けのまとめ（PDF・リンク）に、比較の表、理想のPFC（％とグラム）、注意事項、根拠が入ります。</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
+          <button type="button" className="trchip on" onClick={() => setPack(PACK_DEFAULT)}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
+          <button type="button" className="trchip" onClick={() => setPack([])}>全部はずす</button>
+        </div>
+        <div className="mechips" role="group" aria-label="ダイエット方法の施策" style={{ flexWrap: "wrap" }}>
+          {PACK_OPTIONS.map((o) => (
+            <button key={o.id} type="button" aria-pressed={pack.includes(o.id)} className={pack.includes(o.id) ? "on" : ""} onClick={() => setPack((x) => (x.includes(o.id) ? x.filter((y) => y !== o.id) : [...x, o.id]))}>{o.icon} {o.label}</button>
+          ))}
+        </div>
+        {pack.length > 0 && <MethodPlans ids={pack} kcal={wantKcal} evLimit={2} />}
       </section>
       <section className="card" id="s3k">
         <p className="balh">停滞期を抜ける・腸内環境を整える：打開策の候補（選んで提案）</p>
