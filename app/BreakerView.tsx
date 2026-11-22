@@ -9,6 +9,21 @@ export default function BreakerView({ ids, evLimit = 3, notes }: { ids: string[]
   return (
     <div className="bkv">
       <p className="rnote">いまの状況に合わせて、候補を、いくつか選びました。1つずつ、トレーナーと相談して、試します（全部を、一度に、やる必要はありません）。</p>
+      <table className="rtable bk-sum">
+        <thead>
+          <tr><th>候補</th><th>期間</th><th>根拠の強さ</th><th>向く状況</th></tr>
+        </thead>
+        <tbody>
+          {list.map((b, n) => (
+            <tr key={b.id}>
+              <th>{n + 1}. {b.icon} {b.name.replace(/（.*$/, "")}</th>
+              <td>{b.period}</td>
+              <td><span className={`bk-lv lv-${b.level === "強い" ? "s" : b.level === "中くらい" ? "m" : "w"}`}>{b.level}</span></td>
+              <td>{b.when}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       {list.map((b, n) => (
         <div key={b.id} className="bkc">
           <p className="bkh">

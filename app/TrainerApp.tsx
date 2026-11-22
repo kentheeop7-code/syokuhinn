@@ -17,7 +17,7 @@ import { Bars, Pie } from "./Charts";
 import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
-import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS } from "./MethodPlans";
+import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
@@ -263,6 +263,9 @@ export default function TrainerApp() {
     }
     if (energy && wantKcal) L.push("", `■ 1日の目安：約${wantKcal.toLocaleString()}kcal（${energy.method === "dri" ? "年代・性別の目安" : `基礎代謝 約${energy.bmr}kcal × 活動量${energy.pal}`}）`);
     if (mac) L.push("", `■ 食事の方法：${mth.name}（たんぱく質${Math.round((pctEff.p / pctSum) * 100)}%・脂質${Math.round((pctEff.f / pctSum) * 100)}%・炭水化物${Math.round((pctEff.c / pctSum) * 100)}%）`, `　1日 約${wantKcal.toLocaleString()}kcal：たんぱく質 約${mac.p}g・脂質 約${mac.f}g・炭水化物 約${mac.c}g`);
+    if (pack.length) L.push("", packText(pack, wantKcal));
+    if (breakers.length || bkNotes._free?.trim()) L.push("", breakerText(breakers, bkNotes));
+    if (advice.trim()) L.push("", "■ 詳しいアドバイス", advice.trim());
     L.push("", "■ 気をつけること（指導方針）", ...COMMON_LINES);
     if (plan) L.push("", `■ ゴールの目安：${w}kg → ${wt}kg　約${plan.weeks}週間（筋トレ 週${days}回・合計${plan.sessions}回）`);
     if (swapOn.length) {

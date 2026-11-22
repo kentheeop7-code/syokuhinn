@@ -21,7 +21,10 @@ export default function Foods30() {
                       {r.name}
                       <small style={{ display: "block", fontWeight: 400, color: "#667" }}>{unitLabel(r)}</small>
                     </th>
-                    <td>{r.g}g</td>
+                    <td>
+                      {r.g}g
+                      <span className="f30bar" style={{ width: `${Math.min(100, Math.round((r.g / 300) * 100))}%`, background: b.k === "p" ? "#e0694f" : "#e0a030" }} />
+                    </td>
                     <td>{r.kcal}kcal</td>
                   </tr>
                 ))}

@@ -1,5 +1,6 @@
 import { METHODS, getMethod, macrosFor, type Pct } from "../lib/methods";
 import { getShortPlan } from "../lib/shortplans";
+import { BREAKERS } from "../lib/breakers";
 
 // 定期フォロー資料：新しいダイエット方法の施策（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カットなど）を、
 // 並べて見せる。理想のPFCバランス（％とグラム）・注意事項・根拠つき。お客様に共有する資料用。
@@ -64,6 +65,20 @@ export default function MethodPlans({ ids, kcal, evLimit = 2 }: { ids: string[];
   return (
     <div className="mpk">
       <p className="rnote">ダイエットの方法は、いくつかあります。結果の差は、小さく、「続けられるか」が、いちばん大切です。向き・不向きと、注意事項を、確認して、トレーナーと一緒に、選びます。</p>
+      <div className="mpk-chart" role="img" aria-label="方法ごとのPFCバランスの比較">
+        <p className="mpk-ct">図：方法ごとの、PFCバランス（エネルギーの割合）</p>
+        {cards.filter((c) => c.pct).map((c) => (
+          <div key={c.id} className="mpk-crow">
+            <span className="mpk-cl">{c.icon} {c.name.replace(/（.*$/, "")}</span>
+            <div className="mpk-bar">
+              <span className="p" style={{ width: `${c.pct!.p}%` }}>{c.pct!.p}</span>
+              <span className="f" style={{ width: `${c.pct!.f}%` }}>{c.pct!.f}</span>
+              <span className="c" style={{ width: `${c.pct!.c}%` }}>{c.pct!.c}</span>
+            </div>
+          </div>
+        ))}
+        <p className="mpk-leg"><i className="p" />たんぱく質（P）<i className="f" />脂質（F）<i className="c" />炭水化物（C）　数字は％</p>
+      </div>
       <table className="rtable mpk-cmp">
         <thead>
           <tr>
@@ -118,4 +133,34 @@ export default function MethodPlans({ ids, kcal, evLimit = 2 }: { ids: string[];
       })}
     </div>
   );
+}
+
+// LINE・メールに、そのまま貼れる、文面（お客様向け）
+export function packText(ids: string[], kcal: number): string {
+  const cards = ids.map(cardOf).filter((c): c is Card => !!c);
+  if (!cards.length) return "";
+  const L: string[] = ["■ ダイエット方法の施策（選んで、一緒に決めましょう）"];
+  for (const c of cards) {
+    const g = c.pct && kcal > 0 ? macrosFor(kcal, c.pct) : null;
+    L.push(
+      "",
+      `【${c.icon} ${c.name.replace(/（.*$/, "")}】根拠：${c.level}${c.risky ? "／要・医師の確認" : ""}`,
+      c.pct ? `理想のPFC：P${c.pct.p}%・F${c.pct.f}%・C${c.pct.c}%${g ? `（1日 P${g.p}g・F${g.f}g・C${g.c}g）` : ""}` : "断食中は、PFCの目標は、ありません",
+      `向く人：${c.who}`,
+      `⚠ 注意：${c.caution.slice(0, 2).join(" ／ ")}`
+    );
+  }
+  return L.join("\n");
+}
+
+export function breakerText(ids: string[], notes: Record<string, string> = {}): string {
+  const list = ids.map((i) => BREAKERS.find((b) => b.id === i)).filter((b): b is (typeof BREAKERS)[number] => !!b);
+  if (!list.length && !notes._free?.trim()) return "";
+  const L: string[] = ["■ 停滞期を抜ける・整える 打開策"];
+  list.forEach((b, n) => {
+    L.push("", `候補${n + 1}：${b.icon} ${b.name}`, `期間：${b.period}／根拠：${b.level}`, `向く状況：${b.when}`, `やり方：${b.steps.slice(0, 3).join(" → ")}`, `⚠ ${b.caution.slice(0, 2).join(" ／ ")}`);
+    if (notes[b.id]?.trim()) L.push(`あなたへの進め方：${notes[b.id].trim()}`);
+  });
+  if (notes._free?.trim()) L.push("", `そのほか：${notes._free.trim()}`);
+  return L.join("\n");
 }

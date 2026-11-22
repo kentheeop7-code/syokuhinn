@@ -5510,3 +5510,18 @@ html{scroll-behavior:smooth}
 .mpk-warn{margin:6px 0;padding:6px 10px;border-radius:10px;background:#fff4e0;color:#8a4b00;font-size:.92rem}
 .mpk-warn ul{margin:2px 0 0 18px;padding:0}
 .report .mpk-card,.fureport .mpk-card{font-size:15px}
+
+/* 図：PFC比較・打開策の早見表・食品の量グラフ */
+.mpk-chart{margin:8px 0 12px;padding:10px 12px;border:2px solid #d5e8dd;border-radius:14px;background:#fff;break-inside:avoid}
+.mpk-ct{font-weight:800;margin:0 0 8px}
+.mpk-crow{display:flex;align-items:center;gap:8px;margin:6px 0}
+.mpk-cl{flex:0 0 7.5em;font-size:.9rem;font-weight:700}
+.mpk-crow .mpk-bar{flex:1;margin:0}
+.mpk-leg{margin:8px 0 0;font-size:.82rem;color:#555}
+.mpk-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin:0 4px 0 10px;vertical-align:-1px}
+.mpk-leg i.p{background:#e0694f}.mpk-leg i.f{background:#e0a030}.mpk-leg i.c{background:#3b82c4}
+.bk-sum{width:100%;font-size:.9rem;margin:6px 0 10px}
+.bk-sum th,.bk-sum td{vertical-align:top}
+.bk-lv{display:inline-block;padding:1px 8px;border-radius:8px;color:#fff;font-weight:700;font-size:.8rem;white-space:nowrap}
+.bk-lv.lv-s{background:#2e7d32}.bk-lv.lv-m{background:#b26a00}.bk-lv.lv-w{background:#c62828}
+.f30bar{display:block;height:5px;border-radius:3px;margin-top:3px;opacity:.75}
