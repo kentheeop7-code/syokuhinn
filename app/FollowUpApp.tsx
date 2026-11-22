@@ -14,6 +14,7 @@ import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import ShortPlanView from "./ShortPlanView";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
+import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import { expertAssess } from "../lib/expert";
 import { computeGoal } from "../lib/goal";
@@ -40,6 +41,7 @@ type S = {
   pfcMethod: string;
   shortPlan: string;
   breakers: string[];
+  pack: string[];
   bkNotes: Record<string, string>;
   situation: string;
   advice: string;
@@ -106,6 +108,7 @@ const DEFAULT: S = {
   pfcMethod: "balance",
   shortPlan: "",
   breakers: [],
+  pack: [],
   bkNotes: {},
   situation: "",
   advice: "",
@@ -285,6 +288,7 @@ export default function FollowUpApp() {
     kcal && mac ? `これからの目安：約${r10(kcal).toLocaleString()}kcal（P${mac.p}g・F${mac.f}g・C${mac.c}g）${delta ? `　前回より ${delta > 0 ? "+" : ""}${r10(delta)}kcal` : ""}` : "",
     s.homework.filter(Boolean).length ? `\n今週の宿題：\n${s.homework.filter(Boolean).map((h, i) => `${i + 1}. ${h}`).join("\n")}` : "",
     s.nextDate ? `\n次回：${s.nextDate}` : "",
+    s.pack.length ? `\nダイエット方法の施策：${PACK_OPTIONS.filter((o) => s.pack.includes(o.id)).map((o) => o.label).join("・")}（くわしくは、PDFをご覧ください）` : "",
     s.advice.trim() ? `\n【くわしいアドバイス】\n${s.advice.trim()}` : "",
     s.comment ? `\nトレーナーから：${s.comment}` : "",
     "\n※ 目安です。持病・服薬のある方は、主治医にご確認ください。",
@@ -384,6 +388,16 @@ export default function FollowUpApp() {
             </select>
           </label>
         )}
+        <p style={{ ...lab, marginTop: 12 }}>新しいダイエット方法の施策（選んだ方法を、並べて、お客様に共有：理想のPFC・注意事項つき）</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button type="button" className="trchip on" onClick={() => up({ pack: PACK_DEFAULT })}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
+          <button type="button" className="trchip" onClick={() => up({ pack: [] })}>全部はずす</button>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+          {PACK_OPTIONS.map((o) => (
+            <button key={o.id} type="button" aria-pressed={s.pack.includes(o.id)} className={s.pack.includes(o.id) ? "trchip on" : "trchip"} onClick={() => up({ pack: s.pack.includes(o.id) ? s.pack.filter((x) => x !== o.id) : [...s.pack, o.id] })}>{o.icon} {o.label}</button>
+          ))}
+        </div>
         <p style={{ ...lab, marginTop: 12 }}>食べ物の例の「量」（たんぱく質・炭水化物・脂質）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           {["5", "10", "20", "30"].map((v) => (
@@ -611,6 +625,13 @@ export default function FollowUpApp() {
           </section>
         )}
 
+        {s.pack.length > 0 && (
+          <section>
+            <h2>{H("ダイエット方法の施策（比較・理想のPFC・注意事項）")}</h2>
+            <MethodPlans ids={s.pack} kcal={kcal} evLimit={2} />
+          </section>
+        )}
+
         {nowW > 0 && <AddFoods e={expert} compact title={H("増やす食事で、変えていく")} />}
 
         {sp && (
@@ -619,6 +640,36 @@ export default function FollowUpApp() {
             <ShortPlanView plan={sp} evLimit={4} />
           </section>
         )}
+
+        <section>
+          <h2>{H("食べ物の例：たんぱく質10gの食品と、脂質が多い食品（30種）")}</h2>
+          <p className="rnote">上の15種は「たんぱく質10gをとれる量」、下の15種は「脂質が多い食品（脂質10gをとれる量）」です。脂質は、とりすぎないよう、量の目安に、使ってください。</p>
+          <div className="fufoods">
+            {[
+              { k: "p" as const, t: "たんぱく質 10g をとれる食品（15種）", rows: foodsFor("p", 10).filter((r) => !/乾|粉|ソース|ふりかけ/.test(r.name)).slice(0, 15) },
+              { k: "f" as const, t: "脂質が多い食品（脂質10gをとれる量・15種）", rows: foodsFor("f", 10).filter((r) => !/油|ラード|ショートニング|マーガリン|ドレッシング|マヨ/.test(r.name)).slice(0, 15) },
+            ].map((b) => (
+              <div key={b.k} className="fufood">
+                <p className="fufh">{b.t}</p>
+                <table className="rtable rinct">
+                  <tbody>
+                    {b.rows.map((r) => (
+                      <tr key={r.name}>
+                        <th>
+                          {r.name}
+                          <small style={{ display: "block", fontWeight: 400, color: "#667" }}>{unitLabel(r)}</small>
+                        </th>
+                        <td>{r.g}g</td>
+                        <td>{r.kcal}kcal</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="rxr">根拠：{NUT_BASIS[b.k]}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section>
           <h2>{H(`食べ物の例（${foodAmtN}gぶん）`)}</h2>

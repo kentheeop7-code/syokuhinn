@@ -5496,3 +5496,17 @@ html{scroll-behavior:smooth}
 .clsv-list small{color:#666}
 .clsv-file{cursor:pointer;position:relative}
 .clsv-file input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+
+/* ダイエット方法の施策（定期フォロー） */
+.mpk-cmp{width:100%;font-size:.95rem}
+.mpk-cmp th,.mpk-cmp td{vertical-align:top}
+.mpk-card{margin:10px 0;padding:10px 14px;border:2px solid #d5e8dd;border-radius:14px;background:#fff;break-inside:avoid}
+.mpk-card.risky{border-color:#f0c9a0;background:#fffaf2}
+.mpk-h{font-weight:800;margin:0 0 4px;font-size:1.08rem}
+.mpk-h small{display:block;font-weight:500;color:#667;font-size:.82rem}
+.mpk-bar{display:flex;border-radius:10px;overflow:hidden;margin:6px 0;font-size:.85rem;font-weight:700;color:#fff}
+.mpk-bar span{padding:6px 4px;white-space:nowrap;overflow:hidden;text-overflow:clip;text-align:center;min-width:0}
+.mpk-bar .p{background:#e0694f}.mpk-bar .f{background:#e0a030}.mpk-bar .c{background:#3b82c4}
+.mpk-warn{margin:6px 0;padding:6px 10px;border-radius:10px;background:#fff4e0;color:#8a4b00;font-size:.92rem}
+.mpk-warn ul{margin:2px 0 0 18px;padding:0}
+.report .mpk-card,.fureport .mpk-card{font-size:15px}
