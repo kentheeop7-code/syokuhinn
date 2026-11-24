@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS } from "./MethodPlans";
+import MethodPlans, { PACK_ALL, PACK_OPTIONS } from "./MethodPlans";
 import BreakerView from "./BreakerView";
 import { BREAKERS } from "../lib/breakers";
 import { readTarget } from "../lib/target";
@@ -11,7 +11,7 @@ import { TIPS } from "../lib/knowledge";
 
 // お客様向け：ダイエット方法を、図で、比べる（理想のPFC・注意事項・根拠）。
 export function DietMethods({ card = false }: { card?: boolean }) {
-  const [ids, setIds] = useState<string[]>(PACK_DEFAULT);
+  const [ids, setIds] = useState<string[]>(PACK_ALL);
   const [kcal, setKcal] = useState(0);
   useEffect(() => {
     const read = () => setKcal(readTarget()?.kcal ?? 0);

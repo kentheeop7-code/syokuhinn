@@ -17,7 +17,7 @@ import BreakerView from "./BreakerView";
 import Foods30 from "./Foods30";
 import TipView from "./TipView";
 import { TIPS, autoTips, getTip, tipText } from "../lib/knowledge";
-import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
+import MethodPlans, { PACK_ALL, PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import { expertAssess } from "../lib/expert";
 import { computeGoal } from "../lib/goal";
@@ -418,7 +418,7 @@ export default function FollowUpApp() {
         </div>
         <p style={{ ...lab, marginTop: 12 }}>新しいダイエット方法の施策（選んだ方法を、並べて、お客様に共有：理想のPFC・注意事項つき）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button type="button" className="trchip on" onClick={() => up({ pack: PACK_DEFAULT })}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
+          <button type="button" className="trchip on" onClick={() => up({ pack: PACK_ALL })}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
           <button type="button" className="trchip" onClick={() => up({ pack: [] })}>全部はずす</button>
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
@@ -606,7 +606,7 @@ export default function FollowUpApp() {
         {s.breakers.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={s.breakers} evLimit={3} notes={s.bkNotes} kcal={kcal} maint={energy?.tdee ?? 0} />
+            <BreakerView ids={s.breakers} evLimit={1} notes={s.bkNotes} kcal={kcal} maint={energy?.tdee ?? 0} />
           </section>
         )}
         {s.breakers.length === 0 && s.bkNotes._free?.trim() && (
@@ -656,7 +656,7 @@ export default function FollowUpApp() {
         {s.pack.length > 0 && (
           <section>
             <h2>{H("ダイエット方法の施策（比較・理想のPFC・注意事項）")}</h2>
-            <MethodPlans ids={s.pack} kcal={kcal} evLimit={2} />
+            <MethodPlans ids={s.pack} kcal={kcal} evLimit={1} />
           </section>
         )}
 

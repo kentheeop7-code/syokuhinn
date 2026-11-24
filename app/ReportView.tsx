@@ -1087,7 +1087,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         {pack.length > 0 && (
           <section>
             <h2>{H("ダイエット方法の施策（比較・理想のPFC・注意事項）")}</h2>
-            <MethodPlans ids={pack} kcal={want || kcalMain} evLimit={compact ? 1 : 2} />
+            <MethodPlans ids={pack} kcal={want || kcalMain} evLimit={1} />
           </section>
         )}
 
@@ -1174,7 +1174,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         {bk.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={bk} evLimit={compact ? 2 : 3} notes={bkNotes} kcal={want || kcalMain} maint={energy?.tdee ?? 0} />
+            <BreakerView ids={bk} evLimit={compact ? 1 : 2} notes={bkNotes} kcal={want || kcalMain} maint={energy?.tdee ?? 0} />
           </section>
         )}
         {bk.length === 0 && bkNotes._free?.trim() && (

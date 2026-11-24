@@ -17,7 +17,7 @@ import { Bars, Pie } from "./Charts";
 import { SHORT_PLANS, getShortPlan } from "../lib/shortplans";
 import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
-import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
+import MethodPlans, { PACK_ALL, PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import TipView from "./TipView";
 import { TIPS, autoTips, getTip } from "../lib/knowledge";
@@ -1016,7 +1016,7 @@ export default function TrainerApp() {
         <p className="balh">新しいダイエット方法の施策（選んで提案：理想のPFC・注意事項つき）</p>
         <p className="agnote">低糖質・16時間断食・ファスティング・ケトジェニック・脂質カットなどを、並べて、お客様に提案できます。選ぶと、お客様向けのまとめ（PDF・リンク）に、比較の表、理想のPFC（％とグラム）、注意事項、根拠が入ります。</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
-          <button type="button" className="trchip on" onClick={() => setPack(PACK_DEFAULT)}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
+          <button type="button" className="trchip on" onClick={() => setPack(PACK_ALL)}>5つ全部（低糖質・16時間断食・ファスティング・ケトジェニック・脂質カット）</button>
           <button type="button" className="trchip" onClick={() => setPack([])}>全部はずす</button>
         </div>
         <div className="mechips" role="group" aria-label="ダイエット方法の施策" style={{ flexWrap: "wrap" }}>
@@ -1024,7 +1024,7 @@ export default function TrainerApp() {
             <button key={o.id} type="button" aria-pressed={pack.includes(o.id)} className={pack.includes(o.id) ? "on" : ""} onClick={() => setPack((x) => (x.includes(o.id) ? x.filter((y) => y !== o.id) : [...x, o.id]))}>{o.icon} {o.label}</button>
           ))}
         </div>
-        {pack.length > 0 && <MethodPlans ids={pack} kcal={wantKcal} evLimit={2} />}
+        {pack.length > 0 && <MethodPlans ids={pack} kcal={wantKcal} evLimit={1} />}
       </section>
       <section className="card" id="s3k">
         <p className="balh">停滞期を抜ける・腸内環境を整える：打開策の候補（選んで提案）</p>

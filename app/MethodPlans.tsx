@@ -13,7 +13,8 @@ export const PACK_OPTIONS: { id: string; icon: string; label: string }[] = [
   { id: "highpro", icon: "🍗", label: "高たんぱく" },
   { id: "balance", icon: "⚖️", label: "バランス型" },
 ];
-export const PACK_DEFAULT = ["lowcarb", "fast16", "fasting", "keto", "lowfat"];
+export const PACK_DEFAULT = ["lowcarb", "fast16", "lowfat"]; // 初期設定（PDFを小さくするため、3つ）
+export const PACK_ALL = ["lowcarb", "fast16", "fasting", "keto", "lowfat"];
 
 type Card = {
   id: string;
