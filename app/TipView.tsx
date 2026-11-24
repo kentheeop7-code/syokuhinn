@@ -1,4 +1,5 @@
 import { getTip } from "../lib/knowledge";
+import { foodsFor, unitLabel } from "../lib/foodlist";
 
 // 定期フォロー資料：おすすめ栄養素の豆知識（読むと、知識になる形）。
 export default function TipView({ id }: { id: string }) {
@@ -17,6 +18,19 @@ export default function TipView({ id }: { id: string }) {
           <p>{t.body}</p>
         </div>
       </div>
+      {t.dynamic === "fi" && (
+        <div className="tip-box">
+          <b>食物繊維 5g を、とれる量の目安（少ない量でとれる順）</b>
+          <div className="tip-foods">
+            {foodsFor("fi", 5).slice(0, 12).map((r) => (
+              <div key={r.name} className="tip-fd">
+                <span>{r.name}</span>
+                <small>{unitLabel(r)}（{r.g}g・{r.kcal}kcal）</small>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="tip-row">
         <div className="tip-box">
           <b>③ とれる食べ物</b>

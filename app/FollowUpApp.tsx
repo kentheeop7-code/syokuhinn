@@ -16,7 +16,7 @@ import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
 import Foods30 from "./Foods30";
 import TipView from "./TipView";
-import { TIPS, getTip, suggestTip } from "../lib/knowledge";
+import { TIPS, autoTips, getTip, tipText } from "../lib/knowledge";
 import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import { expertAssess } from "../lib/expert";
@@ -45,7 +45,7 @@ type S = {
   shortPlan: string;
   breakers: string[];
   pack: string[];
-  tip: string;
+  tips: string[];
   seeded?: boolean;
   bkNotes: Record<string, string>;
   situation: string;
@@ -114,7 +114,7 @@ const DEFAULT: S = {
   shortPlan: "",
   breakers: ["dietbreak", "refeed", "cheat", "fast16"],
   pack: PACK_DEFAULT,
-  tip: "inulin",
+  tips: ["fiberfoods", "gutbiome", "sleepdiet"],
   seeded: true,
   bkNotes: {},
   situation: "",
@@ -171,6 +171,7 @@ export default function FollowUpApp() {
 
   const up = (p: Partial<S>) => setS((x) => ({ ...x, ...p }));
   const [asked, setAsked] = useState("");
+  const [tipWhy, setTipWhy] = useState<string[]>([]);
   const loadFromMemo = () => {
     try {
       const t = JSON.parse(localStorage.getItem("lg-trainer") || "null");
@@ -300,7 +301,7 @@ export default function FollowUpApp() {
     s.nextDate ? `\n次回：${s.nextDate}` : "",
     s.pack.length ? `\n${packText(s.pack, kcal)}` : "",
     s.breakers.length || s.bkNotes._free?.trim() ? `\n${breakerText(s.breakers, s.bkNotes)}` : "",
-    getTip(s.tip) ? `\n【今回の豆知識：${getTip(s.tip)!.name}】\n${getTip(s.tip)!.hook}\n覚えておくこと：\n${getTip(s.tip)!.remember.map((x, i) => `${i + 1}. ${x}`).join("\n")}` : "",
+    s.tips.filter((id) => getTip(id)).length ? `\n【今回の豆知識】\n${s.tips.filter((id) => getTip(id)).map((id) => `・${getTip(id)!.icon} ${getTip(id)!.name.replace(/（.*$/, "")}：${getTip(id)!.hook}`).join("\n")}` : "",
     s.advice.trim() ? `\n【くわしいアドバイス】\n${s.advice.trim()}` : "",
     s.comment ? `\nトレーナーから：${s.comment}` : "",
     "\n※ 目安です。持病・服薬のある方は、主治医にご確認ください。",
@@ -400,15 +401,19 @@ export default function FollowUpApp() {
             </select>
           </label>
         )}
-        <p style={{ ...lab, marginTop: 12 }}>おすすめの栄養素の豆知識（1つ選んで掲載。読むと、知識になります）</p>
+        <p style={{ ...lab, marginTop: 12 }}>おすすめの豆知識（食物繊維・腸内細菌・睡眠・ダイエット方法など。複数選べます）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button type="button" className="trchip on" onClick={() => up({ tip: suggestTip({ constipation: s.status.includes("constipation"), sleepLow: s.sleepLow, train: num(s.trainPlan) > 0 }) })}>🔄 状況から、おすすめを選ぶ</button>
-          <button type="button" className={s.tip === "" ? "trchip on" : "trchip"} onClick={() => up({ tip: "" })}>載せない</button>
+          <button type="button" className="trchip on" onClick={() => { const a = autoTips({ constipation: s.status.includes("constipation"), sleepLow: s.sleepLow, stall: (!!res?.judge && ["stall", "up", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15), train: num(s.trainPlan) > 0, round: num(s.round) || 1 }); up({ tips: a.ids }); setTipWhy(a.reasons); }}>🔄 自動で内容を作る（状況から、3つ選ぶ）</button>
+          <button type="button" className="trchip" onClick={() => { up({ tips: [] }); setTipWhy([]); }}>全部はずす</button>
         </div>
+        {tipWhy.length > 0 && <p className="agnote">選んだ理由：{tipWhy.join(" ／ ")}</p>}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
           {TIPS.map((t) => (
-            <button key={t.id} type="button" aria-pressed={s.tip === t.id} className={s.tip === t.id ? "trchip on" : "trchip"} onClick={() => up({ tip: t.id })}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
+            <button key={t.id} type="button" aria-pressed={s.tips.includes(t.id)} className={s.tips.includes(t.id) ? "trchip on" : "trchip"} onClick={() => up({ tips: s.tips.includes(t.id) ? s.tips.filter((x) => x !== t.id) : [...s.tips, t.id] })}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
           ))}
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+          <button type="button" className="trchip" onClick={() => { const names = s.tips.map((id) => getTip(id)?.name.replace(/（.*$/, "")).filter(Boolean); const draft = [`${s.name ? s.name + "さん、" : ""}お疲れさまです。`, last && first ? `この${weeks}週間で、体重は ${total > 0 ? "+" : ""}${total}kg の変化でした${res?.judge ? `（判定：${res.judge.label}）` : ""}。` : "", names.length ? `今回の豆知識は、「${names.join("」「")}」です。読んで、ひとつだけ、今週から試してみましょう。` : "", s.nextDate ? `次回は ${s.nextDate.replace(/-/g, "/")} です。体重と、困ったことを、教えてください。` : "", "つらいときは、無理せず、方法を変えられます。いつでも、相談してください。"].filter(Boolean).join("\n"); up({ advice: s.advice ? s.advice + "\n\n" + draft : draft }); }}>✍ お便りの下書きを、自動で作る（「詳しいアドバイス」に入る）</button>
         </div>
         <p style={{ ...lab, marginTop: 12 }}>新しいダイエット方法の施策（選んだ方法を、並べて、お客様に共有：理想のPFC・注意事項つき）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -656,12 +661,12 @@ export default function FollowUpApp() {
 
         {nowW > 0 && <AddFoods e={expert} compact title={H("増やす食事で、変えていく")} />}
 
-        {getTip(s.tip) && (
-          <section>
-            <h2>{H(`今回の豆知識：${getTip(s.tip)!.name}`)}</h2>
-            <TipView id={s.tip} />
+        {s.tips.filter((id) => getTip(id)).map((id) => (
+          <section key={id}>
+            <h2>{H(`今回の豆知識：${getTip(id)!.name}`)}</h2>
+            <TipView id={id} />
           </section>
-        )}
+        ))}
 
         {sp && (
           <section>

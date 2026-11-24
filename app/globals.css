@@ -5558,3 +5558,8 @@ html{scroll-behavior:smooth}
 .tip-remember{margin:8px 0;padding:10px 14px;border-radius:12px;background:#eaf6ef;border:2px solid #2f9e75;break-inside:avoid}
 .tip-remember ol{margin:4px 0 4px 20px;padding:0}
 @media (max-width:640px){.tip-row{grid-template-columns:1fr}}
+
+.tip-foods{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 6px;margin:6px 0}
+.tip-fd{display:flex;flex-direction:column;border:1px solid #dcebe2;border-radius:8px;padding:3px 7px;background:#fbfdfc;font-size:.92rem}
+.tip-fd small{color:#667;font-size:.78rem}
+@media (max-width:520px){.tip-foods{grid-template-columns:repeat(2,1fr)}}

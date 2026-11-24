@@ -11,18 +11,20 @@ import { CONDS } from "../lib/trainerData";
 import { PACES, type Pace } from "../lib/goal";
 import { BANDS } from "./me";
 import { StallTab, CondTab, LatestTab, LivePapers } from "./GuideMore";
+import TipsTab from "./TipsTab";
 import { SHORT_PLANS } from "../lib/shortplans";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_NOTES } from "../lib/methods";
 
 // トレーナー向け資料：①お客様タイプ別のおすすめ ②食品PFC表＋献立づくり ③食事法とバランス ④計算方法と根拠
-type Tab = "client" | "food" | "method" | "short" | "stall" | "cond" | "latest" | "calc";
+type Tab = "client" | "food" | "method" | "short" | "stall" | "tips" | "cond" | "latest" | "calc";
 const TABS: { id: Tab; t: string }[] = [
   { id: "client", t: "① お客様に合わせる" },
   { id: "food", t: "② 食品PFC・献立づくり" },
   { id: "method", t: "③ 食事法とバランス" },
   { id: "short", t: "短期プログラム（断食・腸活）" },
   { id: "stall", t: "④ 停滞・代謝・不調" },
+  { id: "tips", t: "💡 豆知識（定期フォローで送る）" },
   { id: "cond", t: "⑤ 持病向けの身体づくり" },
   { id: "latest", t: "⑥ 最新の論文（自動取得）" },
   { id: "calc", t: "⑦ 計算方法と根拠" },
@@ -66,6 +68,7 @@ export default function GuideApp() {
       {tab === "method" && <MethodTab />}
       {tab === "short" && <ShortTab />}
       {tab === "stall" && <StallTab />}
+      {tab === "tips" && <TipsTab />}
       {tab === "cond" && <CondTab />}
       {tab === "latest" && <LatestTab />}
       {tab === "calc" && <CalcTab />}
