@@ -139,7 +139,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const sp = getShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
   const bk: string[] = Array.isArray(s.breakers) ? s.breakers : [];
   const pack: string[] = Array.isArray(s.pack) ? s.pack : [];
-  const tipId: string = typeof s.tip === "string" ? s.tip : "";
+  const tipIds: string[] = Array.isArray(s.tips) ? s.tips : typeof s.tip === "string" && s.tip ? [s.tip] : [];
   const bkNotes: Record<string, string> = s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {};
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
@@ -1091,12 +1091,12 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </section>
         )}
 
-        {getTip(tipId) && (
-          <section>
-            <h2>{H(`今回の豆知識：${getTip(tipId)!.name}`)}</h2>
-            <TipView id={tipId} />
+        {tipIds.filter((id) => getTip(id)).map((id) => (
+          <section key={id}>
+            <h2>{H(`今回の豆知識：${getTip(id)!.name}`)}</h2>
+            <TipView id={id} />
           </section>
-        )}
+        ))}
 
         <section>
           <h2>{H("食べ物の例：たんぱく質10gの食品と、脂質が多い食品（24種）")}</h2>

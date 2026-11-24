@@ -20,7 +20,7 @@ import BreakerView from "./BreakerView";
 import MethodPlans, { PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import TipView from "./TipView";
-import { TIPS, getTip, suggestTip } from "../lib/knowledge";
+import { TIPS, autoTips, getTip } from "../lib/knowledge";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
 import { recommend } from "../lib/recommend";
@@ -65,7 +65,8 @@ export default function TrainerApp() {
   const [shortPlan, setShortPlan] = useState("");
   const [breakers, setBreakers] = useState<string[]>([]);
   const [pack, setPack] = useState<string[]>([]);
-  const [tip, setTip] = useState("inulin");
+  const [tips, setTips] = useState<string[]>(["fiberfoods", "gutbiome", "sleepdiet"]);
+  const [tipWhy, setTipWhy] = useState<string[]>([]);
   const [bkNotes, setBkNotes] = useState<Record<string, string>>({});
   const [advice, setAdvice] = useState("");
   const [situation, setSituation] = useState("");
@@ -119,7 +120,7 @@ export default function TrainerApp() {
         setShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
         setBreakers(Array.isArray(s.breakers) ? s.breakers : []);
         setPack(Array.isArray(s.pack) ? s.pack : []);
-        setTip(typeof s.tip === "string" ? s.tip : "inulin");
+        setTips(Array.isArray(s.tips) ? s.tips : typeof s.tip === "string" && s.tip ? [s.tip] : ["fiberfoods", "gutbiome", "sleepdiet"]);
         setBkNotes(s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {});
         setAdvice(typeof s.advice === "string" ? s.advice : "");
         setSituation(typeof s.situation === "string" ? s.situation : "");
@@ -149,9 +150,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, pack, tip, bkNotes, advice, situation }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, pack, tip, bkNotes, advice, situation]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation]);
 
   const w = num(now);
   const wt = num(target);
@@ -193,11 +194,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tip, bkNotes, advice, situation }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tip, bkNotes, advice, situation]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -268,7 +269,7 @@ export default function TrainerApp() {
     if (energy && wantKcal) L.push("", `■ 1日の目安：約${wantKcal.toLocaleString()}kcal（${energy.method === "dri" ? "年代・性別の目安" : `基礎代謝 約${energy.bmr}kcal × 活動量${energy.pal}`}）`);
     if (mac) L.push("", `■ 食事の方法：${mth.name}（たんぱく質${Math.round((pctEff.p / pctSum) * 100)}%・脂質${Math.round((pctEff.f / pctSum) * 100)}%・炭水化物${Math.round((pctEff.c / pctSum) * 100)}%）`, `　1日 約${wantKcal.toLocaleString()}kcal：たんぱく質 約${mac.p}g・脂質 約${mac.f}g・炭水化物 約${mac.c}g`);
     if (pack.length) L.push("", packText(pack, wantKcal));
-    if (getTip(tip)) L.push("", `■ 今回の豆知識：${getTip(tip)!.name}`, getTip(tip)!.hook, "覚えておくこと：", ...getTip(tip)!.remember.map((x, i) => `${i + 1}. ${x}`));
+    if (tips.some((id) => getTip(id))) L.push("", "■ 今回の豆知識", ...tips.filter((id) => getTip(id)).map((id) => `・${getTip(id)!.icon} ${getTip(id)!.name.replace(/（.*$/, "")}：${getTip(id)!.hook}`));
     if (breakers.length || bkNotes._free?.trim()) L.push("", breakerText(breakers, bkNotes));
     if (advice.trim()) L.push("", "■ 詳しいアドバイス", advice.trim());
     L.push("", "■ 気をつけること（指導方針）", ...COMMON_LINES);
@@ -994,18 +995,22 @@ export default function TrainerApp() {
         {getShortPlan(shortPlan) && <ShortPlanView plan={getShortPlan(shortPlan)!} />}
       </section>
       <section className="card" id="s3t">
-        <p className="balh">おすすめの栄養素の豆知識（1つ選んで掲載）</p>
-        <p className="agnote">読むと、知識になる形で、お客様向けのまとめ（PDF・リンク）に入ります。論文で確認できたことと、まだ分かっていないことを、分けて書いています。</p>
+        <p className="balh">おすすめの豆知識（食物繊維・腸内細菌・睡眠・ダイエット方法など。複数選べます）</p>
+        <p className="agnote">読むと、知識になる形で、お客様向けのまとめ（PDF・リンク）に入ります。「自動で内容を作る」は、いまの状況（困りごと・筋トレ）から、3つ選びます。論文で確認できたことと、まだ分かっていないことを、分けて書いています。</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
-          <button type="button" className="trchip on" onClick={() => setTip(suggestTip({ constipation: troubles.includes("constipation"), train: days > 0 }))}>🔄 状況から、おすすめを選ぶ</button>
-          <button type="button" className={tip === "" ? "trchip on" : "trchip"} onClick={() => setTip("")}>載せない</button>
+          <button type="button" className="trchip on" onClick={() => { const r = autoTips({ constipation: troubles.includes("constipation"), sleepLow: troubles.includes("sleep"), stall: troubles.includes("plateau"), train: days > 0, round: 1 }); setTips(r.ids); setTipWhy(r.reasons); }}>🔄 自動で内容を作る（状況から、3つ選ぶ）</button>
+          <button type="button" className="trchip" onClick={() => { setTips([]); setTipWhy([]); }}>全部はずす</button>
         </div>
+        {tipWhy.length > 0 && <p className="agnote">選んだ理由：{tipWhy.join(" ／ ")}</p>}
         <div className="mechips" role="group" aria-label="豆知識" style={{ flexWrap: "wrap" }}>
           {TIPS.map((t) => (
-            <button key={t.id} type="button" aria-pressed={tip === t.id} className={tip === t.id ? "on" : ""} onClick={() => setTip(t.id)}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
+            <button key={t.id} type="button" aria-pressed={tips.includes(t.id)} className={tips.includes(t.id) ? "on" : ""} onClick={() => setTips((x) => (x.includes(t.id) ? x.filter((y) => y !== t.id) : [...x, t.id]))}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
           ))}
         </div>
-        {getTip(tip) && <TipView id={tip} />}
+        {tips.filter((id) => getTip(id)).map((id) => <TipView key={id} id={id} />)}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
+          <button type="button" className="trchip" onClick={() => { const names = tips.map((id) => getTip(id)?.name.replace(/（.*$/, "")).filter(Boolean); const draft = [`${name ? name + "さん、" : ""}はじめまして。ここから、一緒に、進めていきましょう。`, names.length ? `最初の豆知識は、「${names.join("」「")}」です。読んで、ひとつだけ、今週から試してみましょう。` : "", nextDate ? `次回は ${nextDate.replace(/-/g, "/")} です。体重と、困ったことを、教えてください。` : "", "つらいときは、無理せず、方法を変えられます。いつでも、相談してください。"].filter(Boolean).join("\n"); setAdvice((x) => (x ? x + "\n\n" + draft : draft)); }}>✍ お便りの下書きを、自動で作る（「詳しいアドバイス」に入る）</button>
+        </div>
       </section>
       <section className="card" id="s3p">
         <p className="balh">新しいダイエット方法の施策（選んで提案：理想のPFC・注意事項つき）</p>
