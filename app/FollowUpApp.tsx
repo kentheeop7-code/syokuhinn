@@ -114,7 +114,7 @@ const DEFAULT: S = {
   shortPlan: "",
   breakers: ["dietbreak", "refeed", "cheat", "fast16"],
   pack: PACK_DEFAULT,
-  tips: ["fiberfoods", "gutbiome", "sleepdiet"],
+  tips: ["fiberfoods"],
   seeded: true,
   bkNotes: {},
   situation: "",
@@ -156,6 +156,7 @@ export default function FollowUpApp() {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || "null");
       if (v) {
+        if (Array.isArray(v.tips) && v.tips.length > 1) v.tips = v.tips.slice(0, 1);
         const seed = !v.seeded && !(Array.isArray(v.pack) && v.pack.length) && !(Array.isArray(v.breakers) && v.breakers.length);
         setS({ ...DEFAULT, ...v, ...(seed ? { pack: DEFAULT.pack, breakers: DEFAULT.breakers } : {}), seeded: true, date: v.date || ymd() });
       }
@@ -401,19 +402,19 @@ export default function FollowUpApp() {
             </select>
           </label>
         )}
-        <p style={{ ...lab, marginTop: 12 }}>おすすめの豆知識（食物繊維・腸内細菌・睡眠・ダイエット方法など。複数選べます）</p>
+        <p style={{ ...lab, marginTop: 12 }}>おすすめの豆知識（1つ選びます：食物繊維・腸内細菌・睡眠・ダイエット方法など）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button type="button" className="trchip on" onClick={() => { const a = autoTips({ constipation: s.status.includes("constipation"), sleepLow: s.sleepLow, stall: (!!res?.judge && ["stall", "up", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15), train: num(s.trainPlan) > 0, round: num(s.round) || 1 }); up({ tips: a.ids }); setTipWhy(a.reasons); }}>🔄 自動で内容を作る（状況から、3つ選ぶ）</button>
-          <button type="button" className="trchip" onClick={() => { up({ tips: [] }); setTipWhy([]); }}>全部はずす</button>
+          <button type="button" className="trchip on" onClick={() => { const a = autoTips({ constipation: s.status.includes("constipation"), sleepLow: s.sleepLow, stall: (!!res?.judge && ["stall", "up", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15), train: num(s.trainPlan) > 0, round: num(s.round) || 1, max: 1 }); up({ tips: a.ids }); setTipWhy(a.reasons); }}>🔄 自動で内容を作る（状況から、1つ選ぶ）</button>
+          <button type="button" className="trchip" onClick={() => { up({ tips: [] }); setTipWhy([]); }}>載せない</button>
         </div>
         {tipWhy.length > 0 && <p className="agnote">選んだ理由：{tipWhy.join(" ／ ")}</p>}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
           {TIPS.map((t) => (
-            <button key={t.id} type="button" aria-pressed={s.tips.includes(t.id)} className={s.tips.includes(t.id) ? "trchip on" : "trchip"} onClick={() => up({ tips: s.tips.includes(t.id) ? s.tips.filter((x) => x !== t.id) : [...s.tips, t.id] })}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
+            <button key={t.id} type="button" aria-pressed={s.tips.includes(t.id)} className={s.tips.includes(t.id) ? "trchip on" : "trchip"} onClick={() => up({ tips: s.tips.includes(t.id) ? [] : [t.id] })}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
           ))}
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
-          <button type="button" className="trchip" onClick={() => { const names = s.tips.map((id) => getTip(id)?.name.replace(/（.*$/, "")).filter(Boolean); const draft = [`${s.name ? s.name + "さん、" : ""}お疲れさまです。`, last && first ? `この${weeks}週間で、体重は ${total > 0 ? "+" : ""}${total}kg の変化でした${res?.judge ? `（判定：${res.judge.label}）` : ""}。` : "", names.length ? `今回の豆知識は、「${names.join("」「")}」です。読んで、ひとつだけ、今週から試してみましょう。` : "", s.nextDate ? `次回は ${s.nextDate.replace(/-/g, "/")} です。体重と、困ったことを、教えてください。` : "", "つらいときは、無理せず、方法を変えられます。いつでも、相談してください。"].filter(Boolean).join("\n"); up({ advice: s.advice ? s.advice + "\n\n" + draft : draft }); }}>✍ お便りの下書きを、自動で作る（「詳しいアドバイス」に入る）</button>
+          <button type="button" className="trchip" onClick={() => { const names = s.tips.map((id) => getTip(id)?.name.replace(/（.*$/, "")).filter(Boolean); const draft = [`${s.name ? s.name + "さん、" : ""}お疲れさまです。`, last && first ? `この${weeks}週間で、体重は ${total > 0 ? "+" : ""}${total}kg の変化でした${res?.judge ? `（判定：${res.judge.label}）` : ""}。` : "", names.length ? `今回の豆知識は、「${names.join("」「")}」です。読んで、できることを、ひとつだけ、今週から試してみましょう。` : "", s.nextDate ? `次回は ${s.nextDate.replace(/-/g, "/")} です。体重と、困ったことを、教えてください。` : "", "つらいときは、無理せず、方法を変えられます。いつでも、相談してください。"].filter(Boolean).join("\n"); up({ advice: s.advice ? s.advice + "\n\n" + draft : draft }); }}>✍ お便りの下書きを、自動で作る（「詳しいアドバイス」に入る）</button>
         </div>
         <p style={{ ...lab, marginTop: 12 }}>新しいダイエット方法の施策（選んだ方法を、並べて、お客様に共有：理想のPFC・注意事項つき）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

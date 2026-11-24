@@ -65,7 +65,7 @@ export default function TrainerApp() {
   const [shortPlan, setShortPlan] = useState("");
   const [breakers, setBreakers] = useState<string[]>([]);
   const [pack, setPack] = useState<string[]>([]);
-  const [tips, setTips] = useState<string[]>(["fiberfoods", "gutbiome", "sleepdiet"]);
+  const [tips, setTips] = useState<string[]>(["fiberfoods"]);
   const [tipWhy, setTipWhy] = useState<string[]>([]);
   const [bkNotes, setBkNotes] = useState<Record<string, string>>({});
   const [advice, setAdvice] = useState("");
@@ -120,7 +120,7 @@ export default function TrainerApp() {
         setShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
         setBreakers(Array.isArray(s.breakers) ? s.breakers : []);
         setPack(Array.isArray(s.pack) ? s.pack : []);
-        setTips(Array.isArray(s.tips) ? s.tips : typeof s.tip === "string" && s.tip ? [s.tip] : ["fiberfoods", "gutbiome", "sleepdiet"]);
+        setTips(Array.isArray(s.tips) ? s.tips.slice(0, 1) : typeof s.tip === "string" && s.tip ? [s.tip] : ["fiberfoods"]);
         setBkNotes(s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {});
         setAdvice(typeof s.advice === "string" ? s.advice : "");
         setSituation(typeof s.situation === "string" ? s.situation : "");
@@ -995,21 +995,21 @@ export default function TrainerApp() {
         {getShortPlan(shortPlan) && <ShortPlanView plan={getShortPlan(shortPlan)!} />}
       </section>
       <section className="card" id="s3t">
-        <p className="balh">おすすめの豆知識（食物繊維・腸内細菌・睡眠・ダイエット方法など。複数選べます）</p>
-        <p className="agnote">読むと、知識になる形で、お客様向けのまとめ（PDF・リンク）に入ります。「自動で内容を作る」は、いまの状況（困りごと・筋トレ）から、3つ選びます。論文で確認できたことと、まだ分かっていないことを、分けて書いています。</p>
+        <p className="balh">おすすめの豆知識（1つ選びます：食物繊維・腸内細菌・睡眠・ダイエット方法など）</p>
+        <p className="agnote">読むと、知識になる形で、お客様向けのまとめ（PDF・リンク）に入ります。「自動で内容を作る」は、いまの状況（困りごと・筋トレ）から、1つ選びます。論文で確認できたことと、まだ分かっていないことを、分けて書いています。</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
-          <button type="button" className="trchip on" onClick={() => { const r = autoTips({ constipation: troubles.includes("constipation"), sleepLow: troubles.includes("sleep"), stall: troubles.includes("plateau"), train: days > 0, round: 1 }); setTips(r.ids); setTipWhy(r.reasons); }}>🔄 自動で内容を作る（状況から、3つ選ぶ）</button>
-          <button type="button" className="trchip" onClick={() => { setTips([]); setTipWhy([]); }}>全部はずす</button>
+          <button type="button" className="trchip on" onClick={() => { const r = autoTips({ constipation: troubles.includes("constipation"), sleepLow: troubles.includes("sleep"), stall: troubles.includes("plateau"), train: days > 0, round: 1, max: 1 }); setTips(r.ids); setTipWhy(r.reasons); }}>🔄 自動で内容を作る（状況から、1つ選ぶ）</button>
+          <button type="button" className="trchip" onClick={() => { setTips([]); setTipWhy([]); }}>載せない</button>
         </div>
         {tipWhy.length > 0 && <p className="agnote">選んだ理由：{tipWhy.join(" ／ ")}</p>}
         <div className="mechips" role="group" aria-label="豆知識" style={{ flexWrap: "wrap" }}>
           {TIPS.map((t) => (
-            <button key={t.id} type="button" aria-pressed={tips.includes(t.id)} className={tips.includes(t.id) ? "on" : ""} onClick={() => setTips((x) => (x.includes(t.id) ? x.filter((y) => y !== t.id) : [...x, t.id]))}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
+            <button key={t.id} type="button" aria-pressed={tips.includes(t.id)} className={tips.includes(t.id) ? "on" : ""} onClick={() => setTips((x) => (x.includes(t.id) ? [] : [t.id]))}>{t.icon} {t.name.replace(/（.*$/, "")}</button>
           ))}
         </div>
         {tips.filter((id) => getTip(id)).map((id) => <TipView key={id} id={id} />)}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
-          <button type="button" className="trchip" onClick={() => { const names = tips.map((id) => getTip(id)?.name.replace(/（.*$/, "")).filter(Boolean); const draft = [`${name ? name + "さん、" : ""}はじめまして。ここから、一緒に、進めていきましょう。`, names.length ? `最初の豆知識は、「${names.join("」「")}」です。読んで、ひとつだけ、今週から試してみましょう。` : "", nextDate ? `次回は ${nextDate.replace(/-/g, "/")} です。体重と、困ったことを、教えてください。` : "", "つらいときは、無理せず、方法を変えられます。いつでも、相談してください。"].filter(Boolean).join("\n"); setAdvice((x) => (x ? x + "\n\n" + draft : draft)); }}>✍ お便りの下書きを、自動で作る（「詳しいアドバイス」に入る）</button>
+          <button type="button" className="trchip" onClick={() => { const names = tips.map((id) => getTip(id)?.name.replace(/（.*$/, "")).filter(Boolean); const draft = [`${name ? name + "さん、" : ""}はじめまして。ここから、一緒に、進めていきましょう。`, names.length ? `最初の豆知識は、「${names.join("」「")}」です。読んで、できることを、ひとつだけ、今週から試してみましょう。` : "", nextDate ? `次回は ${nextDate.replace(/-/g, "/")} です。体重と、困ったことを、教えてください。` : "", "つらいときは、無理せず、方法を変えられます。いつでも、相談してください。"].filter(Boolean).join("\n"); setAdvice((x) => (x ? x + "\n\n" + draft : draft)); }}>✍ お便りの下書きを、自動で作る（「詳しいアドバイス」に入る）</button>
         </div>
       </section>
       <section className="card" id="s3p">

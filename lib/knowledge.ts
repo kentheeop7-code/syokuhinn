@@ -310,11 +310,12 @@ export function tipText(id: string): string {
 }
 
 // 定期フォローで送る豆知識を、状況から、自動で選ぶ（最大3つ）。毎回、ちがう内容になるよう、回数で、ずらす。
-export function autoTips(o: { constipation?: boolean; sleepLow?: boolean; stall?: boolean; train?: boolean; round?: number }): { ids: string[]; reasons: string[] } {
+export function autoTips(o: { constipation?: boolean; sleepLow?: boolean; stall?: boolean; train?: boolean; round?: number; max?: number }): { ids: string[]; reasons: string[] } {
+  const max = o.max ?? 3;
   const ids: string[] = [];
   const reasons: string[] = [];
   const add = (id: string, why: string) => {
-    if (ids.length < 3 && !ids.includes(id)) {
+    if (ids.length < max && !ids.includes(id)) {
       ids.push(id);
       reasons.push(`${getTip(id)!.name.replace(/（.*$/, "")}：${why}`);
     }
@@ -327,7 +328,7 @@ export function autoTips(o: { constipation?: boolean; sleepLow?: boolean; stall?
   if (o.stall) add("dietchoose", "体重が止まっている");
   if (o.train) add("protein", "筋トレをしている");
   const pool = ["fiberfoods", "gutbiome", "sleepdiet", "dietchoose", "inulin", "ferment", "magnesium", "protein", "kiwi", "natto", "fiber", "melatonin"];
-  const start = Math.max(0, (o.round ?? 1) - 1) * 3;
-  for (let i = 0; i < pool.length && ids.length < 3; i++) add(pool[(start + i) % pool.length], "今回の定期フォローの、おすすめ（回ごとに、入れかえ）");
+  const start = Math.max(0, (o.round ?? 1) - 1) * max;
+  for (let i = 0; i < pool.length && ids.length < max; i++) add(pool[(start + i) % pool.length], "今回の定期フォローの、おすすめ（回ごとに、入れかえ）");
   return { ids, reasons };
 }
