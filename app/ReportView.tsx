@@ -15,6 +15,8 @@ import BreakerView from "./BreakerView";
 import MethodPlans from "./MethodPlans";
 import Foods30 from "./Foods30";
 import TipView from "./TipView";
+import AutoPlanView from "./AutoPlanView";
+import { buildPlan } from "../lib/autoplan";
 import { getTip } from "../lib/knowledge";
 import ShortPlanView from "./ShortPlanView";
 import ExpertSection, { NextActions } from "./ExpertSection";
@@ -173,7 +175,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
     return true;
   };
   let secNo = 0;
-  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["豆知識", "💡"], ["次回までの", "📌"], ["打開策の候補", "🧗"], ["短期プログラム", "🗓"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
+  const ICONS: [string, string][] = [["食べ物の例", "🥚"], ["豆知識", "💡"], ["状況の判断", "🧭"], ["次回までの", "📌"], ["打開策の候補", "🧗"], ["短期プログラム", "🗓"], ["専門家の評価", "🩺"], ["今後の見通し", "🗺"], ["増やす食事", "➕"], ["今日から", "✅"], ["現状の分析", "🔍"], ["からだの", "🧍"], ["今日の食事", "🍽"], ["ゴール", "🎯"], ["運動", "🏃"], ["1日の食事の目安", "📊"], ["カロリーの", "🔢"], ["食事の方法", "🥗"], ["食べる量", "✋"], ["栄養素", "🧪"], ["こちらを", "🔄"], ["増やしたい", "🛒"], ["食事の例", "📅"], ["あなたの食事例", "📅"], ["食品の早見", "🥚"], ["困ったとき", "🩺"], ["いまの課題", "🧩"], ["今週", "🗓"], ["アドバイス", "💬"], ["トレーナー", "🧑‍🏫"], ["根拠", "📚"]];
   const H = (t: string) => `${ICONS.find(([k]) => t.includes(k))?.[1] ?? "▪"} ${++secNo}. ${t}`;
   const paceT = PACES.find((p) => p.id === pace);
   const blocks = gp ? Array.from({ length: Math.min(6, Math.ceil(Math.min(gp.weeks, 24) / 4)) }, (_, i) => ({ label: `${i * 4 + 1}〜${i * 4 + 4}週`, value: days * 4 })) : [];
@@ -1170,6 +1172,35 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           </div>
         </section>
         )}
+
+        {s.apOn !== false && w > 0 && (() => {
+          const apH: string[] = Array.isArray(s.apHabits) ? s.apHabits : [];
+          const apM = { am: "", noon: "", pm: "", snack: "", ...(s.apMeals && typeof s.apMeals === "object" ? s.apMeals : {}) };
+          const hasAny = apH.length > 0 || Object.values(apM).some((x) => String(x).trim()) || num(s.apStall) > 0 || (s.troubles || []).some((t: string) => ["plateau", "sleep", "constipation"].includes(t));
+          if (!hasAny) return null;
+          const plan = buildPlan({
+            methodId: mth.id,
+            kcal: want || kcalMain,
+            tdee: energy?.tdee ?? 0,
+            weeks: 0,
+            ratePct: 0,
+            judgeId: "",
+            stallWeeks: num(s.apStall) > 0 ? num(s.apStall) : (s.troubles || []).includes("plateau") ? 2 : 0,
+            stallAuto: 0,
+            habits: [...apH, ...((s.troubles || []).includes("sleep") ? ["sleep"] : []), ...((s.troubles || []).includes("constipation") ? ["const"] : [])],
+            meals: apM,
+            train: days > 0,
+            conds: (s.conds || []).length > 0,
+            youth: band <= 1 || (num(s.age) > 0 && num(s.age) < 18),
+            round: 1,
+          });
+          return (
+            <section>
+              <h2>{H("状況の判断と、具体的な提案")}</h2>
+              <AutoPlanView p={plan} />
+            </section>
+          );
+        })()}
 
         {bk.length > 0 && (
           <section>

@@ -20,6 +20,8 @@ import BreakerView from "./BreakerView";
 import MethodPlans, { PACK_ALL, PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
 import TipView from "./TipView";
+import AutoPlanView from "./AutoPlanView";
+import { HABITS, buildPlan } from "../lib/autoplan";
 import { TIPS, autoTips, getTip } from "../lib/knowledge";
 import ShortPlanView from "./ShortPlanView";
 import { COMMON_CAUTION, COMMON_LINES, COMMON_NOTES, type MethodId, METHODS, effectivePct, exampleSt, getMethod, inNational, macrosFor, methodBlocked } from "../lib/methods";
@@ -67,6 +69,10 @@ export default function TrainerApp() {
   const [pack, setPack] = useState<string[]>([]);
   const [tips, setTips] = useState<string[]>(["fiberfoods"]);
   const [tipWhy, setTipWhy] = useState<string[]>([]);
+  const [apOn, setApOn] = useState(true);
+  const [apHabits, setApHabits] = useState<string[]>([]);
+  const [apMeals, setApMeals] = useState({ am: "", noon: "", pm: "", snack: "" });
+  const [apStall, setApStall] = useState("");
   const [bkNotes, setBkNotes] = useState<Record<string, string>>({});
   const [advice, setAdvice] = useState("");
   const [situation, setSituation] = useState("");
@@ -120,6 +126,10 @@ export default function TrainerApp() {
         setShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
         setBreakers(Array.isArray(s.breakers) ? s.breakers : []);
         setPack(Array.isArray(s.pack) ? s.pack : []);
+        setApOn(s.apOn !== false);
+        setApHabits(Array.isArray(s.apHabits) ? s.apHabits : []);
+        setApMeals(s.apMeals && typeof s.apMeals === "object" ? { am: "", noon: "", pm: "", snack: "", ...s.apMeals } : { am: "", noon: "", pm: "", snack: "" });
+        setApStall(typeof s.apStall === "string" ? s.apStall : "");
         setTips(Array.isArray(s.tips) ? s.tips.slice(0, 1) : typeof s.tip === "string" && s.tip ? [s.tip] : ["fiberfoods"]);
         setBkNotes(s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {});
         setAdvice(typeof s.advice === "string" ? s.advice : "");
@@ -150,9 +160,9 @@ export default function TrainerApp() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation }));
+      localStorage.setItem("lg-trainer", JSON.stringify({ name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, methodManual: method !== "", pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, apOn, apHabits, apMeals, apStall, bkNotes, advice, situation }));
     } catch {}
-  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation]);
+  }, [loaded, name, goal, now, target, days, note, picked, pins, conds, issues, problem, weekAct, nextDate, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, others, water, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, apOn, apHabits, apMeals, apStall, bkNotes, advice, situation]);
 
   const w = num(now);
   const wt = num(target);
@@ -175,6 +185,24 @@ export default function TrainerApp() {
   const methodId: MethodId = ((method as MethodId) || rec.top) as MethodId;
   const mth = getMethod(methodId);
   const youthNow = band <= 1 || (num(age) > 0 && num(age) < 18);
+  const autoPlan = w > 0
+    ? buildPlan({
+        methodId,
+        kcal: wantKcal || 0,
+        tdee: energy?.tdee ?? 0,
+        weeks: 0,
+        ratePct: 0,
+        judgeId: "",
+        stallWeeks: num(apStall) > 0 ? num(apStall) : troubles.includes("plateau") ? 2 : 0,
+        stallAuto: 0,
+        habits: [...apHabits, ...(troubles.includes("sleep") ? ["sleep"] : []), ...(troubles.includes("constipation") ? ["const"] : [])],
+        meals: apMeals,
+        train: days > 0,
+        conds: conds.length > 0,
+        youth: youthNow,
+        round: 1,
+      })
+    : null;
   const blocked = methodBlocked(mth, { hasConds: conds.length > 0, youth: youthNow });
   const pctEff = effectivePct(mth, pfc);
   const pctSum = pctEff.p + pctEff.f + pctEff.c;
@@ -194,11 +222,11 @@ export default function TrainerApp() {
     if (!loaded) return;
     const h = setTimeout(async () => {
       try {
-        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation }));
+        setLink(await shareUrl({ name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, method: methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, apOn, apHabits, apMeals, apStall, bkNotes, advice, situation }));
       } catch {}
     }, 600);
     return () => clearTimeout(h);
-  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, bkNotes, advice, situation]);
+  }, [loaded, name, goal, now, target, days, others, water, sex, band, curMeal, planMeal, targetKcal, pace, swapOff, picked, conds, issues, problem, weekAct, nextDate, note, pins, age, height, bmr, muscle, bodyFat, pal, actOff, fatMass, visceral, bmiIn, methodId, pfc, troubles, foodAmts, shortPlan, breakers, pack, tips, apOn, apHabits, apMeals, apStall, bkNotes, advice, situation]);
   const insights = makeInsights(curMeal, sex, band, wantKcal);
   const good = goodPoints(curMeal, sex, band);
   const draft = draftAdvice({ name, cur: curMeal, plan: planMeal, sex, band, wantKcal, nextDate });
@@ -268,6 +296,7 @@ export default function TrainerApp() {
     }
     if (energy && wantKcal) L.push("", `■ 1日の目安：約${wantKcal.toLocaleString()}kcal（${energy.method === "dri" ? "年代・性別の目安" : `基礎代謝 約${energy.bmr}kcal × 活動量${energy.pal}`}）`);
     if (mac) L.push("", `■ 食事の方法：${mth.name}（たんぱく質${Math.round((pctEff.p / pctSum) * 100)}%・脂質${Math.round((pctEff.f / pctSum) * 100)}%・炭水化物${Math.round((pctEff.c / pctSum) * 100)}%）`, `　1日 約${wantKcal.toLocaleString()}kcal：たんぱく質 約${mac.p}g・脂質 約${mac.f}g・炭水化物 約${mac.c}g`);
+    if (apOn && autoPlan) L.push("", `■ 状況の判断：${autoPlan.judge.label}`, ...autoPlan.judge.points, ...(autoPlan.dx.length ? ["", "■ 次の一手", ...autoPlan.dx.slice(0, 4).map((d, i) => `${i + 1}. ${d.title}：${d.action}`)] : []));
     if (pack.length) L.push("", packText(pack, wantKcal));
     if (tips.some((id) => getTip(id))) L.push("", "■ 今回の豆知識", ...tips.filter((id) => getTip(id)).map((id) => `・${getTip(id)!.icon} ${getTip(id)!.name.replace(/（.*$/, "")}：${getTip(id)!.hook}`));
     if (breakers.length || bkNotes._free?.trim()) L.push("", breakerText(breakers, bkNotes));
@@ -1025,6 +1054,33 @@ export default function TrainerApp() {
           ))}
         </div>
         {pack.length > 0 && <MethodPlans ids={pack} kcal={wantKcal} evLimit={1} />}
+      </section>
+      <section className="card" id="s3a">
+        <p className="balh">お客様の状況を入れると、自動で、判断・具体的な食事・次の一手を作ります（根拠つき）</p>
+        <label className="advl" style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+          <input type="checkbox" checked={apOn} onChange={(e) => setApOn(e.target.checked)} />
+          まとめに「状況の判断と、具体的な提案（自動）」を、載せる
+        </label>
+        <p className="agnote">いまの食事・生活の様子（当てはまるものを選ぶ）。「困りごと」で選んだ、睡眠・便秘・停滞も、自動で読み取ります。</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {HABITS.map((h) => (
+            <button key={h.id} type="button" aria-pressed={apHabits.includes(h.id)} className={apHabits.includes(h.id) ? "trchip on" : "trchip"} onClick={() => setApHabits((x) => (x.includes(h.id) ? x.filter((y) => y !== h.id) : [...x, h.id]))}>{h.label}</button>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 8, marginTop: 8 }}>
+          {([["am", "朝食（食べたもの）"], ["noon", "昼食"], ["pm", "夕食"], ["snack", "間食・飲み物"]] as const).map(([k, t]) => (
+            <label key={k} className="advl">{t}<textarea rows={2} value={apMeals[k]} placeholder="例：トースト・コーヒー" onChange={(e) => setApMeals((x) => ({ ...x, [k]: e.target.value }))} /></label>
+          ))}
+        </div>
+        <label className="advl" style={{ maxWidth: 280 }}>停滞している期間（週・わかる場合）<input value={apStall} inputMode="numeric" onChange={(e) => setApStall(e.target.value)} style={{ font: "inherit", padding: 8, border: "1px solid #bbb", borderRadius: 8 }} /></label>
+        {autoPlan && (
+          <>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
+              <button type="button" className="trchip on" onClick={() => { setBreakers(autoPlan.breakerIds); if (autoPlan.tipId) setTips([autoPlan.tipId]); }}>この提案の、打開策と豆知識を、まとめに反映する</button>
+            </div>
+            <AutoPlanView p={autoPlan} />
+          </>
+        )}
       </section>
       <section className="card" id="s3k">
         <p className="balh">停滞期を抜ける・腸内環境を整える：打開策の候補（選んで提案）</p>
