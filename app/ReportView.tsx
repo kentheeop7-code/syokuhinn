@@ -139,7 +139,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
   const sp = getShortPlan(typeof s.shortPlan === "string" ? s.shortPlan : "");
   const bk: string[] = Array.isArray(s.breakers) ? s.breakers : [];
   const pack: string[] = Array.isArray(s.pack) ? s.pack : [];
-  const tipIds: string[] = Array.isArray(s.tips) ? s.tips : typeof s.tip === "string" && s.tip ? [s.tip] : [];
+  const tipIds: string[] = Array.isArray(s.tips) ? s.tips.slice(0, 1) : typeof s.tip === "string" && s.tip ? [s.tip] : [];
   const bkNotes: Record<string, string> = s.bkNotes && typeof s.bkNotes === "object" ? s.bkNotes : {};
   const myTroubles = TROUBLES.filter((t) => (s.troubles || []).includes(t.id));
   const foodAmts: Record<string, string> = s.foodAmts && typeof s.foodAmts === "object" ? s.foodAmts : {};
