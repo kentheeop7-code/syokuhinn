@@ -32,6 +32,17 @@ const STEPS: BkEv = { label: "Ding 2025 Lancet Public Health（歩数のメタ�
 const GRGIC: BkEv = { label: "Grgic 2018 Sports Med（筋トレの回数）", pmid: "29470825", note: "1週間の総量が同じなら、筋トレの回数による筋力の差は見られなかった" };
 const MORTON: BkEv = { label: "Morton 2018 Br J Sports Med（メタ分析）", pmid: "28698222", note: "筋トレ中の筋力・筋量の増加は、体重1kgあたり約1.6g/日で、頭打ちになる傾向" };
 const BIA: BkEv = { label: "Kyle 2004 Clin Nutr（体組成計BIAのガイドライン）", pmid: "15556267", note: "水分状態が異常なときは、日常的な使用をすすめない。経過の追跡は、注意して解釈する" };
+export const EVID = {
+  BURKE,
+  LICHTMAN,
+  NEDEL,
+  MORTON,
+  STEPS,
+  BREAK6,
+  MATADOR,
+  ADAPT,
+  LOWE: { label: "Lowe 2020 JAMA Intern Med（116人・12週間）", pmid: "32986097", note: "16:8は、3食を決めて食べる群と、体重の減りに差がなかった（群間 −0.26kg、P=0.63）。除脂肪量の指標は、16:8群で低かった（対面の50人）" } as BkEv,
+};
 const fromPlan = (id: string): BkEv[] => (SHORT_PLANS.find((p) => p.id === id)?.evidence ?? []).slice(0, 4);
 
 export const BREAKERS: BreakOption[] = [

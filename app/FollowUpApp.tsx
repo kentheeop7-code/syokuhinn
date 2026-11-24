@@ -16,6 +16,8 @@ import { BREAKERS, suggestBreakers } from "../lib/breakers";
 import BreakerView from "./BreakerView";
 import Foods30 from "./Foods30";
 import TipView from "./TipView";
+import AutoPlanView from "./AutoPlanView";
+import { HABITS, buildPlan } from "../lib/autoplan";
 import { TIPS, autoTips, getTip, tipText } from "../lib/knowledge";
 import MethodPlans, { PACK_ALL, PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
 import { advise, type Advice } from "../lib/advisor";
@@ -46,6 +48,10 @@ type S = {
   breakers: string[];
   pack: string[];
   tips: string[];
+  apOn: boolean;
+  apHabits: string[];
+  apMeals: { am: string; noon: string; pm: string; snack: string };
+  apStall: string;
   seeded?: boolean;
   bkNotes: Record<string, string>;
   situation: string;
@@ -115,6 +121,10 @@ const DEFAULT: S = {
   breakers: ["dietbreak", "refeed", "cheat", "fast16"],
   pack: PACK_DEFAULT,
   tips: ["fiberfoods"],
+  apOn: true,
+  apHabits: [],
+  apMeals: { am: "", noon: "", pm: "", snack: "" },
+  apStall: "",
   seeded: true,
   bkNotes: {},
   situation: "",
@@ -235,6 +245,38 @@ export default function FollowUpApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(wArr), energy?.kind, kcal, s.sleepLow, s.sleep, s.steps, s.trainDone, s.trainPlan, s.noLog, s.logDays, s.status.join(",")]
   );
+  const plan = useMemo(
+    () =>
+      nowW > 0
+        ? buildPlan({
+            methodId: s.pfcMethod || "balance",
+            kcal,
+            tdee: energy?.tdee ?? 0,
+            weeks,
+            ratePct,
+            judgeId: res?.judge?.id ?? "",
+            stallWeeks: num(s.apStall),
+            stallAuto: (() => {
+              if (!last) return 0;
+              const tol = Math.max(0.4, num(last.kg) * 0.006);
+              let sw = 0;
+              for (let k = sorted.length - 2; k >= 0; k--) {
+                if (Math.abs(num(sorted[k].kg) - num(last.kg)) <= tol) sw = num(last.w) - num(sorted[k].w);
+                else break;
+              }
+              return sw;
+            })(),
+            habits: [...s.apHabits, ...(s.noLog ? ["nolog"] : []), ...(s.sleepLow ? ["sleep"] : []), ...(s.status.includes("constipation") ? ["const"] : [])],
+            meals: s.apMeals,
+            train: num(s.trainPlan) > 0,
+            conds: s.conds,
+            youth: band <= 1 || (age > 0 && age < 18),
+            round: num(s.round) || 1,
+          })
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [nowW, s.pfcMethod, kcal, weeks, ratePct, res?.judge?.id, s.apStall, s.apHabits.join(","), s.noLog, s.sleepLow, s.status.join(","), JSON.stringify(s.apMeals), s.trainPlan, s.conds, band, age, s.round]
+  );
   const pts = sorted.map((r) => ({ x: num(r.w), y: num(r.kg) }));
   const trainRate = num(s.trainPlan) > 0 ? Math.round((num(s.trainDone) / num(s.trainPlan)) * 100) : 0;
   const logRate = s.logDays !== "" ? Math.round((num(s.logDays) / 7) * 100) : 0;
@@ -303,6 +345,7 @@ export default function FollowUpApp() {
     s.pack.length ? `\n${packText(s.pack, kcal)}` : "",
     s.breakers.length || s.bkNotes._free?.trim() ? `\n${breakerText(s.breakers, s.bkNotes)}` : "",
     s.tips.filter((id) => getTip(id)).length ? `\n【今回の豆知識】\n${s.tips.filter((id) => getTip(id)).map((id) => `・${getTip(id)!.icon} ${getTip(id)!.name.replace(/（.*$/, "")}：${getTip(id)!.hook}`).join("\n")}` : "",
+    s.apOn && plan ? `\n【判定】${plan.judge.label}\n${plan.judge.points.join("\n")}${plan.dx.length ? `\n\n【次の一手】\n${plan.dx.slice(0, 4).map((d, i) => `${i + 1}. ${d.title}：${d.action}`).join("\n")}` : ""}${plan.breakerWhy.length ? `\n\n【打開策のおすすめ】\n${plan.breakerWhy.slice(0, 3).join("\n")}` : ""}` : "",
     s.advice.trim() ? `\n【くわしいアドバイス】\n${s.advice.trim()}` : "",
     s.comment ? `\nトレーナーから：${s.comment}` : "",
     "\n※ 目安です。持病・服薬のある方は、主治医にご確認ください。",
@@ -433,6 +476,29 @@ export default function FollowUpApp() {
           ))}
           <input style={{ ...inp, width: 110 }} inputMode="decimal" value={s.foodAmt} onChange={(e) => up({ foodAmt: e.target.value })} aria-label="食べ物の例の量（g）" />
         </div>
+        <p style={{ ...lab, marginTop: 12 }}>お客様の状況を入れると、自動で、判断・具体的な食事・次の一手を作ります（根拠つき）</p>
+        <label style={{ ...lab, display: "flex", gap: 8, alignItems: "center" }}>
+          <input type="checkbox" checked={s.apOn} onChange={(e) => up({ apOn: e.target.checked })} />
+          資料に「状況の判断と、具体的な提案（自動）」を、載せる
+        </label>
+        <p style={{ ...lab, marginTop: 6 }}>いまの食事・生活の様子（当てはまるものを選ぶ）</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {HABITS.map((h) => (
+            <button key={h.id} type="button" aria-pressed={s.apHabits.includes(h.id)} className={s.apHabits.includes(h.id) ? "trchip on" : "trchip"} onClick={() => up({ apHabits: s.apHabits.includes(h.id) ? s.apHabits.filter((x) => x !== h.id) : [...s.apHabits, h.id] })}>{h.label}</button>
+          ))}
+        </div>
+        <p className="agnote">睡眠・便秘・食事の記録は、上の「状態」の入力からも、自動で読み取ります。</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 8, marginTop: 6 }}>
+          {([["am", "朝食（食べたもの）"], ["noon", "昼食"], ["pm", "夕食"], ["snack", "間食・飲み物"]] as const).map(([k, t]) => (
+            <label key={k} style={lab}>{t}<textarea style={{ ...inp, minHeight: 56, resize: "vertical" }} value={s.apMeals[k]} placeholder="例：トースト・コーヒー" onChange={(e) => up({ apMeals: { ...s.apMeals, [k]: e.target.value } })} /></label>
+          ))}
+        </div>
+        <label style={{ ...lab, maxWidth: 260 }}>停滞している期間（週・わかる場合。空なら、記録から自動）<input style={inp} inputMode="numeric" value={s.apStall} onChange={(e) => up({ apStall: e.target.value })} /></label>
+        {plan && (
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+            <button type="button" className="trchip on" onClick={() => { up({ breakers: plan.breakerIds, tips: plan.tipId ? [plan.tipId] : s.tips }); }}>この提案の、打開策と豆知識を、資料に反映する</button>
+          </div>
+        )}
         <p style={{ ...lab, marginTop: 12 }}>停滞期を抜ける・腸内環境を整える：打開策の候補（選んで提案）</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button type="button" className="trchip on" onClick={() => up({ breakers: suggestBreakers({ stall: (!!res?.judge && ["stall", "up", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15), weeksStalled: (res?.judge && ["stall", "slow"].includes(res.judge.id)) || (weeks >= 2 && ratePct > -0.15) ? Math.max(weeks, 4) : 0, gut: s.status.includes("constipation"), youth: band <= 1 || (age > 0 && age < 18), cond: s.conds, noReduce: false }) })}>🔄 判定から、自動で候補を出す</button>
@@ -600,6 +666,13 @@ export default function FollowUpApp() {
             <h2>{H("いまの判定と、原因")}</h2>
             <div className="fujudge"><b>{res.judge.label}</b><span>{res.slopeText}</span></div>
             {res.causes.length > 0 && <ul className="fucauses">{res.causes.map((c, i) => <li key={i}><b>{c.t}</b><small>{c.d}</small></li>)}</ul>}
+          </section>
+        )}
+
+        {s.apOn && plan && (
+          <section>
+            <h2>{H("状況の判断と、具体的な提案（自動作成）")}</h2>
+            <AutoPlanView p={plan} />
           </section>
         )}
 
