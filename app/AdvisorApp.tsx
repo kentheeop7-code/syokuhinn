@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { EXAMPLES, advise, type Advice } from "../lib/advisor";
 import PdfButton from "./PdfButton";
 import ShareButtons from "./ShareButtons";
+import Link from "next/link";
+import { autoTips, getTip, tipText } from "../lib/knowledge";
 
 // トレーナーの相談アシスタント：お客様の状態を書く（または、例を押す）と、原因の候補・確認する質問・対策・今後の流れ・他の可能性・根拠が、出る。
 const LC = { 高: "#e0694f", 中: "#e0a526", 低: "#3b82c4" } as const;
@@ -152,8 +154,29 @@ export default function AdvisorApp() {
             <p className="agnote">論文の多くは、人数が少ない・期間が短い・対象が限られる、という限界があります。個別のお客様には、そのまま当てはまらないことがあります。</p>
           </section>
 
+          {(() => {
+            const goal = /筋肉をつけ|筋肉を増や|増量|バルク|筋肥大|筋トレの効果|体重を増や/.test(asked) ? ("muscle" as const) : /減量.*筋|筋.*減量|痩せ.*筋|筋.*守/.test(asked) ? ("both" as const) : ("diet" as const);
+            const t = autoTips({ constipation: /便秘|お腹|腸/.test(asked), sleepLow: /睡眠|眠れ|寝不足|不眠/.test(asked), stall: /停滞|減らない|減って(い)?ない|落ちない|変わらない|増えない/.test(asked) || goal === "muscle" && /増えない/.test(asked), train: /筋トレ|トレーニング/.test(asked), round: 1, max: 2, goal });
+            return (
+              <section className="advcard">
+                <h2>10. おすすめの豆知識（お客様に送れます：{goal === "muscle" ? "筋肉をつけたい" : goal === "both" ? "減量＋筋肉を守る" : "ダイエット"}）</h2>
+                <p className="agnote">状況から、おすすめを選びました。定期フォローでは、自動で選んで、資料に組み込めます（<Link href="/trainer/followup">定期フォローを開く</Link>／<Link href="/trainer/guide">資料集の豆知識</Link>）。</p>
+                {t.ids.map((id, i) => (
+                  <div key={id} className="advcause">
+                    <p className="advch"><b>{getTip(id)!.icon} {getTip(id)!.name}</b></p>
+                    <p>{getTip(id)!.hook}</p>
+                    <p className="agnote">選んだ理由：{t.reasons[i]?.split("：")[1] ?? ""}</p>
+                    <p className="agnote">覚えておくこと：{getTip(id)!.remember.join(" ／ ")}</p>
+                    {getTip(id)!.trainer && <div className="trnotes" data-pdf-skip><b>👤 トレーナーへ</b><ul>{getTip(id)!.trainer!.map((x) => <li key={x}>{x}</li>)}</ul></div>}
+                    <ShareButtons text={tipText(id)} label="この豆知識の文面" />
+                  </div>
+                ))}
+              </section>
+            );
+          })()}
+
           <section className="advcard">
-            <h2>10. お客様への、伝え方の例（LINE用）</h2>
+            <h2>11. お客様への、伝え方の例（LINE用）</h2>
             <p className="advsay">{res.say}</p>
             <ShareButtons text={res.say} label="伝え方の例" />
             <p className="agnote">トレーナー用のまとめ（原因・対策・流れ）を、メモに残すとき：</p>

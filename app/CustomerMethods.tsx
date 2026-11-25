@@ -83,12 +83,19 @@ export function StallBreakers({ card = false }: { card?: boolean }) {
 // お客様向け：おすすめの栄養素の豆知識（選んで読む）。
 export function NutrientTips({ card = false }: { card?: boolean }) {
   const [id, setId] = useState(TIPS[0].id);
+  const [g, setG] = useState<"all" | "diet" | "muscle">("all");
+  const list = TIPS.filter((t) => g === "all" || t.goal === g || !t.goal);
   const body = (
     <>
       <PdfButton target="#nutritips" title="栄養素の豆知識" base="lifegym-tips" />
       <p className="agnote">気になる栄養素を選ぶと、「とは・からだのなかで・とれる食べ物・とり方・論文でわかっていること・注意」が読めます。<b>サプリは、持病・服薬のある方、妊娠中の方、未成年の方は、先に主治医に相談してください。</b></p>
+      <div className="spvchips" role="group" aria-label="目的で絞る">
+        {([["all", "すべて"], ["diet", "🔥 ダイエットしたい"], ["muscle", "💪 筋肉をつけたい"]] as const).map(([k, t]) => (
+          <button key={k} type="button" aria-pressed={g === k} className={g === k ? "on" : ""} onClick={() => { setG(k); const first = TIPS.find((x) => k === "all" || x.goal === k); if (first && k !== "all") setId(first.id); }}>{t}</button>
+        ))}
+      </div>
       <div className="spvchips" role="group" aria-label="栄養素の豆知識">
-        {TIPS.map((t) => (
+        {list.map((t) => (
           <button key={t.id} type="button" aria-pressed={id === t.id} className={id === t.id ? "on" : ""} onClick={() => setId(t.id)}>
             <span aria-hidden>{t.icon}</span> {t.name.replace(/（.*$/, "")}
           </button>

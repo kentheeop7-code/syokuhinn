@@ -450,7 +450,8 @@ export function autoTips(o: { constipation?: boolean; sleepLow?: boolean; stall?
     add("fiberfoods", "便通が気になる");
     add("gutbiome", "便通が気になる");
   }
-  if (o.stall) add("dietchoose", "体重が止まっている");
+  if (o.stall && o.goal !== "muscle") add("dietchoose", "体重が止まっている");
+  if (o.stall && o.goal === "muscle") add("mfuel", "体重が増えない（食事量の見直し）");
   if (o.train) add("protein", "筋トレをしている");
   const pool = o.goal === "muscle"
     ? ["mvolume", "mfuel", "protein", "sleepdiet", "magnesium", "fiberfoods", "natto"]
