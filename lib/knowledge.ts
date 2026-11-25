@@ -446,6 +446,7 @@ export function autoTips(o: { constipation?: boolean; sleepLow?: boolean; stall?
   };
   if (o.sleepLow) add("sleepdiet", "睡眠が短い");
   if (o.goal === "muscle") add("mvolume", "筋肉をつけたい（筋トレの量と頻度）");
+  if (o.goal === "both") add("protein", "減量中に筋肉を守る（たんぱく質）");
   if (o.constipation) {
     add("fiberfoods", "便通が気になる");
     add("gutbiome", "便通が気になる");
