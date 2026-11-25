@@ -5586,3 +5586,6 @@ html{scroll-behavior:smooth}
 .trnotes{margin:10px 0;padding:10px 14px;border-radius:12px;background:#fff6e5;border:2px dashed #e0a030}
 .trnotes ul{margin:4px 0 0 18px;padding:0}
 .trnotes li{margin:3px 0}
+
+.apv-line{margin:6px 0;font-size:.95rem;line-height:1.7}
+.bk-sum td{font-size:.88rem}

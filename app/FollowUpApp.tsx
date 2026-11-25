@@ -685,14 +685,14 @@ export default function FollowUpApp() {
         {s.apOn && plan && (
           <section>
             <h2>{H("状況の判断と、具体的な提案（自動作成）")}</h2>
-            <AutoPlanView p={plan} />
+            <AutoPlanView p={plan} compact />
           </section>
         )}
 
         {s.breakers.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={s.breakers} evLimit={1} notes={s.bkNotes} kcal={kcal} maint={energy?.tdee ?? 0} />
+            <BreakerView ids={s.breakers} evLimit={1} notes={s.bkNotes} kcal={kcal} maint={energy?.tdee ?? 0} compact />
           </section>
         )}
         {s.breakers.length === 0 && s.bkNotes._free?.trim() && (

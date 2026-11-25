@@ -157,7 +157,7 @@ export function buildPlan(i: PlanIn): PlanOut {
   const PRI = ["停滞期の見立て", "食事の記録がありません", "睡眠が短い", "筋トレ中のたんぱく質", "たんぱく質が少ない", "便通が気になる", "いまの方法の注意", "朝食を抜いている", "空腹感が強い", "疲れ・やる気の低下", "歩数・活動量が少ない"];
   dx.sort((a, b) => (PRI.indexOf(a.title) < 0 ? 99 : PRI.indexOf(a.title)) - (PRI.indexOf(b.title) < 0 ? 99 : PRI.indexOf(b.title)));
   const dxAll = dx.length;
-  dx.splice(6);
+  dx.splice(4);
   // --- 小さな工夫（痩せる／筋肉をつける）。根拠は、PubMedの要旨で確認したものだけ
   const tricks: { title: string; why: string; action: string; ev: PlanEv[] }[] = [];
   const T = (t: { title: string; why: string; action: string; ev: PlanEv[] }) => tricks.push(t);

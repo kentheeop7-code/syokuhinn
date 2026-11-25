@@ -1199,7 +1199,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
           return (
             <section>
               <h2>{H("状況の判断と、具体的な提案")}</h2>
-              <AutoPlanView p={plan} />
+              <AutoPlanView p={plan} compact />
             </section>
           );
         })()}
@@ -1207,7 +1207,7 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
         {bk.length > 0 && (
           <section>
             <h2>{H("停滞期を抜ける・整える 打開策の候補")}</h2>
-            <BreakerView ids={bk} evLimit={compact ? 1 : 2} notes={bkNotes} kcal={want || kcalMain} maint={energy?.tdee ?? 0} />
+            <BreakerView ids={bk} evLimit={compact ? 1 : 2} notes={bkNotes} kcal={want || kcalMain} maint={energy?.tdee ?? 0} compact={compact} />
           </section>
         )}
         {bk.length === 0 && bkNotes._free?.trim() && (
