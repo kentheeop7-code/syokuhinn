@@ -67,9 +67,25 @@ export default function AutoPlanView({ p }: { p: PlanOut }) {
         </>
       )}
 
-      {p.breakerWhy.length > 0 && (
+      {p.tricks.length > 0 && (
         <>
-          <p className="apv-h">③ 停滞期の打開策（この状況での、おすすめの順）</p>
+          <p className="apv-h">③ {p.trickTitle}</p>
+          <div className="apv-dx">
+            {p.tricks.map((d) => (
+              <div key={d.title} className="apv-card">
+                <b>{d.title}</b>
+                <p>{d.why}</p>
+                <p className="apv-act">→ {d.action}</p>
+                {d.ev.length > 0 && <ul className="fuev">{d.ev.map((e) => <li key={e.pmid}>{e.label}：{e.note}</li>)}</ul>}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {p.breakerWhy.length > 0 && (p.goal !== "muscle" || p.judge.level === "stall") && (
+        <>
+          <p className="apv-h">④ 停滞期の打開策（この状況での、おすすめの順）</p>
           <ol className="apv-br">{p.breakerWhy.map((x) => <li key={x}>{x}</li>)}</ol>
           <p className="rxr">くわしい、やり方・PFC・注意は、「打開策」の欄に、あります。</p>
         </>

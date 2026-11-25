@@ -21,6 +21,7 @@ import MethodPlans, { PACK_ALL, PACK_DEFAULT, PACK_OPTIONS, breakerText, packTex
 import { advise, type Advice } from "../lib/advisor";
 import TipView from "./TipView";
 import AutoPlanView from "./AutoPlanView";
+import TrainerNotes from "./TrainerNotes";
 import { HABITS, buildPlan } from "../lib/autoplan";
 import { TIPS, autoTips, getTip } from "../lib/knowledge";
 import ShortPlanView from "./ShortPlanView";
@@ -201,6 +202,8 @@ export default function TrainerApp() {
         conds: conds.length > 0,
         youth: youthNow,
         round: 1,
+        goal,
+        weight: w,
       })
     : null;
   const blocked = methodBlocked(mth, { hasConds: conds.length > 0, youth: youthNow });
@@ -1075,6 +1078,7 @@ export default function TrainerApp() {
         <label className="advl" style={{ maxWidth: 280 }}>停滞している期間（週・わかる場合）<input value={apStall} inputMode="numeric" onChange={(e) => setApStall(e.target.value)} style={{ font: "inherit", padding: 8, border: "1px solid #bbb", borderRadius: 8 }} /></label>
         {autoPlan && (
           <>
+            <TrainerNotes notes={autoPlan.trainerNotes} />
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
               <button type="button" className="trchip on" onClick={() => { setBreakers(autoPlan.breakerIds); if (autoPlan.tipId) setTips([autoPlan.tipId]); }}>この提案の、打開策と豆知識を、まとめに反映する</button>
             </div>

@@ -1193,6 +1193,8 @@ export default function ReportView({ mode = "trainer" }: { mode?: "trainer" | "c
             conds: (s.conds || []).length > 0,
             youth: band <= 1 || (num(s.age) > 0 && num(s.age) < 18),
             round: 1,
+            goal: goalK === "muscle" ? "muscle" : goalK === "both" ? "both" : "diet",
+            weight: w,
           });
           return (
             <section>

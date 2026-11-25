@@ -17,6 +17,7 @@ import BreakerView from "./BreakerView";
 import Foods30 from "./Foods30";
 import TipView from "./TipView";
 import AutoPlanView from "./AutoPlanView";
+import TrainerNotes from "./TrainerNotes";
 import { HABITS, buildPlan } from "../lib/autoplan";
 import { TIPS, autoTips, getTip, tipText } from "../lib/knowledge";
 import MethodPlans, { PACK_ALL, PACK_DEFAULT, PACK_OPTIONS, breakerText, packText } from "./MethodPlans";
@@ -49,6 +50,7 @@ type S = {
   pack: string[];
   tips: string[];
   apOn: boolean;
+  goal: "diet" | "muscle" | "both";
   apHabits: string[];
   apMeals: { am: string; noon: string; pm: string; snack: string };
   apStall: string;
@@ -122,6 +124,7 @@ const DEFAULT: S = {
   pack: PACK_DEFAULT,
   tips: ["fiberfoods"],
   apOn: true,
+  goal: "diet",
   apHabits: [],
   apMeals: { am: "", noon: "", pm: "", snack: "" },
   apStall: "",
@@ -200,6 +203,7 @@ export default function FollowUpApp() {
         pace: t.pace === "slow" ? "slow" : s.pace,
         pal: typeof t.pal === "number" ? t.pal : s.pal,
         pfcMethod: t.method || "balance",
+        goal: t.goal === "muscle" || t.goal === "both" ? t.goal : "diet",
         conds: Array.isArray(t.conds) && t.conds.length > 0,
         rows,
         prog: PROG_TEMPLATE[t.days >= 1 && t.days <= 3 ? t.days : 1],
@@ -272,10 +276,12 @@ export default function FollowUpApp() {
             conds: s.conds,
             youth: band <= 1 || (age > 0 && age < 18),
             round: num(s.round) || 1,
+            goal: s.goal,
+            weight: nowW,
           })
         : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nowW, s.pfcMethod, kcal, weeks, ratePct, res?.judge?.id, s.apStall, s.apHabits.join(","), s.noLog, s.sleepLow, s.status.join(","), JSON.stringify(s.apMeals), s.trainPlan, s.conds, band, age, s.round]
+    [nowW, s.pfcMethod, kcal, weeks, ratePct, res?.judge?.id, s.apStall, s.apHabits.join(","), s.noLog, s.sleepLow, s.status.join(","), JSON.stringify(s.apMeals), s.trainPlan, s.conds, band, age, s.round, s.goal]
   );
   const pts = sorted.map((r) => ({ x: num(r.w), y: num(r.kg) }));
   const trainRate = num(s.trainPlan) > 0 ? Math.round((num(s.trainDone) / num(s.trainPlan)) * 100) : 0;
@@ -477,6 +483,12 @@ export default function FollowUpApp() {
           <input style={{ ...inp, width: 110 }} inputMode="decimal" value={s.foodAmt} onChange={(e) => up({ foodAmt: e.target.value })} aria-label="食べ物の例の量（g）" />
         </div>
         <p style={{ ...lab, marginTop: 12 }}>お客様の状況を入れると、自動で、判断・具体的な食事・次の一手を作ります（根拠つき）</p>
+        <p style={{ ...lab, marginTop: 6 }}>お客様の目的</p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {([["diet", "🔥 ダイエット（体重・体脂肪を減らす）"], ["muscle", "💪 筋肉をつけたい（増量）"], ["both", "⚖️ 減量しながら、筋肉を守る・つける"]] as const).map(([id, t]) => (
+            <button key={id} type="button" aria-pressed={s.goal === id} className={s.goal === id ? "trchip on" : "trchip"} onClick={() => up({ goal: id })}>{t}</button>
+          ))}
+        </div>
         <label style={{ ...lab, display: "flex", gap: 8, alignItems: "center" }}>
           <input type="checkbox" checked={s.apOn} onChange={(e) => up({ apOn: e.target.checked })} />
           資料に「状況の判断と、具体的な提案（自動）」を、載せる
@@ -494,6 +506,7 @@ export default function FollowUpApp() {
           ))}
         </div>
         <label style={{ ...lab, maxWidth: 260 }}>停滞している期間（週・わかる場合。空なら、記録から自動）<input style={inp} inputMode="numeric" value={s.apStall} onChange={(e) => up({ apStall: e.target.value })} /></label>
+        {plan && <TrainerNotes notes={plan.trainerNotes} />}
         {plan && (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
             <button type="button" className="trchip on" onClick={() => { up({ breakers: plan.breakerIds, tips: plan.tipId ? [plan.tipId] : s.tips }); }}>この提案の、打開策と豆知識を、資料に反映する</button>

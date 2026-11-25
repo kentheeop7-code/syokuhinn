@@ -5581,3 +5581,8 @@ html{scroll-behavior:smooth}
 .apv-act{color:#1f6f54;font-weight:600}
 .apv-gen{font-style:normal;font-size:.72rem;font-weight:700;background:#eef0f2;color:#556;border-radius:6px;padding:1px 6px;margin-left:6px}
 .apv-br{margin:4px 0 4px 20px;padding:0}
+
+/* トレーナーへ（資料には出ない） */
+.trnotes{margin:10px 0;padding:10px 14px;border-radius:12px;background:#fff6e5;border:2px dashed #e0a030}
+.trnotes ul{margin:4px 0 0 18px;padding:0}
+.trnotes li{margin:3px 0}

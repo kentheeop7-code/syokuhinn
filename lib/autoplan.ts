@@ -36,6 +36,8 @@ export type PlanIn = {
   conds: boolean;
   youth: boolean;
   round: number;
+  goal?: "diet" | "muscle" | "both";
+  weight?: number;
 };
 export type Dx = { title: string; why: string; action: string; ev: PlanEv[]; general?: boolean };
 export type MealRow = { name: string; kcal: number; p: number; f: number; c: number; foodsP: string[]; foodsC: string[]; own: string };
@@ -45,6 +47,10 @@ export type PlanOut = {
   meals: MealRow[];
   dx: Dx[];
   dxAll: number;
+  tricks: { title: string; why: string; action: string; ev: PlanEv[] }[];
+  trickTitle: string;
+  trainerNotes: string[];
+  goal: "diet" | "muscle" | "both";
   breakerIds: string[];
   breakerWhy: string[];
   tipId: string;
@@ -84,15 +90,31 @@ export function buildPlan(i: PlanIn): PlanOut {
 
   // --- 具体的な食事（いまの方法）
   const m = getMethod(i.methodId || "balance");
-  const pct = effectivePct(m, null);
-  const g = i.kcal > 0 ? macrosFor(i.kcal, pct) : null;
+  const goal = i.goal ?? "diet";
+  const w = i.weight ?? 0;
+  let kcalUse = i.kcal;
+  let pct = effectivePct(m, null);
+  const notesGoal: string[] = [];
+  if (goal === "muscle" && i.tdee > 0 && w > 0) {
+    // 筋肉をつける：維持のカロリー＋約250kcal（一般的な目安）。たんぱく質は 体重×1.8g、脂質25%、残りは炭水化物
+    kcalUse = Math.round((i.tdee + 250) / 10) * 10;
+    const pP = Math.min(35, Math.round(((w * 1.8 * 4) / kcalUse) * 100));
+    pct = { p: pP, f: 25, c: 100 - pP - 25 };
+    notesGoal.push("筋肉をつける設定：維持カロリー＋約250kcal（一般的な目安）、たんぱく質は体重×約1.8g/日。体脂肪が増えすぎる場合は、カロリーを減らす。");
+  } else if (goal === "both" && w > 0 && kcalUse > 0) {
+    // 減量しながら筋肉を守る：たんぱく質を、体重×1.8g以上に
+    const pP = Math.min(40, Math.max(pct.p, Math.round(((w * 1.8 * 4) / kcalUse) * 100)));
+    if (pP > pct.p) pct = { p: pP, f: pct.f, c: Math.max(10, 100 - pP - pct.f) };
+    notesGoal.push("減量＋筋肉を守る設定：たんぱく質を、体重×約1.8g/日以上に（筋トレをしている人の、減量中は、さらに多く必要になることがあります）。");
+  }
+  const g = kcalUse > 0 ? macrosFor(kcalUse, pct) : null;
   const fast = m.id === "fast16";
   const split = fast ? [0, 0.4, 0.5, 0.1] : [0.25, 0.3, 0.35, 0.1];
   const names = ["朝食", "昼食", "夕食", "間食"];
   const own = [i.meals.am, i.meals.noon, i.meals.pm, i.meals.snack];
   const meals: MealRow[] = names
     .map((n, k) => {
-      const kc = Math.round((i.kcal * split[k]) / 10) * 10;
+      const kc = Math.round((kcalUse * split[k]) / 10) * 10;
       const mg = g ? { p: Math.round(g.p * split[k]), f: Math.round(g.f * split[k]), c: Math.round(g.c * split[k]) } : { p: 0, f: 0, c: 0 };
       const GROUPS = {
         p: [/鶏|ささみ|豚|牛/, /さけ|鮭|まぐろ|さば|ツナ|いわし|あじ|えび/, /卵|納豆|豆腐|ヨーグルト|牛乳/],
@@ -136,6 +158,38 @@ export function buildPlan(i: PlanIn): PlanOut {
   dx.sort((a, b) => (PRI.indexOf(a.title) < 0 ? 99 : PRI.indexOf(a.title)) - (PRI.indexOf(b.title) < 0 ? 99 : PRI.indexOf(b.title)));
   const dxAll = dx.length;
   dx.splice(6);
+  // --- 小さな工夫（痩せる／筋肉をつける）。根拠は、PubMedの要旨で確認したものだけ
+  const tricks: { title: string; why: string; action: string; ev: PlanEv[] }[] = [];
+  const T = (t: { title: string; why: string; action: string; ev: PlanEv[] }) => tricks.push(t);
+  const TE = (id: string, k = 0): PlanEv[] => {
+    const e = getTip(id)?.known[k];
+    return e ? [e] : [];
+  };
+  if (goal !== "muscle") {
+    if (hab.has("sweet")) T({ title: "甘い飲み物を、無糖に", why: "砂糖入りの飲み物は、1日1杯ふえるごとに、成人で1年に約0.12〜0.22kgの体重増加と関連（メタ分析）。", action: "毎日の甘い飲み物を、1つだけ、水・お茶・無糖コーヒーに変える。", ev: TE("waterpre", 1) });
+    T({ title: "食事の前に、水を1杯", why: "低カロリー食に加えて、食前に水500mlを飲んだ群は、12週間で約2kg多く減った（48人の試験）。", action: "主な食事の前に、水かお茶を、コップ1〜2杯（無理のない量で）。", ev: TE("waterpre", 0) });
+    T({ title: "ゆっくり食べる", why: "ゆっくり食べるほうが、速く食べるより、食べる量が少なかった（22の実験のメタ分析）。", action: "一口ごとに箸を置く。1日1食から始める。", ev: TE("eatslow") });
+    if (hab.has("eatout") || hab.has("sweet")) T({ title: "超加工食品を、1つ置きかえる", why: "超加工食品の食事では、自由に食べると、1日約500kcal多かった（入院試験・20人）。", action: "菓子パン・スナックを、おにぎり・果物・ヨーグルトに置きかえる。", ev: TE("ultraproc") });
+  }
+  if (goal === "both" && tricks.length > 2) tricks.splice(2);
+  if (goal !== "diet") {
+    T({ title: "筋トレの量（週のセット数）", why: "週のセット数が多いほど、筋肉のつきが大きい（メタ回帰）。量が同じなら、頻度は好みで選べる（メタ分析）。", action: "1つの筋肉に、週10セット前後を、めやすに。2〜4週ごとに、少しずつ増やす。", ev: [...TE("mvolume", 0), ...TE("mvolume", 1)] });
+    T({ title: "たんぱく質と、カロリー", why: "筋量の増加は、体重1kgあたり約1.6g/日で、頭打ちになる傾向。運動する人は、1.4〜2.0g/kgが十分、とされる。", action: g ? `1日 たんぱく質 約${g.p}g。3〜4回に分けて取る。` : "3〜4回に分けて取る。", ev: TE("mfuel", 0).concat(TE("mfuel", 1)) });
+    if (goal === "muscle") T({ title: "睡眠と回復", why: "睡眠が短いと、筋肉などの減りが多かった（少人数の研究）。", action: "6.5時間以上。筋トレの量を増やす前に、睡眠と食事を整える。", ev: TE("sleepdiet", 0) });
+  }
+  const trickTitle = goal === "muscle" ? "筋肉をつけるための、工夫（根拠つき）" : goal === "both" ? "痩せる工夫と、筋肉を守る工夫（根拠つき）" : "痩せるための、小さな工夫（根拠つき）";
+  tricks.splice(4);
+
+  // --- トレーナーへ（お客様の資料には、出さない）
+  const trainerNotes: string[] = [...notesGoal];
+  if (isStall) trainerNotes.push("停滞の判断は、週平均の体重で。1〜2日の増減で、お客様を不安にさせない。まず、記録と測り方の確認から。");
+  if (goal !== "muscle" && !isStall) trainerNotes.push("順調なときは、方法を変えない。『いまの方法を続ける』ことを、はっきり伝える。");
+  if (goal === "muscle") trainerNotes.push("体重が増えない場合は、食事の量が、足りていない可能性が高い。食事の記録を、先に確認。");
+  if (goal === "both") trainerNotes.push("減量中の筋トレは、重量が落ちたら、カロリーが少なすぎる合図。ダイエットブレイクも、検討。");
+  if (i.habits.includes("sleep") || hab.has("sleep")) trainerNotes.push("睡眠は、減量にも筋肉にも、影響します。トレーニングや食事の指導より、先に、整えたい項目。");
+  if (i.youth) trainerNotes.push("未成年は、断食・糖質制限・減量の目標設定は、避ける。成長を、優先する。");
+  if (i.conds) trainerNotes.push("持病・服薬のある方は、食事の変更前に、主治医への確認を、案内する。");
+
   // --- 打開策
   const sb = suggestBreakers({ stall: isStall, weeksStalled: stallWeeks, gut: hab.has("const"), youth: i.youth, cond: i.conds, noReduce: false });
   const breakerIds = sb.filter((id) => !!getBreaker(id));
@@ -144,16 +198,22 @@ export function buildPlan(i: PlanIn): PlanOut {
     return `${b.icon} ${b.name.replace(/（.*$/, "")}：${b.when}`;
   });
 
-  const tip = autoTips({ constipation: hab.has("const"), sleepLow: hab.has("sleep"), stall: isStall, train: i.train, round: i.round, max: 1 });
+  const tip = autoTips({ constipation: hab.has("const"), sleepLow: hab.has("sleep"), stall: isStall, train: i.train, round: i.round, max: 1, goal });
 
-  const ev = uniq([...dx.flatMap((d) => d.ev), ...breakerIds.flatMap((id) => (getBreaker(id)?.evidence ?? []).slice(0, 1)), ...m.evidence.slice(0, 1)]);
+  const tipNotes = getTip(tip.ids[0] ?? "")?.trainer ?? [];
+  trainerNotes.push(...tipNotes.map((x) => `（豆知識）${x}`));
+  const ev = uniq([...dx.flatMap((d) => d.ev), ...tricks.flatMap((t) => t.ev), ...breakerIds.flatMap((id) => (getBreaker(id)?.evidence ?? []).slice(0, 1)), ...m.evidence.slice(0, 1)]);
 
   return {
     judge: { label: isStall ? (stallWeeks >= 4 ? "停滞が、長く続いている可能性" : "停滞の可能性") : i.weeks >= 2 ? "目安の範囲" : "判断には、記録が足りません", level: isStall ? "stall" : i.weeks >= 2 ? "ok" : "none", points, criteria, stallWeeks },
-    method: { id: m.id, name: m.name, icon: m.icon, pct, g, kcal: i.kcal, steps: m.choose.slice(0, 4), caution: m.caution[0] ?? "" },
+    method: { id: m.id, name: goal === "muscle" ? "筋肉をつける食事（増量）" : m.name, icon: goal === "muscle" ? "💪" : m.icon, pct, g, kcal: kcalUse, steps: m.choose.slice(0, 4), caution: m.caution[0] ?? "" },
     meals,
     dx,
     dxAll,
+    tricks,
+    trickTitle,
+    trainerNotes,
+    goal,
     breakerIds,
     breakerWhy,
     tipId: tip.ids[0] ?? "",
